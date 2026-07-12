@@ -557,3 +557,12 @@ body.lib-hidden .lib-resizer{display:none}
   position:absolute;bottom:44px;left:0;right:0;text-align:center;z-index:2;
   font-size:10.5px;color:var(--dim);
 }
+
+/* touch devices get much larger crop handles */
+@media (pointer:coarse){
+  .ch{width:28px;height:28px;border-width:2.5px}
+  .ch[data-h="nw"]{left:-15px;top:-15px}
+  .ch[data-h="ne"]{right:-15px;top:-15px}
+  .ch[data-h="sw"]{left:-15px;bottom:-15px}
+  .ch[data-h="se"]{right:-15px;bottom:-15px}
+}

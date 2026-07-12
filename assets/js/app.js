@@ -72,7 +72,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.0.0';
+const APP_VERSION='1.1.0';
 const uid = () => Math.random().toString(36).slice(2,9);
 let state = {
   version:APP_VERSION,
@@ -409,6 +409,20 @@ $('#paDone').addEventListener('click',()=>{setSelMarker(null);renderMarkers();})
 document.addEventListener('click',()=>$('#ctx').style.display='none');
 $('#ctxDelete').addEventListener('click',()=>{if(ctxTarget){deletePlacement(ctxTarget.id);ctxTarget=null;}});
 
+function doUndo(){
+  const a=undoStack.pop();if(!a)return;
+  const f=state.floors.find(fl=>fl.id===a.floorId);if(!f)return;
+  if(a.type==='add'){const i=f.placements.findIndex(p=>p.id===a.p.id);if(i>-1)f.placements.splice(i,1);}
+  if(a.type==='del')f.placements.push(a.p);
+  if(a.type==='floor'){                        /* crop / rotate snapshot */
+    f.img=a.prev.img;f.w=a.prev.w;f.h=a.prev.h;f.placements=a.prev.placements;
+    if(state.activeFloor===f.id){ if(cropMode)cancelCrop(); showFloor(); }
+  }
+  renderMarkers();renderLibrary();renderBoq();updateChipCount();
+}
+const floorSnapshot=f=>({type:'floor',floorId:f.id,prev:{img:f.img,w:f.w,h:f.h,placements:f.placements.map(p=>({...p}))}});
+$('#btnUndo').addEventListener('click',doUndo);
+
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){
     const veil=document.querySelector('.veil.open');
@@ -421,11 +435,7 @@ document.addEventListener('keydown',e=>{
     deletePlacement(selMarker);
   }
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'&&!e.target.matches('input,select,textarea')){
-    e.preventDefault();const a=undoStack.pop();if(!a)return;
-    const f=state.floors.find(fl=>fl.id===a.floorId);if(!f)return;
-    if(a.type==='add'){const i=f.placements.findIndex(p=>p.id===a.p.id);if(i>-1)f.placements.splice(i,1);}
-    if(a.type==='del')f.placements.push(a.p);
-    renderMarkers();renderLibrary();renderBoq();updateChipCount();
+    e.preventDefault();doUndo();
   }
 });
 
@@ -611,6 +621,23 @@ stage.addEventListener('touchmove',e=>{
     const d=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);
     const mx=(a.clientX+b.clientX)/2-r.left, my=(a.clientY+b.clientY)/2-r.top;
     const nz=Math.min(4,Math.max(0.05,pinch.z*(d/pinch.d)));
+    /* while cropping, keep the frame visually steady: as the plan zooms,
+       the crop region scales inversely about its own centre */
+    if(cropMode){
+      const f=activeFloor();
+      const kz=nz/zoom;
+      if(f&&Math.abs(kz-1)>0.0001){
+        const cx=crop.x+crop.w/2, cy=crop.y+crop.h/2;
+        let nw=crop.w/kz, nh=cropRatio!=null?(crop.w/kz)/cropRatio:crop.h/kz;
+        nw=Math.max(60,Math.min(f.w,nw));
+        nh=cropRatio!=null?nw/cropRatio:Math.max(60,Math.min(f.h,nh));
+        if(nh>f.h){nh=f.h;if(cropRatio!=null)nw=nh*cropRatio;}
+        crop.w=nw;crop.h=nh;
+        crop.x=Math.min(f.w-nw,Math.max(0,cx-nw/2));
+        crop.y=Math.min(f.h-nh,Math.max(0,cy-nh/2));
+        renderCropRect();
+      }
+    }
     panX=mx-(pinch.mx-pinch.px)*(nz/pinch.z);
     panY=my-(pinch.my-pinch.py)*(nz/pinch.z);
     zoom=nz;clampPan();applyView();
@@ -652,6 +679,7 @@ async function rotateFloor(){
   const f=activeFloor();if(!f){toast('Upload a floor plan first.');return;}
   if(cropMode)cancelCrop();
   toast('Rotating…');
+  undoStack.push(floorSnapshot(f));
   const img=await loadImg(f.img);
   const cv=document.createElement('canvas');cv.width=f.h;cv.height=f.w;
   const ctx=cv.getContext('2d');
@@ -660,7 +688,6 @@ async function rotateFloor(){
   f.img=cv.toDataURL('image/jpeg',0.92);
   f.placements=f.placements.map(p=>({...p,x:1-p.y,y:p.x}));   /* CW: (x,y) → (1−y, x) */
   [f.w,f.h]=[f.h,f.w];
-  undoStack=[];
   showFloor();renderLibrary();renderBoq();
   toast('Rotated 90° clockwise — click again for further turns.');
 }
@@ -696,10 +723,22 @@ $('#cropRect').addEventListener('pointerdown',ev=>{
   const f=activeFloor();const r0={...crop};
   const rect=planRect();const k=f.w/rect.width;
   const sx=ev.clientX,sy=ev.clientY;
+  const px0=panX,py0=panY;
+  const touch=ev.pointerType==='touch';
   const t=ev.currentTarget;t.setPointerCapture(ev.pointerId);
   const mv=e=>{
-    crop.x=Math.min(f.w-crop.w,Math.max(0,r0.x+(e.clientX-sx)*k));
-    crop.y=Math.min(f.h-crop.h,Math.max(0,r0.y+(e.clientY-sy)*k));
+    if(pinchActive)return;
+    const dx=e.clientX-sx, dy=e.clientY-sy;
+    if(touch){
+      /* photo-cropper feel: the frame stays put on screen while the plan
+         slides beneath it — pan the view and counter-shift the frame */
+      panX=px0+dx; panY=py0+dy; clampPan(); applyView();
+      crop.x=Math.min(f.w-crop.w,Math.max(0,r0.x-dx*k));
+      crop.y=Math.min(f.h-crop.h,Math.max(0,r0.y-dy*k));
+    }else{
+      crop.x=Math.min(f.w-crop.w,Math.max(0,r0.x+dx*k));
+      crop.y=Math.min(f.h-crop.h,Math.max(0,r0.y+dy*k));
+    }
     renderCropRect();
   };
   const up=()=>{t.removeEventListener('pointermove',mv);t.removeEventListener('pointerup',up);t.removeEventListener('pointercancel',up);};
@@ -745,6 +784,7 @@ $('#cropApply').addEventListener('click',async()=>{
   const inside=p=>{const px=p.x*f.w,py=p.y*f.h;return px>=crop.x&&px<=crop.x+crop.w&&py>=crop.y&&py<=crop.y+crop.h;};
   const dropped=f.placements.filter(p=>!inside(p)).length;
   if(dropped&&!confirm(`${dropped} ikon${dropped>1?`s`:``} fall outside the crop and will be removed. Continue?`))return;
+  undoStack.push(floorSnapshot(f));
   const img=await loadImg(f.img);
   const cv=document.createElement('canvas');
   cv.width=Math.round(crop.w);cv.height=Math.round(crop.h);
@@ -755,9 +795,8 @@ $('#cropApply').addEventListener('click',async()=>{
     y:(p.y*f.h-crop.y)/crop.h
   }));
   f.w=cv.width;f.h=cv.height;
-  undoStack=[];
   cancelCrop();showFloor();renderLibrary();renderBoq();
-  toast('Plan cropped.');
+  toast('Plan cropped — Undo (Ctrl+Z or ↩) restores it.');
 });
 
 /* ──────────── Item modal ──────────── */

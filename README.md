@@ -1,14 +1,5 @@
-Created by: Jassim Alfonso
-Tool: Claude
-
-Created: 20260710
-Updated: 20260711
-
-# ikonhouse-pre-sales-tool
-A pre-sales tool developed with the help for Claude for ikonhouse - not yet approved for use.
-
-
 # ikonhouse — AV Pre-Sales Studio
+**Version 1.0** · Developed by Jassim Alfonso with Claude
 
 A lightweight, browser-based pre-sales tool for AV integration projects.
 Upload or paste a floor plan, crop it to a print-ready format, place devices

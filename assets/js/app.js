@@ -31,6 +31,7 @@ const ICONS = {
   'plug':'<path d="M9 3v5M15 3v5M6 8h12v3a6 6 0 0 1-12 0z"/><path d="M12 17v4"/>'
 };
 const svgOf = icon => `<svg viewBox="0 0 24 24">${ICONS[icon]||ICONS['plug']}</svg>`;
+const iconHtml = it => it.iconImg ? `<img src="${it.iconImg}" alt="">` : svgOf(it.icon);
 const PALETTE = [
   '#141414','#5B5B5B','#94A3B8','#64748B','#AE8B5C','#8C6A3F',
   '#2E5CFF','#1D3FA8','#0EA5E9','#0E7490','#0FA3A3','#16B364',
@@ -71,13 +72,16 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
+const APP_VERSION='1.0.0';
 const uid = () => Math.random().toString(36).slice(2,9);
 let state = {
+  version:APP_VERSION,
   project:'Untitled Project', client:'', location:'', reference:'', preparedBy:'',
   theme:'light', brandLogo:null, libDock:'left', libHidden:false, libFloat:null,
+  libSize:{w:264,h:60,fw:288,fh:520}, catOrder:[],
   items:[], floors:[], activeFloor:null, pinScale:1
 };
-let armedItem=null, selMarker=null, zoom=1, undoStack=[], ctxTarget=null;
+let armedItem=null, selMarker=null, zoom=1, undoStack=[], ctxTarget=null, draggingCat=null;
 
 const SEED = [
  ['Ceiling Speaker','Audio','ceiling-speaker','#2E5CFF'],['Invisible Speaker','Audio','speaker','#0E7490'],
@@ -130,6 +134,7 @@ function applyTheme(){
 document.querySelectorAll('#themeRow [data-theme-opt]').forEach(b=>{
   b.addEventListener('click',()=>{ state.theme=b.dataset.themeOpt; applyTheme(); });
 });
+$('#themeToggle').addEventListener('click',()=>{ state.theme=state.theme==='dark'?'light':'dark'; applyTheme(); });
 /* View menu (theme + docking) */
 $('#btnView').addEventListener('click',e=>{e.stopPropagation();$('#viewMenu').classList.toggle('open');$('#exportMenu').classList.remove('open');});
 document.addEventListener('click',()=>$('#viewMenu').classList.remove('open'));
@@ -169,12 +174,20 @@ function renderLibrary(){
   const q=$('#libSearch').value.trim().toLowerCase();
   const list=$('#libList'); list.innerHTML='';
   const items=state.items.filter(i=>!q||i.name.toLowerCase().includes(q)||(i.cat||'').toLowerCase().includes(q));
-  [...new Set(items.map(i=>i.cat||'Other'))].forEach(cat=>{
-    list.appendChild(el('div','cat-head',cat));
+  /* categories follow the user's saved order; new ones append */
+  const present=[...new Set(items.map(i=>i.cat||'Other'))];
+  state.catOrder=state.catOrder||[];
+  present.forEach(c=>{ if(!state.catOrder.includes(c)) state.catOrder.push(c); });
+  const cats=state.catOrder.filter(c=>present.includes(c));
+  cats.forEach(cat=>{
+    const head=el('div','cat-head'+(draggingCat===cat?' dragging':''),`<span class="grip">⋮⋮</span>${cat}`);
+    head.dataset.cat=cat; head.title='Drag to reorder categories';
+    head.addEventListener('pointerdown',e=>{ e.preventDefault(); startCatDrag(cat,e); });
+    list.appendChild(head);
     items.filter(i=>(i.cat||'Other')===cat).forEach(item=>{
       const qty=qtyOf(item.id);
       const row=el('div','item-row'+(armedItem===item.id?' armed':''));
-      row.innerHTML=`<span class="item-chip" style="background:${item.color}">${svgOf(item.icon)}</span>
+      row.innerHTML=`<span class="item-chip" style="background:${item.color}">${iconHtml(item)}</span>
         <span class="item-meta"><span class="nm">${item.name}</span>${item.model?`<span class="md">${item.model}</span>`:''}</span>
         <span class="item-qty ${qty?'on':''}">${qty||'—'}</span>
         <button class="item-edit" title="Edit"><svg viewBox="0 0 24 24"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg></button>`;
@@ -191,6 +204,27 @@ function renderLibrary(){
   renderStats();
 }
 $('#libSearch').addEventListener('input',renderLibrary);
+function startCatDrag(cat,e){
+  const id=e.pointerId, sx=e.clientX, sy=e.clientY; let started=false;
+  const mv=ev=>{
+    if(ev.pointerId!==id)return;
+    if(!started&&Math.hypot(ev.clientX-sx,ev.clientY-sy)<5)return;
+    if(!started){started=true;draggingCat=cat;document.body.style.cursor='grabbing';renderLibrary();}
+    const under=document.elementFromPoint(ev.clientX,ev.clientY);
+    const th=under&&under.closest?under.closest('.cat-head'):null;
+    if(th&&th.dataset.cat&&th.dataset.cat!==cat){
+      const o=state.catOrder;
+      const from=o.indexOf(cat),to=o.indexOf(th.dataset.cat);
+      if(from>-1&&to>-1){ o.splice(from,1); o.splice(to,0,cat); renderLibrary(); }
+    }
+  };
+  const up=ev=>{
+    if(ev.pointerId!==id)return;
+    document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);
+    if(started){draggingCat=null;document.body.style.cursor='';renderLibrary();}
+  };
+  document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
+}
 
 /* mobile library sheet */
 const openLib=()=>document.body.classList.add('lib-open');
@@ -203,11 +237,25 @@ $('#libClose').addEventListener('click',closeLib);
 $('#libVeil').addEventListener('click',closeLib);
 
 /* ──────────── Library docking (left / top / bottom / right / float / hidden) ──────────── */
+function applySizes(){
+  const lp=$('#libPanel');
+  const sz=state.libSize||(state.libSize={w:264,h:60,fw:288,fh:520});
+  lp.style.width='';lp.style.height='';
+  const mob=window.innerWidth<=1024;
+  const d=state.libDock||'left';
+  if((d==='left'||d==='right')&&!mob) lp.style.width=Math.min(460,Math.max(208,sz.w))+'px';
+  else if(d==='top'||d==='bottom')    lp.style.height=Math.min(190,Math.max(52,sz.h))+'px';
+  else if(d==='float'&&!mob){
+    lp.style.width=Math.min(460,Math.max(240,sz.fw))+'px';
+    lp.style.height=Math.min(window.innerHeight-140,Math.max(300,sz.fh))+'px';
+  }
+}
 function applyDock(){
   const b=document.body;
   b.classList.remove('dock-left','dock-right','dock-top','dock-bottom','dock-float','lib-hidden');
   b.classList.add('dock-'+(state.libDock||'left'));
   if(state.libHidden) b.classList.add('lib-hidden');
+  applySizes();
   const lp=$('#libPanel');
   if(state.libDock==='float'){
     const p=state.libFloat||{x:84,y:126};
@@ -223,6 +271,29 @@ document.querySelectorAll('#dockRow [data-dock]').forEach(btn=>{
   btn.addEventListener('click',()=>{ state.libDock=btn.dataset.dock; state.libHidden=false; applyDock(); });
 });
 $('#dockHideOpt').addEventListener('click',()=>{ state.libHidden=true; applyDock(); toast('Library hidden — use the Devices button to bring it back.'); });
+/* drag an edge (or the floating panel's corner) to resize the library */
+$('#libResizer').addEventListener('pointerdown',e=>{
+  e.preventDefault();e.stopPropagation();
+  const lp=$('#libPanel');const r=lp.getBoundingClientRect();
+  const d=state.libDock||'left';const sz=state.libSize;
+  const id=e.pointerId;
+  const mv=ev=>{
+    if(ev.pointerId!==id)return;
+    if(d==='left')   sz.w=ev.clientX-r.left;
+    if(d==='right')  sz.w=r.right-ev.clientX;
+    if(d==='top')    sz.h=ev.clientY-r.top;
+    if(d==='bottom') sz.h=r.bottom-ev.clientY;
+    if(d==='float'){ sz.fw=ev.clientX-r.left; sz.fh=ev.clientY-r.top; }
+    applySizes();
+  };
+  const up=ev=>{
+    if(ev.pointerId!==id)return;
+    document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);
+    requestAnimationFrame(()=>{ if(activeFloor()&&!cropMode){clampPan();applyView();} });
+  };
+  document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
+});
+
 /* drag the floating panel by its grip */
 $('#floatGrip').addEventListener('pointerdown',e=>{
   e.preventDefault();
@@ -250,7 +321,7 @@ function armItem(id){
   $('#planHolder').classList.toggle('arming',!!id);
   $('#hintbar').style.display=id?'block':'none';
   if(id){const it=itemById(id);$('#hintName').textContent=it.name;
-    $('#chipDot').style.background=it.color;$('#chipDot').innerHTML=svgOf(it.icon);
+    $('#chipDot').style.background=it.color;$('#chipDot').innerHTML=iconHtml(it);
     $('#chipName').textContent=it.name;updateChipCount();
   }else $('#chip').style.display='none';
   renderLibrary();renderMarkers();
@@ -289,7 +360,7 @@ function renderMarkers(){
   const s=pinPx();
   f.placements.forEach(p=>{
     const it=itemById(p.itemId);if(!it)return;
-    const m=el('div','marker'+(selMarker===p.id?' sel':''),svgOf(it.icon));
+    const m=el('div','marker'+(selMarker===p.id?' sel':''),iconHtml(it));
     m.style.cssText=`left:${p.x*100}%;top:${p.y*100}%;width:${s}px;height:${s}px;background:${it.color}`;
     m.title=it.name;
     m.addEventListener('pointerdown',ev=>{
@@ -690,15 +761,41 @@ $('#cropApply').addEventListener('click',async()=>{
 });
 
 /* ──────────── Item modal ──────────── */
-let editingId=null,mIcon='ceiling-speaker',mColor=PALETTE[6];
+let editingId=null,mIcon='ceiling-speaker',mColor=PALETTE[6],mIconImg=null;
 function buildIconGrid(){
   const g=$('#iconGrid');g.innerHTML='';
   Object.keys(ICONS).forEach(k=>{
-    const b=el('button','icon-opt'+(k===mIcon?' on':''),svgOf(k));b.title=k;
-    b.addEventListener('click',()=>{mIcon=k;buildIconGrid();});
+    const b=el('button','icon-opt'+(k===mIcon&&!mIconImg?' on':''),svgOf(k));b.title=k;
+    b.addEventListener('click',()=>{mIcon=k;mIconImg=null;buildIconGrid();renderIconPreview();});
     g.appendChild(b);
   });
 }
+function renderIconPreview(){
+  const p=$('#fIconPreview');
+  p.classList.toggle('show',!!mIconImg);
+  p.innerHTML=mIconImg?`<img src="${mIconImg}" alt="">`:'';
+  $('#fIconClear').style.display=mIconImg?'block':'none';
+}
+$('#fIconUpload').addEventListener('click',()=>$('#fileIcon').click());
+$('#fIconClear').addEventListener('click',()=>{mIconImg=null;buildIconGrid();renderIconPreview();});
+$('#fileIcon').addEventListener('change',e=>{
+  const f=e.target.files[0];e.target.value='';if(!f)return;
+  const rd=new FileReader();
+  rd.onload=()=>{
+    const img=new Image();
+    img.onload=()=>{
+      /* normalize to a compact 96px transparent PNG */
+      const cv=document.createElement('canvas');cv.width=cv.height=96;
+      const k=Math.min(96/img.width,96/img.height);
+      const w=img.width*k,hh=img.height*k;
+      cv.getContext('2d').drawImage(img,(96-w)/2,(96-hh)/2,w,hh);
+      mIconImg=cv.toDataURL('image/png');
+      buildIconGrid();renderIconPreview();
+    };
+    img.src=rd.result;
+  };
+  rd.readAsDataURL(f);
+});
 function buildColorRow(){
   const r=$('#colorRow');r.innerHTML='';
   PALETTE.forEach(c=>{
@@ -716,15 +813,15 @@ function openItemModal(id){
   $('#itemModalTitle').textContent=it?'Edit device':'New device';
   $('#fName').value=it?.name||'';$('#fCat').value=it?.cat||'';
   $('#fModel').value=it?.model||'';$('#fPrice').value=it?.price||'';
-  mIcon=it?.icon||'ceiling-speaker';mColor=it?.color||PALETTE[6];
+  mIcon=it?.icon||'ceiling-speaker';mColor=it?.color||PALETTE[6];mIconImg=it?.iconImg||null;
   $('#fDelete').style.display=it?'block':'none';
-  buildIconGrid();buildColorRow();
+  buildIconGrid();buildColorRow();renderIconPreview();
   $('#itemVeil').classList.add('open');
 }
 $('#btnNewItem').addEventListener('click',()=>openItemModal(null));
 $('#fSave').addEventListener('click',()=>{
   const name=$('#fName').value.trim();if(!name){toast('Give the device a name.');return;}
-  const data={name,cat:$('#fCat').value.trim()||'Other',model:$('#fModel').value.trim(),price:parseFloat($('#fPrice').value)||0,icon:mIcon,color:mColor};
+  const data={name,cat:$('#fCat').value.trim()||'Other',model:$('#fModel').value.trim(),price:parseFloat($('#fPrice').value)||0,icon:mIcon,iconImg:mIconImg||null,color:mColor};
   if(editingId)Object.assign(itemById(editingId),data);
   else state.items.push({id:uid(),...data});
   $('#itemVeil').classList.remove('open');
@@ -778,7 +875,7 @@ function renderBoq(){
   const hasPrice=rows.some(r=>r.it.price>0);
   let h='<thead><tr><th>Device</th><th style="text-align:right">Qty</th>'+(hasPrice?'<th style="text-align:right">Unit</th><th style="text-align:right">Amount</th>':'')+'</tr></thead><tbody>';
   rows.forEach(r=>{
-    h+=`<tr><td><span class="swatch" style="background:${r.it.color}">${svgOf(r.it.icon)}</span>${r.it.name}${r.it.model?`<span style="color:var(--dim);font-size:11px"> · ${r.it.model}</span>`:''}</td>
+    h+=`<tr><td><span class="swatch" style="background:${r.it.color}">${iconHtml(r.it)}</span>${r.it.name}${r.it.model?`<span style="color:var(--dim);font-size:11px"> · ${r.it.model}</span>`:''}</td>
       <td class="num">${r.total}</td>`+
       (hasPrice?`<td class="num">${r.it.price?r.it.price.toLocaleString(undefined,{minimumFractionDigits:2}):'—'}</td><td class="num">${r.amount?r.amount.toLocaleString(undefined,{minimumFractionDigits:2}):'—'}</td>`:'')+'</tr>';
   });
@@ -1061,9 +1158,10 @@ async function renderSheet(f,paper,idx,total){
     ctx.beginPath();ctx.arc(x0,y0,pin/2,0,Math.PI*2);
     ctx.fillStyle=it.color;ctx.fill();
     ctx.lineWidth=Math.max(1,pin*0.06);ctx.strokeStyle='rgba(255,255,255,.9)';ctx.stroke();
-    if(!iconCache[it.icon])iconCache[it.icon]=await iconImage(it.icon,'#ffffff');
+    const key=it.iconImg?('img:'+it.id):it.icon;
+    if(!iconCache[key])iconCache[key]=it.iconImg?await loadImg(it.iconImg):await iconImage(it.icon,'#ffffff');
     const g=pin*0.56;
-    ctx.drawImage(iconCache[it.icon],x0-g/2,y0-g/2,g,g);
+    ctx.drawImage(iconCache[key],x0-g/2,y0-g/2,g,g);
   }
 
   /* legend chips */
@@ -1191,7 +1289,7 @@ $('#fileProject').addEventListener('change',e=>{
     try{
       const s=JSON.parse(rd.result);
       if(!s.items||!s.floors)throw 0;
-      state=Object.assign({theme:'light',brandLogo:null,pinScale:1,client:'',location:'',reference:'',preparedBy:'',libDock:'left',libHidden:false,libFloat:null},s);
+      state=Object.assign({version:APP_VERSION,theme:'light',brandLogo:null,pinScale:1,client:'',location:'',reference:'',preparedBy:'',libDock:'left',libHidden:false,libFloat:null,libSize:{w:264,h:60,fw:288,fh:520},catOrder:[]},s);
       armedItem=null;setSelMarker(null);undoStack=[];
       if(cropMode)cancelCrop();
       $('#projName').value=state.project;
@@ -1207,7 +1305,7 @@ $('#fileProject').addEventListener('change',e=>{
 window.addEventListener('beforeunload',e=>{
   if(state.floors.some(f=>f.placements.length)){e.preventDefault();e.returnValue='';}
 });
-window.addEventListener('resize',()=>{ if(activeFloor()&&!cropMode) fitZoom(); });
+window.addEventListener('resize',()=>{ applySizes(); if(activeFloor()&&!cropMode) fitZoom(); });
 
 /* ──────────── Onboarding ──────────── */
 function dismissOnboard(){ $('#welcome').style.display='none'; $('#setup').style.display='none'; obStopFx(); }

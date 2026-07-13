@@ -14,10 +14,11 @@ const ICONS = {
   'screen':'<path d="M3 4h18M12 4v3"/><rect x="4" y="7" width="16" height="11" rx="1"/>',
   'wifi':'<path d="M2.5 9a15 15 0 0 1 19 0M5.5 12.5a10 10 0 0 1 13 0M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19.5" r="1.2" fill="currentColor"/>',
   'rack':'<rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M5 8h14M5 13h14M8 5.5h.01M8 10.5h.01M8 15.5h.01"/>',
-  'keypad':'<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8.5 9h.01M12 9h.01M15.5 9h.01M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 15h.01M12 15h.01M15.5 15h.01"/>',
-  'keypad-2':'<rect x="4" y="4" width="16" height="16" rx="2"/><rect x="7.2" y="7.4" width="9.6" height="3.4" rx="1"/><rect x="7.2" y="13.2" width="9.6" height="3.4" rx="1"/>',
-  'touch':'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M12 15l2.5-4 2 3"/><circle cx="8.5" cy="10.5" r="1"/>',
-  'thermostat':'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  'keypad':'<rect x="4.5" y="4" width="15" height="16" rx="1.2"/><rect x="9" y="6.4" width="6" height="2.5" rx="0.6"/><rect x="9" y="10" width="6" height="2.5" rx="0.6"/><rect x="9" y="13.6" width="6" height="2.5" rx="0.6"/><rect x="9" y="17.2" width="6" height="1.6" rx="0.5"/>',
+  'keypad-2col':'<rect x="4.5" y="4" width="15" height="16" rx="1.2"/><rect x="7" y="6.8" width="4.2" height="2.6" rx="0.6"/><rect x="12.8" y="6.8" width="4.2" height="2.6" rx="0.6"/><rect x="7" y="10.7" width="4.2" height="2.6" rx="0.6"/><rect x="12.8" y="10.7" width="4.2" height="2.6" rx="0.6"/><rect x="7" y="14.6" width="4.2" height="2.6" rx="0.6"/><rect x="12.8" y="14.6" width="4.2" height="2.6" rx="0.6"/>',
+  'keypad-2':'<rect x="4.5" y="4" width="15" height="16" rx="1.2"/><rect x="8" y="7.2" width="8" height="3.6" rx="0.8"/><rect x="8" y="13.2" width="8" height="3.6" rx="0.8"/>',
+  'touch':'<rect x="5.5" y="3" width="13" height="18" rx="2"/><path d="M10.3 18.7h3.4"/>',
+  'thermostat':'<rect x="4.5" y="4" width="15" height="16" rx="1.2"/><rect x="7.3" y="6.8" width="9.4" height="4.4" rx="0.8"/><circle cx="15.4" cy="7.9" r="0.45" fill="currentColor"/><path d="M8.6 14.6h.01M12 14.6h.01M15.4 14.6h.01M12 17.3h.01"/>',
   'sensor':'<circle cx="12" cy="12" r="1.4" fill="currentColor"/><path d="M7.5 7.5a6.4 6.4 0 0 0 0 9M16.5 7.5a6.4 6.4 0 0 1 0 9M4.8 4.8a10.2 10.2 0 0 0 0 14.4M19.2 4.8a10.2 10.2 0 0 1 0 14.4"/>',
   'blinds':'<rect x="4" y="3" width="16" height="18" rx="1.5"/><path d="M4 7.5h16M4 12h16M4 16.5h16"/>',
   'curtain':'<path d="M3 3h18M5 3c0 7-1 12-2 18M19 3c0 7 1 12 2 18M12 3c0 7 .5 12 1.5 18M12 3c0 7-.5 12-1.5 18"/>',
@@ -76,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.3.1';
+const APP_VERSION='1.4.0';
 const uid = () => Math.random().toString(36).slice(2,9);
 let state = {
   version:APP_VERSION,
@@ -93,7 +94,7 @@ const SEED = [
  ['Outdoor Speaker','Audio','outdoor-speaker','#1F9D55'],
  ['TV Display','Video','tv','#7C4DFF'],['Projector','Video','projector','#D62FA0'],['Projection Screen','Video','screen','#D62FA0'],
  ['Wi-Fi Access Point','Network','wifi','#F4572E'],['Network Rack','Network','rack','#64748B'],
- ['Keypad','Control','keypad','#0FA3A3'],['Keypad (2-Button)','Control','keypad-2','#0FA3A3'],['Touch Panel','Control','touch','#0FA3A3'],
+ ['Keypad','Control','keypad','#0FA3A3'],['Keypad (2-Column)','Control','keypad-2col','#0FA3A3'],['Keypad (2-Button)','Control','keypad-2','#0FA3A3'],['Touch Panel','Control','touch','#0FA3A3'],
  ['Thermostat','Climate','thermostat','#F59E0B'],['Motion Sensor','Control','sensor','#F59E0B'],
  ['Motorized Blinds','Shading','blinds','#64748B'],['Motorized Curtains','Shading','curtain','#64748B'],
  ['CCTV Camera','Security','cctv','#1F9D55'],['Access Control','Security','access','#1F9D55'],['Video Intercom','Security','intercom','#0E7490']
@@ -184,9 +185,36 @@ function renderLibrary(){
   present.forEach(c=>{ if(!state.catOrder.includes(c)) state.catOrder.push(c); });
   const cats=state.catOrder.filter(c=>present.includes(c));
   cats.forEach(cat=>{
-    const head=el('div','cat-head'+(draggingCat===cat?' dragging':''),`<span class="grip">⋮⋮</span>${cat}`);
+    const head=el('div','cat-head'+(draggingCat===cat?' dragging':''),
+      `<span class="grip">⋮⋮</span><span class="cat-nm">${cat}</span>
+       <span class="cat-tools"><button class="ct-btn" data-act="ren" title="Rename category">✎</button><button class="ct-btn" data-act="del" title="Delete category">✕</button></span>`);
     head.dataset.cat=cat; head.title='Drag to reorder categories';
-    head.addEventListener('pointerdown',e=>{ e.preventDefault(); startCatDrag(cat,e); });
+    head.addEventListener('pointerdown',e=>{
+      if(e.target.closest('.ct-btn'))return;               /* buttons, not a drag */
+      e.preventDefault(); startCatDrag(cat,e);
+    });
+    head.querySelector('[data-act="ren"]').addEventListener('click',e=>{
+      e.stopPropagation();
+      const nn=prompt('Rename category',cat);
+      if(!nn||!nn.trim()||nn.trim()===cat)return;
+      const name=nn.trim();
+      state.items.forEach(i=>{ if((i.cat||'Other')===cat)i.cat=name; });
+      const oi=state.catOrder.indexOf(cat);
+      if(oi>-1)state.catOrder[oi]=name;
+      renderLibrary();renderBoq();
+    });
+    head.querySelector('[data-act="del"]').addEventListener('click',e=>{
+      e.stopPropagation();
+      const its=state.items.filter(i=>(i.cat||'Other')===cat);
+      const placed=its.reduce((a,i)=>a+qtyOf(i.id),0);
+      if(!confirm(`Delete category “${cat}” and its ${its.length} device${its.length>1?'s':''}${placed?` (${placed} placed ikon${placed>1?'s':''} will be removed)`:''}?`))return;
+      const ids=new Set(its.map(i=>i.id));
+      state.items=state.items.filter(i=>!ids.has(i.id));
+      state.floors.forEach(f=>f.placements=f.placements.filter(p=>!ids.has(p.itemId)));
+      state.catOrder=state.catOrder.filter(c=>c!==cat);
+      if(ids.has(armedItem))armItem(null);
+      renderLibrary();renderMarkers();renderBoq();renderStats();
+    });
     list.appendChild(head);
     items.filter(i=>(i.cat||'Other')===cat).forEach(item=>{
       const qty=qtyOf(item.id);
@@ -194,8 +222,17 @@ function renderLibrary(){
       row.innerHTML=`<span class="item-chip" style="background:${item.color}">${iconHtml(item)}</span>
         <span class="item-meta"><span class="nm">${item.name}</span>${item.model?`<span class="md">${item.model}</span>`:''}</span>
         <span class="item-qty ${qty?'on':''}">${qty||'—'}</span>
-        <button class="item-edit" title="Edit"><svg viewBox="0 0 24 24"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg></button>`;
+        <button class="item-edit" title="Edit"><svg viewBox="0 0 24 24"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg></button>
+        <button class="item-del" title="Delete device"><svg viewBox="0 0 24 24"><path d="M5 7h14M9 7V5h6v2m-8 0l1 13h8l1-13"/></svg></button>`;
       row.addEventListener('click',e=>{
+        if(e.target.closest('.item-del')){
+          if(!confirm(`Delete “${item.name}”${qty?` and its ${qty} placed ikon${qty>1?'s':''}`:''}?`))return;
+          state.items=state.items.filter(i=>i.id!==item.id);
+          state.floors.forEach(f=>f.placements=f.placements.filter(p=>p.itemId!==item.id));
+          if(armedItem===item.id)armItem(null);
+          renderLibrary();renderMarkers();renderBoq();renderStats();
+          return;
+        }
         if(e.target.closest('.item-edit')){openItemModal(item.id);return;}
         armItem(armedItem===item.id?null:item.id);
         if(armedItem&&isMobile()) closeLib();
@@ -317,53 +354,218 @@ $('#floatGrip').addEventListener('pointerdown',e=>{
   document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
 });
 
-/* ──────────── Rooms / areas ──────────── */
-let roomMode=false;
+/* ──────────── Rooms / areas (polygon engine) ──────────── */
+let roomMode=false, selRoom=null, hlRoom=null;
+const ROOM_COLORS=['#AE8B5C','#2E5CFF','#16B364','#F59E0B','#E5484D','#7C4DFF','#0FA3A3','#64748B'];
+/* migrate legacy {x,y,w,h} rectangles to point lists; ensure color/scope */
+function migrateRoom(r){
+  if(!r.pts){ r.pts=[{x:r.x,y:r.y},{x:r.x+r.w,y:r.y},{x:r.x+r.w,y:r.y+r.h},{x:r.x,y:r.y+r.h}]; delete r.x;delete r.y;delete r.w;delete r.h; }
+  r.color=r.color||ROOM_COLORS[0]; r.scope=r.scope||'in';
+  return r;
+}
+const migrateRooms=f=>{(f.rooms=f.rooms||[]).forEach(migrateRoom);};
+function pointInPoly(p,pts){
+  let inside=false;
+  for(let i=0,j=pts.length-1;i<pts.length;j=i++){
+    if(((pts[i].y>p.y)!==(pts[j].y>p.y)) &&
+       (p.x < (pts[j].x-pts[i].x)*(p.y-pts[i].y)/(pts[j].y-pts[i].y)+pts[i].x)) inside=!inside;
+  }
+  return inside;
+}
+const polyArea=pts=>Math.abs(pts.reduce((a,p,i)=>{const q=pts[(i+1)%pts.length];return a+(p.x*q.y-q.x*p.y);},0))/2;
+function roomOf(p,f){
+  let best=null,bestA=Infinity;
+  (f.rooms||[]).forEach(r=>{
+    migrateRoom(r);
+    if(pointInPoly(p,r.pts)){const a=polyArea(r.pts);if(a<bestA){bestA=a;best=r;}}
+  });
+  return best;
+}
+/* Sutherland–Hodgman clip of a polygon to a rect (image px space) */
+function clipPolyRect(pts,x0,y0,x1,y1){
+  const edges=[
+    [p=>p.x>=x0,(a,b)=>({x:x0,y:a.y+(b.y-a.y)*(x0-a.x)/(b.x-a.x)})],
+    [p=>p.x<=x1,(a,b)=>({x:x1,y:a.y+(b.y-a.y)*(x1-a.x)/(b.x-a.x)})],
+    [p=>p.y>=y0,(a,b)=>({x:a.x+(b.x-a.x)*(y0-a.y)/(b.y-a.y),y:y0})],
+    [p=>p.y<=y1,(a,b)=>({x:a.x+(b.x-a.x)*(y1-a.y)/(b.y-a.y),y:y1})]
+  ];
+  let out=pts;
+  for(const [inside,cross] of edges){
+    const inp=out;out=[];
+    for(let i=0;i<inp.length;i++){
+      const a=inp[i],b=inp[(i+1)%inp.length];
+      if(inside(a)){out.push(a);if(!inside(b))out.push(cross(a,b));}
+      else if(inside(b))out.push(cross(a,b));
+    }
+    if(!out.length)return [];
+  }
+  return out;
+}
+/* snapping: candidate x/y from other rooms' points + plan edges */
+function snapCandidates(f,exceptRoom){
+  const xs=[0,1],ys=[0,1];
+  (f.rooms||[]).forEach(r=>{ if(r===exceptRoom)return; r.pts.forEach(p=>{xs.push(p.x);ys.push(p.y);}); });
+  return {xs,ys};
+}
+function snapVal(v,cands,tol){ for(const c of cands){ if(Math.abs(v-c)<tol)return c; } return v; }
 function setRoomMode(on){
   roomMode=on;
-  if(on){ armItem(null); if(cropMode)cancelCrop(); setSelMarker(null); }
+  if(on){ armItem(null); if(cropMode)cancelCrop(); setSelMarker(null); highlightRoom(null); }
+  selRoom=null;
   $('#btnRooms').classList.toggle('on',on);
   $('#planClick').classList.toggle('rooming',on);
   $('#planHolder').classList.toggle('rooming',on);
   $('#hintbar').style.display=on?'block':'none';
   if(on){
-    $('#hintbar').innerHTML='Drag to draw a room · click a name to rename · <b>✕</b> deletes · <b>Esc</b> done';
+    $('#hintbar').innerHTML='Drag to draw · drag corners to reshape · <b>◦</b> midpoints add corners · dbl-click removes · click name for color & scope · <b>Esc</b> done';
     toast('Rooms — drag on the plan to draw an area.');
-  }
-  renderRooms();
+  } else closeRoomPop();
+  renderRooms();renderMarkers();
 }
 $('#btnRooms').addEventListener('click',()=>{ if(!activeFloor()){toast('Upload a floor plan first.');return;} setRoomMode(!roomMode); });
+/* room edits are undoable */
+const roomSnapshot=(f,r)=>({type:'room-edit',floorId:f.id,roomId:r.id,prev:{name:r.name,color:r.color,scope:r.scope,pts:r.pts.map(p=>({...p}))}});
 function renderRooms(){
-  const holder=$('#planHolder');holder.querySelectorAll('.room').forEach(r=>r.remove());
-  const f=activeFloor();if(!f)return;
-  (f.rooms||[]).forEach(r=>{
-    const d=el('div','room',`<span class="rlabel"><span class="rname">${r.name}</span><span class="rx" title="Delete room">✕</span></span>`);
-    d.style.cssText=`left:${r.x*100}%;top:${r.y*100}%;width:${r.w*100}%;height:${r.h*100}%`;
-    d.querySelector('.rlabel').addEventListener('pointerdown',e=>e.stopPropagation());
-    d.querySelector('.rname').addEventListener('click',e=>{
-      e.stopPropagation();if(!roomMode)return;
-      const nn=prompt('Room name',r.name);
-      if(nn&&nn.trim()){r.name=nn.trim();renderRooms();}
+  const holder=$('#planHolder');
+  let layer=holder.querySelector('#roomLayer');
+  const f=activeFloor();
+  if(layer)layer.remove();
+  if(!f||!(f.rooms||[]).length&&!roomMode)return;
+  migrateRooms(f);
+  layer=el('div','room-layer');layer.id='roomLayer';
+  const handleR=Math.max(5,8*(f.w/Math.max(1,planRect().width)));
+  let svg=`<svg viewBox="0 0 ${f.w} ${f.h}" preserveAspectRatio="none">`;
+  svg+=`<defs><pattern id="rhatch" width="10" height="10" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="10" stroke-width="3"/></pattern></defs>`;
+  f.rooms.forEach(r=>{
+    const d=r.pts.map(p=>`${p.x*f.w},${p.y*f.h}`).join(' ');
+    const cls=['rpoly',r.id===selRoom?'sel':'',r.id===hlRoom?'hl':'',r.scope==='out'?'out':''].join(' ');
+    svg+=`<g class="${cls}" data-room="${r.id}" style="color:${r.color}">`;
+    if(r.scope==='out')svg+=`<polygon class="hatchfill" points="${d}"/>`;
+    svg+=`<polygon class="rfill" points="${d}"/>`;
+    if(roomMode&&r.id===selRoom){
+      r.pts.forEach((p,i)=>{
+        const q=r.pts[(i+1)%r.pts.length];
+        svg+=`<rect class="rmid" data-room="${r.id}" data-after="${i}" x="${(p.x+q.x)/2*f.w-handleR*0.7}" y="${(p.y+q.y)/2*f.h-handleR*0.7}" width="${handleR*1.4}" height="${handleR*1.4}"/>`;
+      });
+      r.pts.forEach((p,i)=>{
+        svg+=`<circle class="rvtx" data-room="${r.id}" data-i="${i}" cx="${p.x*f.w}" cy="${p.y*f.h}" r="${handleR}"/>`;
+      });
+    }
+    svg+=`</g>`;
+  });
+  svg+=`</svg>`;
+  layer.innerHTML=svg;
+  /* labels (HTML, clickable both modes) */
+  f.rooms.forEach(r=>{
+    const lx=Math.min(...r.pts.map(p=>p.x)), ly=Math.min(...r.pts.map(p=>p.y));
+    const lab=el('div','rlabel'+(r.id===hlRoom?' hl':''),
+      `<span class="rname">${r.name}</span>${r.scope==='out'?'<span class="rtag">OUT</span>':''}${roomMode?'<span class="rx" title="Delete room">✕</span>':''}`);
+    lab.style.cssText=`left:${lx*100}%;top:${ly*100}%;border-color:${r.color};color:${r.color}`;
+    lab.addEventListener('pointerdown',e=>e.stopPropagation());
+    lab.addEventListener('click',e=>{
+      e.stopPropagation();
+      if(e.target.classList.contains('rx')){
+        pushUndo({type:'room-del',floorId:f.id,room:JSON.parse(JSON.stringify(r))});
+        f.rooms=f.rooms.filter(x=>x.id!==r.id);
+        if(selRoom===r.id)selRoom=null;
+        closeRoomPop();renderRooms();return;
+      }
+      if(roomMode){ selRoom=r.id; openRoomPop(r,lab); renderRooms(); }
+      else highlightRoom(hlRoom===r.id?null:r.id);
     });
-    d.querySelector('.rx').addEventListener('click',e=>{
-      e.stopPropagation();if(!roomMode)return;
-      pushUndo({type:'room-del',floorId:f.id,room:{...r}});
-      f.rooms=f.rooms.filter(x=>x.id!==r.id);
-      renderRooms();
-    });
-    /* rooms sit under the markers */
-    holder.insertBefore(d,holder.querySelector('.marker'));
+    layer.appendChild(lab);
+  });
+  holder.insertBefore(layer,$('#planClick'));
+  wireRoomPointer(layer,f);
+}
+/* highlight a room: emphasize its ikons, dim the rest, summarize contents */
+function highlightRoom(id){
+  hlRoom=id;
+  renderRooms();renderMarkers();
+  if(!id)return;
+  const f=activeFloor();const r=f.rooms.find(x=>x.id===id);if(!r)return;
+  const counts={};
+  f.placements.forEach(p=>{ if(roomOf(p,f)===r){const it=itemById(p.itemId);if(it)counts[it.name]=(counts[it.name]||0)+1;} });
+  const parts=Object.entries(counts).map(([n,c])=>`${c}× ${n}`);
+  toast(`${r.name} — ${parts.length?parts.join(', '):'no ikons yet'}`);
+}
+/* pointer interactions on the svg layer (room mode only) */
+function wireRoomPointer(layer,f){
+  const svg=layer.querySelector('svg');
+  if(!roomMode||!svg)return;
+  svg.addEventListener('pointerdown',e=>{
+    const t=e.target;
+    const toFrac=ev=>{const rc=planRect();return{x:(ev.clientX-rc.left)/rc.width,y:(ev.clientY-rc.top)/rc.height};};
+    const tol=8/Math.max(1,planRect().width);
+    const id=e.pointerId;
+    const room=t.dataset.room?f.rooms.find(r=>r.id===t.dataset.room):null;
+
+    if(t.classList.contains('rvtx')||t.classList.contains('rmid')){
+      e.preventDefault();e.stopPropagation();
+      pushUndo(roomSnapshot(f,room));
+      let vi;
+      if(t.classList.contains('rmid')){
+        vi=+t.dataset.after+1;
+        const a=room.pts[+t.dataset.after], b=room.pts[(vi)%room.pts.length];
+        room.pts.splice(vi,0,{x:(a.x+b.x)/2,y:(a.y+b.y)/2});
+      } else vi=+t.dataset.i;
+      const cands=snapCandidates(f,room);
+      const mv=ev=>{
+        if(ev.pointerId!==id)return;
+        const p=toFrac(ev);
+        room.pts[vi]={x:Math.min(1,Math.max(0,snapVal(p.x,cands.xs,tol))),y:Math.min(1,Math.max(0,snapVal(p.y,cands.ys,tol)))};
+        renderRooms();
+      };
+      const up=ev=>{if(ev.pointerId!==id)return;document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);};
+      document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
+      return;
+    }
+    if(t.classList.contains('rfill')||t.classList.contains('hatchfill')){
+      e.preventDefault();e.stopPropagation();
+      selRoom=room.id;closeRoomPop();renderRooms();
+      /* drag body = move whole room, snapping its bounding box */
+      pushUndo(roomSnapshot(f,room));
+      const start=toFrac(e), orig=room.pts.map(p=>({...p}));
+      const cands=snapCandidates(f,room);
+      const mv=ev=>{
+        if(ev.pointerId!==id)return;
+        const p=toFrac(ev);
+        let dx=p.x-start.x, dy=p.y-start.y;
+        const minx=Math.min(...orig.map(q=>q.x)),maxx=Math.max(...orig.map(q=>q.x));
+        const miny=Math.min(...orig.map(q=>q.y)),maxy=Math.max(...orig.map(q=>q.y));
+        dx=Math.min(1-maxx,Math.max(-minx,dx));dy=Math.min(1-maxy,Math.max(-miny,dy));
+        const sx1=snapVal(minx+dx,cands.xs,tol)-(minx+dx), sx2=snapVal(maxx+dx,cands.xs,tol)-(maxx+dx);
+        const sy1=snapVal(miny+dy,cands.ys,tol)-(miny+dy), sy2=snapVal(maxy+dy,cands.ys,tol)-(maxy+dy);
+        dx+=Math.abs(sx1)<Math.abs(sx2)?sx1:sx2; dy+=Math.abs(sy1)<Math.abs(sy2)?sy1:sy2;
+        room.pts=orig.map(q=>({x:q.x+dx,y:q.y+dy}));
+        renderRooms();
+      };
+      const up=ev=>{if(ev.pointerId!==id)return;document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);};
+      document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
+    }
+  });
+  svg.addEventListener('dblclick',e=>{
+    const t=e.target;
+    if(!t.classList.contains('rvtx'))return;
+    const room=f.rooms.find(r=>r.id===t.dataset.room);
+    if(room.pts.length<=3){toast('A room needs at least 3 corners.');return;}
+    pushUndo(roomSnapshot(f,room));
+    room.pts.splice(+t.dataset.i,1);
+    renderRooms();
   });
 }
-/* draw a new room by dragging */
+/* draw a new room by dragging on empty plan */
 $('#planClick').addEventListener('pointerdown',e=>{
   if(!roomMode)return;
   e.preventDefault();e.stopPropagation();
   const f=activeFloor();if(!f)return;
+  closeRoomPop();
   const r=planRect();
   const fx=v=>Math.min(1,Math.max(0,v));
-  const x0=fx((e.clientX-r.left)/r.width), y0=fx((e.clientY-r.top)/r.height);
-  const prev=el('div','room preview');$('#planHolder').appendChild(prev);
+  const tol=8/Math.max(1,r.width);
+  const cands=snapCandidates(f,null);
+  const x0=fx(snapVal((e.clientX-r.left)/r.width,cands.xs,tol)), y0=fx(snapVal((e.clientY-r.top)/r.height,cands.ys,tol));
+  const prev=el('div','room-draw');$('#planHolder').appendChild(prev);
   let x1=x0,y1=y0;
   const draw=()=>{
     const rx=Math.min(x0,x1),ry=Math.min(y0,y1),rw=Math.abs(x1-x0),rh=Math.abs(y1-y0);
@@ -371,31 +573,49 @@ $('#planClick').addEventListener('pointerdown',e=>{
     return{rx,ry,rw,rh};
   };
   const id=e.pointerId;
-  const mv=ev=>{if(ev.pointerId!==id)return;x1=fx((ev.clientX-r.left)/r.width);y1=fx((ev.clientY-r.top)/r.height);draw();};
+  const mv=ev=>{if(ev.pointerId!==id)return;x1=fx(snapVal((ev.clientX-r.left)/r.width,cands.xs,tol));y1=fx(snapVal((ev.clientY-r.top)/r.height,cands.ys,tol));draw();};
   const up=ev=>{
     if(ev.pointerId!==id)return;
     document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);
     const g=draw();prev.remove();
-    if(g.rw<0.015||g.rh<0.015)return;                       /* too small — treat as a stray tap */
+    if(g.rw<0.015||g.rh<0.015)return;
     const name=prompt('Room / area name',`Room ${(f.rooms||[]).length+1}`);
     if(name===null)return;
-    const room={id:uid(),name:(name.trim()||`Room ${(f.rooms||[]).length+1}`),x:g.rx,y:g.ry,w:g.rw,h:g.rh};
+    const room=migrateRoom({id:uid(),name:(name.trim()||`Room ${(f.rooms||[]).length+1}`),
+      pts:[{x:g.rx,y:g.ry},{x:g.rx+g.rw,y:g.ry},{x:g.rx+g.rw,y:g.ry+g.rh},{x:g.rx,y:g.ry+g.rh}]});
     (f.rooms=f.rooms||[]).push(room);
-    pushUndo({type:'room-add',floorId:f.id,room:{...room}});
+    pushUndo({type:'room-add',floorId:f.id,room:JSON.parse(JSON.stringify(room))});
+    selRoom=room.id;
     renderRooms();
   };
   document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
 });
-/* which room contains an ikon? smallest containing area wins (nested rooms) */
-function roomOf(p,f){
-  let best=null,bestA=Infinity;
-  (f.rooms||[]).forEach(r=>{
-    if(p.x>=r.x&&p.x<=r.x+r.w&&p.y>=r.y&&p.y<=r.y+r.h){
-      const a=r.w*r.h;
-      if(a<bestA){bestA=a;best=r;}
-    }
+/* room popover: name, color, scope, delete */
+function closeRoomPop(){const p=$('#roomPop');if(p)p.remove();}
+function openRoomPop(r,anchor){
+  closeRoomPop();
+  const f=activeFloor();
+  const pop=el('div','room-pop');pop.id='roomPop';
+  pop.innerHTML=`
+    <input class="rp-name" value="${r.name.replace(/"/g,'&quot;')}">
+    <div class="rp-colors">${ROOM_COLORS.map(c=>`<button class="rp-c ${c===r.color?'on':''}" data-c="${c}" style="background:${c}"></button>`).join('')}</div>
+    <label class="rp-scope"><input type="checkbox" class="rp-out" ${r.scope==='out'?'checked':''}> Out of scope (hatched)</label>
+    <div class="rp-row"><button class="rp-del">Delete</button><button class="rp-done">Done</button></div>`;
+  const snap=roomSnapshot(f,r);let changed=false;
+  pop.addEventListener('pointerdown',e=>e.stopPropagation());
+  pop.querySelector('.rp-name').addEventListener('input',e=>{changed=true;r.name=e.target.value.trim()||r.name;});
+  pop.querySelectorAll('.rp-c').forEach(b=>b.addEventListener('click',()=>{changed=true;r.color=b.dataset.c;renderRooms();openRoomPop(r,anchor);}));
+  pop.querySelector('.rp-out').addEventListener('change',e=>{changed=true;r.scope=e.target.checked?'out':'in';renderRooms();openRoomPop(r,anchor);});
+  pop.querySelector('.rp-del').addEventListener('click',()=>{
+    pushUndo({type:'room-del',floorId:f.id,room:JSON.parse(JSON.stringify(r))});
+    f.rooms=f.rooms.filter(x=>x.id!==r.id);selRoom=null;closeRoomPop();renderRooms();
   });
-  return best;
+  pop.querySelector('.rp-done').addEventListener('click',()=>{if(changed)pushUndo(snap);closeRoomPop();renderRooms();});
+  const rc=anchor.getBoundingClientRect(), wr=$('#stage').getBoundingClientRect();
+  pop.style.left=Math.min(wr.width-240,Math.max(8,rc.left-wr.left))+'px';
+  pop.style.top=Math.min(wr.height-190,rc.bottom-wr.top+8)+'px';
+  $('#stage').appendChild(pop);
+  pop.querySelector('.rp-name').focus();
 }
 
 /* ──────────── Arm / place ──────────── */
@@ -447,7 +667,9 @@ function renderMarkers(){
   const s=pinPx();
   f.placements.forEach(p=>{
     const it=itemById(p.itemId);if(!it)return;
-    const m=el('div','marker'+(selMarker===p.id?' sel':''),iconHtml(it));
+    let hlCls='';
+    if(hlRoom){const rr=(f.rooms||[]).find(x=>x.id===hlRoom);hlCls=rr&&roomOf(p,f)===rr?' lit':' dim';}
+    const m=el('div','marker'+(selMarker===p.id?' sel':'')+hlCls,iconHtml(it));
     m.style.cssText=`left:${p.x*100}%;top:${p.y*100}%;width:${s}px;height:${s}px;background:${it.color}`;
     m.title=it.name;
     m.addEventListener('pointerdown',ev=>{
@@ -516,7 +738,17 @@ function applyHistory(a,stackFrom,stackTo){
   if(a.type==='room-del'){
     if(stackFrom===undoStack)(f.rooms=f.rooms||[]).push(a.room);
     else f.rooms=(f.rooms||[]).filter(r=>r.id!==a.room.id);
+    if(selRoom===a.room.id)selRoom=null;
     stackTo.push(a);renderRooms();
+  }
+  if(a.type==='room-edit'){
+    const r=(f.rooms||[]).find(x=>x.id===a.roomId);
+    if(r){
+      const cur={name:r.name,color:r.color,scope:r.scope,pts:r.pts.map(p=>({...p}))};
+      Object.assign(r,a.prev);
+      stackTo.push({type:'room-edit',floorId:f.id,roomId:r.id,prev:cur});
+      renderRooms();
+    }
   }
   if(a.type==='floor'){                        /* crop / rotate snapshot — swap states */
     const cur=floorSnapshot(f);
@@ -539,6 +771,7 @@ document.addEventListener('keydown',e=>{
     if(veil){veil.classList.remove('open');return;}
     if(cropMode){cancelCrop();return;}
     if(roomMode){setRoomMode(false);return;}
+    if(hlRoom){highlightRoom(null);return;}
     if(document.body.classList.contains('lib-open')){closeLib();return;}
     if(armedItem)armItem(null);else{setSelMarker(null);renderMarkers();}
   }
@@ -803,7 +1036,7 @@ async function rotateFloor(){
   ctx.drawImage(img,0,0);
   f.img=cv.toDataURL('image/jpeg',0.92);
   f.placements=f.placements.map(p=>({...p,x:1-p.y,y:p.x}));   /* CW: (x,y) → (1−y, x) */
-  f.rooms=(f.rooms||[]).map(r=>({...r,x:1-(r.y+r.h),y:r.x,w:r.h,h:r.w}));
+  f.rooms=(f.rooms||[]).map(r=>{migrateRoom(r);return {...r,pts:r.pts.map(p=>({x:1-p.y,y:p.x}))};});
   [f.w,f.h]=[f.h,f.w];
   showFloor();renderLibrary();renderBoq();
   toast('Rotated 90° clockwise — click again for further turns.');
@@ -911,12 +1144,15 @@ $('#cropApply').addEventListener('click',async()=>{
     x:(p.x*f.w-crop.x)/crop.w,
     y:(p.y*f.h-crop.y)/crop.h
   }));
-  /* rooms: keep the intersection with the crop, drop slivers */
+  /* rooms: clip each polygon to the crop, drop slivers */
   f.rooms=(f.rooms||[]).map(r=>{
-    const x0=Math.max(r.x*f.w,crop.x), y0=Math.max(r.y*f.h,crop.y);
-    const x1=Math.min((r.x+r.w)*f.w,crop.x+crop.w), y1=Math.min((r.y+r.h)*f.h,crop.y+crop.h);
-    if(x1-x0<20||y1-y0<20)return null;
-    return {...r,x:(x0-crop.x)/crop.w,y:(y0-crop.y)/crop.h,w:(x1-x0)/crop.w,h:(y1-y0)/crop.h};
+    migrateRoom(r);
+    const px=r.pts.map(p=>({x:p.x*f.w,y:p.y*f.h}));
+    const cl=clipPolyRect(px,crop.x,crop.y,crop.x+crop.w,crop.y+crop.h);
+    if(cl.length<3)return null;
+    const pts=cl.map(p=>({x:(p.x-crop.x)/crop.w,y:(p.y-crop.y)/crop.h}));
+    if(polyArea(pts)<0.0004)return null;
+    return {...r,pts};
   }).filter(Boolean);
   f.w=cv.width;f.h=cv.height;
   cancelCrop();showFloor();renderLibrary();renderBoq();
@@ -1217,7 +1453,7 @@ function buildFdSheet(rows){
     aoa.push(['',f.name]);
     let n=1;
     (f.rooms||[]).forEach(room=>{
-      aoa.push([n++,room.name,...devs.map(d=>countIn(f,room,d.id)||'')]);
+      aoa.push([n++,room.name+(room.scope==='out'?' (OUT OF SCOPE)':''),...devs.map(d=>countIn(f,room,d.id)||'')]);
     });
     const loose=devs.map(d=>countIn(f,null,d.id));
     if(loose.some(v=>v)||!(f.rooms||[]).length){
@@ -1493,7 +1729,7 @@ $('#fileProject').addEventListener('change',e=>{
     try{
       const s=JSON.parse(rd.result);
       if(!s.items||!s.floors)throw 0;
-      s.floors&&s.floors.forEach(f=>{f.rooms=f.rooms||[];});
+      s.floors&&s.floors.forEach(f=>{f.rooms=f.rooms||[];f.rooms.forEach(r=>{if(!r.pts&&r.w!==undefined){/* legacy rect */}});});
       state=Object.assign({version:APP_VERSION,theme:'light',brandLogo:null,pinScale:1,client:'',location:'',reference:'',preparedBy:'',libDock:'left',libHidden:false,libFloat:null,libSize:{w:264,h:60,fw:288,fh:520},catOrder:[]},s);
       armedItem=null;setSelMarker(null);undoStack=[];redoStack=[];
       if(cropMode)cancelCrop();

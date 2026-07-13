@@ -4,6 +4,40 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.4.0] — 2026-07-13
+
+### Added
+- **Reshapeable polygon rooms.** Rooms are no longer locked to rectangles:
+  in Rooms mode, select a room and drag its corner handles to reshape;
+  drag a midpoint handle to add a corner (L-shapes, notches, any outline);
+  double-click a corner to remove it. Drag inside a room to move it whole.
+  Every edit is undoable.
+- **Snapping.** While drawing, reshaping, or moving, corners snap to other
+  rooms' edges and to the plan boundary for clean, gap-free adjacency.
+- **Room colors.** Click a room's name (in Rooms mode) for a popover with
+  an 8-color palette — distinguish common, main, private, and outdoor areas.
+- **Out-of-scope rooms.** The same popover has an "Out of scope" toggle:
+  the room renders hatched with a faint outline and an OUT tag, and its row
+  in the Excel FD sheet is suffixed "(OUT OF SCOPE)".
+- **Room highlight.** Outside Rooms mode, click a room's name to spotlight
+  it: its ikons glow, all others dim, and a toast summarizes the contents
+  ("OFFICE — 2× Keypad, 1× Touch Panel"). Click again or press Esc to clear.
+- **Library management.** Hover a category header for rename (✎) and
+  delete (✕) controls — deleting a category removes its devices and their
+  placed ikons after confirmation. Each device row now has a quick-delete
+  (trash) button beside the edit pencil. Always visible on touch devices.
+
+### Changed
+- **Icon redesigns:** Keypad is now a squared faceplate with a single
+  column of buttons; new "Keypad (2-Column)" device/icon with two button
+  columns; the 2-button keypad matches the squared style; Thermostat is a
+  squared keypad-style faceplate with a display window; Touch Panel is now
+  an iPad-style tablet.
+
+### Compatibility
+- `.ikonplan` files from 1.0.0–1.3.1 open unchanged; rectangular rooms are
+  migrated to polygons automatically on load.
+
 ## [1.3.1] — 2026-07-13
 
 ### Fixed
@@ -41,6 +75,40 @@ follows [Semantic Versioning](https://semver.org).
 
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
+
+## [1.4.0] — 2026-07-13
+
+### Added
+- **Reshapeable polygon rooms.** Rooms are no longer locked to rectangles:
+  in Rooms mode, select a room and drag its corner handles to reshape;
+  drag a midpoint handle to add a corner (L-shapes, notches, any outline);
+  double-click a corner to remove it. Drag inside a room to move it whole.
+  Every edit is undoable.
+- **Snapping.** While drawing, reshaping, or moving, corners snap to other
+  rooms' edges and to the plan boundary for clean, gap-free adjacency.
+- **Room colors.** Click a room's name (in Rooms mode) for a popover with
+  an 8-color palette — distinguish common, main, private, and outdoor areas.
+- **Out-of-scope rooms.** The same popover has an "Out of scope" toggle:
+  the room renders hatched with a faint outline and an OUT tag, and its row
+  in the Excel FD sheet is suffixed "(OUT OF SCOPE)".
+- **Room highlight.** Outside Rooms mode, click a room's name to spotlight
+  it: its ikons glow, all others dim, and a toast summarizes the contents
+  ("OFFICE — 2× Keypad, 1× Touch Panel"). Click again or press Esc to clear.
+- **Library management.** Hover a category header for rename (✎) and
+  delete (✕) controls — deleting a category removes its devices and their
+  placed ikons after confirmation. Each device row now has a quick-delete
+  (trash) button beside the edit pencil. Always visible on touch devices.
+
+### Changed
+- **Icon redesigns:** Keypad is now a squared faceplate with a single
+  column of buttons; new "Keypad (2-Column)" device/icon with two button
+  columns; the 2-button keypad matches the squared style; Thermostat is a
+  squared keypad-style faceplate with a display window; Touch Panel is now
+  an iPad-style tablet.
+
+### Compatibility
+- `.ikonplan` files from 1.0.0–1.3.1 open unchanged; rectangular rooms are
+  migrated to polygons automatically on load.
 
 ## [1.3.1] — 2026-07-13
 

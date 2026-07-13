@@ -191,7 +191,7 @@ body.dock-float .float-grip:active{cursor:grabbing}
 }
 .plan-holder{position:absolute;left:0;top:0;transform-origin:0 0;width:max-content}
 .plan-holder img.plan{display:block;box-shadow:var(--shadow);border-radius:4px;background:#fff;pointer-events:none;user-select:none;-webkit-user-select:none}
-.plan-click{position:absolute;inset:0;touch-action:manipulation}
+.plan-click{position:absolute;inset:0;touch-action:none}
 .plan-click.armed{cursor:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28'><g fill='none' stroke='white' stroke-width='5' stroke-linecap='round'><path d='M14 3v7M14 18v7M3 14h7M18 14h7'/></g><g fill='none' stroke='%23141414' stroke-width='2.2' stroke-linecap='round'><path d='M14 3v7M14 18v7M3 14h7M18 14h7'/></g><circle cx='14' cy='14' r='2.4' fill='%23AE8B5C' stroke='white' stroke-width='1.4'/></svg>") 14 14, crosshair}
 .marker{
   position:absolute;transform:translate(-50%,-50%);border-radius:50%;display:grid;place-items:center;
@@ -435,8 +435,7 @@ body.dock-top .btn-new,body.dock-bottom .btn-new{width:auto;padding:8px 13px;whi
   body.dock-top .lib-panel,body.dock-bottom .lib-panel{height:52px}
   body.dock-top .lib-search,body.dock-bottom .lib-search{width:120px}
   body.dock-top .cat-head,body.dock-bottom .cat-head{display:none}
-  body.dock-top .item-meta,body.dock-bottom .item-meta{display:none}   /* icon + qty chips only */
-  body.dock-top .item-edit,body.dock-bottom .item-edit{display:none}
+  body.dock-top .item-meta,body.dock-bottom .item-meta{max-width:96px}
   body.dock-top .item-row,body.dock-bottom .item-row{gap:6px}
   body.dock-top .btn-new,body.dock-bottom .btn-new{font-size:0;gap:0;padding:8px 10px}
   body.dock-top .btn-new svg,body.dock-bottom .btn-new svg{width:15px;height:15px}
@@ -543,6 +542,13 @@ body.dock-float .lib-resizer{
 body.lib-hidden .lib-resizer{display:none}
 @media (max-width:1024px){
   body.dock-left .lib-resizer,body.dock-right .lib-resizer,body.dock-float .lib-resizer{display:none}
+  body.dock-float .lib-panel{
+    position:fixed;top:0;bottom:0;left:0;width:min(320px,86vw);height:auto;
+    border-radius:0;border:none;border-right:1px solid var(--line);
+    transform:translateX(-105%);transition:transform .22s ease;
+  }
+  body.lib-open.dock-float .lib-panel{transform:translateX(0)}
+  body.dock-float .float-grip{display:none}
 }
 @media (max-width:760px){ .lib-resizer{display:none} }
 
@@ -556,6 +562,11 @@ body.lib-hidden .lib-resizer{display:none}
 .ob-credit{
   position:absolute;bottom:44px;left:0;right:0;text-align:center;z-index:2;
   font-size:10.5px;color:var(--dim);
+}
+
+/* touch devices: no hover — keep the edit pencil visible */
+@media (pointer:coarse){
+  .item-edit{opacity:1}
 }
 
 /* touch devices get much larger crop handles */

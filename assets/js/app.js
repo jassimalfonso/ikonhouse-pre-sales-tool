@@ -72,7 +72,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.1.0';
+const APP_VERSION='1.2.0';
 const uid = () => Math.random().toString(36).slice(2,9);
 let state = {
   version:APP_VERSION,
@@ -81,7 +81,7 @@ let state = {
   libSize:{w:264,h:60,fw:288,fh:520}, catOrder:[],
   items:[], floors:[], activeFloor:null, pinScale:1
 };
-let armedItem=null, selMarker=null, zoom=1, undoStack=[], ctxTarget=null, draggingCat=null;
+let armedItem=null, selMarker=null, zoom=1, undoStack=[], redoStack=[], ctxTarget=null, draggingCat=null;
 
 const SEED = [
  ['Ceiling Speaker','Audio','ceiling-speaker','#2E5CFF'],['Invisible Speaker','Audio','speaker','#0E7490'],
@@ -257,7 +257,7 @@ function applyDock(){
   if(state.libHidden) b.classList.add('lib-hidden');
   applySizes();
   const lp=$('#libPanel');
-  if(state.libDock==='float'){
+  if(state.libDock==='float'&&window.innerWidth>1024){
     const p=state.libFloat||{x:84,y:126};
     lp.style.left=Math.min(Math.max(8,p.x),window.innerWidth-120)+'px';
     lp.style.top =Math.min(Math.max(64,p.y),window.innerHeight-80)+'px';
@@ -344,7 +344,7 @@ $('#planClick').addEventListener('click',e=>{
   if(x<0||x>1||y<0||y>1)return;
   const p={id:uid(),itemId:armedItem,x,y};
   f.placements.push(p);
-  undoStack.push({type:'add',floorId:f.id,p});
+  pushUndo({type:'add',floorId:f.id,p});
   renderMarkers();renderLibrary();renderBoq();updateChipCount();
 });
 
@@ -400,7 +400,7 @@ function startDrag(p,m,ev){
 function deletePlacement(id){
   const f=activeFloor();if(!f)return;
   const i=f.placements.findIndex(p=>p.id===id);
-  if(i>-1){undoStack.push({type:'del',floorId:f.id,p:f.placements[i]});f.placements.splice(i,1);}
+  if(i>-1){pushUndo({type:'del',floorId:f.id,p:f.placements[i]});f.placements.splice(i,1);}
   if(selMarker===id)setSelMarker(null);
   renderMarkers();renderLibrary();renderBoq();updateChipCount();
 }
@@ -409,19 +409,32 @@ $('#paDone').addEventListener('click',()=>{setSelMarker(null);renderMarkers();})
 document.addEventListener('click',()=>$('#ctx').style.display='none');
 $('#ctxDelete').addEventListener('click',()=>{if(ctxTarget){deletePlacement(ctxTarget.id);ctxTarget=null;}});
 
-function doUndo(){
-  const a=undoStack.pop();if(!a)return;
+function applyHistory(a,stackFrom,stackTo){
   const f=state.floors.find(fl=>fl.id===a.floorId);if(!f)return;
-  if(a.type==='add'){const i=f.placements.findIndex(p=>p.id===a.p.id);if(i>-1)f.placements.splice(i,1);}
-  if(a.type==='del')f.placements.push(a.p);
-  if(a.type==='floor'){                        /* crop / rotate snapshot */
+  if(a.type==='add'){
+    if(stackFrom===undoStack){const i=f.placements.findIndex(p=>p.id===a.p.id);if(i>-1)f.placements.splice(i,1);}
+    else f.placements.push(a.p);
+    stackTo.push(a);
+  }
+  if(a.type==='del'){
+    if(stackFrom===undoStack)f.placements.push(a.p);
+    else{const i=f.placements.findIndex(p=>p.id===a.p.id);if(i>-1)f.placements.splice(i,1);}
+    stackTo.push(a);
+  }
+  if(a.type==='floor'){                        /* crop / rotate snapshot — swap states */
+    const cur=floorSnapshot(f);
     f.img=a.prev.img;f.w=a.prev.w;f.h=a.prev.h;f.placements=a.prev.placements;
+    stackTo.push(cur);
     if(state.activeFloor===f.id){ if(cropMode)cancelCrop(); showFloor(); }
   }
   renderMarkers();renderLibrary();renderBoq();updateChipCount();
 }
+function doUndo(){ const a=undoStack.pop(); if(a) applyHistory(a,undoStack,redoStack); }
+function doRedo(){ const a=redoStack.pop(); if(a) applyHistory(a,redoStack,undoStack); }
 const floorSnapshot=f=>({type:'floor',floorId:f.id,prev:{img:f.img,w:f.w,h:f.h,placements:f.placements.map(p=>({...p}))}});
+const pushUndo=a=>{ undoStack.push(a); redoStack=[]; };   /* a fresh action invalidates redo */
 $('#btnUndo').addEventListener('click',doUndo);
+$('#btnRedo').addEventListener('click',doRedo);
 
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){
@@ -434,8 +447,10 @@ document.addEventListener('keydown',e=>{
   if((e.key==='Delete'||e.key==='Backspace')&&selMarker&&!e.target.matches('input,select,textarea')){
     deletePlacement(selMarker);
   }
-  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'&&!e.target.matches('input,select,textarea')){
-    e.preventDefault();doUndo();
+  if((e.ctrlKey||e.metaKey)&&!e.target.matches('input,select,textarea')){
+    const k=e.key.toLowerCase();
+    if(k==='z'&&!e.shiftKey){e.preventDefault();doUndo();}
+    if(k==='y'||(k==='z'&&e.shiftKey)){e.preventDefault();doRedo();}
   }
 });
 
@@ -679,7 +694,7 @@ async function rotateFloor(){
   const f=activeFloor();if(!f){toast('Upload a floor plan first.');return;}
   if(cropMode)cancelCrop();
   toast('Rotating…');
-  undoStack.push(floorSnapshot(f));
+  pushUndo(floorSnapshot(f));
   const img=await loadImg(f.img);
   const cv=document.createElement('canvas');cv.width=f.h;cv.height=f.w;
   const ctx=cv.getContext('2d');
@@ -784,7 +799,7 @@ $('#cropApply').addEventListener('click',async()=>{
   const inside=p=>{const px=p.x*f.w,py=p.y*f.h;return px>=crop.x&&px<=crop.x+crop.w&&py>=crop.y&&py<=crop.y+crop.h;};
   const dropped=f.placements.filter(p=>!inside(p)).length;
   if(dropped&&!confirm(`${dropped} ikon${dropped>1?`s`:``} fall outside the crop and will be removed. Continue?`))return;
-  undoStack.push(floorSnapshot(f));
+  pushUndo(floorSnapshot(f));
   const img=await loadImg(f.img);
   const cv=document.createElement('canvas');
   cv.width=Math.round(crop.w);cv.height=Math.round(crop.h);
@@ -1329,7 +1344,7 @@ $('#fileProject').addEventListener('change',e=>{
       const s=JSON.parse(rd.result);
       if(!s.items||!s.floors)throw 0;
       state=Object.assign({version:APP_VERSION,theme:'light',brandLogo:null,pinScale:1,client:'',location:'',reference:'',preparedBy:'',libDock:'left',libHidden:false,libFloat:null,libSize:{w:264,h:60,fw:288,fh:520},catOrder:[]},s);
-      armedItem=null;setSelMarker(null);undoStack=[];
+      armedItem=null;setSelMarker(null);undoStack=[];redoStack=[];
       if(cropMode)cancelCrop();
       $('#projName').value=state.project;
       $('#pinSize').value=(state.pinScale||1)*100;
@@ -1367,7 +1382,7 @@ $('#setup').addEventListener('keydown',e=>{ if(e.key==='Enter')$('#obGo').click(
 $('#btnStartOver').addEventListener('click',()=>{
   if(!confirm('Start over? This clears the current plans, ikons and project details. Your device library is kept.'))return;
   state.project='Untitled Project';state.client='';state.location='';state.reference='';state.preparedBy='';
-  state.floors=[];state.activeFloor=null;undoStack=[];
+  state.floors=[];state.activeFloor=null;undoStack=[];redoStack=[];
   if(cropMode)cancelCrop();
   armItem(null);setSelMarker(null);
   $('#projName').value=state.project;

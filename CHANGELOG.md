@@ -4,6 +4,31 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.2.0] — 2026-07-13
+
+### Added
+- **Redo** (↪ toolbar button, `Ctrl+Y` / `Ctrl+Shift+Z`) as the counterpart
+  to Undo — covers ikon add/remove and crop/rotate snapshots. Any fresh
+  action clears the redo history, as expected.
+
+### Fixed
+- **Touch panning on the plan** (reported on Galaxy Fold 7): drags starting
+  on the floor plan were being claimed by the browser as scroll gestures
+  (`touch-action: manipulation` on the placement layer), so the plan could
+  not be moved by touch. It now pans freely in every direction.
+- **Floating library on small screens:** the floating dock ignored the
+  mobile off-canvas rules and its inline position, leaving the panel parked
+  over the left half of the canvas. On screens ≤1024px the floating dock now
+  collapses into the slide-in Devices sheet like the other vertical docks.
+- **Device rows on touch devices:** the edit (pencil) button only appeared
+  on hover, which does not exist on touch — it is now always visible on
+  coarse-pointer devices. Device names are no longer hidden in the
+  top/bottom strip on phones (they truncate gracefully instead), so devices
+  can be identified and customized on mobile.
+
+### Compatibility
+- `.ikonplan` files from 1.0.0 and 1.1.0 open unchanged.
+
 ## [1.1.0] — 2026-07-12
 
 ### Added

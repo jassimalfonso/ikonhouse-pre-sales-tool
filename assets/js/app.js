@@ -76,7 +76,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.3.0';
+const APP_VERSION='1.3.1';
 const uid = () => Math.random().toString(36).slice(2,9);
 let state = {
   version:APP_VERSION,
@@ -326,7 +326,10 @@ function setRoomMode(on){
   $('#planClick').classList.toggle('rooming',on);
   $('#planHolder').classList.toggle('rooming',on);
   $('#hintbar').style.display=on?'block':'none';
-  if(on)$('#hintbar').innerHTML='Drag to draw a room · click a name to rename · <b>✕</b> deletes · <b>Esc</b> done';
+  if(on){
+    $('#hintbar').innerHTML='Drag to draw a room · click a name to rename · <b>✕</b> deletes · <b>Esc</b> done';
+    toast('Rooms — drag on the plan to draw an area.');
+  }
   renderRooms();
 }
 $('#btnRooms').addEventListener('click',()=>{ if(!activeFloor()){toast('Upload a floor plan first.');return;} setRoomMode(!roomMode); });

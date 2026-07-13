@@ -4,6 +4,20 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.3.1] — 2026-07-13
+
+### Fixed
+- **Rooms button appearing dead after an update.** The code was verified
+  correct by direct execution; the symptom matches a stale cached
+  `app.js` being served alongside the new HTML. Asset URLs are now
+  version-stamped (`app.js?v=1.3.1`, `app.css?v=1.3.1`) so every release
+  forces browsers and CDNs to fetch matching assets. If a button ever seems
+  inert after updating, hard-refresh once (`Ctrl+Shift+R`).
+
+### Changed
+- Entering Rooms mode now shows a confirmation toast, so mode activation is
+  always visible.
+
 ## [1.3.0] — 2026-07-13
 
 ### Added
@@ -27,6 +41,20 @@ follows [Semantic Versioning](https://semver.org).
 
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
+
+## [1.3.1] — 2026-07-13
+
+### Fixed
+- **Rooms button appearing dead after an update.** The code was verified
+  correct by direct execution; the symptom matches a stale cached
+  `app.js` being served alongside the new HTML. Asset URLs are now
+  version-stamped (`app.js?v=1.3.1`, `app.css?v=1.3.1`) so every release
+  forces browsers and CDNs to fetch matching assets. If a button ever seems
+  inert after updating, hard-refresh once (`Ctrl+Shift+R`).
+
+### Changed
+- Entering Rooms mode now shows a confirmation toast, so mode activation is
+  always visible.
 
 ## [1.3.0] — 2026-07-13
 

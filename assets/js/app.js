@@ -49,7 +49,11 @@ const PAPER_INK='#141414', PAPER_DIM='#8A857C', PAPER_LINE='#E9E6E0', PAPER_HL='
 
 /* ──────────── Vendor loader (local first, CDN fallback) ──────────── */
 const VENDORS = {
-  xlsx:{ ready:()=>window.XLSX, srcs:['assets/vendor/xlsx.full.min.js','https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'] },
+  xlsx:{ ready:()=>window.XLSX, srcs:[
+    'assets/vendor/xlsx-js-style.min.js',                                    /* styled output (preferred) */
+    'https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.min.js',
+    'assets/vendor/xlsx.full.min.js',                                        /* plain fallback */
+    'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'] },
   pdf :{ ready:()=>window.pdfjsLib, srcs:['assets/vendor/pdf.min.js','https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js'],
          workers:['assets/vendor/pdf.worker.min.js','https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'] },
   zip :{ ready:()=>window.JSZip, srcs:['assets/vendor/jszip.min.js','https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js'] },
@@ -72,7 +76,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.2.0';
+const APP_VERSION='1.3.0';
 const uid = () => Math.random().toString(36).slice(2,9);
 let state = {
   version:APP_VERSION,
@@ -313,21 +317,101 @@ $('#floatGrip').addEventListener('pointerdown',e=>{
   document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
 });
 
+/* ──────────── Rooms / areas ──────────── */
+let roomMode=false;
+function setRoomMode(on){
+  roomMode=on;
+  if(on){ armItem(null); if(cropMode)cancelCrop(); setSelMarker(null); }
+  $('#btnRooms').classList.toggle('on',on);
+  $('#planClick').classList.toggle('rooming',on);
+  $('#planHolder').classList.toggle('rooming',on);
+  $('#hintbar').style.display=on?'block':'none';
+  if(on)$('#hintbar').innerHTML='Drag to draw a room · click a name to rename · <b>✕</b> deletes · <b>Esc</b> done';
+  renderRooms();
+}
+$('#btnRooms').addEventListener('click',()=>{ if(!activeFloor()){toast('Upload a floor plan first.');return;} setRoomMode(!roomMode); });
+function renderRooms(){
+  const holder=$('#planHolder');holder.querySelectorAll('.room').forEach(r=>r.remove());
+  const f=activeFloor();if(!f)return;
+  (f.rooms||[]).forEach(r=>{
+    const d=el('div','room',`<span class="rlabel"><span class="rname">${r.name}</span><span class="rx" title="Delete room">✕</span></span>`);
+    d.style.cssText=`left:${r.x*100}%;top:${r.y*100}%;width:${r.w*100}%;height:${r.h*100}%`;
+    d.querySelector('.rlabel').addEventListener('pointerdown',e=>e.stopPropagation());
+    d.querySelector('.rname').addEventListener('click',e=>{
+      e.stopPropagation();if(!roomMode)return;
+      const nn=prompt('Room name',r.name);
+      if(nn&&nn.trim()){r.name=nn.trim();renderRooms();}
+    });
+    d.querySelector('.rx').addEventListener('click',e=>{
+      e.stopPropagation();if(!roomMode)return;
+      pushUndo({type:'room-del',floorId:f.id,room:{...r}});
+      f.rooms=f.rooms.filter(x=>x.id!==r.id);
+      renderRooms();
+    });
+    /* rooms sit under the markers */
+    holder.insertBefore(d,holder.querySelector('.marker'));
+  });
+}
+/* draw a new room by dragging */
+$('#planClick').addEventListener('pointerdown',e=>{
+  if(!roomMode)return;
+  e.preventDefault();e.stopPropagation();
+  const f=activeFloor();if(!f)return;
+  const r=planRect();
+  const fx=v=>Math.min(1,Math.max(0,v));
+  const x0=fx((e.clientX-r.left)/r.width), y0=fx((e.clientY-r.top)/r.height);
+  const prev=el('div','room preview');$('#planHolder').appendChild(prev);
+  let x1=x0,y1=y0;
+  const draw=()=>{
+    const rx=Math.min(x0,x1),ry=Math.min(y0,y1),rw=Math.abs(x1-x0),rh=Math.abs(y1-y0);
+    prev.style.cssText=`left:${rx*100}%;top:${ry*100}%;width:${rw*100}%;height:${rh*100}%`;
+    return{rx,ry,rw,rh};
+  };
+  const id=e.pointerId;
+  const mv=ev=>{if(ev.pointerId!==id)return;x1=fx((ev.clientX-r.left)/r.width);y1=fx((ev.clientY-r.top)/r.height);draw();};
+  const up=ev=>{
+    if(ev.pointerId!==id)return;
+    document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);
+    const g=draw();prev.remove();
+    if(g.rw<0.015||g.rh<0.015)return;                       /* too small — treat as a stray tap */
+    const name=prompt('Room / area name',`Room ${(f.rooms||[]).length+1}`);
+    if(name===null)return;
+    const room={id:uid(),name:(name.trim()||`Room ${(f.rooms||[]).length+1}`),x:g.rx,y:g.ry,w:g.rw,h:g.rh};
+    (f.rooms=f.rooms||[]).push(room);
+    pushUndo({type:'room-add',floorId:f.id,room:{...room}});
+    renderRooms();
+  };
+  document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
+});
+/* which room contains an ikon? smallest containing area wins (nested rooms) */
+function roomOf(p,f){
+  let best=null,bestA=Infinity;
+  (f.rooms||[]).forEach(r=>{
+    if(p.x>=r.x&&p.x<=r.x+r.w&&p.y>=r.y&&p.y<=r.y+r.h){
+      const a=r.w*r.h;
+      if(a<bestA){bestA=a;best=r;}
+    }
+  });
+  return best;
+}
+
 /* ──────────── Arm / place ──────────── */
 function armItem(id){
   if(cropMode) cancelCrop();
+  if(id&&roomMode) setRoomMode(false);
   armedItem=id; setSelMarker(null);
   $('#planClick').classList.toggle('armed',!!id);
   $('#planHolder').classList.toggle('arming',!!id);
   $('#hintbar').style.display=id?'block':'none';
-  if(id){const it=itemById(id);$('#hintName').textContent=it.name;
+  if(id){$('#hintbar').innerHTML='Placing <span id="hintName"></span> · click to drop ikons · <b>✕ stop</b>';
+    const it=itemById(id);$('#hintName').textContent=it.name;
     $('#chipDot').style.background=it.color;$('#chipDot').innerHTML=iconHtml(it);
     $('#chipName').textContent=it.name;updateChipCount();
   }else $('#chip').style.display='none';
   renderLibrary();renderMarkers();
 }
 function updateChipCount(){ if(armedItem) $('#chipCnt').textContent='×'+qtyOf(armedItem); }
-$('#hintbar').addEventListener('click',()=>armItem(null));
+$('#hintbar').addEventListener('click',()=>{ if(roomMode)setRoomMode(false); else armItem(null); });
 document.addEventListener('pointermove',e=>{
   if(!armedItem||e.pointerType==='touch')return;
   const over=e.target.closest&&e.target.closest('#stage');
@@ -336,7 +420,7 @@ document.addEventListener('pointermove',e=>{
 });
 $('#planClick').addEventListener('contextmenu',e=>{ if(armedItem){e.preventDefault();armItem(null);} });
 $('#planClick').addEventListener('click',e=>{
-  if(panMoved)return;                       /* a drag-to-pan just ended — not a placement click */
+  if(panMoved||roomMode)return;
   const f=activeFloor(); if(!f||cropMode)return;
   if(!armedItem){setSelMarker(null);renderMarkers();return;}
   const r=planRect();
@@ -421,9 +505,19 @@ function applyHistory(a,stackFrom,stackTo){
     else{const i=f.placements.findIndex(p=>p.id===a.p.id);if(i>-1)f.placements.splice(i,1);}
     stackTo.push(a);
   }
+  if(a.type==='room-add'){
+    if(stackFrom===undoStack){f.rooms=(f.rooms||[]).filter(r=>r.id!==a.room.id);}
+    else (f.rooms=f.rooms||[]).push(a.room);
+    stackTo.push(a);renderRooms();
+  }
+  if(a.type==='room-del'){
+    if(stackFrom===undoStack)(f.rooms=f.rooms||[]).push(a.room);
+    else f.rooms=(f.rooms||[]).filter(r=>r.id!==a.room.id);
+    stackTo.push(a);renderRooms();
+  }
   if(a.type==='floor'){                        /* crop / rotate snapshot — swap states */
     const cur=floorSnapshot(f);
-    f.img=a.prev.img;f.w=a.prev.w;f.h=a.prev.h;f.placements=a.prev.placements;
+    f.img=a.prev.img;f.w=a.prev.w;f.h=a.prev.h;f.placements=a.prev.placements;f.rooms=a.prev.rooms||[];
     stackTo.push(cur);
     if(state.activeFloor===f.id){ if(cropMode)cancelCrop(); showFloor(); }
   }
@@ -431,7 +525,7 @@ function applyHistory(a,stackFrom,stackTo){
 }
 function doUndo(){ const a=undoStack.pop(); if(a) applyHistory(a,undoStack,redoStack); }
 function doRedo(){ const a=redoStack.pop(); if(a) applyHistory(a,redoStack,undoStack); }
-const floorSnapshot=f=>({type:'floor',floorId:f.id,prev:{img:f.img,w:f.w,h:f.h,placements:f.placements.map(p=>({...p}))}});
+const floorSnapshot=f=>({type:'floor',floorId:f.id,prev:{img:f.img,w:f.w,h:f.h,placements:f.placements.map(p=>({...p})),rooms:(f.rooms||[]).map(r=>({...r}))}});
 const pushUndo=a=>{ undoStack.push(a); redoStack=[]; };   /* a fresh action invalidates redo */
 $('#btnUndo').addEventListener('click',doUndo);
 $('#btnRedo').addEventListener('click',doRedo);
@@ -441,6 +535,7 @@ document.addEventListener('keydown',e=>{
     const veil=document.querySelector('.veil.open');
     if(veil){veil.classList.remove('open');return;}
     if(cropMode){cancelCrop();return;}
+    if(roomMode){setRoomMode(false);return;}
     if(document.body.classList.contains('lib-open')){closeLib();return;}
     if(armedItem)armItem(null);else{setSelMarker(null);renderMarkers();}
   }
@@ -473,6 +568,7 @@ function renderFloors(){
         }return;
       }
       if(cropMode)cancelCrop();
+      if(roomMode)setRoomMode(false);
       state.activeFloor=f.id;renderFloors();showFloor();
     });
     tabs.appendChild(t);
@@ -484,10 +580,10 @@ function showFloor(){
   $('#emptyState').style.display=f?'none':'block';
   $('#planHolder').style.display=f?'block':'none';
   setSelMarker(null);
-  if(f){$('#planImg').src=f.img;requestAnimationFrame(()=>{fitZoom();renderMarkers();});}
+  if(f){$('#planImg').src=f.img;requestAnimationFrame(()=>{fitZoom();renderMarkers();renderRooms();});}
 }
 function addFloor(name,dataUrl,w,h){
-  const f={id:uid(),name,img:dataUrl,w,h,placements:[]};
+  const f={id:uid(),name,img:dataUrl,w,h,placements:[],rooms:[]};
   state.floors.push(f);state.activeFloor=f.id;
   renderFloors();showFloor();renderBoq();
   return f;
@@ -599,6 +695,7 @@ stage.addEventListener('pointerdown',e=>{
   if(e.target.closest('button,input,a,.marker,.crop-rect')||e.target.classList.contains('ch'))return;
   const mouse=e.pointerType==='mouse';
   const onPlan=!!e.target.closest('#planClick');
+  if(roomMode&&onPlan)return;                 /* drawing a room, not panning */
   const allow = e.button===1 || spaceHeld || !mouse || (e.button===0 && (!onPlan || !armedItem));
   if(!allow || pinchActive) return;
   if(e.button===1||spaceHeld) e.preventDefault();   /* stop middle-click autoscroll / page scroll on space */
@@ -673,6 +770,7 @@ const RATIOS=[
 function recommendedRatio(){const f=activeFloor();return f&&f.h>f.w?1/Math.SQRT2:Math.SQRT2;}
 function enterCrop(){
   const f=activeFloor();if(!f){toast('Upload a floor plan first.');return;}
+  if(roomMode)setRoomMode(false);
   armItem(null);setSelMarker(null);
   cropMode=true;
   cropRatio=recommendedRatio();
@@ -702,6 +800,7 @@ async function rotateFloor(){
   ctx.drawImage(img,0,0);
   f.img=cv.toDataURL('image/jpeg',0.92);
   f.placements=f.placements.map(p=>({...p,x:1-p.y,y:p.x}));   /* CW: (x,y) → (1−y, x) */
+  f.rooms=(f.rooms||[]).map(r=>({...r,x:1-(r.y+r.h),y:r.x,w:r.h,h:r.w}));
   [f.w,f.h]=[f.h,f.w];
   showFloor();renderLibrary();renderBoq();
   toast('Rotated 90° clockwise — click again for further turns.');
@@ -809,6 +908,13 @@ $('#cropApply').addEventListener('click',async()=>{
     x:(p.x*f.w-crop.x)/crop.w,
     y:(p.y*f.h-crop.y)/crop.h
   }));
+  /* rooms: keep the intersection with the crop, drop slivers */
+  f.rooms=(f.rooms||[]).map(r=>{
+    const x0=Math.max(r.x*f.w,crop.x), y0=Math.max(r.y*f.h,crop.y);
+    const x1=Math.min((r.x+r.w)*f.w,crop.x+crop.w), y1=Math.min((r.y+r.h)*f.h,crop.y+crop.h);
+    if(x1-x0<20||y1-y0<20)return null;
+    return {...r,x:(x0-crop.x)/crop.w,y:(y0-crop.y)/crop.h,w:(x1-x0)/crop.w,h:(y1-y0)/crop.h};
+  }).filter(Boolean);
   f.w=cv.width;f.h=cv.height;
   cancelCrop();showFloor();renderLibrary();renderBoq();
   toast('Plan cropped — Undo (Ctrl+Z or ↩) restores it.');
@@ -1088,7 +1194,49 @@ async function exportPackage(paper){
 }
 
 /* ──────────── Excel BoQ ──────────── */
+/* "FD" Field Device Sheet — matches the client's reference workbook:
+   devices as rotated column headers, locations as rows, blank = 0,
+   and a bold "Total units" row of live SUM formulas. */
+/* ── Field Device sheet: floors → numbered room rows × device columns,
+      matching the team's quotation reference tab. Zero quantities are left
+      blank, as in the reference. (The free SheetJS build cannot write cell
+      styling, so the layout carries the fidelity: readable column widths
+      instead of the reference's rotated headers.) ── */
+function fdSheetName(){
+  const d=new Date();
+  return `FD ${String(d.getDate()).padStart(2,'0')}${d.toLocaleDateString('en-GB',{month:'long'})}${String(d.getFullYear()).slice(-2)}`;
+}
+function buildFdSheet(rows){
+  const devs=rows.map(r=>r.it);
+  const countIn=(f,room,itemId)=>f.placements.filter(p=>p.itemId===itemId&&roomOf(p,f)===room).length;
+  const aoa=[['','Field Device Sheet',...devs.map(d=>d.name)],[]];
+  state.floors.forEach(f=>{
+    aoa.push(['',f.name]);
+    let n=1;
+    (f.rooms||[]).forEach(room=>{
+      aoa.push([n++,room.name,...devs.map(d=>countIn(f,room,d.id)||'')]);
+    });
+    const loose=devs.map(d=>countIn(f,null,d.id));
+    if(loose.some(v=>v)||!(f.rooms||[]).length){
+      aoa.push([n++,(f.rooms||[]).length?'UNASSIGNED / GENERAL':'GENERAL',...loose.map(v=>v||'')]);
+    }
+    aoa.push([]);
+  });
+  const totalRow=aoa.length+1;                       /* 1-based row of 'Total units' */
+  aoa.push(['','Total units',...devs.map(()=>0)]);
+  const ws=XLSX.utils.aoa_to_sheet(aoa);
+  devs.forEach((d,i)=>{
+    const col=XLSX.utils.encode_col(2+i);            /* device columns start at C */
+    ws[`${col}${totalRow}`]={t:'n',f:`SUM(${col}3:${col}${totalRow-1})`};
+  });
+  ws['!cols']=[{wch:4.5},{wch:42},...devs.map(d=>({wch:Math.min(24,Math.max(11,d.name.length+2))}))];
+  return ws;
+}
 function buildBoqWorkbook(rows){   /* requires XLSX to be loaded */
+  const wb=XLSX.utils.book_new();
+  /* Sheet 1 — the FD matrix, the main BoQ reference */
+  XLSX.utils.book_append_sheet(wb,buildFdSheet(rows),fdSheetName());
+  /* Sheet 2 — priced summary (unit prices & amounts live here) */
   const floorNames=state.floors.map(f=>f.name);
   const header=['#','Device','Category','Model / SKU',...floorNames,'Total Qty','Unit Price','Amount'];
   const aoa=[['BILL OF QUANTITIES'],['Project',state.project]];
@@ -1102,8 +1250,7 @@ function buildBoqWorkbook(rows){   /* requires XLSX to be loaded */
   const ws=XLSX.utils.aoa_to_sheet(aoa);
   ws['!cols']=[{wch:4},{wch:26},{wch:14},{wch:22},...floorNames.map(n=>({wch:Math.max(10,n.length+2)})),{wch:10},{wch:11},{wch:12}];
   ws['!merges']=[{s:{r:0,c:0},e:{r:0,c:header.length-1}}];
-  const wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,ws,'BoQ');
+  XLSX.utils.book_append_sheet(wb,ws,'BoQ Summary');
   return wb;
 }
 async function exportExcel(){
@@ -1343,6 +1490,7 @@ $('#fileProject').addEventListener('change',e=>{
     try{
       const s=JSON.parse(rd.result);
       if(!s.items||!s.floors)throw 0;
+      s.floors&&s.floors.forEach(f=>{f.rooms=f.rooms||[];});
       state=Object.assign({version:APP_VERSION,theme:'light',brandLogo:null,pinScale:1,client:'',location:'',reference:'',preparedBy:'',libDock:'left',libHidden:false,libFloat:null,libSize:{w:264,h:60,fw:288,fh:520},catOrder:[]},s);
       armedItem=null;setSelMarker(null);undoStack=[];redoStack=[];
       if(cropMode)cancelCrop();

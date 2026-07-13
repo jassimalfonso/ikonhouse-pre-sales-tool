@@ -577,3 +577,26 @@ body.lib-hidden .lib-resizer{display:none}
   .ch[data-h="sw"]{left:-15px;bottom:-15px}
   .ch[data-h="se"]{right:-15px;bottom:-15px}
 }
+
+/* ───── Rooms / areas ───── */
+.room{
+  position:absolute;border:1.5px dashed color-mix(in srgb, var(--hl) 65%, transparent);
+  background:color-mix(in srgb, var(--hl) 7%, transparent);border-radius:3px;
+  pointer-events:none;
+}
+.room .rlabel{
+  position:absolute;top:3px;left:3px;max-width:calc(100% - 8px);
+  font-family:var(--font-m);font-size:10px;letter-spacing:.04em;
+  background:var(--panel);border:1px solid var(--hl-line);color:var(--hl);
+  padding:1px 7px;border-radius:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  display:flex;align-items:center;gap:6px;
+}
+.room .rx{display:none;cursor:pointer;font-size:11px;line-height:1}
+.plan-holder.rooming .room{pointer-events:none}
+.plan-holder.rooming .room .rlabel{pointer-events:auto;cursor:pointer}
+.plan-holder.rooming .room .rx{display:inline}
+.plan-holder.rooming .room .rx:hover{color:var(--danger)}
+.plan-holder.rooming .marker{pointer-events:none;opacity:.45}
+.plan-click.rooming{cursor:crosshair}
+#btnRooms.on{background:var(--hl-soft);border-color:var(--hl-line);color:var(--hl)}
+.room.preview{border-style:solid}

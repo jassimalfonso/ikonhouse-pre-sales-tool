@@ -1,5 +1,5 @@
 # ikonhouse — AV Pre-Sales Studio
-**Version 1.2** · Developed by Jassim Alfonso with Claude · see CHANGELOG.md
+**Version 1.3** · Developed by Jassim Alfonso with Claude · see CHANGELOG.md
 
 A lightweight, browser-based pre-sales tool for AV integration projects.
 Upload or paste a floor plan, crop it to a print-ready format, place devices
@@ -63,8 +63,10 @@ Sheets and the cover export as **PDF or PNG** (choose in the export dialog);
   √2 aspect ratio — the paper size choice sets the export resolution).
   Each sheet carries the branded header, the plan with its ikons, a legend of
   every placed device with its count, and a sheet index footer.
-- **Excel BoQ** — per-floor quantity columns, totals, unit prices and
-  amounts, with the project details in the header.
+- **Excel BoQ** — two tabs: an **FD (Field Device) sheet** in the client's
+  reference format — devices as rotated column headers, one row per floor,
+  blank for zero, and a bold "Total units" row of live SUM formulas — plus
+  a priced **BoQ Summary** with per-floor columns, unit prices and amounts.
 - **Project file** (`.ikonplan`) — the full project including plans, ikons,
   library and details; portable between team members.
 
@@ -95,7 +97,10 @@ demand: SheetJS (Excel), pdf.js (PDF import) and JSZip (full-package export).
 The app looks for them locally first, then falls back to a CDN. For a fully
 offline setup, download these once into `assets/vendor/`:
 
+- `xlsx-js-style.min.js` — https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.min.js
+  (preferred: writes the styled FD sheet — fonts and rotated headers)
 - `xlsx.full.min.js` — https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js
+  (fallback: same data and formulas, plain styling)
 - `pdf.min.js` — https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js
 - `pdf.worker.min.js` — https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js
 - `jszip.min.js` — https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js

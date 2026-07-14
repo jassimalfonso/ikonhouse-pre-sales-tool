@@ -4,6 +4,21 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.4.1] — 2026-07-13
+
+### Fixed
+- **Room editing was unreachable.** The room overlay was stacked beneath the
+  drawing surface, so in Rooms mode every click or drag — even on a corner
+  handle, a room body, or a name label — started drawing a new box, and
+  reshape / move / delete / color / out-of-scope were all inaccessible. The
+  overlay now sits above the drawing surface with click-through empty areas:
+  drawing on blank plan still works, and handles, bodies, and labels receive
+  their events.
+
+### Changed
+- Creating a room now opens its popover immediately, so name, color, and
+  out-of-scope are one step away instead of hidden behind a label click.
+
 ## [1.4.0] — 2026-07-13
 
 ### Added
@@ -75,6 +90,21 @@ follows [Semantic Versioning](https://semver.org).
 
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
+
+## [1.4.1] — 2026-07-13
+
+### Fixed
+- **Room editing was unreachable.** The room overlay was stacked beneath the
+  drawing surface, so in Rooms mode every click or drag — even on a corner
+  handle, a room body, or a name label — started drawing a new box, and
+  reshape / move / delete / color / out-of-scope were all inaccessible. The
+  overlay now sits above the drawing surface with click-through empty areas:
+  drawing on blank plan still works, and handles, bodies, and labels receive
+  their events.
+
+### Changed
+- Creating a room now opens its popover immediately, so name, color, and
+  out-of-scope are one step away instead of hidden behind a label click.
 
 ## [1.4.0] — 2026-07-13
 

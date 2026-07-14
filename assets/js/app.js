@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.4.0';
+const APP_VERSION='1.4.1';
 const uid = () => Math.random().toString(36).slice(2,9);
 let state = {
   version:APP_VERSION,
@@ -436,6 +436,7 @@ function renderRooms(){
   const handleR=Math.max(5,8*(f.w/Math.max(1,planRect().width)));
   let svg=`<svg viewBox="0 0 ${f.w} ${f.h}" preserveAspectRatio="none">`;
   svg+=`<defs><pattern id="rhatch" width="10" height="10" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="10" stroke-width="3"/></pattern></defs>`;
+  if(roomMode)svg+=`<rect class="rbg" x="0" y="0" width="${f.w}" height="${f.h}"/>`;
   f.rooms.forEach(r=>{
     const d=r.pts.map(p=>`${p.x*f.w},${p.y*f.h}`).join(' ');
     const cls=['rpoly',r.id===selRoom?'sel':'',r.id===hlRoom?'hl':'',r.scope==='out'?'out':''].join(' ');
@@ -460,6 +461,7 @@ function renderRooms(){
     const lx=Math.min(...r.pts.map(p=>p.x)), ly=Math.min(...r.pts.map(p=>p.y));
     const lab=el('div','rlabel'+(r.id===hlRoom?' hl':''),
       `<span class="rname">${r.name}</span>${r.scope==='out'?'<span class="rtag">OUT</span>':''}${roomMode?'<span class="rx" title="Delete room">✕</span>':''}`);
+    lab.dataset.room=r.id;
     lab.style.cssText=`left:${lx*100}%;top:${ly*100}%;border-color:${r.color};color:${r.color}`;
     lab.addEventListener('pointerdown',e=>e.stopPropagation());
     lab.addEventListener('click',e=>{
@@ -475,7 +477,7 @@ function renderRooms(){
     });
     layer.appendChild(lab);
   });
-  holder.insertBefore(layer,$('#planClick'));
+  $('#planClick').after(layer);          /* above the draw surface; below markers */
   wireRoomPointer(layer,f);
 }
 /* highlight a room: emphasize its ikons, dim the rest, summarize contents */
@@ -499,6 +501,8 @@ function wireRoomPointer(layer,f){
     const tol=8/Math.max(1,planRect().width);
     const id=e.pointerId;
     const room=t.dataset.room?f.rooms.find(r=>r.id===t.dataset.room):null;
+
+    if(t.classList.contains('rbg')){ startRoomDraw(e,f); return; }
 
     if(t.classList.contains('rvtx')||t.classList.contains('rmid')){
       e.preventDefault();e.stopPropagation();
@@ -554,12 +558,10 @@ function wireRoomPointer(layer,f){
     renderRooms();
   });
 }
-/* draw a new room by dragging on empty plan */
-$('#planClick').addEventListener('pointerdown',e=>{
-  if(!roomMode)return;
+/* draw a new room by dragging on the layer background */
+function startRoomDraw(e,f){
   e.preventDefault();e.stopPropagation();
-  const f=activeFloor();if(!f)return;
-  closeRoomPop();
+  closeRoomPop();selRoom=null;
   const r=planRect();
   const fx=v=>Math.min(1,Math.max(0,v));
   const tol=8/Math.max(1,r.width);
@@ -578,18 +580,20 @@ $('#planClick').addEventListener('pointerdown',e=>{
     if(ev.pointerId!==id)return;
     document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);
     const g=draw();prev.remove();
-    if(g.rw<0.015||g.rh<0.015)return;
+    if(g.rw<0.015||g.rh<0.015){renderRooms();return;}
     const name=prompt('Room / area name',`Room ${(f.rooms||[]).length+1}`);
-    if(name===null)return;
+    if(name===null){renderRooms();return;}
     const room=migrateRoom({id:uid(),name:(name.trim()||`Room ${(f.rooms||[]).length+1}`),
       pts:[{x:g.rx,y:g.ry},{x:g.rx+g.rw,y:g.ry},{x:g.rx+g.rw,y:g.ry+g.rh},{x:g.rx,y:g.ry+g.rh}]});
     (f.rooms=f.rooms||[]).push(room);
     pushUndo({type:'room-add',floorId:f.id,room:JSON.parse(JSON.stringify(room))});
     selRoom=room.id;
     renderRooms();
+    const lab=document.querySelector(`#roomLayer .rlabel[data-room="${room.id}"]`);
+    if(lab)openRoomPop(room,lab);
   };
   document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
-});
+}
 /* room popover: name, color, scope, delete */
 function closeRoomPop(){const p=$('#roomPop');if(p)p.remove();}
 function openRoomPop(r,anchor){

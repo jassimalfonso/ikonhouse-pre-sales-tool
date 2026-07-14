@@ -591,8 +591,8 @@ body.lib-hidden .lib-resizer{display:none}
 .rvtx{fill:var(--panel);stroke:currentColor;stroke-width:2;vector-effect:non-scaling-stroke;cursor:grab}
 .rmid{fill:currentColor;opacity:.45;cursor:copy}
 .rmid:hover{opacity:.9}
-.plan-holder.rooming .room-layer svg{pointer-events:auto}
 .plan-holder.rooming .rpoly .rfill,.plan-holder.rooming .rpoly .hatchfill{cursor:move;pointer-events:fill}
+.plan-holder.rooming .rvtx,.plan-holder.rooming .rmid{pointer-events:auto}
 .room-layer .rlabel{
   position:absolute;transform:translateY(-2px);max-width:46%;pointer-events:auto;cursor:pointer;
   font-family:var(--font-m);font-size:10px;letter-spacing:.04em;
@@ -631,5 +631,7 @@ body.lib-hidden .lib-resizer{display:none}
 .item-del:hover{color:var(--danger);background:color-mix(in srgb, var(--danger) 10%, transparent)}
 .item-del svg{width:13px;height:13px}
 @media (pointer:coarse){ .item-del{opacity:1} .cat-tools{display:inline-flex} }
-.plan-click.rooming{cursor:crosshair}
+.plan-click.rooming{pointer-events:none}   /* the room layer owns all pointer work in Rooms mode */
+.plan-holder.rooming .room-layer svg{cursor:crosshair}
+.room-layer svg .rbg{fill:none;pointer-events:all}
 #btnRooms.on{background:var(--hl-soft);border-color:var(--hl-line);color:var(--hl)}

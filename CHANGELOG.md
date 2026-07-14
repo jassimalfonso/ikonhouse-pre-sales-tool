@@ -4,6 +4,15 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.7.1] — 2026-07-14
+
+### Changed
+- **Angle lock now applies only to pure 4-corner rectangles**, which resize
+  rigidly as before. As soon as a room has additional corners it becomes
+  fully freeform — every corner drags independently. The previous behaviour
+  kept pulling neighbouring corners along in multi-corner shapes, which made
+  reshaping feel stiff.
+
 ## [1.7.0] — 2026-07-14
 
 ### Added
@@ -157,6 +166,15 @@ follows [Semantic Versioning](https://semver.org).
 
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
+
+## [1.7.1] — 2026-07-14
+
+### Changed
+- **Angle lock now applies only to pure 4-corner rectangles**, which resize
+  rigidly as before. As soon as a room has additional corners it becomes
+  fully freeform — every corner drags independently. The previous behaviour
+  kept pulling neighbouring corners along in multi-corner shapes, which made
+  reshaping feel stiff.
 
 ## [1.7.0] — 2026-07-14
 

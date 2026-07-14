@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.7.0';
+const APP_VERSION='1.7.1';
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
 let state = {
@@ -542,15 +542,15 @@ function wireRoomPointer(layer,f){
         room.pts.splice(vi,0,{x:(a.x+b.x)/2,y:(a.y+b.y)/2});
       } else vi=+t.dataset.i;
       const cands=snapCandidates(f,room);
-      /* angle lock: edges that were axis-aligned stay axis-aligned — the
-         neighbouring corner follows, so rectangles resize like rectangles
-         and L-shapes keep their square angles. A freshly inserted corner
-         moves freely (that is how a new angle is created). */
+      /* angle lock applies to pure 4-corner rectangles only: they resize
+         rigidly like rectangles. Once extra corners exist the shape is
+         freeform — every corner drags freely. */
       const EPS=0.004, n0=room.pts.length;
       const orig=room.pts.map(p=>({...p}));
       const pi=(vi-1+n0)%n0, ni=(vi+1)%n0;
-      const lockPrev=!inserted&&{v:Math.abs(orig[vi].x-orig[pi].x)<EPS, h:Math.abs(orig[vi].y-orig[pi].y)<EPS};
-      const lockNext=!inserted&&{v:Math.abs(orig[vi].x-orig[ni].x)<EPS, h:Math.abs(orig[vi].y-orig[ni].y)<EPS};
+      const rectLock=!inserted&&n0===4;
+      const lockPrev=rectLock&&{v:Math.abs(orig[vi].x-orig[pi].x)<EPS, h:Math.abs(orig[vi].y-orig[pi].y)<EPS};
+      const lockNext=rectLock&&{v:Math.abs(orig[vi].x-orig[ni].x)<EPS, h:Math.abs(orig[vi].y-orig[ni].y)<EPS};
       const mv=ev=>{
         if(ev.pointerId!==id)return;
         const p=toFrac(ev);

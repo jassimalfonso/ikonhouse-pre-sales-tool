@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.4.1';
+const APP_VERSION='1.5.0';
 const uid = () => Math.random().toString(36).slice(2,9);
 let state = {
   version:APP_VERSION,
@@ -473,7 +473,12 @@ function renderRooms(){
         closeRoomPop();renderRooms();return;
       }
       if(roomMode){ selRoom=r.id; openRoomPop(r,lab); renderRooms(); }
-      else highlightRoom(hlRoom===r.id?null:r.id);
+      else{
+        const on=hlRoom!==r.id;
+        highlightRoom(on?r.id:null);
+        if(on){ const fresh=document.querySelector(`#roomLayer .rlabel[data-room="${r.id}"]`); openRoomPop(r,fresh||lab); }
+        else closeRoomPop();
+      }
     });
     layer.appendChild(lab);
   });
@@ -599,12 +604,22 @@ function closeRoomPop(){const p=$('#roomPop');if(p)p.remove();}
 function openRoomPop(r,anchor){
   closeRoomPop();
   const f=activeFloor();
+  /* re-renders replace labels — always anchor to the live one */
+  if(!anchor||!anchor.isConnected){
+    anchor=document.querySelector(`#roomLayer .rlabel[data-room="${r.id}"]`)||anchor;
+  }
+  if(!anchor)return;
+  const n=f.placements.filter(p=>roomOf(p,f)===r).length;
   const pop=el('div','room-pop');pop.id='roomPop';
   pop.innerHTML=`
-    <input class="rp-name" value="${r.name.replace(/"/g,'&quot;')}">
-    <div class="rp-colors">${ROOM_COLORS.map(c=>`<button class="rp-c ${c===r.color?'on':''}" data-c="${c}" style="background:${c}"></button>`).join('')}</div>
-    <label class="rp-scope"><input type="checkbox" class="rp-out" ${r.scope==='out'?'checked':''}> Out of scope (hatched)</label>
-    <div class="rp-row"><button class="rp-del">Delete</button><button class="rp-done">Done</button></div>`;
+    <div class="rp-head"><span class="rp-title">Room</span><span class="rp-count">${n} ikon${n===1?'':'s'} inside</span></div>
+    <div class="rp-sec"><label class="rp-lab">Name</label>
+      <input class="rp-name" value="${r.name.replace(/"/g,'&quot;')}"></div>
+    <div class="rp-sec"><label class="rp-lab">Color</label>
+      <div class="rp-colors">${ROOM_COLORS.map(c=>`<button class="rp-c ${c===r.color?'on':''}" data-c="${c}" style="background:${c}"></button>`).join('')}</div></div>
+    <div class="rp-sec"><label class="rp-lab">Status</label>
+      <label class="rp-scope"><input type="checkbox" class="rp-out" ${r.scope==='out'?'checked':''}> Out of scope — hatched on the plan, tagged in the Excel FD sheet</label></div>
+    <div class="rp-row"><button class="rp-del">Delete room</button><button class="rp-done">Done</button></div>`;
   const snap=roomSnapshot(f,r);let changed=false;
   pop.addEventListener('pointerdown',e=>e.stopPropagation());
   pop.querySelector('.rp-name').addEventListener('input',e=>{changed=true;r.name=e.target.value.trim()||r.name;});
@@ -1027,25 +1042,30 @@ function cancelCrop(){
 $('#btnCrop').addEventListener('click',()=>cropMode?cancelCrop():enterCrop());
 $('#cropCancel').addEventListener('click',cancelCrop);
 
-/* rotate the active plan 90° clockwise, remapping pins with it */
-async function rotateFloor(){
+/* rotate the active plan 90° in either direction, remapping ikons and rooms */
+async function rotateFloor(dir){                       /* 1 = CW, −1 = CCW */
   const f=activeFloor();if(!f){toast('Upload a floor plan first.');return;}
   if(cropMode)cancelCrop();
+  if(roomMode)setRoomMode(false);
   toast('Rotating…');
   pushUndo(floorSnapshot(f));
   const img=await loadImg(f.img);
   const cv=document.createElement('canvas');cv.width=f.h;cv.height=f.w;
   const ctx=cv.getContext('2d');
-  ctx.translate(f.h,0);ctx.rotate(Math.PI/2);
+  if(dir>0){ ctx.translate(f.h,0); ctx.rotate(Math.PI/2); }
+  else     { ctx.translate(0,f.w); ctx.rotate(-Math.PI/2); }
   ctx.drawImage(img,0,0);
   f.img=cv.toDataURL('image/jpeg',0.92);
-  f.placements=f.placements.map(p=>({...p,x:1-p.y,y:p.x}));   /* CW: (x,y) → (1−y, x) */
-  f.rooms=(f.rooms||[]).map(r=>{migrateRoom(r);return {...r,pts:r.pts.map(p=>({x:1-p.y,y:p.x}))};});
+  const map=dir>0 ? p=>({x:1-p.y,y:p.x})              /* CW:  (x,y) → (1−y, x) */
+                  : p=>({x:p.y,y:1-p.x});             /* CCW: (x,y) → (y, 1−x) */
+  f.placements=f.placements.map(p=>({...p,...map(p)}));
+  f.rooms=(f.rooms||[]).map(r=>{migrateRoom(r);return {...r,pts:r.pts.map(map)};});
   [f.w,f.h]=[f.h,f.w];
   showFloor();renderLibrary();renderBoq();
-  toast('Rotated 90° clockwise — click again for further turns.');
+  toast(`Rotated 90° ${dir>0?'clockwise':'counter-clockwise'}.`);
 }
-$('#btnRotate').addEventListener('click',rotateFloor);
+$('#btnRotate').addEventListener('click',()=>rotateFloor(1));
+$('#btnRotateCCW').addEventListener('click',()=>rotateFloor(-1));
 function fitCropToRatio(){
   const f=activeFloor();
   if(cropRatio==null){crop={x:f.w*0.05,y:f.h*0.05,w:f.w*0.9,h:f.h*0.9};return;}
@@ -1285,6 +1305,33 @@ function renderBoq(){
   h+='</tbody><tfoot><tr><td>Total</td><td class="num">'+rows.reduce((a,r)=>a+r.total,0)+'</td>'+
      (hasPrice?'<td></td><td class="num">'+rows.reduce((a,r)=>a+r.amount,0).toLocaleString(undefined,{minimumFractionDigits:2})+'</td>':'')+'</tr></tfoot>';
   t.innerHTML=h;
+  renderBoqRooms();
+}
+/* per-room breakdown, mirroring the Excel FD sheet */
+function renderBoqRooms(){
+  const host=$('#boqRooms');if(!host)return;
+  let h='';
+  state.floors.forEach(f=>{
+    migrateRooms(f);
+    if(!f.placements.length&&!(f.rooms||[]).length)return;
+    const line=room=>{
+      const counts={};
+      f.placements.forEach(p=>{ if(roomOf(p,f)===room){const it=itemById(p.itemId);if(it)counts[it.name]=(counts[it.name]||0)+1;} });
+      const total=Object.values(counts).reduce((a,b)=>a+b,0);
+      const summary=Object.entries(counts).map(([n,c])=>`${c}× ${n}`).join(', ');
+      return {total,summary};
+    };
+    let rowsH='';
+    (f.rooms||[]).forEach(r=>{
+      const {total,summary}=line(r);
+      rowsH+=`<tr><td><span class="rb-dot" style="background:${r.color}"></span>${r.name}${r.scope==='out'?' <span class="rb-out">OUT OF SCOPE</span>':''}</td>
+        <td class="num">${total||'—'}</td><td class="rb-sum">${summary||'<span style="color:var(--dim)">empty</span>'}</td></tr>`;
+    });
+    const un=line(null);
+    if(un.total)rowsH+=`<tr><td style="color:var(--dim)">Unassigned / general</td><td class="num">${un.total}</td><td class="rb-sum">${un.summary}</td></tr>`;
+    if(rowsH)h+=`<div class="rb-floor">${f.name}</div><table class="boq rb"><thead><tr><th>Room</th><th style="text-align:right">Qty</th><th>Devices</th></tr></thead><tbody>${rowsH}</tbody></table>`;
+  });
+  host.innerHTML=h?`<div class="rb-head">Breakdown by room</div>${h}`:'';
 }
 
 /* ──────────── Export menu & paper dialog ──────────── */
@@ -1717,33 +1764,77 @@ function coverLandscape(){
 }
 
 /* ──────────── Save / open project ──────────── */
-$('#mSave').addEventListener('click',()=>{
-  closeMenu();
-  const blob=new Blob([JSON.stringify(state)],{type:'application/json'});
+/* ── Save / Save as: writes back to the same file where the browser allows
+      (File System Access API — Chrome/Edge); elsewhere falls back to a
+      download. Opening via the picker also links the file for Ctrl+S. ── */
+let projHandle=null;
+const projJson=()=>JSON.stringify(state);
+function downloadProject(){
+  const blob=new Blob([projJson()],{type:'application/json'});
   const a=document.createElement('a');
   a.download=`${safeName()}.ikonplan`;
   a.href=URL.createObjectURL(blob);a.click();
   setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+  toast('Project downloaded.');
+}
+async function writeProject(handle){
+  const w=await handle.createWritable();
+  await w.write(projJson());await w.close();
+}
+async function saveProjectAs(){
+  if(!window.showSaveFilePicker){downloadProject();return;}
+  try{
+    projHandle=await showSaveFilePicker({
+      suggestedName:`${safeName()}.ikonplan`,
+      types:[{description:'ikonhouse project',accept:{'application/json':['.ikonplan']}}]
+    });
+    await writeProject(projHandle);
+    toast('Saved.');
+  }catch(err){ if(err&&err.name!=='AbortError')downloadProject(); }
+}
+async function saveProject(){
+  if(projHandle){
+    try{ await writeProject(projHandle); toast('Saved.'); return; }
+    catch(err){ /* permission lost or file moved — fall through to Save as */ }
+  }
+  saveProjectAs();
+}
+$('#mSave').addEventListener('click',()=>{closeMenu();saveProject();});
+$('#mSaveAs').addEventListener('click',()=>{closeMenu();saveProjectAs();});
+document.addEventListener('keydown',e=>{
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();saveProject();}
 });
-$('#mOpen').addEventListener('click',()=>{closeMenu();$('#fileProject').click();});
+async function openViaPicker(){
+  try{
+    const [h]=await showOpenFilePicker({types:[{description:'ikonhouse project',accept:{'application/json':['.ikonplan','.json']}}]});
+    const file=await h.getFile();
+    const txt=await file.text();
+    if(loadProjectText(txt))projHandle=h;      /* Ctrl+S now writes back here */
+  }catch(err){ if(err&&err.name!=='AbortError')$('#fileProject').click(); }
+}
+$('#mOpen').addEventListener('click',()=>{closeMenu();window.showOpenFilePicker?openViaPicker():$('#fileProject').click();});
+function loadProjectText(txt){
+  try{
+    const s=JSON.parse(txt);
+    if(!s.items||!s.floors)throw 0;
+    s.floors&&s.floors.forEach(f=>{f.rooms=f.rooms||[];});
+    state=Object.assign({version:APP_VERSION,theme:'light',brandLogo:null,pinScale:1,client:'',location:'',reference:'',preparedBy:'',libDock:'left',libHidden:false,libFloat:null,libSize:{w:264,h:60,fw:288,fh:520},catOrder:[]},s);
+    projHandle=null;                            /* re-linked by the picker path */
+    armedItem=null;setSelMarker(null);undoStack=[];redoStack=[];
+    if(cropMode)cancelCrop();
+    if(roomMode)setRoomMode(false);
+    $('#projName').value=state.project;
+    $('#pinSize').value=(state.pinScale||1)*100;
+    applyTheme();renderBrand();applyDock();renderLibrary();renderFloors();showFloor();renderBoq();
+    dismissOnboard();
+    toast('Project loaded.');
+    return true;
+  }catch{toast('That file is not a valid project file.');return false;}
+}
 $('#fileProject').addEventListener('change',e=>{
   const file=e.target.files[0];e.target.value='';if(!file)return;
   const rd=new FileReader();
-  rd.onload=()=>{
-    try{
-      const s=JSON.parse(rd.result);
-      if(!s.items||!s.floors)throw 0;
-      s.floors&&s.floors.forEach(f=>{f.rooms=f.rooms||[];f.rooms.forEach(r=>{if(!r.pts&&r.w!==undefined){/* legacy rect */}});});
-      state=Object.assign({version:APP_VERSION,theme:'light',brandLogo:null,pinScale:1,client:'',location:'',reference:'',preparedBy:'',libDock:'left',libHidden:false,libFloat:null,libSize:{w:264,h:60,fw:288,fh:520},catOrder:[]},s);
-      armedItem=null;setSelMarker(null);undoStack=[];redoStack=[];
-      if(cropMode)cancelCrop();
-      $('#projName').value=state.project;
-      $('#pinSize').value=(state.pinScale||1)*100;
-      applyTheme();renderBrand();applyDock();renderLibrary();renderFloors();showFloor();renderBoq();
-      dismissOnboard();
-      toast('Project loaded.');
-    }catch{toast('That file is not a valid project file.');}
-  };
+  rd.onload=()=>loadProjectText(rd.result);
   rd.readAsText(file);
 });
 
@@ -1773,7 +1864,7 @@ $('#setup').addEventListener('keydown',e=>{ if(e.key==='Enter')$('#obGo').click(
 $('#btnStartOver').addEventListener('click',()=>{
   if(!confirm('Start over? This clears the current plans, ikons and project details. Your device library is kept.'))return;
   state.project='Untitled Project';state.client='';state.location='';state.reference='';state.preparedBy='';
-  state.floors=[];state.activeFloor=null;undoStack=[];redoStack=[];
+  state.floors=[];state.activeFloor=null;undoStack=[];redoStack=[];projHandle=null;
   if(cropMode)cancelCrop();
   armItem(null);setSelMarker(null);
   $('#projName').value=state.project;

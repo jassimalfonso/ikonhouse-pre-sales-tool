@@ -1,5 +1,5 @@
 # ikonhouse — AV Pre-Sales Studio
-**Version 1.4** · Developed by Jassim Alfonso with Claude · see CHANGELOG.md
+**Version 1.5** · Developed by Jassim Alfonso with Claude · see CHANGELOG.md
 
 A lightweight, browser-based pre-sales tool for AV integration projects.
 Upload or paste a floor plan, crop it to a print-ready format, place devices

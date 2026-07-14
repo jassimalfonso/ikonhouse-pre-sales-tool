@@ -635,3 +635,21 @@ body.lib-hidden .lib-resizer{display:none}
 .plan-holder.rooming .room-layer svg{cursor:crosshair}
 .room-layer svg .rbg{fill:none;pointer-events:all}
 #btnRooms.on{background:var(--hl-soft);border-color:var(--hl-line);color:var(--hl)}
+
+/* structured room popover */
+.room-pop{width:264px;gap:12px}
+.rp-head{display:flex;justify-content:space-between;align-items:baseline}
+.rp-title{font-family:var(--font-m);font-size:9.5px;letter-spacing:.18em;color:var(--hl);text-transform:uppercase}
+.rp-count{font-size:11px;color:var(--dim)}
+.rp-sec{display:grid;gap:6px}
+.rp-lab{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);font-family:var(--font-m)}
+.room-pop .rp-scope{line-height:1.5;align-items:flex-start}
+.room-pop .rp-scope input{margin-top:2px}
+
+/* BoQ room breakdown */
+.rb-head{font-family:var(--font-m);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--hl);margin:22px 0 4px;padding-top:14px;border-top:1px solid var(--line)}
+.rb-floor{font-weight:600;font-size:12px;margin:12px 0 4px}
+table.rb .rb-sum{font-size:11px;color:var(--dim);max-width:220px}
+.rb-dot{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:7px;vertical-align:baseline}
+.rb-out{font-family:var(--font-m);font-size:8.5px;letter-spacing:.1em;color:var(--danger);border:1px solid color-mix(in srgb, var(--danger) 40%, transparent);border-radius:4px;padding:0 4px;margin-left:5px}
+.menu .mk{margin-left:auto;font-family:var(--font-m);font-size:9px;color:var(--dim);border:1px solid var(--line);border-radius:4px;padding:1px 5px}

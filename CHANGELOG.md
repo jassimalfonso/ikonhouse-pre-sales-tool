@@ -4,6 +4,35 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.5.0] — 2026-07-13
+
+### Added
+- **Counter-clockwise rotation** (↺ button beside Rotate) with correct
+  remapping of ikons and rooms in both directions.
+- **BoQ breakdown by room.** The BoQ drawer now ends with a per-floor room
+  table — each room's color dot, total quantity, and a device summary
+  ("2× Keypad, 1× TV"), with unassigned ikons and OUT OF SCOPE tags shown —
+  mirroring the Excel FD sheet.
+- **Edit from highlight.** Clicking a room name outside Rooms mode now opens
+  the room's editor alongside the highlight, so rename / recolor / scope /
+  delete no longer require switching to the Rooms tool.
+- **Save and Save as…** in the Export menu. On Chrome/Edge, Save as… writes a
+  real file via the system picker and **Save (Ctrl+S) writes back to that
+  same file silently** — no more download-per-save. Opening a project through
+  the picker links it for Ctrl+S too. Browsers without the File System
+  Access API fall back to downloading, and Start Over unlinks the file.
+
+### Changed
+- The room popover is restructured for readability: header with live ikon
+  count, labeled Name / Color / Status sections, and a clearer out-of-scope
+  description. It stays open until you press Done.
+
+### Fixed
+- **Popover jumping to the top-left corner** when toggling out-of-scope or
+  changing color: re-renders replaced the label the popover was anchored
+  to, leaving it measuring a detached element (position 0,0). It now always
+  re-anchors to the live label.
+
 ## [1.4.1] — 2026-07-13
 
 ### Fixed
@@ -90,6 +119,35 @@ follows [Semantic Versioning](https://semver.org).
 
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
+
+## [1.5.0] — 2026-07-13
+
+### Added
+- **Counter-clockwise rotation** (↺ button beside Rotate) with correct
+  remapping of ikons and rooms in both directions.
+- **BoQ breakdown by room.** The BoQ drawer now ends with a per-floor room
+  table — each room's color dot, total quantity, and a device summary
+  ("2× Keypad, 1× TV"), with unassigned ikons and OUT OF SCOPE tags shown —
+  mirroring the Excel FD sheet.
+- **Edit from highlight.** Clicking a room name outside Rooms mode now opens
+  the room's editor alongside the highlight, so rename / recolor / scope /
+  delete no longer require switching to the Rooms tool.
+- **Save and Save as…** in the Export menu. On Chrome/Edge, Save as… writes a
+  real file via the system picker and **Save (Ctrl+S) writes back to that
+  same file silently** — no more download-per-save. Opening a project through
+  the picker links it for Ctrl+S too. Browsers without the File System
+  Access API fall back to downloading, and Start Over unlinks the file.
+
+### Changed
+- The room popover is restructured for readability: header with live ikon
+  count, labeled Name / Color / Status sections, and a clearer out-of-scope
+  description. It stays open until you press Done.
+
+### Fixed
+- **Popover jumping to the top-left corner** when toggling out-of-scope or
+  changing color: re-renders replaced the label the popover was anchored
+  to, leaving it measuring a detached element (position 0,0). It now always
+  re-anchors to the live label.
 
 ## [1.4.1] — 2026-07-13
 

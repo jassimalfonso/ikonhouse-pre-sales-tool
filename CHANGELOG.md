@@ -4,6 +4,20 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.7.0] — 2026-07-14
+
+### Added
+- **Angle lock while reshaping.** Dragging a corner keeps formerly straight
+  (axis-aligned) edges straight: the neighbouring corners follow, so
+  rectangles resize like rectangles and L-shapes keep their square angles.
+  A corner added via a midpoint handle moves freely — that is how a new
+  angle is introduced — and deliberately diagonal edges stay free.
+- **The full package now includes the editable design file.** Every
+  "Full package (.zip)" export contains the project''s `.ikonplan` plus a
+  "HOW TO OPEN THE DESIGN FILE.txt" note pointing recipients to
+  https://ikonhouse-presales-tool.netlify.app → "Open a project…", with a
+  contents listing of the package.
+
 ## [1.6.0] — 2026-07-14
 
 ### Added
@@ -143,6 +157,20 @@ follows [Semantic Versioning](https://semver.org).
 
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
+
+## [1.7.0] — 2026-07-14
+
+### Added
+- **Angle lock while reshaping.** Dragging a corner keeps formerly straight
+  (axis-aligned) edges straight: the neighbouring corners follow, so
+  rectangles resize like rectangles and L-shapes keep their square angles.
+  A corner added via a midpoint handle moves freely — that is how a new
+  angle is introduced — and deliberately diagonal edges stay free.
+- **The full package now includes the editable design file.** Every
+  "Full package (.zip)" export contains the project''s `.ikonplan` plus a
+  "HOW TO OPEN THE DESIGN FILE.txt" note pointing recipients to
+  https://ikonhouse-presales-tool.netlify.app → "Open a project…", with a
+  contents listing of the package.
 
 ## [1.6.0] — 2026-07-14
 

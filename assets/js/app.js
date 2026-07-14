@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.6.0';
+const APP_VERSION='1.7.0';
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
 let state = {
@@ -535,17 +535,30 @@ function wireRoomPointer(layer,f){
     if(t.classList.contains('rvtx')||t.classList.contains('rmid')){
       e.preventDefault();e.stopPropagation();
       pushUndo(roomSnapshot(f,room));
-      let vi;
+      let vi, inserted=false;
       if(t.classList.contains('rmid')){
-        vi=+t.dataset.after+1;
+        vi=+t.dataset.after+1; inserted=true;
         const a=room.pts[+t.dataset.after], b=room.pts[(vi)%room.pts.length];
         room.pts.splice(vi,0,{x:(a.x+b.x)/2,y:(a.y+b.y)/2});
       } else vi=+t.dataset.i;
       const cands=snapCandidates(f,room);
+      /* angle lock: edges that were axis-aligned stay axis-aligned — the
+         neighbouring corner follows, so rectangles resize like rectangles
+         and L-shapes keep their square angles. A freshly inserted corner
+         moves freely (that is how a new angle is created). */
+      const EPS=0.004, n0=room.pts.length;
+      const orig=room.pts.map(p=>({...p}));
+      const pi=(vi-1+n0)%n0, ni=(vi+1)%n0;
+      const lockPrev=!inserted&&{v:Math.abs(orig[vi].x-orig[pi].x)<EPS, h:Math.abs(orig[vi].y-orig[pi].y)<EPS};
+      const lockNext=!inserted&&{v:Math.abs(orig[vi].x-orig[ni].x)<EPS, h:Math.abs(orig[vi].y-orig[ni].y)<EPS};
       const mv=ev=>{
         if(ev.pointerId!==id)return;
         const p=toFrac(ev);
-        room.pts[vi]={x:Math.min(1,Math.max(0,snapVal(p.x,cands.xs,tol))),y:Math.min(1,Math.max(0,snapVal(p.y,cands.ys,tol)))};
+        const nx=Math.min(1,Math.max(0,snapVal(p.x,cands.xs,tol)));
+        const ny=Math.min(1,Math.max(0,snapVal(p.y,cands.ys,tol)));
+        room.pts[vi]={x:nx,y:ny};
+        if(lockPrev){ if(lockPrev.v)room.pts[pi].x=nx; else if(lockPrev.h)room.pts[pi].y=ny; }
+        if(lockNext){ if(lockNext.v)room.pts[ni].x=nx; else if(lockNext.h)room.pts[ni].y=ny; }
         updateRoomInPlace(layer,f,room);
       };
       const up=ev=>{if(ev.pointerId!==id)return;document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);renderRooms();};
@@ -1505,6 +1518,28 @@ async function exportPackage(paper){
     const folder=zip.folder(safeName());
     if(pdfBlob) folder.file(`${safeName()} - Device Location Plan - ${paper.label}.pdf`, pdfBlob);
     if(boqData) folder.file(`${safeName()} - BoQ.xlsx`, boqData);
+    /* the editable design file, with a note on how to open it */
+    folder.file(`${safeName()}.ikonplan`, projJson());
+    folder.file('HOW TO OPEN THE DESIGN FILE.txt',
+`${state.project} — ikonhouse Pre-Sales package
+Generated ${today()}${state.preparedBy?` · Prepared by ${state.preparedBy}`:''}
+
+CONTENTS
+- ${safeName()} - Device Location Plan (${paper.label}).pdf — layout sheets & cover
+- ${safeName()} - BoQ.xlsx — Field Device sheet (by room) + priced summary
+- sheets-png/ — each sheet as a high-resolution image
+- ${safeName()}.ikonplan — the editable design file
+
+TO OPEN OR EDIT THE DESIGN
+1. Go to  https://ikonhouse-presales-tool.netlify.app
+2. Click "Open a project…" on the welcome screen
+   (or Export menu → Open project… if already inside)
+3. Select  ${safeName()}.ikonplan  from this package
+
+The full project opens exactly as designed — floor plans, ikons, rooms,
+device library and pricing — ready to continue editing.
+
+ikonhouse · Pre-Sales Tool`);
     const sheets=folder.folder('sheets-png');
     for(const p of pages) sheets.file(p.name, await canvasBlob(p.cv));
     toast('Compressing package…');

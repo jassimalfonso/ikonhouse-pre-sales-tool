@@ -4,6 +4,30 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.6.0] — 2026-07-14
+
+### Added
+- **Movable room editor.** Drag the popover by its header to uncover the
+  plan beneath while editing.
+- **Single vs double click on room names.** Single click highlights the
+  area (or selects it in Rooms mode); double click opens the room editor.
+  Applies in and out of Rooms mode.
+
+### Changed
+- The device library now docks to the **bottom** by default (existing
+  projects keep their saved dock).
+- The app starts in **your system's light/dark mode**; the in-app toggles
+  still override it, and projects keep their saved theme.
+- Removed the 2-button keypad from the starting library (the icon remains
+  available when creating devices).
+
+### Fixed
+- **Rooms could not be dragged or reshaped on touch devices** (cursor
+  changed but nothing moved): every movement rebuilt the room layer, which
+  detached the element the touch gesture was captured on, silently ending
+  the drag. Gestures now update the shape in place and re-render only on
+  release — smoother on mouse, working at all on touch.
+
 ## [1.5.0] — 2026-07-13
 
 ### Added
@@ -119,6 +143,30 @@ follows [Semantic Versioning](https://semver.org).
 
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
+
+## [1.6.0] — 2026-07-14
+
+### Added
+- **Movable room editor.** Drag the popover by its header to uncover the
+  plan beneath while editing.
+- **Single vs double click on room names.** Single click highlights the
+  area (or selects it in Rooms mode); double click opens the room editor.
+  Applies in and out of Rooms mode.
+
+### Changed
+- The device library now docks to the **bottom** by default (existing
+  projects keep their saved dock).
+- The app starts in **your system's light/dark mode**; the in-app toggles
+  still override it, and projects keep their saved theme.
+- Removed the 2-button keypad from the starting library (the icon remains
+  available when creating devices).
+
+### Fixed
+- **Rooms could not be dragged or reshaped on touch devices** (cursor
+  changed but nothing moved): every movement rebuilt the room layer, which
+  detached the element the touch gesture was captured on, silently ending
+  the drag. Gestures now update the shape in place and re-render only on
+  release — smoother on mouse, working at all on touch.
 
 ## [1.5.0] — 2026-07-13
 

@@ -653,3 +653,7 @@ table.rb .rb-sum{font-size:11px;color:var(--dim);max-width:220px}
 .rb-dot{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:7px;vertical-align:baseline}
 .rb-out{font-family:var(--font-m);font-size:8.5px;letter-spacing:.1em;color:var(--danger);border:1px solid color-mix(in srgb, var(--danger) 40%, transparent);border-radius:4px;padding:0 4px;margin-left:5px}
 .menu .mk{margin-left:auto;font-family:var(--font-m);font-size:9px;color:var(--dim);border:1px solid var(--line);border-radius:4px;padding:1px 5px}
+/* draggable popover header; handles hidden while a gesture edits the shape */
+.rp-head{cursor:grab;margin:-4px -6px 0;padding:4px 6px 0;border-radius:8px}
+.rp-head:active{cursor:grabbing}
+.rpoly.editing .rvtx,.rpoly.editing .rmid{display:none}

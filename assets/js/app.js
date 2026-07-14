@@ -77,12 +77,13 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.5.0';
+const APP_VERSION='1.6.0';
+const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
 let state = {
   version:APP_VERSION,
   project:'Untitled Project', client:'', location:'', reference:'', preparedBy:'',
-  theme:'light', brandLogo:null, libDock:'left', libHidden:false, libFloat:null,
+  theme:SYS_THEME(), brandLogo:null, libDock:'bottom', libHidden:false, libFloat:null,
   libSize:{w:264,h:60,fw:288,fh:520}, catOrder:[],
   items:[], floors:[], activeFloor:null, pinScale:1
 };
@@ -94,7 +95,7 @@ const SEED = [
  ['Outdoor Speaker','Audio','outdoor-speaker','#1F9D55'],
  ['TV Display','Video','tv','#7C4DFF'],['Projector','Video','projector','#D62FA0'],['Projection Screen','Video','screen','#D62FA0'],
  ['Wi-Fi Access Point','Network','wifi','#F4572E'],['Network Rack','Network','rack','#64748B'],
- ['Keypad','Control','keypad','#0FA3A3'],['Keypad (2-Column)','Control','keypad-2col','#0FA3A3'],['Keypad (2-Button)','Control','keypad-2','#0FA3A3'],['Touch Panel','Control','touch','#0FA3A3'],
+ ['Keypad','Control','keypad','#0FA3A3'],['Keypad (2-Column)','Control','keypad-2col','#0FA3A3'],['Touch Panel','Control','touch','#0FA3A3'],
  ['Thermostat','Climate','thermostat','#F59E0B'],['Motion Sensor','Control','sensor','#F59E0B'],
  ['Motorized Blinds','Shading','blinds','#64748B'],['Motorized Curtains','Shading','curtain','#64748B'],
  ['CCTV Camera','Security','cctv','#1F9D55'],['Access Control','Security','access','#1F9D55'],['Video Intercom','Security','intercom','#0E7490']
@@ -464,6 +465,7 @@ function renderRooms(){
     lab.dataset.room=r.id;
     lab.style.cssText=`left:${lx*100}%;top:${ly*100}%;border-color:${r.color};color:${r.color}`;
     lab.addEventListener('pointerdown',e=>e.stopPropagation());
+    let labTimer=null;
     lab.addEventListener('click',e=>{
       e.stopPropagation();
       if(e.target.classList.contains('rx')){
@@ -472,13 +474,22 @@ function renderRooms(){
         if(selRoom===r.id)selRoom=null;
         closeRoomPop();renderRooms();return;
       }
-      if(roomMode){ selRoom=r.id; openRoomPop(r,lab); renderRooms(); }
-      else{
-        const on=hlRoom!==r.id;
-        highlightRoom(on?r.id:null);
-        if(on){ const fresh=document.querySelector(`#roomLayer .rlabel[data-room="${r.id}"]`); openRoomPop(r,fresh||lab); }
-        else closeRoomPop();
+      if(e.detail>=2){                                  /* double-click: edit */
+        clearTimeout(labTimer);
+        if(roomMode){selRoom=r.id;renderRooms();}
+        else if(hlRoom!==r.id)highlightRoom(r.id);
+        openRoomPop(r,document.querySelector(`#roomLayer .rlabel[data-room="${r.id}"]`)||lab);
+        return;
       }
+      clearTimeout(labTimer);
+      labTimer=setTimeout(()=>{                         /* single click */
+        if(roomMode){ selRoom=r.id; closeRoomPop(); renderRooms(); }
+        else{
+          const on=hlRoom!==r.id;
+          highlightRoom(on?r.id:null);
+          if(!on)closeRoomPop();
+        }
+      },240);
     });
     layer.appendChild(lab);
   });
@@ -495,6 +506,18 @@ function highlightRoom(id){
   f.placements.forEach(p=>{ if(roomOf(p,f)===r){const it=itemById(p.itemId);if(it)counts[it.name]=(counts[it.name]||0)+1;} });
   const parts=Object.entries(counts).map(([n,c])=>`${c}× ${n}`);
   toast(`${r.name} — ${parts.length?parts.join(', '):'no ikons yet'}`);
+}
+/* update a room's rendered shape without rebuilding the layer — rebuilding
+   mid-gesture detaches the pointer-captured node and kills touch drags */
+function updateRoomInPlace(layer,f,room){
+  const d=room.pts.map(p=>`${p.x*f.w},${p.y*f.h}`).join(' ');
+  const g=layer.querySelector(`g[data-room="${room.id}"]`);
+  if(g){g.classList.add('editing');g.querySelectorAll('polygon').forEach(pl=>pl.setAttribute('points',d));}
+  const lab=layer.querySelector(`.rlabel[data-room="${room.id}"]`);
+  if(lab){
+    lab.style.left=(Math.min(...room.pts.map(p=>p.x))*100)+'%';
+    lab.style.top =(Math.min(...room.pts.map(p=>p.y))*100)+'%';
+  }
 }
 /* pointer interactions on the svg layer (room mode only) */
 function wireRoomPointer(layer,f){
@@ -523,15 +546,16 @@ function wireRoomPointer(layer,f){
         if(ev.pointerId!==id)return;
         const p=toFrac(ev);
         room.pts[vi]={x:Math.min(1,Math.max(0,snapVal(p.x,cands.xs,tol))),y:Math.min(1,Math.max(0,snapVal(p.y,cands.ys,tol)))};
-        renderRooms();
+        updateRoomInPlace(layer,f,room);
       };
-      const up=ev=>{if(ev.pointerId!==id)return;document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);};
+      const up=ev=>{if(ev.pointerId!==id)return;document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);renderRooms();};
       document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
       return;
     }
     if(t.classList.contains('rfill')||t.classList.contains('hatchfill')){
       e.preventDefault();e.stopPropagation();
-      selRoom=room.id;closeRoomPop();renderRooms();
+      selRoom=room.id;closeRoomPop();
+      layer.querySelectorAll('.rpoly').forEach(gg=>gg.classList.toggle('sel',gg.getAttribute('data-room')===room.id));
       /* drag body = move whole room, snapping its bounding box */
       pushUndo(roomSnapshot(f,room));
       const start=toFrac(e), orig=room.pts.map(p=>({...p}));
@@ -547,9 +571,9 @@ function wireRoomPointer(layer,f){
         const sy1=snapVal(miny+dy,cands.ys,tol)-(miny+dy), sy2=snapVal(maxy+dy,cands.ys,tol)-(maxy+dy);
         dx+=Math.abs(sx1)<Math.abs(sx2)?sx1:sx2; dy+=Math.abs(sy1)<Math.abs(sy2)?sy1:sy2;
         room.pts=orig.map(q=>({x:q.x+dx,y:q.y+dy}));
-        renderRooms();
+        updateRoomInPlace(layer,f,room);
       };
-      const up=ev=>{if(ev.pointerId!==id)return;document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);};
+      const up=ev=>{if(ev.pointerId!==id)return;document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);renderRooms();};
       document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
     }
   });
@@ -631,9 +655,22 @@ function openRoomPop(r,anchor){
   });
   pop.querySelector('.rp-done').addEventListener('click',()=>{if(changed)pushUndo(snap);closeRoomPop();renderRooms();});
   const rc=anchor.getBoundingClientRect(), wr=$('#stage').getBoundingClientRect();
-  pop.style.left=Math.min(wr.width-240,Math.max(8,rc.left-wr.left))+'px';
-  pop.style.top=Math.min(wr.height-190,rc.bottom-wr.top+8)+'px';
+  pop.style.left=Math.min(wr.width-276,Math.max(8,rc.left-wr.left))+'px';
+  pop.style.top=Math.min(wr.height-240,rc.bottom-wr.top+8)+'px';
   $('#stage').appendChild(pop);
+  /* drag the popover by its header to uncover the plan */
+  pop.querySelector('.rp-head').addEventListener('pointerdown',e=>{
+    e.preventDefault();
+    const id=e.pointerId,sx=e.clientX,sy=e.clientY;
+    const x0=parseFloat(pop.style.left),y0=parseFloat(pop.style.top);
+    const mv=ev=>{
+      if(ev.pointerId!==id)return;
+      pop.style.left=Math.min(wr.width-80,Math.max(8-200,x0+(ev.clientX-sx)))+'px';
+      pop.style.top =Math.min(wr.height-46,Math.max(4,y0+(ev.clientY-sy)))+'px';
+    };
+    const up=ev=>{if(ev.pointerId!==id)return;document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);};
+    document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
+  });
   pop.querySelector('.rp-name').focus();
 }
 
@@ -1818,7 +1855,7 @@ function loadProjectText(txt){
     const s=JSON.parse(txt);
     if(!s.items||!s.floors)throw 0;
     s.floors&&s.floors.forEach(f=>{f.rooms=f.rooms||[];});
-    state=Object.assign({version:APP_VERSION,theme:'light',brandLogo:null,pinScale:1,client:'',location:'',reference:'',preparedBy:'',libDock:'left',libHidden:false,libFloat:null,libSize:{w:264,h:60,fw:288,fh:520},catOrder:[]},s);
+    state=Object.assign({version:APP_VERSION,theme:SYS_THEME(),brandLogo:null,pinScale:1,client:'',location:'',reference:'',preparedBy:'',libDock:'bottom',libHidden:false,libFloat:null,libSize:{w:264,h:60,fw:288,fh:520},catOrder:[]},s);
     projHandle=null;                            /* re-linked by the picker path */
     armedItem=null;setSelMarker(null);undoStack=[];redoStack=[];
     if(cropMode)cancelCrop();

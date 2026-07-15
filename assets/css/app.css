@@ -594,7 +594,8 @@ body.lib-hidden .lib-resizer{display:none}
 .plan-holder.rooming .rpoly .rfill,.plan-holder.rooming .rpoly .hatchfill{cursor:move;pointer-events:fill}
 .plan-holder.rooming .rvtx,.plan-holder.rooming .rmid{pointer-events:auto}
 .room-layer .rlabel{
-  position:absolute;transform:translateY(-2px);max-width:46%;pointer-events:auto;cursor:pointer;
+  position:absolute;transform:translateY(-2px) scale(var(--zi,1));transform-origin:0 0;
+  max-width:46%;pointer-events:auto;cursor:pointer;
   font-family:var(--font-m);font-size:10px;letter-spacing:.04em;
   background:var(--panel);border:1px solid;padding:1px 7px;border-radius:5px;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:6px;

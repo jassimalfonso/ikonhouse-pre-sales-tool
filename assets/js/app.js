@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.8.0';
+const APP_VERSION='1.8.2';
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
 let state = {
@@ -935,7 +935,7 @@ async function importPdf(file){
   for(let i=1;i<=n;i++){
     const page=await pdf.getPage(i);
     const vp1=page.getViewport({scale:1});
-    const scale=Math.min(3000/vp1.width,3.5);   /* high-res render — PNG below keeps it lossless */
+    const scale=Math.min(3600/vp1.width,4);     /* high-res render — PNG below keeps it lossless */
     const vp=page.getViewport({scale});
     const cv=document.createElement('canvas');cv.width=vp.width;cv.height=vp.height;
     await page.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise;
@@ -964,7 +964,9 @@ stage.addEventListener('drop',e=>{[...(e.dataTransfer?.files||[])].forEach(route
    plan can never be lost off-screen. */
 let panX=0, panY=0, panMoved=false, spaceHeld=false;
 function applyView(){
-  $('#planHolder').style.transform=`translate(${panX}px, ${panY}px) scale(${zoom})`;
+  const h=$('#planHolder');
+  h.style.transform=`translate(${panX}px, ${panY}px) scale(${zoom})`;
+  h.style.setProperty('--zi',1/zoom);          /* labels counter-scale to stay pixel-crisp */
   $('#zoomLbl').textContent=Math.round(zoom*100)+'%';
 }
 function clampPan(){
@@ -1406,7 +1408,7 @@ const preparedByLine=()=> state.preparedBy ? `PREPARED BY ${state.preparedBy.toU
 
 const PAPERS=[
   {id:'a4',label:'A4',sub:'297 × 210 mm · 300 dpi',long:3508,short:2480,mm:[297,210]},
-  {id:'a3',label:'A3',sub:'420 × 297 mm · 250 dpi',long:4134,short:2923,mm:[420,297]},
+  {id:'a3',label:'A3',sub:'420 × 297 mm · 300 dpi',long:4961,short:3508,mm:[420,297]},
   {id:'a1',label:'A1',sub:'841 × 594 mm · 150 dpi',long:4967,short:3508,mm:[841,594]},
 ];
 let paperChoice='a3', fmtChoice='pdf', pendingExport=null;
@@ -1494,7 +1496,7 @@ async function pagesToPdf(pages,paper){
     const o=w>h?'landscape':'portrait';
     if(i===0) doc=new jsPDF({orientation:o,unit:'mm',format:[w,h]});
     else doc.addPage([w,h],o);
-    doc.addImage(p.cv.toDataURL('image/jpeg',0.95),'JPEG',0,0,w,h);
+    doc.addImage(p.cv.toDataURL('image/png'),'PNG',0,0,w,h,undefined,'FAST');   /* lossless — crisp lines at any zoom */
   });
   return doc;
 }
@@ -1669,6 +1671,7 @@ async function renderSheet(f,paper,idx,total){
   const M=Math.round(pw*0.032);
   const cv=document.createElement('canvas');cv.width=pw;cv.height=ph;
   const ctx=cv.getContext('2d');
+  ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
   ctx.fillStyle='#FFFFFF';ctx.fillRect(0,0,pw,ph);
 
   const logo=await loadBrandImg();
@@ -1791,6 +1794,7 @@ async function renderCover(paper,landscape=false){
   const ph=landscape?paper.short:paper.long;
   const cv=document.createElement('canvas');cv.width=pw;cv.height=ph;
   const ctx=cv.getContext('2d');
+  ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
   ctx.fillStyle='#FFFFFF';ctx.fillRect(0,0,pw,ph);
   const B=Math.min(pw,ph);                 /* proportions follow the short edge */
   const M=Math.round(B*0.11);

@@ -4,6 +4,30 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.8.2] — 2026-07-14
+
+### Fixed
+- **Room label text blurred while zooming in the editor.** The canvas is
+  scaled with a CSS transform, which stretches rasterized text; labels now
+  counter-scale by the inverse zoom so their effective scale is always 1 —
+  names stay pixel-crisp at any magnification (they keep a constant
+  on-screen size as a result, like map labels).
+
+### Changed
+- PDF plans import at up to 4× resolution (was 3.5×) for more zoom headroom
+  on the text printed within the drawing itself. Plans imported before
+  v1.8 remain at their original resolution until re-imported.
+
+## [1.8.1] — 2026-07-14
+
+### Fixed
+- **Sheets still softened when zooming into the exported PDF.** The final
+  raster was embedded as JPEG, which smears one-pixel line art even at high
+  quality. Sheets and covers now embed as **lossless PNG**, A3 renders at
+  full **300 dpi** (matching A4), and the plan is resampled with
+  high-quality interpolation — wall lines stay crisp under deep zoom.
+  PDF file sizes grow somewhat; line-art pages compress efficiently.
+
 ## [1.8.0] — 2026-07-14
 
 ### Fixed
@@ -191,6 +215,30 @@ follows [Semantic Versioning](https://semver.org).
 
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
+
+## [1.8.2] — 2026-07-14
+
+### Fixed
+- **Room label text blurred while zooming in the editor.** The canvas is
+  scaled with a CSS transform, which stretches rasterized text; labels now
+  counter-scale by the inverse zoom so their effective scale is always 1 —
+  names stay pixel-crisp at any magnification (they keep a constant
+  on-screen size as a result, like map labels).
+
+### Changed
+- PDF plans import at up to 4× resolution (was 3.5×) for more zoom headroom
+  on the text printed within the drawing itself. Plans imported before
+  v1.8 remain at their original resolution until re-imported.
+
+## [1.8.1] — 2026-07-14
+
+### Fixed
+- **Sheets still softened when zooming into the exported PDF.** The final
+  raster was embedded as JPEG, which smears one-pixel line art even at high
+  quality. Sheets and covers now embed as **lossless PNG**, A3 renders at
+  full **300 dpi** (matching A4), and the plan is resampled with
+  high-quality interpolation — wall lines stay crisp under deep zoom.
+  PDF file sizes grow somewhat; line-art pages compress efficiently.
 
 ## [1.8.0] — 2026-07-14
 

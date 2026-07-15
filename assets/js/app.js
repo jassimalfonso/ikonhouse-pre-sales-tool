@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.7.1';
+const APP_VERSION='1.8.0';
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
 let state = {
@@ -310,7 +310,14 @@ function applyDock(){
   requestAnimationFrame(()=>{ if(activeFloor()&&!cropMode){clampPan();applyView();} });
 }
 document.querySelectorAll('#dockRow [data-dock]').forEach(btn=>{
-  btn.addEventListener('click',()=>{ state.libDock=btn.dataset.dock; state.libHidden=false; applyDock(); });
+  btn.addEventListener('click',()=>{
+    state.libDock=btn.dataset.dock; state.libHidden=false; applyDock();
+    /* on small screens the vertical docks live in the slide-in sheet —
+       open it right away so the library doesn't appear to vanish */
+    if(window.innerWidth<=1024){
+      if(['left','right','float'].includes(btn.dataset.dock)) openLib(); else closeLib();
+    }
+  });
 });
 $('#dockHideOpt').addEventListener('click',()=>{ state.libHidden=true; applyDock(); toast('Library hidden — use the Devices button to bring it back.'); });
 /* drag an edge (or the floating panel's corner) to resize the library */
@@ -411,7 +418,7 @@ function snapCandidates(f,exceptRoom){
 function snapVal(v,cands,tol){ for(const c of cands){ if(Math.abs(v-c)<tol)return c; } return v; }
 function setRoomMode(on){
   roomMode=on;
-  if(on){ armItem(null); if(cropMode)cancelCrop(); setSelMarker(null); highlightRoom(null); }
+  if(on){ armItem(null); if(cropMode)cancelCrop(); setSelMarker(null); if(hlRoom)highlightRoom(null); }
   selRoom=null;
   $('#btnRooms').classList.toggle('on',on);
   $('#planClick').classList.toggle('rooming',on);
@@ -436,7 +443,7 @@ function renderRooms(){
   layer=el('div','room-layer');layer.id='roomLayer';
   const handleR=Math.max(5,8*(f.w/Math.max(1,planRect().width)));
   let svg=`<svg viewBox="0 0 ${f.w} ${f.h}" preserveAspectRatio="none">`;
-  svg+=`<defs><pattern id="rhatch" width="10" height="10" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="10" stroke-width="3"/></pattern></defs>`;
+  svg+=`<defs><pattern id="rhatch" width="10" height="10" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="10" stroke-width="4.5"/></pattern></defs>`;
   if(roomMode)svg+=`<rect class="rbg" x="0" y="0" width="${f.w}" height="${f.h}"/>`;
   f.rooms.forEach(r=>{
     const d=r.pts.map(p=>`${p.x*f.w},${p.y*f.h}`).join(' ');
@@ -444,7 +451,7 @@ function renderRooms(){
     svg+=`<g class="${cls}" data-room="${r.id}" style="color:${r.color}">`;
     if(r.scope==='out')svg+=`<polygon class="hatchfill" points="${d}"/>`;
     svg+=`<polygon class="rfill" points="${d}"/>`;
-    if(roomMode&&r.id===selRoom){
+    if((roomMode&&r.id===selRoom)||(!roomMode&&r.id===hlRoom)){
       r.pts.forEach((p,i)=>{
         const q=r.pts[(i+1)%r.pts.length];
         svg+=`<rect class="rmid" data-room="${r.id}" data-after="${i}" x="${(p.x+q.x)/2*f.w-handleR*0.7}" y="${(p.y+q.y)/2*f.h-handleR*0.7}" width="${handleR*1.4}" height="${handleR*1.4}"/>`;
@@ -499,6 +506,7 @@ function renderRooms(){
 /* highlight a room: emphasize its ikons, dim the rest, summarize contents */
 function highlightRoom(id){
   hlRoom=id;
+  $('#planHolder').classList.toggle('room-hl',!!id);
   renderRooms();renderMarkers();
   if(!id)return;
   const f=activeFloor();const r=f.rooms.find(x=>x.id===id);if(!r)return;
@@ -522,13 +530,14 @@ function updateRoomInPlace(layer,f,room){
 /* pointer interactions on the svg layer (room mode only) */
 function wireRoomPointer(layer,f){
   const svg=layer.querySelector('svg');
-  if(!roomMode||!svg)return;
+  if((!roomMode&&!hlRoom)||!svg)return;
   svg.addEventListener('pointerdown',e=>{
     const t=e.target;
     const toFrac=ev=>{const rc=planRect();return{x:(ev.clientX-rc.left)/rc.width,y:(ev.clientY-rc.top)/rc.height};};
     const tol=8/Math.max(1,planRect().width);
     const id=e.pointerId;
     const room=t.dataset.room?f.rooms.find(r=>r.id===t.dataset.room):null;
+    if(!roomMode&&(!room||room.id!==hlRoom))return;   /* outside Rooms mode, only the highlighted room is editable */
 
     if(t.classList.contains('rbg')){ startRoomDraw(e,f); return; }
 
@@ -926,11 +935,11 @@ async function importPdf(file){
   for(let i=1;i<=n;i++){
     const page=await pdf.getPage(i);
     const vp1=page.getViewport({scale:1});
-    const scale=Math.min(2400/vp1.width,3);
+    const scale=Math.min(3000/vp1.width,3.5);   /* high-res render — PNG below keeps it lossless */
     const vp=page.getViewport({scale});
     const cv=document.createElement('canvas');cv.width=vp.width;cv.height=vp.height;
     await page.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise;
-    const f=addFloor(`Page ${i}`,cv.toDataURL('image/jpeg',0.86),cv.width,cv.height);
+    const f=addFloor(`Page ${i}`,cv.toDataURL('image/png'),cv.width,cv.height);
     if(!firstId)firstId=f.id;
   }
   if(firstId){state.activeFloor=firstId;renderFloors();showFloor();}
@@ -1105,7 +1114,7 @@ async function rotateFloor(dir){                       /* 1 = CW, −1 = CCW */
   if(dir>0){ ctx.translate(f.h,0); ctx.rotate(Math.PI/2); }
   else     { ctx.translate(0,f.w); ctx.rotate(-Math.PI/2); }
   ctx.drawImage(img,0,0);
-  f.img=cv.toDataURL('image/jpeg',0.92);
+  f.img=cv.toDataURL('image/png');            /* lossless rotation */
   const map=dir>0 ? p=>({x:1-p.y,y:p.x})              /* CW:  (x,y) → (1−y, x) */
                   : p=>({x:p.y,y:1-p.x});             /* CCW: (x,y) → (y, 1−x) */
   f.placements=f.placements.map(p=>({...p,...map(p)}));
@@ -1357,31 +1366,34 @@ function renderBoq(){
   t.innerHTML=h;
   renderBoqRooms();
 }
-/* per-room breakdown, mirroring the Excel FD sheet */
+/* per-room breakdown: a rooms × devices matrix, like the Excel FD sheet */
 function renderBoqRooms(){
   const host=$('#boqRooms');if(!host)return;
   let h='';
   state.floors.forEach(f=>{
     migrateRooms(f);
     if(!f.placements.length&&!(f.rooms||[]).length)return;
-    const line=room=>{
-      const counts={};
-      f.placements.forEach(p=>{ if(roomOf(p,f)===room){const it=itemById(p.itemId);if(it)counts[it.name]=(counts[it.name]||0)+1;} });
-      const total=Object.values(counts).reduce((a,b)=>a+b,0);
-      const summary=Object.entries(counts).map(([n,c])=>`${c}× ${n}`).join(', ');
-      return {total,summary};
+    /* devices present on this floor, in library order */
+    const devs=state.items.filter(it=>f.placements.some(p=>p.itemId===it.id));
+    if(!devs.length&&!(f.rooms||[]).length)return;
+    const countIn=(room,itemId)=>f.placements.filter(p=>p.itemId===itemId&&roomOf(p,f)===room).length;
+    const rowFor=(label,room,extra='')=>{
+      const cells=devs.map(d=>{const c=countIn(room,d.id);return `<td class="num">${c||''}</td>`;}).join('');
+      const tot=devs.reduce((a,d)=>a+countIn(room,d.id),0);
+      return `<tr><td class="rb-room">${label}${extra}</td>${cells}<td class="num rb-tot">${tot||'—'}</td></tr>`;
     };
     let rowsH='';
     (f.rooms||[]).forEach(r=>{
-      const {total,summary}=line(r);
-      rowsH+=`<tr><td><span class="rb-dot" style="background:${r.color}"></span>${r.name}${r.scope==='out'?' <span class="rb-out">OUT OF SCOPE</span>':''}</td>
-        <td class="num">${total||'—'}</td><td class="rb-sum">${summary||'<span style="color:var(--dim)">empty</span>'}</td></tr>`;
+      rowsH+=rowFor(`<span class="rb-dot" style="background:${r.color}"></span>${r.name}`,r,
+                    r.scope==='out'?' <span class="rb-out">OUT</span>':'');
     });
-    const un=line(null);
-    if(un.total)rowsH+=`<tr><td style="color:var(--dim)">Unassigned / general</td><td class="num">${un.total}</td><td class="rb-sum">${un.summary}</td></tr>`;
-    if(rowsH)h+=`<div class="rb-floor">${f.name}</div><table class="boq rb"><thead><tr><th>Room</th><th style="text-align:right">Qty</th><th>Devices</th></tr></thead><tbody>${rowsH}</tbody></table>`;
+    if(devs.some(d=>countIn(null,d.id)))rowsH+=rowFor('<span style="color:var(--dim)">Unassigned</span>',null);
+    if(!rowsH)return;
+    const head=devs.map(d=>`<th class="rb-dev" title="${d.name}"><span class="item-chip" style="background:${d.color}">${iconHtml(d)}</span></th>`).join('');
+    h+=`<div class="rb-floor">${f.name}</div>
+        <div class="rb-scroll"><table class="boq rb"><thead><tr><th>Room</th>${head}<th class="rb-tot">Σ</th></tr></thead><tbody>${rowsH}</tbody></table></div>`;
   });
-  host.innerHTML=h?`<div class="rb-head">Breakdown by room</div>${h}`:'';
+  host.innerHTML=h?`<div class="rb-head">Breakdown by room</div><div class="rb-hint">Hover a column icon for the device name.</div>${h}`:'';
 }
 
 /* ──────────── Export menu & paper dialog ──────────── */
@@ -1482,7 +1494,7 @@ async function pagesToPdf(pages,paper){
     const o=w>h?'landscape':'portrait';
     if(i===0) doc=new jsPDF({orientation:o,unit:'mm',format:[w,h]});
     else doc.addPage([w,h],o);
-    doc.addImage(p.cv.toDataURL('image/jpeg',0.92),'JPEG',0,0,w,h);
+    doc.addImage(p.cv.toDataURL('image/jpeg',0.95),'JPEG',0,0,w,h);
   });
   return doc;
 }

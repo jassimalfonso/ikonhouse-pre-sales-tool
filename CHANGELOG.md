@@ -4,6 +4,31 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.8.0] — 2026-07-14
+
+### Fixed
+- **Cropped plans exported blurry.** Plans were passing through three
+  generations of JPEG (PDF import at q0.86 → crop re-encode → PDF embed).
+  PDF pages now import at higher resolution and every plan-altering step
+  (import, crop, rotate) stores lossless PNG; the final PDF embeds at
+  higher quality. Line art stays crisp through any number of crops.
+- **Library appeared empty on tablets when docking left/right/floating:**
+  those docks live in the slide-in sheet on small screens, which stayed
+  closed after switching — it now opens immediately, and switching to
+  top/bottom closes it.
+
+### Changed
+- **Out-of-scope hatching is much more visible** (denser, thicker, ~2.5×
+  stronger) with a bolder dashed outline.
+- **BoQ room breakdown is now a true matrix:** rooms as rows, device icons
+  as columns (hover for the name), quantities in cells, per-room totals —
+  scrolls horizontally when needed, mirroring the Excel FD layout.
+
+### Added
+- **Reshape without Rooms mode:** a highlighted room (single-click its
+  name) now shows its corner handles — move, resize, and reshape directly;
+  double-click still opens the editor.
+
 ## [1.7.1] — 2026-07-14
 
 ### Changed
@@ -166,6 +191,31 @@ follows [Semantic Versioning](https://semver.org).
 
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
+
+## [1.8.0] — 2026-07-14
+
+### Fixed
+- **Cropped plans exported blurry.** Plans were passing through three
+  generations of JPEG (PDF import at q0.86 → crop re-encode → PDF embed).
+  PDF pages now import at higher resolution and every plan-altering step
+  (import, crop, rotate) stores lossless PNG; the final PDF embeds at
+  higher quality. Line art stays crisp through any number of crops.
+- **Library appeared empty on tablets when docking left/right/floating:**
+  those docks live in the slide-in sheet on small screens, which stayed
+  closed after switching — it now opens immediately, and switching to
+  top/bottom closes it.
+
+### Changed
+- **Out-of-scope hatching is much more visible** (denser, thicker, ~2.5×
+  stronger) with a bolder dashed outline.
+- **BoQ room breakdown is now a true matrix:** rooms as rows, device icons
+  as columns (hover for the name), quantities in cells, per-room totals —
+  scrolls horizontally when needed, mirroring the Excel FD layout.
+
+### Added
+- **Reshape without Rooms mode:** a highlighted room (single-click its
+  name) now shows its corner handles — move, resize, and reshape directly;
+  double-click still opens the editor.
 
 ## [1.7.1] — 2026-07-14
 

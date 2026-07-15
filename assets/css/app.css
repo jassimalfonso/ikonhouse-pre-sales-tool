@@ -583,9 +583,9 @@ body.lib-hidden .lib-resizer{display:none}
 .room-layer{position:absolute;inset:0;pointer-events:none}
 .room-layer svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
 .rpoly .rfill{fill:currentColor;fill-opacity:.08;stroke:currentColor;stroke-opacity:.75;stroke-width:1.5;stroke-dasharray:5 4;vector-effect:non-scaling-stroke}
-.rpoly .hatchfill{fill:url(#rhatch);stroke:none;color:inherit;opacity:.16}
+.rpoly .hatchfill{fill:url(#rhatch);stroke:none;color:inherit;opacity:.42}
 #rhatch line{stroke:currentColor}
-.rpoly.out .rfill{fill-opacity:.02;stroke-dasharray:2 4}
+.rpoly.out .rfill{fill-opacity:.02;stroke-dasharray:3 3;stroke-width:2;stroke-opacity:.9}
 .rpoly.hl .rfill{fill-opacity:.2;stroke-opacity:1;stroke-width:2.5;stroke-dasharray:none}
 .rpoly.sel .rfill{stroke-dasharray:none;stroke-width:2;stroke-opacity:1}
 .rvtx{fill:var(--panel);stroke:currentColor;stroke-width:2;vector-effect:non-scaling-stroke;cursor:grab}
@@ -657,3 +657,15 @@ table.rb .rb-sum{font-size:11px;color:var(--dim);max-width:220px}
 .rp-head{cursor:grab;margin:-4px -6px 0;padding:4px 6px 0;border-radius:8px}
 .rp-head:active{cursor:grabbing}
 .rpoly.editing .rvtx,.rpoly.editing .rmid{display:none}
+/* highlighted room is editable without Rooms mode */
+.plan-holder.room-hl .rpoly.hl .rfill{pointer-events:fill;cursor:move}
+.plan-holder.room-hl .rvtx,.plan-holder.room-hl .rmid{pointer-events:auto}
+/* BoQ room × device matrix */
+.rb-scroll{overflow-x:auto;margin-bottom:6px}
+table.rb{min-width:100%}
+table.rb th.rb-dev{padding:4px 3px;text-align:center}
+table.rb th.rb-dev .item-chip{width:20px;height:20px;display:inline-grid}
+table.rb th.rb-dev .item-chip svg,table.rb th.rb-dev .item-chip img{width:12px;height:12px}
+table.rb td.rb-room{white-space:nowrap;max-width:150px;overflow:hidden;text-overflow:ellipsis}
+table.rb .rb-tot{border-left:1px solid var(--line);font-weight:600}
+.rb-hint{font-size:10px;color:var(--dim);margin:2px 0 6px}

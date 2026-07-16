@@ -670,3 +670,5 @@ table.rb th.rb-dev .item-chip svg,table.rb th.rb-dev .item-chip img{width:12px;h
 table.rb td.rb-room{white-space:nowrap;max-width:150px;overflow:hidden;text-overflow:ellipsis}
 table.rb .rb-tot{border-left:1px solid var(--line);font-weight:600}
 .rb-hint{font-size:10px;color:var(--dim);margin:2px 0 6px}
+body.dock-float .lib-panel.lifting{box-shadow:0 26px 64px rgba(0,0,0,.4);transition:box-shadow .15s}
+.lib-head,.lib-foot{user-select:none;-webkit-user-select:none}

@@ -4,6 +4,27 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.9.1] — 2026-07-15
+
+### Added
+- **Middle-button panning while creating rooms.** In Rooms mode, hold the
+  scroll-wheel button (or Space) and drag to pan the plan — over blank
+  plan and over existing rooms alike; the left button keeps drawing and
+  editing. Two-finger pan/pinch on touch was already available.
+
+## [1.9.0] — 2026-07-15
+
+### Added
+- **Press & hold to dock / undock the library.** Hold the panel (header,
+  footer, or empty list area) for half a second to tear it off into the
+  floating panel at your pointer and keep dragging to place it; hold the
+  floating panel to dock it back to the edge it came from. Movement cancels
+  the hold, and buttons, rows, and the resizer are exempt. Desktop/large
+  screens only — small screens keep the slide-in sheet.
+
+### Changed
+- The device library docks to the **left by default** again.
+
 ## [1.8.2] — 2026-07-14
 
 ### Fixed
@@ -215,6 +236,27 @@ follows [Semantic Versioning](https://semver.org).
 
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
+
+## [1.9.1] — 2026-07-15
+
+### Added
+- **Middle-button panning while creating rooms.** In Rooms mode, hold the
+  scroll-wheel button (or Space) and drag to pan the plan — over blank
+  plan and over existing rooms alike; the left button keeps drawing and
+  editing. Two-finger pan/pinch on touch was already available.
+
+## [1.9.0] — 2026-07-15
+
+### Added
+- **Press & hold to dock / undock the library.** Hold the panel (header,
+  footer, or empty list area) for half a second to tear it off into the
+  floating panel at your pointer and keep dragging to place it; hold the
+  floating panel to dock it back to the edge it came from. Movement cancels
+  the hold, and buttons, rows, and the resizer are exempt. Desktop/large
+  screens only — small screens keep the slide-in sheet.
+
+### Changed
+- The device library docks to the **left by default** again.
 
 ## [1.8.2] — 2026-07-14
 

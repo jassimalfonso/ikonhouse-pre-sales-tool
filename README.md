@@ -1,5 +1,5 @@
 # ikonhouse — AV Pre-Sales Studio
-**Version 1.8** · Developed by Jassim Alfonso with Claude · see CHANGELOG.md
+**Version 1.9** · Developed by Jassim Alfonso with Claude · see CHANGELOG.md
 
 A lightweight, browser-based pre-sales tool for AV integration projects.
 Upload or paste a floor plan, crop it to a print-ready format, place devices
@@ -13,8 +13,10 @@ No installation and no server — open `index.html` in any modern browser
 The device library is **dockable**: use the dock control at the bottom of
 the library panel to pin it to the left, top, bottom or right edge, pop it
 out as a floating panel you can drag anywhere, or hide it entirely for a
-full-window canvas (the Devices button brings it back). Your choice is
-saved inside project files.
+full-window canvas (the Devices button brings it back). You can also
+**press & hold** the panel to tear it off into floating mode, and press &
+hold the floating panel to dock it back. Your choice is saved inside
+project files.
 
 ---
 

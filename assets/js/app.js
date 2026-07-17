@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.10.0';
+const APP_VERSION='1.11.0';
 const isCompact=()=>window.innerWidth<=1024||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -85,7 +85,7 @@ let state = {
   version:APP_VERSION,
   project:'Untitled Project', client:'', location:'', reference:'', preparedBy:'',
   theme:SYS_THEME(), brandLogo:null, libDock:'left', lastDock:'left', libHidden:false, libFloat:null,
-  libSize:{w:264,h:60,fw:288,fh:520}, catOrder:[],
+  libSize:{w:324,h:60,fw:288,fh:520}, catOrder:[],
   items:[], floors:[], activeFloor:null, pinScale:1
 };
 let armedItem=null, selMarker=null, zoom=1, undoStack=[], redoStack=[], ctxTarget=null, draggingCat=null;
@@ -274,7 +274,7 @@ const openLib=()=>document.body.classList.add('lib-open');
 const closeLib=()=>document.body.classList.remove('lib-open');
 $('#btnLib').addEventListener('click',()=>{
   if(state.libHidden){ state.libHidden=false; applyDock(); return; }
-  openLib();
+  document.body.classList.contains('lib-open')?closeLib():openLib();
 });
 $('#libClose').addEventListener('click',closeLib);
 $('#libVeil').addEventListener('click',closeLib);
@@ -286,7 +286,7 @@ function applySizes(){
   lp.style.width='';lp.style.height='';
   const mob=isCompact();
   const d=state.libDock||'left';
-  if((d==='left'||d==='right')&&!mob) lp.style.width=Math.min(460,Math.max(208,sz.w))+'px';
+  if((d==='left'||d==='right')&&!mob) lp.style.width=Math.min(480,Math.max(220,sz.w))+'px';
   else if(d==='top'||d==='bottom')    lp.style.height=Math.min(190,Math.max(52,sz.h))+'px';
   else if(d==='float'&&!mob){
     lp.style.width=Math.min(460,Math.max(240,sz.fw))+'px';
@@ -378,6 +378,37 @@ function dropDock(zone){
   toast(`Library docked ${zone}.`);
   return true;
 }
+
+/* the grip in the library header tears the panel off instantly and drags
+   it with edge drop-zones — the discoverable sibling of press-and-hold */
+$('#libGrip').addEventListener('pointerdown',e=>{
+  if(isCompact())return;
+  e.preventDefault();e.stopPropagation();
+  const lp=$('#libPanel'), id=e.pointerId;
+  if(state.libDock!=='float'){
+    state.lastDock=state.libDock;
+    state.libDock='float';
+    state.libFloat={x:Math.max(8,e.clientX-144),y:Math.max(64,e.clientY-18)};
+    applyDock();
+  }
+  lp.classList.add('lifting');
+  let zone=null;
+  const mv=ev=>{
+    if(ev.pointerId!==id)return;
+    const x=Math.min(Math.max(8,ev.clientX-144),window.innerWidth-120);
+    const y=Math.min(Math.max(64,ev.clientY-18),window.innerHeight-80);
+    lp.style.left=x+'px';lp.style.top=y+'px';
+    state.libFloat={x,y};
+    zone=dockZoneAt(ev.clientX,ev.clientY);showDockHint(zone);
+  };
+  const up=ev=>{
+    if(ev.pointerId!==id)return;
+    lp.classList.remove('lifting');
+    document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);
+    dropDock(zone);
+  };
+  document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
+});
 
 /* press & hold the library panel to tear it off into a floating panel;
    press & hold the floating panel to dock it back to its previous edge.
@@ -502,9 +533,10 @@ function clipPolyRect(pts,x0,y0,x1,y1){
   return out;
 }
 /* snapping: candidate x/y from other rooms' points + plan edges */
-function snapCandidates(f,exceptRoom){
+function snapCandidates(f,exceptRoom,selfPts){
   const xs=[0,1],ys=[0,1];
   (f.rooms||[]).forEach(r=>{ if(r===exceptRoom)return; r.pts.forEach(p=>{xs.push(p.x);ys.push(p.y);}); });
+  if(selfPts)selfPts.forEach(p=>{xs.push(p.x);ys.push(p.y);});   /* align nodes within the room too */
   return {xs,ys};
 }
 function snapVal(v,cands,tol){ for(const c of cands){ if(Math.abs(v-c)<tol)return c; } return v; }
@@ -535,7 +567,7 @@ function renderRooms(){
   layer=el('div','room-layer');layer.id='roomLayer';
   const handleR=Math.max(5,8*(f.w/Math.max(1,planRect().width)));
   let svg=`<svg viewBox="0 0 ${f.w} ${f.h}" preserveAspectRatio="none">`;
-  svg+=`<defs><pattern id="rhatch" width="10" height="10" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="10" stroke-width="4.5"/></pattern></defs>`;
+  svg+=`<defs><pattern id="rhatch" width="8" height="8" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="8" stroke-width="5.5"/></pattern></defs>`;
   if(roomMode)svg+=`<rect class="rbg" x="0" y="0" width="${f.w}" height="${f.h}"/>`;
   f.rooms.forEach(r=>{
     const d=r.pts.map(p=>`${p.x*f.w},${p.y*f.h}`).join(' ');
@@ -643,7 +675,13 @@ function wireRoomPointer(layer,f){
         const a=room.pts[+t.dataset.after], b=room.pts[(vi)%room.pts.length];
         room.pts.splice(vi,0,{x:(a.x+b.x)/2,y:(a.y+b.y)/2});
       } else vi=+t.dataset.i;
-      const cands=snapCandidates(f,room);
+      const cands=snapCandidates(f,room,room.pts.filter((_,i)=>i!==vi));
+      /* the room's own corners are alignment targets too (excluding the
+         ones this drag moves) */
+      room.pts.forEach((q,qi)=>{
+        if(qi===vi)return;
+        cands.xs.push(q.x);cands.ys.push(q.y);
+      });
       /* angle lock applies to pure 4-corner rectangles only: they resize
          rigidly like rectangles. Once extra corners exist the shape is
          freeform — every corner drags freely. */
@@ -658,12 +696,13 @@ function wireRoomPointer(layer,f){
         const p=toFrac(ev);
         const nx=Math.min(1,Math.max(0,snapVal(p.x,cands.xs,tol)));
         const ny=Math.min(1,Math.max(0,snapVal(p.y,cands.ys,tol)));
+        showGuides(nx!==p.x?nx:null, ny!==p.y?ny:null);
         room.pts[vi]={x:nx,y:ny};
         if(lockPrev){ if(lockPrev.v)room.pts[pi].x=nx; else if(lockPrev.h)room.pts[pi].y=ny; }
         if(lockNext){ if(lockNext.v)room.pts[ni].x=nx; else if(lockNext.h)room.pts[ni].y=ny; }
         updateRoomInPlace(layer,f,room);
       };
-      const up=ev=>{if(ev.pointerId!==id)return;document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);renderRooms();};
+      const up=ev=>{if(ev.pointerId!==id)return;clearGuides();document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);renderRooms();};
       document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
       return;
     }
@@ -856,20 +895,40 @@ function renderMarkers(){
     holder.appendChild(m);
   });
 }
+/* alignment guides: thin bronze lines shown while a drag snaps */
+function showGuides(x,y){
+  const hold=$('#planHolder');
+  let v=hold.querySelector('.align-guide.v'), hg=hold.querySelector('.align-guide.h');
+  if(x!=null){ if(!v){v=el('div','align-guide v');hold.appendChild(v);} v.style.left=(x*100)+'%'; }
+  else if(v)v.remove();
+  if(y!=null){ if(!hg){hg=el('div','align-guide h');hold.appendChild(hg);} hg.style.top=(y*100)+'%'; }
+  else if(hg)hg.remove();
+}
+const clearGuides=()=>showGuides(null,null);
+
 function startDrag(p,m,ev){
   let moved=false;
   const startX=ev.clientX,startY=ev.clientY;
   m.setPointerCapture(ev.pointerId);
+  const f0=activeFloor();
+  const oxs=f0?f0.placements.filter(q=>q.id!==p.id).map(q=>q.x):[];
+  const oys=f0?f0.placements.filter(q=>q.id!==p.id).map(q=>q.y):[];
   const onMove=e=>{
     if(!moved&&Math.hypot(e.clientX-startX,e.clientY-startY)<4)return;
     moved=true;
     const r=planRect();
-    p.x=Math.min(1,Math.max(0,(e.clientX-r.left)/r.width));
-    p.y=Math.min(1,Math.max(0,(e.clientY-r.top)/r.height));
+    let nx=Math.min(1,Math.max(0,(e.clientX-r.left)/r.width));
+    let ny=Math.min(1,Math.max(0,(e.clientY-r.top)/r.height));
+    /* align with other ikons: snap to their x / y, guides show the line */
+    const tx=6/Math.max(1,r.width), ty=6/Math.max(1,r.height);
+    const sx=snapVal(nx,oxs,tx), sy=snapVal(ny,oys,ty);
+    showGuides(sx!==nx?sx:null, sy!==ny?sy:null);
+    p.x=sx;p.y=sy;
     m.style.left=(p.x*100)+'%';m.style.top=(p.y*100)+'%';   // live update without re-render
   };
   const onUp=()=>{
     m.removeEventListener('pointermove',onMove);m.removeEventListener('pointerup',onUp);m.removeEventListener('pointercancel',onUp);
+    clearGuides();
     setSelMarker(p.id);   // tap = select, drag = reposition (stays selected)
     renderMarkers();
   };
@@ -1999,7 +2058,7 @@ function loadProjectText(txt){
     const s=JSON.parse(txt);
     if(!s.items||!s.floors)throw 0;
     s.floors&&s.floors.forEach(f=>{f.rooms=f.rooms||[];});
-    state=Object.assign({version:APP_VERSION,theme:SYS_THEME(),brandLogo:null,pinScale:1,client:'',location:'',reference:'',preparedBy:'',libDock:'left',lastDock:'left',libHidden:false,libFloat:null,libSize:{w:264,h:60,fw:288,fh:520},catOrder:[]},s);
+    state=Object.assign({version:APP_VERSION,theme:SYS_THEME(),brandLogo:null,pinScale:1,client:'',location:'',reference:'',preparedBy:'',libDock:'left',lastDock:'left',libHidden:false,libFloat:null,libSize:{w:324,h:60,fw:288,fh:520},catOrder:[]},s);
     projHandle=null;                            /* re-linked by the picker path */
     armedItem=null;setSelMarker(null);undoStack=[];redoStack=[];
     if(cropMode)cancelCrop();
@@ -2137,4 +2196,4 @@ $('#welcome').addEventListener('pointermove',e=>{
 $('#welcome').addEventListener('pointerleave',()=>{ obFx.mx=-9999; obFx.my=-9999; });
 
 /* ──────────── Init ──────────── */
-applyTheme();renderBrand();applyDock();renderLibrary();renderFloors();showFloor();obStartFx();
+applyTheme();renderBrand();applyDock();closeLib();renderLibrary();renderFloors();showFloor();obStartFx();

@@ -583,9 +583,9 @@ body.lib-hidden .lib-resizer{display:none}
 .room-layer{position:absolute;inset:0;pointer-events:none}
 .room-layer svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
 .rpoly .rfill{fill:currentColor;fill-opacity:.08;stroke:currentColor;stroke-opacity:.75;stroke-width:1.5;stroke-dasharray:5 4;vector-effect:non-scaling-stroke}
-.rpoly .hatchfill{fill:url(#rhatch);stroke:none;color:inherit;opacity:.42}
+.rpoly .hatchfill{fill:url(#rhatch);stroke:none;color:inherit;opacity:.55}
 #rhatch line{stroke:currentColor}
-.rpoly.out .rfill{fill-opacity:.02;stroke-dasharray:3 3;stroke-width:2;stroke-opacity:.9}
+.rpoly.out .rfill{fill-opacity:.03;stroke-dasharray:none;stroke-width:2.5;stroke-opacity:1}
 .rpoly.hl .rfill{fill-opacity:.2;stroke-opacity:1;stroke-width:2.5;stroke-dasharray:none}
 .rpoly.sel .rfill{stroke-dasharray:none;stroke-width:2;stroke-opacity:1}
 .rvtx{fill:var(--panel);stroke:currentColor;stroke-width:2;vector-effect:non-scaling-stroke;cursor:grab}
@@ -673,3 +673,10 @@ table.rb .rb-tot{border-left:1px solid var(--line);font-weight:600}
 body.dock-float .lib-panel.lifting{box-shadow:0 26px 64px rgba(0,0,0,.4);transition:box-shadow .15s}
 .lib-head,.lib-foot{user-select:none;-webkit-user-select:none}
 .dock-hint{background:color-mix(in srgb, var(--hl) 16%, transparent);border:2px dashed var(--hl)}
+
+/* library drag grip */
+.lib-grip{width:22px;height:24px;display:inline-grid;place-items:center;color:var(--dim);cursor:grab;border-radius:6px;margin-right:2px;vertical-align:middle}
+.lib-grip:hover{color:var(--hl);background:var(--hl-soft)}
+.lib-grip:active{cursor:grabbing}
+.lib-grip svg{width:13px;height:13px;fill:currentColor;stroke:none}
+@media (max-width:1024px), (orientation:portrait) and (max-width:1280px){ .lib-grip{display:none} }

@@ -4,6 +4,35 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.11.0] — 2026-07-15
+
+### Added
+- **Visible drag grip on the library** (dot-grid button in its header):
+  drag it to carry the panel immediately — no press-and-hold needed — with
+  the same edge drop-zones to dock left/right/top/bottom, or drop in open
+  space to float. Press-and-hold still works.
+- **Room corners align to their own room:** dragging a node now snaps to
+  the other corners of the same room as well as neighbouring rooms and the
+  plan edges.
+
+### Changed
+- **New categories, made obvious:** the device dialog's category field now
+  reads "Pick one, or type a new category" — typing any new name has always
+  created it, now it says so.
+- **Ikon alignment guides** (snapping a dragged ikon to others' rows and
+  columns) now clear reliably on release.
+- **Out-of-scope hatching heavier again** — denser diagonal bars at higher
+  opacity with a solid outline.
+- **Side docks are wider by default (304px)** so device names are readable
+  immediately; drag the inner edge to taste as before.
+
+### Fixed
+- **Compact screens (incl. Fold portrait): the library can no longer camp
+  on the plan.** The Devices sheet never starts open, and the Devices
+  button now toggles it open/closed. Portrait widths up to 1280px use the
+  compact layout (added in 1.10.0 — make sure the deployed site is up to
+  date if a docked panel still appears in portrait).
+
 ## [1.10.0] — 2026-07-15
 
 ### Added
@@ -253,6 +282,35 @@ follows [Semantic Versioning](https://semver.org).
 
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
+
+## [1.11.0] — 2026-07-15
+
+### Added
+- **Visible drag grip on the library** (dot-grid button in its header):
+  drag it to carry the panel immediately — no press-and-hold needed — with
+  the same edge drop-zones to dock left/right/top/bottom, or drop in open
+  space to float. Press-and-hold still works.
+- **Room corners align to their own room:** dragging a node now snaps to
+  the other corners of the same room as well as neighbouring rooms and the
+  plan edges.
+
+### Changed
+- **New categories, made obvious:** the device dialog's category field now
+  reads "Pick one, or type a new category" — typing any new name has always
+  created it, now it says so.
+- **Ikon alignment guides** (snapping a dragged ikon to others' rows and
+  columns) now clear reliably on release.
+- **Out-of-scope hatching heavier again** — denser diagonal bars at higher
+  opacity with a solid outline.
+- **Side docks are wider by default (304px)** so device names are readable
+  immediately; drag the inner edge to taste as before.
+
+### Fixed
+- **Compact screens (incl. Fold portrait): the library can no longer camp
+  on the plan.** The Devices sheet never starts open, and the Devices
+  button now toggles it open/closed. Portrait widths up to 1280px use the
+  compact layout (added in 1.10.0 — make sure the deployed site is up to
+  date if a docked panel still appears in portrait).
 
 ## [1.10.0] — 2026-07-15
 

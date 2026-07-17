@@ -351,7 +351,7 @@ input[type=file]{display:none}
 /* ═══════════ Responsive: tablet & mobile ═══════════ */
 @media (max-width:1240px){ .dash-stats{display:none} }
 
-@media (max-width:1024px){
+@media (max-width:1024px), (orientation:portrait) and (max-width:1280px){
   .only-mobile{display:flex !important}
   .lib-title .only-mobile{display:grid !important}
   /* library becomes an off-canvas sheet */
@@ -424,7 +424,7 @@ body.dock-top .item-qty,body.dock-bottom .item-qty{min-width:0}
 body.dock-top .lib-foot,body.dock-bottom .lib-foot{border-top:none;border-left:1px solid var(--line);padding:0 12px;display:flex;align-items:center}
 body.dock-top .btn-new,body.dock-bottom .btn-new{width:auto;padding:8px 13px;white-space:nowrap}
 
-@media (max-width:1024px){
+@media (max-width:1024px), (orientation:portrait) and (max-width:1280px){
   /* top strip stays in place on small screens — no off-canvas, no Devices button */
   body.dock-top .lib-panel,body.dock-bottom .lib-panel{position:static;transform:none;box-shadow:none;width:auto;z-index:auto}
   body.dock-top .lib-veil,body.dock-bottom .lib-veil{display:none !important}
@@ -540,7 +540,7 @@ body.dock-float .lib-resizer{
   border-right:3px solid var(--line-2);border-bottom:3px solid var(--line-2);border-radius:0 0 12px 0;
 }
 body.lib-hidden .lib-resizer{display:none}
-@media (max-width:1024px){
+@media (max-width:1024px), (orientation:portrait) and (max-width:1280px){
   body.dock-left .lib-resizer,body.dock-right .lib-resizer,body.dock-float .lib-resizer{display:none}
   body.dock-float .lib-panel{
     position:fixed;top:0;bottom:0;left:0;width:min(320px,86vw);height:auto;
@@ -672,3 +672,4 @@ table.rb .rb-tot{border-left:1px solid var(--line);font-weight:600}
 .rb-hint{font-size:10px;color:var(--dim);margin:2px 0 6px}
 body.dock-float .lib-panel.lifting{box-shadow:0 26px 64px rgba(0,0,0,.4);transition:box-shadow .15s}
 .lib-head,.lib-foot{user-select:none;-webkit-user-select:none}
+.dock-hint{background:color-mix(in srgb, var(--hl) 16%, transparent);border:2px dashed var(--hl)}

@@ -4,6 +4,23 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.10.0] — 2026-07-15
+
+### Added
+- **Drag the library to dock it.** While carrying the floating panel (by
+  its grip, or fresh from a press-and-hold tear-off), the edges of the
+  canvas become drop zones with a live dashed preview — release on the
+  left, right, top or bottom edge to dock there; release anywhere else to
+  leave it floating.
+
+### Fixed
+- **Portrait tablets lost plan space to the docked library.** Tablets with
+  1025–1280 px portrait widths were getting the desktop layout, so a side
+  dock consumed a quarter of an already-narrow screen. Portrait screens up
+  to 1280 px now use the compact layout (slide-in Devices sheet for
+  vertical docks); rotating to landscape restores the full desktop layout
+  automatically.
+
 ## [1.9.1] — 2026-07-15
 
 ### Added
@@ -236,6 +253,23 @@ follows [Semantic Versioning](https://semver.org).
 
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
+
+## [1.10.0] — 2026-07-15
+
+### Added
+- **Drag the library to dock it.** While carrying the floating panel (by
+  its grip, or fresh from a press-and-hold tear-off), the edges of the
+  canvas become drop zones with a live dashed preview — release on the
+  left, right, top or bottom edge to dock there; release anywhere else to
+  leave it floating.
+
+### Fixed
+- **Portrait tablets lost plan space to the docked library.** Tablets with
+  1025–1280 px portrait widths were getting the desktop layout, so a side
+  dock consumed a quarter of an already-narrow screen. Portrait screens up
+  to 1280 px now use the compact layout (slide-in Devices sheet for
+  vertical docks); rotating to landscape restores the full desktop layout
+  automatically.
 
 ## [1.9.1] — 2026-07-15
 

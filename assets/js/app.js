@@ -77,7 +77,8 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.9.1';
+const APP_VERSION='1.10.0';
+const isCompact=()=>window.innerWidth<=1024||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
 let state = {
@@ -283,7 +284,7 @@ function applySizes(){
   const lp=$('#libPanel');
   const sz=state.libSize||(state.libSize={w:264,h:60,fw:288,fh:520});
   lp.style.width='';lp.style.height='';
-  const mob=window.innerWidth<=1024;
+  const mob=isCompact();
   const d=state.libDock||'left';
   if((d==='left'||d==='right')&&!mob) lp.style.width=Math.min(460,Math.max(208,sz.w))+'px';
   else if(d==='top'||d==='bottom')    lp.style.height=Math.min(190,Math.max(52,sz.h))+'px';
@@ -299,7 +300,7 @@ function applyDock(){
   if(state.libHidden) b.classList.add('lib-hidden');
   applySizes();
   const lp=$('#libPanel');
-  if(state.libDock==='float'&&window.innerWidth>1024){
+  if(state.libDock==='float'&&!isCompact()){
     const p=state.libFloat||{x:84,y:126};
     lp.style.left=Math.min(Math.max(8,p.x),window.innerWidth-120)+'px';
     lp.style.top =Math.min(Math.max(64,p.y),window.innerHeight-80)+'px';
@@ -314,7 +315,7 @@ document.querySelectorAll('#dockRow [data-dock]').forEach(btn=>{
     state.libDock=btn.dataset.dock; state.libHidden=false; applyDock();
     /* on small screens the vertical docks live in the slide-in sheet —
        open it right away so the library doesn't appear to vanish */
-    if(window.innerWidth<=1024){
+    if(isCompact()){
       if(['left','right','float'].includes(btn.dataset.dock)) openLib(); else closeLib();
     }
   });
@@ -343,11 +344,46 @@ $('#libResizer').addEventListener('pointerdown',e=>{
   document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
 });
 
+/* edge drop-zones while carrying the library: hover an edge to preview,
+   release to dock there */
+function dockZoneAt(x,y){
+  const wr=$('#stage').getBoundingClientRect(), m=56;
+  if(y>wr.top-40&&y<wr.bottom+40){
+    if(x<wr.left+m&&x>wr.left-40)return 'left';
+    if(x>wr.right-m&&x<wr.right+40)return 'right';
+  }
+  if(x>wr.left&&x<wr.right){
+    if(y<wr.top+m&&y>wr.top-40)return 'top';
+    if(y>wr.bottom-m&&y<wr.bottom+40)return 'bottom';
+  }
+  return null;
+}
+function showDockHint(zone){
+  let h=document.getElementById('dockHint');
+  if(!zone){ if(h)h.remove(); return; }
+  if(!h){ h=el('div','dock-hint'); h.id='dockHint'; document.body.appendChild(h); }
+  const wr=$('#stage').getBoundingClientRect();
+  const pos={
+    left:  `left:${wr.left}px;top:${wr.top}px;width:64px;height:${wr.height}px`,
+    right: `left:${wr.right-64}px;top:${wr.top}px;width:64px;height:${wr.height}px`,
+    top:   `left:${wr.left}px;top:${wr.top}px;width:${wr.width}px;height:60px`,
+    bottom:`left:${wr.left}px;top:${wr.bottom-60}px;width:${wr.width}px;height:60px`
+  }[zone];
+  h.style.cssText=`position:fixed;z-index:94;pointer-events:none;border-radius:10px;${pos}`;
+}
+function dropDock(zone){
+  showDockHint(null);
+  if(!zone)return false;
+  state.lastDock=zone; state.libDock=zone; applyDock();
+  toast(`Library docked ${zone}.`);
+  return true;
+}
+
 /* press & hold the library panel to tear it off into a floating panel;
    press & hold the floating panel to dock it back to its previous edge.
    Movement cancels the hold, and interactive children are exempt. */
 $('#libPanel').addEventListener('pointerdown',e=>{
-  if(window.innerWidth<=1024)return;                    /* sheets on small screens */
+  if(isCompact())return;                    /* sheets on small screens */
   if(e.button!==0&&e.pointerType==='mouse')return;
   if(e.target.closest('button,input,.item-row,.cat-head,.lib-resizer'))return;
   if(e.target.closest('.lib')&&!e.target.classList.contains('lib'))return;   /* list content scrolls */
@@ -364,17 +400,20 @@ $('#libPanel').addEventListener('pointerdown',e=>{
       lp.classList.add('lifting');
       toast('Library undocked — drag to place it, hold it again to dock back.');
       /* keep dragging until release */
+      let zone=null;
       const mv=ev=>{
         if(ev.pointerId!==id)return;
         const x=Math.min(Math.max(8,ev.clientX-144),window.innerWidth-120);
         const y=Math.min(Math.max(64,ev.clientY-20),window.innerHeight-80);
         lp.style.left=x+'px';lp.style.top=y+'px';
         state.libFloat={x,y};
+        zone=dockZoneAt(ev.clientX,ev.clientY);showDockHint(zone);
       };
       const up2=ev=>{
         if(ev.pointerId!==id)return;
         lp.classList.remove('lifting');
         document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up2);document.removeEventListener('pointercancel',up2);
+        dropDock(zone);
       };
       document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up2);document.addEventListener('pointercancel',up2);
     }else{
@@ -400,15 +439,18 @@ $('#floatGrip').addEventListener('pointerdown',e=>{
   const sx=e.clientX,sy=e.clientY;
   const x0=parseFloat(lp.style.left)||84, y0=parseFloat(lp.style.top)||126;
   const id=e.pointerId;
+  let zone=null;
   const mv=ev=>{
     if(ev.pointerId!==id)return;
     const x=Math.min(Math.max(8,x0+(ev.clientX-sx)),window.innerWidth-120);
     const y=Math.min(Math.max(64,y0+(ev.clientY-sy)),window.innerHeight-80);
     lp.style.left=x+'px';lp.style.top=y+'px';
     state.libFloat={x,y};
+    zone=dockZoneAt(ev.clientX,ev.clientY);showDockHint(zone);
   };
   const up=ev=>{ if(ev.pointerId!==id)return;
-    document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up); };
+    document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);
+    dropDock(zone); };
   document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
 });
 
@@ -1980,7 +2022,7 @@ $('#fileProject').addEventListener('change',e=>{
 window.addEventListener('beforeunload',e=>{
   if(state.floors.some(f=>f.placements.length)){e.preventDefault();e.returnValue='';}
 });
-window.addEventListener('resize',()=>{ applySizes(); if(activeFloor()&&!cropMode) fitZoom(); });
+window.addEventListener('resize',()=>{ applyDock(); if(activeFloor()&&!cropMode) fitZoom(); });
 
 /* ──────────── Onboarding ──────────── */
 function dismissOnboard(){ $('#welcome').style.display='none'; $('#setup').style.display='none'; obStopFx(); }

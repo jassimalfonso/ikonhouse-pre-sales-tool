@@ -7,7 +7,7 @@
 <title>ikonhouse — AV Pre-Sales Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/app.css?v=1.12.0">
+<link rel="stylesheet" href="assets/css/app.css?v=1.13.0">
 </head>
 <body>
 
@@ -45,7 +45,7 @@
         <button data-theme-opt="light"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>Light</button>
         <button data-theme-opt="dark"><svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>Dark</button>
       </div>
-      <div class="vm-label">Library dock</div>
+      <div class="vm-label vm-dock-label">Library dock</div>
       <div class="vm-row" id="dockRow">
         <button data-dock="left" title="Dock left"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
         <button data-dock="top" title="Dock top"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9.5h18"/></svg></button>
@@ -54,6 +54,7 @@
         <button data-dock="float" title="Floating panel"><svg viewBox="0 0 24 24"><rect x="8" y="8" width="13" height="11" rx="2"/><path d="M3 14V5a2 2 0 0 1 2-2h9"/></svg></button>
         <button id="dockHideOpt" title="Hide library"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M6 7l12 10"/></svg></button>
       </div>
+      <div class="vm-note">On this screen size the library lives in the slide-in <b>Devices</b> sheet — docking applies on larger screens.</div>
     </div>
   </div>
   <button class="tb-btn" id="btnBoq"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg><span class="lbl">BoQ</span></button>
@@ -98,7 +99,7 @@
   <aside class="lib-panel" id="libPanel">
     <div class="float-grip" id="floatGrip"><span></span></div>
     <div class="lib-head">
-      <span class="lib-title"><button class="lib-grip" id="libGrip" title="Drag to move — drop on an edge to dock, or in open space to float"><svg viewBox="0 0 24 24"><circle cx="9" cy="6" r="1.4"/><circle cx="15" cy="6" r="1.4"/><circle cx="9" cy="12" r="1.4"/><circle cx="15" cy="12" r="1.4"/><circle cx="9" cy="18" r="1.4"/><circle cx="15" cy="18" r="1.4"/></svg></button>Device library <span id="libCount"></span><button class="modal-x only-mobile" id="libClose">✕</button></span>
+      <span class="lib-title"><button class="lib-grip" id="libGrip" title="Drag to move — drop on an edge to dock, or in open space to float"><svg viewBox="0 0 24 24"><circle cx="9" cy="6" r="1.4"/><circle cx="15" cy="6" r="1.4"/><circle cx="9" cy="12" r="1.4"/><circle cx="15" cy="12" r="1.4"/><circle cx="9" cy="18" r="1.4"/><circle cx="15" cy="18" r="1.4"/></svg></button><span class="lib-title-text">Device library</span> <span id="libCount"></span><button class="modal-x only-mobile" id="libClose">✕</button></span>
       <input class="lib-search" id="libSearch" placeholder="Search devices…">
     </div>
     <div class="lib" id="libList"></div>
@@ -268,7 +269,7 @@
     </div>
   </div>
   <div class="ob-credit">Developed by Jassim Alfonso with Claude</div>
-  <div class="ob-foot">IKONHOUSE · PRE-SALES TOOL · V1.12</div>
+  <div class="ob-foot">IKONHOUSE · PRE-SALES TOOL · V1.13</div>
 </div>
 
 <div class="onboard" id="setup" style="display:none">
@@ -293,6 +294,6 @@
   </div>
 </div>
 
-<script src="assets/js/app.js?v=1.12.0"></script>
+<script src="assets/js/app.js?v=1.13.0"></script>
 </body>
 </html>

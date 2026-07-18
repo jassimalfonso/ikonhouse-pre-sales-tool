@@ -713,3 +713,15 @@ body.compact .lib-foot{border-left:none;border-top:1px solid var(--line);padding
 .btn-newcat svg{width:14px;height:14px}
 body.dock-top .btn-newcat,body.dock-bottom .btn-newcat{font-size:0;gap:0;padding:8px 10px}
 body.dock-top .btn-newcat svg,body.dock-bottom .btn-newcat svg{width:15px;height:15px}
+
+/* grip stays visible in horizontal docks — title text yields, not the handle */
+body.dock-top .lib-title,body.dock-bottom .lib-title{display:flex;align-items:center}
+body.dock-top .lib-title-text,body.dock-bottom .lib-title-text,
+body.dock-top #libCount,body.dock-bottom #libCount{display:none}
+/* compact: docking is not applicable — say so instead of confusing buttons */
+.vm-note{display:none;font-size:11px;color:var(--dim);line-height:1.55;padding:2px 4px 4px;max-width:220px}
+body.compact .vm-note{display:block}
+body.compact #dockRow,body.compact .vm-dock-label{display:none}
+/* per-category add + empty-category action */
+.cat-empty-add{font-size:11px;color:var(--hl);border:1px dashed var(--hl-line);border-radius:7px;padding:5px 10px}
+.cat-empty-add:hover{background:var(--hl-soft)}

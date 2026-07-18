@@ -4,6 +4,25 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.13.0] — 2026-07-16
+
+### Added
+- **Add devices straight from a category:** every category header has a ＋
+  button (and empty categories a "＋ Add a device" action) that opens the
+  device dialog with that category pre-filled.
+
+### Fixed
+- **Grip vanished when docked top/bottom on PC** — the drag handle lived in
+  the title, which horizontal docks hide. The grip now stays visible in
+  every dock, so you can always drag the library to another edge.
+- **Compact screens: dock buttons caused confusion** (top/bottom "made the
+  library disappear", right "showed a left window"). On small screens every
+  dock is the slide-in Devices sheet by design, so the dock buttons are now
+  replaced with a note explaining that; theme controls remain.
+- **Touch category reordering interrupted by the browser's long-press
+  menu** — the context menu is suppressed on category headers, so press &
+  hold reliably picks the category up (short buzz confirms).
+
 ## [1.12.0] — 2026-07-16
 
 ### Fixed
@@ -319,6 +338,25 @@ follows [Semantic Versioning](https://semver.org).
 
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
+
+## [1.13.0] — 2026-07-16
+
+### Added
+- **Add devices straight from a category:** every category header has a ＋
+  button (and empty categories a "＋ Add a device" action) that opens the
+  device dialog with that category pre-filled.
+
+### Fixed
+- **Grip vanished when docked top/bottom on PC** — the drag handle lived in
+  the title, which horizontal docks hide. The grip now stays visible in
+  every dock, so you can always drag the library to another edge.
+- **Compact screens: dock buttons caused confusion** (top/bottom "made the
+  library disappear", right "showed a left window"). On small screens every
+  dock is the slide-in Devices sheet by design, so the dock buttons are now
+  replaced with a note explaining that; theme controls remain.
+- **Touch category reordering interrupted by the browser's long-press
+  menu** — the context menu is suppressed on category headers, so press &
+  hold reliably picks the category up (short buzz confirms).
 
 ## [1.12.0] — 2026-07-16
 

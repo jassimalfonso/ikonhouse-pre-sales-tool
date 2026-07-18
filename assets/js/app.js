@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.12.0';
+const APP_VERSION='1.13.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -191,12 +191,18 @@ function renderLibrary(){
   cats.forEach(cat=>{
     const head=el('div','cat-head'+(draggingCat===cat?' dragging':''),
       `<span class="grip">⋮⋮</span><span class="cat-nm">${cat}</span>
-       <span class="cat-tools"><button class="ct-btn" data-act="ren" title="Rename category">✎</button><button class="ct-btn" data-act="del" title="Delete category">✕</button></span>`);
+       <span class="cat-tools"><button class="ct-btn" data-act="add" title="Add a device to this category">＋</button><button class="ct-btn" data-act="ren" title="Rename category">✎</button><button class="ct-btn" data-act="del" title="Delete category">✕</button></span>`);
     head.dataset.cat=cat; head.title='Drag to reorder categories';
     head.addEventListener('pointerdown',e=>{
       if(e.target.closest('.ct-btn'))return;               /* buttons, not a drag */
       if(e.pointerType!=='touch')e.preventDefault();       /* touch keeps native scroll until the hold arms */
       startCatDrag(cat,e);
+    });
+    head.querySelector('[data-act="add"]').addEventListener('click',e=>{
+      e.stopPropagation();
+      openItemModal();
+      $('#fCat').value=cat;                       /* pre-filled — just name the device */
+      setTimeout(()=>$('#fName').focus(),60);
     });
     head.querySelector('[data-act="ren"]').addEventListener('click',e=>{
       e.stopPropagation();
@@ -226,7 +232,10 @@ function renderLibrary(){
     list.appendChild(head);
     const inCat=items.filter(i=>(i.cat||'Other')===cat);
     if(!inCat.length){
-      const hint=el('div','cat-empty','No devices yet — use “New device” below and pick this category.');
+      const hint=el('div','cat-empty',`<button class="cat-empty-add">＋ Add a device to “${cat}”</button>`);
+      hint.querySelector('button').addEventListener('click',()=>{
+        openItemModal();$('#fCat').value=cat;setTimeout(()=>$('#fName').focus(),60);
+      });
       list.appendChild(hint);
     }
     inCat.forEach(item=>{
@@ -258,6 +267,7 @@ function renderLibrary(){
   renderStats();
 }
 $('#libSearch').addEventListener('input',renderLibrary);
+$('#libList').addEventListener('contextmenu',e=>{ if(e.target.closest('.cat-head'))e.preventDefault(); });
 $('#btnNewCat').addEventListener('click',()=>{
   const n=prompt('New category name');
   if(!n||!n.trim())return;

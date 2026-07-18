@@ -4,6 +4,26 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.12.0] — 2026-07-16
+
+### Fixed
+- **Blank left panel reserving space on compact screens (Fold, Chrome).**
+  The compact layout is no longer decided by CSS media queries alone: a
+  JavaScript-computed `compact` class (viewport-measured, updated on every
+  resize/fold) forces the sheet layout with authoritative overrides. On
+  compact screens every dock becomes the slide-in Devices sheet and the
+  plan always gets the full window.
+
+### Added
+- **Create categories from the library itself:** a dashed "Category" button
+  next to "New device" creates an empty category, placed at the top of the
+  list with a hint row until its first device arrives. Empty categories are
+  saved with the project and graduate automatically once populated.
+- **Touch: press & hold a category (~⅓s) to rearrange it** — a short buzz
+  confirms pickup, list scrolling locks while dragging, and simply swiping
+  still scrolls. Mouse drag is unchanged.
+- A one-time desktop tip pointing out the ⠿ grip for drag-to-dock.
+
 ## [1.11.1] — 2026-07-16
 
 ### Fixed
@@ -299,6 +319,26 @@ follows [Semantic Versioning](https://semver.org).
 
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
+
+## [1.12.0] — 2026-07-16
+
+### Fixed
+- **Blank left panel reserving space on compact screens (Fold, Chrome).**
+  The compact layout is no longer decided by CSS media queries alone: a
+  JavaScript-computed `compact` class (viewport-measured, updated on every
+  resize/fold) forces the sheet layout with authoritative overrides. On
+  compact screens every dock becomes the slide-in Devices sheet and the
+  plan always gets the full window.
+
+### Added
+- **Create categories from the library itself:** a dashed "Category" button
+  next to "New device" creates an empty category, placed at the top of the
+  list with a hint row until its first device arrives. Empty categories are
+  saved with the project and graduate automatically once populated.
+- **Touch: press & hold a category (~⅓s) to rearrange it** — a short buzz
+  confirms pickup, list scrolling locks while dragging, and simply swiping
+  still scrolls. Mouse drag is unchanged.
+- A one-time desktop tip pointing out the ⠿ grip for drag-to-dock.
 
 ## [1.11.1] — 2026-07-16
 

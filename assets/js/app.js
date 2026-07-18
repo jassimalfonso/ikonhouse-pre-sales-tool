@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.11.1';
+const APP_VERSION='1.12.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -185,7 +185,9 @@ function renderLibrary(){
   const present=[...new Set(items.map(i=>i.cat||'Other'))];
   state.catOrder=state.catOrder||[];
   present.forEach(c=>{ if(!state.catOrder.includes(c)) state.catOrder.push(c); });
-  const cats=state.catOrder.filter(c=>present.includes(c));
+  state.extraCats=(state.extraCats||[]).filter(c=>!present.includes(c));   /* filled ones graduate */
+  state.extraCats.forEach(c=>{ if(!state.catOrder.includes(c)) state.catOrder.unshift(c); });
+  const cats=state.catOrder.filter(c=>present.includes(c)||state.extraCats.includes(c));
   cats.forEach(cat=>{
     const head=el('div','cat-head'+(draggingCat===cat?' dragging':''),
       `<span class="grip">⋮⋮</span><span class="cat-nm">${cat}</span>
@@ -193,7 +195,8 @@ function renderLibrary(){
     head.dataset.cat=cat; head.title='Drag to reorder categories';
     head.addEventListener('pointerdown',e=>{
       if(e.target.closest('.ct-btn'))return;               /* buttons, not a drag */
-      e.preventDefault(); startCatDrag(cat,e);
+      if(e.pointerType!=='touch')e.preventDefault();       /* touch keeps native scroll until the hold arms */
+      startCatDrag(cat,e);
     });
     head.querySelector('[data-act="ren"]').addEventListener('click',e=>{
       e.stopPropagation();
@@ -203,6 +206,8 @@ function renderLibrary(){
       state.items.forEach(i=>{ if((i.cat||'Other')===cat)i.cat=name; });
       const oi=state.catOrder.indexOf(cat);
       if(oi>-1)state.catOrder[oi]=name;
+      const ei=(state.extraCats||[]).indexOf(cat);
+      if(ei>-1)state.extraCats[ei]=name;
       renderLibrary();renderBoq();
     });
     head.querySelector('[data-act="del"]').addEventListener('click',e=>{
@@ -214,11 +219,17 @@ function renderLibrary(){
       state.items=state.items.filter(i=>!ids.has(i.id));
       state.floors.forEach(f=>f.placements=f.placements.filter(p=>!ids.has(p.itemId)));
       state.catOrder=state.catOrder.filter(c=>c!==cat);
+      state.extraCats=(state.extraCats||[]).filter(c=>c!==cat);
       if(ids.has(armedItem))armItem(null);
       renderLibrary();renderMarkers();renderBoq();renderStats();
     });
     list.appendChild(head);
-    items.filter(i=>(i.cat||'Other')===cat).forEach(item=>{
+    const inCat=items.filter(i=>(i.cat||'Other')===cat);
+    if(!inCat.length){
+      const hint=el('div','cat-empty','No devices yet — use “New device” below and pick this category.');
+      list.appendChild(hint);
+    }
+    inCat.forEach(item=>{
       const qty=qtyOf(item.id);
       const row=el('div','item-row'+(armedItem===item.id?' armed':''));
       row.innerHTML=`<span class="item-chip" style="background:${item.color}">${iconHtml(item)}</span>
@@ -247,10 +258,32 @@ function renderLibrary(){
   renderStats();
 }
 $('#libSearch').addEventListener('input',renderLibrary);
+$('#btnNewCat').addEventListener('click',()=>{
+  const n=prompt('New category name');
+  if(!n||!n.trim())return;
+  const name=n.trim();
+  const present=state.items.some(i=>(i.cat||'Other')===name);
+  if(present||state.extraCats.includes(name)){toast(`“${name}” already exists.`);return;}
+  state.extraCats.push(name);
+  state.catOrder=state.catOrder.filter(c=>c!==name);
+  state.catOrder.unshift(name);                          /* new categories land on top */
+  renderLibrary();
+  toast(`Category “${name}” created — add devices to it anytime.`);
+});
 function startCatDrag(cat,e){
-  const id=e.pointerId, sx=e.clientX, sy=e.clientY; let started=false;
+  const id=e.pointerId, sx=e.clientX, sy=e.clientY; let started=false, armed=e.pointerType!=='touch';
+  let holdT=null;
+  if(!armed){
+    /* touch: press & hold ~350ms arms the drag; moving first means scrolling */
+    holdT=setTimeout(()=>{armed=true;draggingCat=cat;started=true;
+      $('#libList').style.overflow='hidden';
+      document.body.style.cursor='grabbing';renderLibrary();
+      if(navigator.vibrate)navigator.vibrate(12);
+    },350);
+  }
   const mv=ev=>{
     if(ev.pointerId!==id)return;
+    if(!armed){ if(Math.hypot(ev.clientX-sx,ev.clientY-sy)>8){clearTimeout(holdT);cleanup();} return; }
     if(!started&&Math.hypot(ev.clientX-sx,ev.clientY-sy)<5)return;
     if(!started){started=true;draggingCat=cat;document.body.style.cursor='grabbing';renderLibrary();}
     const under=document.elementFromPoint(ev.clientX,ev.clientY);
@@ -261,9 +294,13 @@ function startCatDrag(cat,e){
       if(from>-1&&to>-1){ o.splice(from,1); o.splice(to,0,cat); renderLibrary(); }
     }
   };
+  const cleanup=()=>{
+    document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);
+  };
   const up=ev=>{
     if(ev.pointerId!==id)return;
-    document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);
+    clearTimeout(holdT);cleanup();
+    $('#libList').style.overflow='';
     if(started){draggingCat=null;document.body.style.cursor='';renderLibrary();}
   };
   document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
@@ -295,6 +332,7 @@ function applySizes(){
 }
 function applyDock(){
   const b=document.body;
+  b.classList.toggle('compact',isCompact());
   b.classList.remove('dock-left','dock-right','dock-top','dock-bottom','dock-float','lib-hidden');
   b.classList.add('dock-'+(state.libDock||'left'));
   if(state.libHidden) b.classList.add('lib-hidden');
@@ -2201,3 +2239,4 @@ $('#welcome').addEventListener('pointerleave',()=>{ obFx.mx=-9999; obFx.my=-9999
 
 /* ──────────── Init ──────────── */
 applyTheme();renderBrand();applyDock();closeLib();renderLibrary();renderFloors();showFloor();obStartFx();
+if(!isCompact())setTimeout(()=>toast('Tip: drag the ⠿ grip on the device library to dock it left, right, top or bottom.'),1600);

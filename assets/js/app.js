@@ -77,8 +77,8 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.11.0';
-const isCompact=()=>window.innerWidth<=1024||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
+const APP_VERSION='1.11.1';
+const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
 let state = {
@@ -1412,6 +1412,10 @@ function renderIconPreview(){
   p.innerHTML=mIconImg?`<img src="${mIconImg}" alt="">`:'';
   $('#fIconClear').style.display=mIconImg?'block':'none';
 }
+$('#fCatNew').addEventListener('click',()=>{
+  const n=prompt('New category name');
+  if(n&&n.trim()){$('#fCat').value=n.trim();toast(`Category “${n.trim()}” will be created when you save the device.`);}
+});
 $('#fIconUpload').addEventListener('click',()=>$('#fileIcon').click());
 $('#fIconClear').addEventListener('click',()=>{mIconImg=null;buildIconGrid();renderIconPreview();});
 $('#fileIcon').addEventListener('change',e=>{

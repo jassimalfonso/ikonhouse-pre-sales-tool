@@ -298,7 +298,7 @@ table.boq tfoot td{font-weight:600;border-top:2px solid var(--txt);border-bottom
 .drawer-foot .tb-btn{flex:1;justify-content:center}
 
 /* modal */
-.veil{position:fixed;inset:0;background:rgba(12,11,9,.55);backdrop-filter:blur(2px);display:none;place-items:center;z-index:100;padding:16px}
+.veil{position:fixed;inset:0;background:rgba(12,11,9,.55);backdrop-filter:blur(2px);display:none;place-items:center;z-index:170;padding:16px}
 .veil.open{display:grid}
 .modal{background:var(--panel);border-radius:14px;width:490px;max-width:100%;max-height:92vh;overflow:auto;box-shadow:0 24px 64px rgba(0,0,0,.4)}
 .modal-sm{width:380px}
@@ -351,7 +351,7 @@ input[type=file]{display:none}
 /* ═══════════ Responsive: tablet & mobile ═══════════ */
 @media (max-width:1240px){ .dash-stats{display:none} }
 
-@media (max-width:1024px), (orientation:portrait) and (max-width:1280px){
+@media (max-width:1160px), (orientation:portrait) and (max-width:1280px){
   .only-mobile{display:flex !important}
   .lib-title .only-mobile{display:grid !important}
   /* library becomes an off-canvas sheet */
@@ -424,7 +424,7 @@ body.dock-top .item-qty,body.dock-bottom .item-qty{min-width:0}
 body.dock-top .lib-foot,body.dock-bottom .lib-foot{border-top:none;border-left:1px solid var(--line);padding:0 12px;display:flex;align-items:center}
 body.dock-top .btn-new,body.dock-bottom .btn-new{width:auto;padding:8px 13px;white-space:nowrap}
 
-@media (max-width:1024px), (orientation:portrait) and (max-width:1280px){
+@media (max-width:1160px), (orientation:portrait) and (max-width:1280px){
   /* top strip stays in place on small screens — no off-canvas, no Devices button */
   body.dock-top .lib-panel,body.dock-bottom .lib-panel{position:static;transform:none;box-shadow:none;width:auto;z-index:auto}
   body.dock-top .lib-veil,body.dock-bottom .lib-veil{display:none !important}
@@ -540,7 +540,7 @@ body.dock-float .lib-resizer{
   border-right:3px solid var(--line-2);border-bottom:3px solid var(--line-2);border-radius:0 0 12px 0;
 }
 body.lib-hidden .lib-resizer{display:none}
-@media (max-width:1024px), (orientation:portrait) and (max-width:1280px){
+@media (max-width:1160px), (orientation:portrait) and (max-width:1280px){
   body.dock-left .lib-resizer,body.dock-right .lib-resizer,body.dock-float .lib-resizer{display:none}
   body.dock-float .lib-panel{
     position:fixed;top:0;bottom:0;left:0;width:min(320px,86vw);height:auto;
@@ -679,4 +679,7 @@ body.dock-float .lib-panel.lifting{box-shadow:0 26px 64px rgba(0,0,0,.4);transit
 .lib-grip:hover{color:var(--hl);background:var(--hl-soft)}
 .lib-grip:active{cursor:grabbing}
 .lib-grip svg{width:13px;height:13px;fill:currentColor;stroke:none}
-@media (max-width:1024px), (orientation:portrait) and (max-width:1280px){ .lib-grip{display:none} }
+@media (max-width:1160px), (orientation:portrait) and (max-width:1280px){ .lib-grip{display:none} }
+.cat-row{display:flex;gap:8px}
+.cat-row input{flex:1;min-width:0}
+.cat-row .tb-btn{white-space:nowrap;flex:none}

@@ -7,7 +7,7 @@
 <title>ikonhouse — AV Pre-Sales Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/app.css?v=1.11.0">
+<link rel="stylesheet" href="assets/css/app.css?v=1.11.1">
 </head>
 <body>
 
@@ -162,7 +162,9 @@
     <div class="modal-b">
       <div class="f-grid2">
         <div class="f-row"><label>Device name</label><input id="fName" placeholder="e.g. Ceiling Speaker"></div>
-        <div class="f-row"><label>Category</label><input id="fCat" list="catList" placeholder="Pick one, or type a new category"><datalist id="catList"></datalist></div>
+        <div class="f-row"><label>Category</label>
+          <div class="cat-row"><input id="fCat" list="catList" placeholder="Pick one, or type a new category"><button class="tb-btn" id="fCatNew" title="Create a new category">+ New</button></div>
+          <datalist id="catList"></datalist></div>
       </div>
       <div class="f-grid2">
         <div class="f-row"><label>Model / SKU (optional)</label><input id="fModel" placeholder="e.g. Model or SKU"></div>
@@ -290,6 +292,6 @@
   </div>
 </div>
 
-<script src="assets/js/app.js?v=1.11.0"></script>
+<script src="assets/js/app.js?v=1.11.1"></script>
 </body>
 </html>

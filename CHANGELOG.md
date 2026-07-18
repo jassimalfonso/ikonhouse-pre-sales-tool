@@ -4,6 +4,23 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.11.1] — 2026-07-16
+
+### Fixed
+- **Fold-class screens no longer get the desktop layout.** The Fold 7's
+  inner display is wider than tall even held upright (~1092 CSS px), so it
+  dodged both the 1024px and the portrait breakpoints and kept the docked
+  panel over the plan. The compact layout now applies up to **1160px** in
+  any orientation (portrait still up to 1280px) — the library lives in the
+  toggleable Devices sheet there.
+- **New-device dialog opened behind the library sheet** on compact screens
+  (sheet z-index 130 vs dialog 100). Dialogs now sit above all panels.
+
+### Added
+- **“+ New” category button** in the device dialog — prompts for a name and
+  fills the field; the category is created when the device is saved. Typing
+  a new name directly still works.
+
 ## [1.11.0] — 2026-07-15
 
 ### Added
@@ -282,6 +299,23 @@ follows [Semantic Versioning](https://semver.org).
 
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
+
+## [1.11.1] — 2026-07-16
+
+### Fixed
+- **Fold-class screens no longer get the desktop layout.** The Fold 7's
+  inner display is wider than tall even held upright (~1092 CSS px), so it
+  dodged both the 1024px and the portrait breakpoints and kept the docked
+  panel over the plan. The compact layout now applies up to **1160px** in
+  any orientation (portrait still up to 1280px) — the library lives in the
+  toggleable Devices sheet there.
+- **New-device dialog opened behind the library sheet** on compact screens
+  (sheet z-index 130 vs dialog 100). Dialogs now sit above all panels.
+
+### Added
+- **“+ New” category button** in the device dialog — prompts for a name and
+  fills the field; the category is created when the device is saved. Typing
+  a new name directly still works.
 
 ## [1.11.0] — 2026-07-15
 

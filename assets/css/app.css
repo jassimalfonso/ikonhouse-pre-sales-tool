@@ -708,6 +708,8 @@ body.compact .item-row{padding:8px 9px}
 body.compact .lib-foot{border-left:none;border-top:1px solid var(--line);padding:10px 12px;display:flex;gap:8px}
 /* empty category hint + secondary footer button */
 .cat-empty{font-size:11px;color:var(--dim);padding:4px 8px 10px;line-height:1.5}
+.lib-foot{display:flex;gap:8px}
+.lib-foot .btn-new,.lib-foot .btn-newcat{flex:1;justify-content:center}
 .btn-newcat{display:flex;align-items:center;gap:7px;padding:9px 12px;border:1px dashed var(--line-2);border-radius:9px;color:var(--dim);font-size:12.5px;white-space:nowrap}
 .btn-newcat:hover{color:var(--hl);border-color:var(--hl-line);background:var(--hl-soft)}
 .btn-newcat svg{width:14px;height:14px}

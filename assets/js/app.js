@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.13.0';
+const APP_VERSION='1.13.1';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -263,7 +263,7 @@ function renderLibrary(){
     });
   });
   $('#libCount').textContent='· '+state.items.length;
-  $('#catList').innerHTML=[...new Set(state.items.map(i=>i.cat).filter(Boolean))].map(c=>`<option value="${c}">`).join('');
+  $('#catList').innerHTML=[...new Set([...state.items.map(i=>i.cat),...(state.extraCats||[]),...(state.catOrder||[])].filter(Boolean))].map(c=>`<option value="${c}">`).join('');
   renderStats();
 }
 $('#libSearch').addEventListener('input',renderLibrary);

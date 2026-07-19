@@ -4,6 +4,19 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.13.1] — 2026-07-16
+
+### Fixed
+- **Newly created categories missing from the device dialog's category
+  list.** The dropdown only read categories that already had a device in
+  them, so an empty category created via "＋ Category" or "＋ New" never
+  appeared until something was filed under it. It now includes empty and
+  in-progress categories too.
+
+### Changed
+- **"Category" now comes first** and matches "New device" in width in the
+  library footer — creating the container is the natural first step.
+
 ## [1.13.0] — 2026-07-16
 
 ### Added
@@ -338,6 +351,19 @@ follows [Semantic Versioning](https://semver.org).
 
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
+
+## [1.13.1] — 2026-07-16
+
+### Fixed
+- **Newly created categories missing from the device dialog's category
+  list.** The dropdown only read categories that already had a device in
+  them, so an empty category created via "＋ Category" or "＋ New" never
+  appeared until something was filed under it. It now includes empty and
+  in-progress categories too.
+
+### Changed
+- **"Category" now comes first** and matches "New device" in width in the
+  library footer — creating the container is the natural first step.
 
 ## [1.13.0] — 2026-07-16
 

@@ -571,11 +571,11 @@ body.lib-hidden .lib-resizer{display:none}
 
 /* touch devices get much larger crop handles */
 @media (pointer:coarse){
-  .ch{width:28px;height:28px;border-width:2.5px}
-  .ch[data-h="nw"]{left:-15px;top:-15px}
-  .ch[data-h="ne"]{right:-15px;top:-15px}
-  .ch[data-h="sw"]{left:-15px;bottom:-15px}
-  .ch[data-h="se"]{right:-15px;bottom:-15px}
+  .ch{width:36px;height:36px;border-width:3px}
+  .ch[data-h="nw"]{left:-19px;top:-19px}
+  .ch[data-h="ne"]{right:-19px;top:-19px}
+  .ch[data-h="sw"]{left:-19px;bottom:-19px}
+  .ch[data-h="se"]{right:-19px;bottom:-19px}
 }
 
 

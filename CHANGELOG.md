@@ -4,6 +4,20 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.15.1] — 2026-07-17
+
+### Fixed
+- **Room creation completely broken in 1.15.0.** The drawing and corner-
+  editing handlers referenced a variable whose declaration had been
+  removed, throwing on the first movement — no box could be drawn and no
+  corner grabbed. Both handlers were rebuilt and verified: drag-a-box,
+  tap-corner polygons, pinch-abort, wall snapping and rectangle angle-lock
+  all restored, with snap guide lines now shown while corners align.
+- **Handles are finger-sized on touch:** room corner/midpoint handles are
+  nearly twice as large on touch devices and keep their on-screen size as
+  you zoom; crop corner handles grew to 36px. Missing a handle no longer
+  sends the floor plan flying.
+
 ## [1.15.0] — 2026-07-17
 
 ### Added
@@ -387,6 +401,20 @@ follows [Semantic Versioning](https://semver.org).
 
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
+
+## [1.15.1] — 2026-07-17
+
+### Fixed
+- **Room creation completely broken in 1.15.0.** The drawing and corner-
+  editing handlers referenced a variable whose declaration had been
+  removed, throwing on the first movement — no box could be drawn and no
+  corner grabbed. Both handlers were rebuilt and verified: drag-a-box,
+  tap-corner polygons, pinch-abort, wall snapping and rectangle angle-lock
+  all restored, with snap guide lines now shown while corners align.
+- **Handles are finger-sized on touch:** room corner/midpoint handles are
+  nearly twice as large on touch devices and keep their on-screen size as
+  you zoom; crop corner handles grew to 36px. Missing a handle no longer
+  sends the floor plan flying.
 
 ## [1.15.0] — 2026-07-17
 

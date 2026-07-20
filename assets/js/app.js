@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.15.0';
+const APP_VERSION='1.15.1';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -636,7 +636,8 @@ function renderRooms(){
   if(!f||!(f.rooms||[]).length&&!roomMode)return;
   migrateRooms(f);
   layer=el('div','room-layer');layer.id='roomLayer';
-  const handleR=Math.max(5,8*(f.w/Math.max(1,planRect().width)));
+  const hb=matchMedia('(pointer:coarse)').matches?15:8;   /* finger-sized on touch */
+  const handleR=Math.max(hb*0.75,hb*(f.w/Math.max(1,planRect().width)));
   let svg=`<svg viewBox="0 0 ${f.w} ${f.h}" preserveAspectRatio="none">`;
   svg+=`<defs><pattern id="rhatch" width="8" height="8" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="8" stroke-width="5.5"/></pattern></defs>`;
   if(roomMode)svg+=`<rect class="rbg" x="0" y="0" width="${f.w}" height="${f.h}"/>`;
@@ -770,12 +771,6 @@ function wireRoomPointer(layer,f){
         const a=room.pts[+t.dataset.after], b=room.pts[(vi)%room.pts.length];
         room.pts.splice(vi,0,{x:(a.x+b.x)/2,y:(a.y+b.y)/2});
       } else vi=+t.dataset.i;
-      /* the room's own corners are alignment targets too (excluding the
-         ones this drag moves) */
-      room.pts.forEach((q,qi)=>{
-        if(qi===vi)return;
-        cands.xs.push(q.x);cands.ys.push(q.y);
-      });
       /* angle lock applies to pure 4-corner rectangles only: they resize
          rigidly like rectangles. Once extra corners exist the shape is
          freeform — every corner drags freely. */
@@ -788,9 +783,9 @@ function wireRoomPointer(layer,f){
       const mv=ev=>{
         if(ev.pointerId!==id)return;
         const p=toFrac(ev);
-        const nx=Math.min(1,Math.max(0,snapVal(p.x,cands.xs,tol)));
-        const ny=Math.min(1,Math.max(0,snapVal(p.y,cands.ys,tol)));
-        showGuides(nx!==p.x?nx:null, ny!==p.y?ny:null);
+        const sp=roomSnapPoint(p,f,room,room.pts.filter((_,qi)=>qi!==vi),tol);
+        const nx=sp.x, ny=sp.y;
+        showGuides(sp.sx?nx:null, sp.sy?ny:null);
         room.pts[vi]={x:nx,y:ny};
         if(lockPrev){ if(lockPrev.v)room.pts[pi].x=nx; else if(lockPrev.h)room.pts[pi].y=ny; }
         if(lockNext){ if(lockNext.v)room.pts[ni].x=nx; else if(lockNext.h)room.pts[ni].y=ny; }
@@ -835,31 +830,104 @@ function wireRoomPointer(layer,f){
     renderRooms();
   });
 }
-/* draw a new room by dragging on the layer background */
+/* ── room drawing on the layer background rect (.rbg):
+      tap corners for a custom shape, drag for a box.
+      Ortho guidance + wall snapping via roomSnapPoint. ── */
+let polyPts=null, lastPolyTap=0;
+function polyPreview(cursor){
+  let pv=document.getElementById('polyPrev');
+  const f=activeFloor();
+  if(!polyPts||!f){ if(pv)pv.remove(); return; }
+  if(!pv){
+    pv=document.createElement('div');pv.id='polyPrev';pv.className='poly-prev';
+    $('#planHolder').appendChild(pv);
+  }
+  const pts=[...polyPts, ...(cursor?[cursor]:[])];
+  const d=pts.map(p=>`${p.x*f.w},${p.y*f.h}`).join(' ');
+  const first=polyPts[0];
+  pv.innerHTML=`<svg viewBox="0 0 ${f.w} ${f.h}" preserveAspectRatio="none">
+    <polyline points="${d}"/>
+    <circle cx="${first.x*f.w}" cy="${first.y*f.h}" r="${Math.max(6,10*(f.w/Math.max(1,planRect().width)))}"/>
+  </svg>`;
+}
+function polySnap(raw,f,tol){
+  const sp=roomSnapPoint(raw,f,null,polyPts,tol);
+  if(polyPts&&polyPts.length){                        /* ortho guidance from the last corner */
+    const prev=polyPts[polyPts.length-1];
+    if(!sp.sx&&Math.abs(sp.x-prev.x)<tol*1.6)sp.x=prev.x;
+    else if(!sp.sy&&Math.abs(sp.y-prev.y)<tol*1.6)sp.y=prev.y;
+  }
+  return sp;
+}
+function cancelPoly(){ polyPts=null; polyPreview(null); }
+function finishPoly(){
+  const f=activeFloor();
+  if(!polyPts||polyPts.length<3){cancelPoly();return;}
+  const pts=polyPts.slice(); cancelPoly();
+  if(polyArea(pts)<0.0006)return;
+  const name=prompt('Room / area name',`Room ${(f.rooms||[]).length+1}`);
+  if(name===null){renderRooms();return;}
+  const room=migrateRoom({id:uid(),name:(name.trim()||`Room ${(f.rooms||[]).length+1}`),pts});
+  (f.rooms=f.rooms||[]).push(room);
+  pushUndo({type:'room-add',floorId:f.id,room:JSON.parse(JSON.stringify(room))});
+  selRoom=room.id;
+  renderRooms();
+  const lab=document.querySelector(`#roomLayer .rlabel[data-room="${room.id}"]`);
+  if(lab)openRoomPop(room,lab);
+}
 function startRoomDraw(e,f){
+  if(e.pointerType==='mouse'&&e.button!==0)return;    /* middle/right → pan */
+  if(pinchActive)return;
   e.preventDefault();e.stopPropagation();
-  closeRoomPop();selRoom=null;
+  closeRoomPop();
   const r=planRect();
   const fx=v=>Math.min(1,Math.max(0,v));
   const tol=8/Math.max(1,r.width);
   const sp0=roomSnapPoint({x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height},f,null,null,tol);
   const x0=fx(sp0.x), y0=fx(sp0.y);
   const prev=el('div','room-draw');$('#planHolder').appendChild(prev);
-  let x1=x0,y1=y0,movedPx=0;
+  let x1=x0,y1=y0,movedPx=0,aborted=false;
   const draw=()=>{
     const rx=Math.min(x0,x1),ry=Math.min(y0,y1),rw=Math.abs(x1-x0),rh=Math.abs(y1-y0);
     prev.style.cssText=`left:${rx*100}%;top:${ry*100}%;width:${rw*100}%;height:${rh*100}%`;
     return{rx,ry,rw,rh};
   };
   const id=e.pointerId;
-  const mv=ev=>{if(ev.pointerId!==id)return;x1=fx(snapVal((ev.clientX-r.left)/r.width,cands.xs,tol));y1=fx(snapVal((ev.clientY-r.top)/r.height,cands.ys,tol));draw();};
-  const up=ev=>{
+  const stop=()=>{document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);};
+  const mv=ev=>{
     if(ev.pointerId!==id)return;
-    document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);
+    if(pinchActive){aborted=true;prev.remove();stop();return;}   /* second finger = zoom */
+    movedPx=Math.max(movedPx,Math.hypot(ev.clientX-e.clientX,ev.clientY-e.clientY));
+    if(movedPx<6)return;
+    const sp=roomSnapPoint({x:(ev.clientX-r.left)/r.width,y:(ev.clientY-r.top)/r.height},f,null,null,tol);
+    x1=fx(sp.x);y1=fx(sp.y);draw();
+  };
+  const up=ev=>{
+    if(ev.pointerId!==id||aborted)return;
+    stop();
+    if(pinchActive){prev.remove();return;}
+    if(movedPx<6){                                    /* tap: a polygon corner */
+      prev.remove();
+      const sp=polySnap({x:(ev.clientX-r.left)/r.width,y:(ev.clientY-r.top)/r.height},f,tol);
+      const now=performance.now();
+      if(polyPts&&polyPts.length>=3){
+        const first=polyPts[0];
+        const closePx=Math.hypot((sp.x-first.x)*r.width,(sp.y-first.y)*r.height);
+        if(closePx<18||now-lastPolyTap<320){finishPoly();return;} /* first corner or double-tap closes */
+      }
+      lastPolyTap=now;
+      (polyPts=polyPts||[]).push({x:sp.x,y:sp.y});
+      polyPreview(null);
+      $('#hintbar').innerHTML=polyPts.length<3
+        ?'Tap corners to outline the room · lines stay straight near horizontal/vertical'
+        :'Tap the <b>first corner</b> (or double-tap) to close · <b>Esc</b> cancels';
+      return;
+    }
+    if(polyPts)cancelPoly();                          /* a drag supersedes stray corners */
     const g=draw();prev.remove();
-    if(g.rw<0.015||g.rh<0.015){renderRooms();return;}
+    if(g.rw<0.015||g.rh<0.015)return;
     const name=prompt('Room / area name',`Room ${(f.rooms||[]).length+1}`);
-    if(name===null){renderRooms();return;}
+    if(name===null)return;
     const room=migrateRoom({id:uid(),name:(name.trim()||`Room ${(f.rooms||[]).length+1}`),
       pts:[{x:g.rx,y:g.ry},{x:g.rx+g.rw,y:g.ry},{x:g.rx+g.rw,y:g.ry+g.rh},{x:g.rx,y:g.ry+g.rh}]});
     (f.rooms=f.rooms||[]).push(room);
@@ -871,6 +939,14 @@ function startRoomDraw(e,f){
   };
   document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
 }
+/* rubber segment while a polygon is in progress */
+document.addEventListener('pointermove',e=>{
+  if(!roomMode||!polyPts||pinchActive)return;
+  const f=activeFloor();if(!f)return;
+  const r=planRect(), tol=8/Math.max(1,r.width);
+  polyPreview(polySnap({x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height},f,tol));
+});
+
 /* room popover: name, color, scope, delete */
 function closeRoomPop(){const p=$('#roomPop');if(p)p.remove();}
 function openRoomPop(r,anchor){
@@ -1227,13 +1303,19 @@ function fitZoom(){
   zoom=Math.max(0.05,Math.min((stage.clientWidth-mrg)/f.w,(stage.clientHeight-mrg)/f.h,1.6));
   panX=(stage.clientWidth -f.w*zoom)/2;
   panY=(stage.clientHeight-f.h*zoom)/2;
-  applyView();
+  applyView();queueRoomsRefresh();
+}
+let roomsRefreshQ=false;
+function queueRoomsRefresh(){
+  if(roomsRefreshQ||(!roomMode&&!hlRoom))return;
+  roomsRefreshQ=true;
+  requestAnimationFrame(()=>{roomsRefreshQ=false;renderRooms();});
 }
 function zoomAt(cx,cy,nz){
   nz=Math.min(4,Math.max(0.05,nz));
   const k=nz/zoom;
   panX=cx-(cx-panX)*k; panY=cy-(cy-panY)*k; zoom=nz;
-  clampPan();applyView();
+  clampPan();applyView();queueRoomsRefresh();
 }
 $('#zoomIn').addEventListener('click',()=>zoomAt(stage.clientWidth/2,stage.clientHeight/2,zoom*1.2));
 $('#zoomOut').addEventListener('click',()=>zoomAt(stage.clientWidth/2,stage.clientHeight/2,zoom/1.2));
@@ -1315,7 +1397,7 @@ stage.addEventListener('touchmove',e=>{
     }
     panX=mx-(pinch.mx-pinch.px)*(nz/pinch.z);
     panY=my-(pinch.my-pinch.py)*(nz/pinch.z);
-    zoom=nz;clampPan();applyView();
+    zoom=nz;clampPan();applyView();queueRoomsRefresh();
   }
 },{passive:false});
 stage.addEventListener('touchend',e=>{ if(e.touches.length<2){pinch=null;pinchActive=false;} },{passive:true});

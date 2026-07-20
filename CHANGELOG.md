@@ -4,6 +4,17 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.15.2] — 2026-07-17
+
+### Changed
+- **Gentler snapping in Rooms mode:** magnet range reduced (5px base,
+  walls slightly tighter, narrower straight-line guidance) so corners can
+  be fine-tuned onto the floor plan''s own drawn walls without being yanked
+  to a neighbouring room. Hold **Alt** while drawing or dragging a corner
+  to disable snapping entirely.
+- **Room nodes slimmed:** corner/midpoint handles reduced (~25% on touch,
+  slightly on desktop) — still catchable, no longer bulky.
+
 ## [1.15.1] — 2026-07-17
 
 ### Fixed
@@ -401,6 +412,17 @@ follows [Semantic Versioning](https://semver.org).
 
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
+
+## [1.15.2] — 2026-07-17
+
+### Changed
+- **Gentler snapping in Rooms mode:** magnet range reduced (5px base,
+  walls slightly tighter, narrower straight-line guidance) so corners can
+  be fine-tuned onto the floor plan''s own drawn walls without being yanked
+  to a neighbouring room. Hold **Alt** while drawing or dragging a corner
+  to disable snapping entirely.
+- **Room nodes slimmed:** corner/midpoint handles reduced (~25% on touch,
+  slightly on desktop) — still catchable, no longer bulky.
 
 ## [1.15.1] — 2026-07-17
 

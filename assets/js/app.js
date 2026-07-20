@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.15.1';
+const APP_VERSION='1.15.2';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -589,6 +589,8 @@ function snapCandidates(f,exceptRoom,selfPts){
 }
 function snapVal(v,cands,tol){ for(const c of cands){ if(Math.abs(v-c)<tol)return c; } return v; }
 function roomSnapPoint(p,f,exceptRoom,selfPts,tol){
+  if(!tol)return {x:Math.min(1,Math.max(0,p.x)),y:Math.min(1,Math.max(0,p.y)),sx:false,sy:false};
+  const wallTol=tol*0.8;
   let x=p.x,y=p.y,sx=false,sy=false;
   const corner=q=>{ if(!sx&&Math.abs(x-q.x)<tol){x=q.x;sx=true;} if(!sy&&Math.abs(y-q.y)<tol){y=q.y;sy=true;} };
   (f.rooms||[]).forEach(r=>{ if(r!==exceptRoom) r.pts.forEach(corner); });
@@ -601,11 +603,11 @@ function roomSnapPoint(p,f,exceptRoom,selfPts,tol){
       const a=r.pts[i],b=r.pts[(i+1)%n];
       if(!sx&&Math.abs(a.x-b.x)<0.002){
         const y0=Math.min(a.y,b.y)-tol,y1=Math.max(a.y,b.y)+tol;
-        if(y>=y0&&y<=y1&&Math.abs(x-a.x)<tol){x=a.x;sx=true;}
+        if(y>=y0&&y<=y1&&Math.abs(x-a.x)<wallTol){x=a.x;sx=true;}
       }
       if(!sy&&Math.abs(a.y-b.y)<0.002){
         const x0=Math.min(a.x,b.x)-tol,x1=Math.max(a.x,b.x)+tol;
-        if(x>=x0&&x<=x1&&Math.abs(y-a.y)<tol){y=a.y;sy=true;}
+        if(x>=x0&&x<=x1&&Math.abs(y-a.y)<wallTol){y=a.y;sy=true;}
       }
     }
   });
@@ -636,7 +638,7 @@ function renderRooms(){
   if(!f||!(f.rooms||[]).length&&!roomMode)return;
   migrateRooms(f);
   layer=el('div','room-layer');layer.id='roomLayer';
-  const hb=matchMedia('(pointer:coarse)').matches?15:8;   /* finger-sized on touch */
+  const hb=matchMedia('(pointer:coarse)').matches?11:7;   /* catchable, not bulky */
   const handleR=Math.max(hb*0.75,hb*(f.w/Math.max(1,planRect().width)));
   let svg=`<svg viewBox="0 0 ${f.w} ${f.h}" preserveAspectRatio="none">`;
   svg+=`<defs><pattern id="rhatch" width="8" height="8" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="8" stroke-width="5.5"/></pattern></defs>`;
@@ -651,7 +653,7 @@ function renderRooms(){
     if((roomMode&&r.id===selRoom)||(!roomMode&&r.id===hlRoom)){
       r.pts.forEach((p,i)=>{
         const q=r.pts[(i+1)%r.pts.length];
-        svg+=`<rect class="rmid" data-room="${r.id}" data-after="${i}" x="${(p.x+q.x)/2*f.w-handleR*0.7}" y="${(p.y+q.y)/2*f.h-handleR*0.7}" width="${handleR*1.4}" height="${handleR*1.4}"/>`;
+        svg+=`<rect class="rmid" data-room="${r.id}" data-after="${i}" x="${(p.x+q.x)/2*f.w-handleR*0.6}" y="${(p.y+q.y)/2*f.h-handleR*0.6}" width="${handleR*1.2}" height="${handleR*1.2}"/>`;
       });
       r.pts.forEach((p,i)=>{
         svg+=`<circle class="rvtx" data-room="${r.id}" data-i="${i}" cx="${p.x*f.w}" cy="${p.y*f.h}" r="${handleR}"/>`;
@@ -755,7 +757,7 @@ function wireRoomPointer(layer,f){
     if(e.pointerType==='mouse'&&e.button!==0)return;  /* middle/right → pan */
     const t=e.target;
     const toFrac=ev=>{const rc=planRect();return{x:(ev.clientX-rc.left)/rc.width,y:(ev.clientY-rc.top)/rc.height};};
-    const tol=8/Math.max(1,planRect().width);
+    const tol=5/Math.max(1,planRect().width);
     const id=e.pointerId;
     const room=t.dataset.room?f.rooms.find(r=>r.id===t.dataset.room):null;
     if(!roomMode&&(!room||room.id!==hlRoom))return;   /* outside Rooms mode, only the highlighted room is editable */
@@ -783,7 +785,7 @@ function wireRoomPointer(layer,f){
       const mv=ev=>{
         if(ev.pointerId!==id)return;
         const p=toFrac(ev);
-        const sp=roomSnapPoint(p,f,room,room.pts.filter((_,qi)=>qi!==vi),tol);
+        const sp=roomSnapPoint(p,f,room,room.pts.filter((_,qi)=>qi!==vi),ev.altKey?0:tol);
         const nx=sp.x, ny=sp.y;
         showGuides(sp.sx?nx:null, sp.sy?ny:null);
         room.pts[vi]={x:nx,y:ny};
@@ -854,8 +856,8 @@ function polySnap(raw,f,tol){
   const sp=roomSnapPoint(raw,f,null,polyPts,tol);
   if(polyPts&&polyPts.length){                        /* ortho guidance from the last corner */
     const prev=polyPts[polyPts.length-1];
-    if(!sp.sx&&Math.abs(sp.x-prev.x)<tol*1.6)sp.x=prev.x;
-    else if(!sp.sy&&Math.abs(sp.y-prev.y)<tol*1.6)sp.y=prev.y;
+    if(!sp.sx&&Math.abs(sp.x-prev.x)<tol*1.2)sp.x=prev.x;
+    else if(!sp.sy&&Math.abs(sp.y-prev.y)<tol*1.2)sp.y=prev.y;
   }
   return sp;
 }
@@ -882,7 +884,7 @@ function startRoomDraw(e,f){
   closeRoomPop();
   const r=planRect();
   const fx=v=>Math.min(1,Math.max(0,v));
-  const tol=8/Math.max(1,r.width);
+  const tol=5/Math.max(1,r.width);
   const sp0=roomSnapPoint({x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height},f,null,null,tol);
   const x0=fx(sp0.x), y0=fx(sp0.y);
   const prev=el('div','room-draw');$('#planHolder').appendChild(prev);
@@ -899,7 +901,7 @@ function startRoomDraw(e,f){
     if(pinchActive){aborted=true;prev.remove();stop();return;}   /* second finger = zoom */
     movedPx=Math.max(movedPx,Math.hypot(ev.clientX-e.clientX,ev.clientY-e.clientY));
     if(movedPx<6)return;
-    const sp=roomSnapPoint({x:(ev.clientX-r.left)/r.width,y:(ev.clientY-r.top)/r.height},f,null,null,tol);
+    const sp=roomSnapPoint({x:(ev.clientX-r.left)/r.width,y:(ev.clientY-r.top)/r.height},f,null,null,ev.altKey?0:tol);
     x1=fx(sp.x);y1=fx(sp.y);draw();
   };
   const up=ev=>{
@@ -908,7 +910,7 @@ function startRoomDraw(e,f){
     if(pinchActive){prev.remove();return;}
     if(movedPx<6){                                    /* tap: a polygon corner */
       prev.remove();
-      const sp=polySnap({x:(ev.clientX-r.left)/r.width,y:(ev.clientY-r.top)/r.height},f,tol);
+      const sp=polySnap({x:(ev.clientX-r.left)/r.width,y:(ev.clientY-r.top)/r.height},f,ev.altKey?0:tol);
       const now=performance.now();
       if(polyPts&&polyPts.length>=3){
         const first=polyPts[0];
@@ -943,7 +945,7 @@ function startRoomDraw(e,f){
 document.addEventListener('pointermove',e=>{
   if(!roomMode||!polyPts||pinchActive)return;
   const f=activeFloor();if(!f)return;
-  const r=planRect(), tol=8/Math.max(1,r.width);
+  const r=planRect(), tol=5/Math.max(1,r.width);
   polyPreview(polySnap({x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height},f,tol));
 });
 

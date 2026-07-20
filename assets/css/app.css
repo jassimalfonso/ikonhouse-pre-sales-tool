@@ -727,3 +727,12 @@ body.compact #dockRow,body.compact .vm-dock-label{display:none}
 /* per-category add + empty-category action */
 .cat-empty-add{font-size:11px;color:var(--hl);border:1px dashed var(--hl-line);border-radius:7px;padding:5px 10px}
 .cat-empty-add:hover{background:var(--hl-soft)}
+/* invisible wide hit-stroke along room outlines — click to select/edit */
+.redge{fill:none;stroke:transparent;stroke-width:12;vector-effect:non-scaling-stroke;pointer-events:stroke;cursor:pointer}
+@media (pointer:coarse){ .redge{stroke-width:18} }
+.plan-holder.rooming .redge{cursor:move}
+/* in-progress polygon preview */
+.poly-prev{position:absolute;inset:0;pointer-events:none}
+.poly-prev svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.poly-prev polyline{fill:color-mix(in srgb, var(--hl) 8%, transparent);stroke:var(--hl);stroke-width:1.6;vector-effect:non-scaling-stroke;stroke-dasharray:6 4}
+.poly-prev circle{fill:var(--panel);stroke:var(--hl);stroke-width:2;vector-effect:non-scaling-stroke}

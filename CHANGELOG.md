@@ -4,6 +4,42 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.15.0] — 2026-07-17
+
+### Added
+- **Tap-corner room drawing.** In Rooms mode, tap corner after corner to
+  outline any shape — L-shapes, notches, wrapped terraces — with a live
+  dashed preview; tap the first corner (marked with a ring) or double-tap
+  to close and name the room. Dragging still draws a quick box.
+- **Straight-line guidance while tapping:** each new segment auto-aligns
+  to horizontal/vertical when close, so outlines stay presentable without
+  effort; clearly diagonal taps stay diagonal.
+- **Wall snapping.** Corners now snap to neighbouring rooms'' *edges*, not
+  just their corners — rooms butt flush along shared walls at any point,
+  staying visually connected while remaining separate zones with their own
+  device counts.
+
+## [1.14.0] — 2026-07-17
+
+### Changed
+- **Snapping is now room-to-room only.** Corners and drawn rectangles no
+  longer magnet to the plan boundary — they snap exclusively to existing
+  room corners (neighbouring rooms, and the same room''s other corners),
+  which is what alignment is actually for.
+
+### Fixed
+- **Two-finger zoom no longer creates accidental rooms** (Fold and other
+  touch devices): starting a pinch instantly aborts any in-flight room
+  draw, drawing cannot begin during a pinch, and a pinch that ends a
+  gesture never opens the name prompt.
+
+### Added
+- **Click a room''s edge to work with it** — a generous invisible hit zone
+  runs along every room outline (wider on touch). Single-click highlights
+  (or selects in Rooms mode), double-click opens the editor, and in Rooms
+  mode the edge drags the room just like its body. No more hunting for the
+  name label.
+
 ## [1.13.1] — 2026-07-16
 
 ### Fixed
@@ -351,6 +387,42 @@ follows [Semantic Versioning](https://semver.org).
 
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
+
+## [1.15.0] — 2026-07-17
+
+### Added
+- **Tap-corner room drawing.** In Rooms mode, tap corner after corner to
+  outline any shape — L-shapes, notches, wrapped terraces — with a live
+  dashed preview; tap the first corner (marked with a ring) or double-tap
+  to close and name the room. Dragging still draws a quick box.
+- **Straight-line guidance while tapping:** each new segment auto-aligns
+  to horizontal/vertical when close, so outlines stay presentable without
+  effort; clearly diagonal taps stay diagonal.
+- **Wall snapping.** Corners now snap to neighbouring rooms'' *edges*, not
+  just their corners — rooms butt flush along shared walls at any point,
+  staying visually connected while remaining separate zones with their own
+  device counts.
+
+## [1.14.0] — 2026-07-17
+
+### Changed
+- **Snapping is now room-to-room only.** Corners and drawn rectangles no
+  longer magnet to the plan boundary — they snap exclusively to existing
+  room corners (neighbouring rooms, and the same room''s other corners),
+  which is what alignment is actually for.
+
+### Fixed
+- **Two-finger zoom no longer creates accidental rooms** (Fold and other
+  touch devices): starting a pinch instantly aborts any in-flight room
+  draw, drawing cannot begin during a pinch, and a pinch that ends a
+  gesture never opens the name prompt.
+
+### Added
+- **Click a room''s edge to work with it** — a generous invisible hit zone
+  runs along every room outline (wider on touch). Single-click highlights
+  (or selects in Rooms mode), double-click opens the editor, and in Rooms
+  mode the edge drags the room just like its body. No more hunting for the
+  name label.
 
 ## [1.13.1] — 2026-07-16
 

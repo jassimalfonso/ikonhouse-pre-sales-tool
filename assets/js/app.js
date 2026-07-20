@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.13.1';
+const APP_VERSION='1.15.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -582,12 +582,35 @@ function clipPolyRect(pts,x0,y0,x1,y1){
 }
 /* snapping: candidate x/y from other rooms' points + plan edges */
 function snapCandidates(f,exceptRoom,selfPts){
-  const xs=[0,1],ys=[0,1];
+  const xs=[],ys=[];                     /* room points only — the plan itself is not a magnet */
   (f.rooms||[]).forEach(r=>{ if(r===exceptRoom)return; r.pts.forEach(p=>{xs.push(p.x);ys.push(p.y);}); });
   if(selfPts)selfPts.forEach(p=>{xs.push(p.x);ys.push(p.y);});   /* align nodes within the room too */
   return {xs,ys};
 }
 function snapVal(v,cands,tol){ for(const c of cands){ if(Math.abs(v-c)<tol)return c; } return v; }
+function roomSnapPoint(p,f,exceptRoom,selfPts,tol){
+  let x=p.x,y=p.y,sx=false,sy=false;
+  const corner=q=>{ if(!sx&&Math.abs(x-q.x)<tol){x=q.x;sx=true;} if(!sy&&Math.abs(y-q.y)<tol){y=q.y;sy=true;} };
+  (f.rooms||[]).forEach(r=>{ if(r!==exceptRoom) r.pts.forEach(corner); });
+  if(selfPts)selfPts.forEach(corner);
+  /* walls: snap onto other rooms' straight edges, even mid-edge */
+  (f.rooms||[]).forEach(r=>{
+    if(r===exceptRoom)return;
+    const n=r.pts.length;
+    for(let i=0;i<n;i++){
+      const a=r.pts[i],b=r.pts[(i+1)%n];
+      if(!sx&&Math.abs(a.x-b.x)<0.002){
+        const y0=Math.min(a.y,b.y)-tol,y1=Math.max(a.y,b.y)+tol;
+        if(y>=y0&&y<=y1&&Math.abs(x-a.x)<tol){x=a.x;sx=true;}
+      }
+      if(!sy&&Math.abs(a.y-b.y)<0.002){
+        const x0=Math.min(a.x,b.x)-tol,x1=Math.max(a.x,b.x)+tol;
+        if(x>=x0&&x<=x1&&Math.abs(y-a.y)<tol){y=a.y;sy=true;}
+      }
+    }
+  });
+  return {x:Math.min(1,Math.max(0,x)),y:Math.min(1,Math.max(0,y)),sx,sy};
+}
 function setRoomMode(on){
   roomMode=on;
   if(on){ armItem(null); if(cropMode)cancelCrop(); setSelMarker(null); if(hlRoom)highlightRoom(null); }
@@ -599,7 +622,7 @@ function setRoomMode(on){
   if(on){
     $('#hintbar').innerHTML='Drag to draw · drag corners to reshape · <b>◦</b> midpoints add corners · dbl-click removes · click name for color & scope · <b>Esc</b> done';
     toast('Rooms — drag on the plan to draw an area.');
-  } else closeRoomPop();
+  } else { closeRoomPop(); cancelPoly(); }
   renderRooms();renderMarkers();
 }
 $('#btnRooms').addEventListener('click',()=>{ if(!activeFloor()){toast('Upload a floor plan first.');return;} setRoomMode(!roomMode); });
@@ -623,6 +646,7 @@ function renderRooms(){
     svg+=`<g class="${cls}" data-room="${r.id}" style="color:${r.color}">`;
     if(r.scope==='out')svg+=`<polygon class="hatchfill" points="${d}"/>`;
     svg+=`<polygon class="rfill" points="${d}"/>`;
+    svg+=`<polygon class="redge" data-room="${r.id}" points="${d}"/>`;
     if((roomMode&&r.id===selRoom)||(!roomMode&&r.id===hlRoom)){
       r.pts.forEach((p,i)=>{
         const q=r.pts[(i+1)%r.pts.length];
@@ -674,6 +698,29 @@ function renderRooms(){
   });
   $('#planClick').after(layer);          /* above the draw surface; below markers */
   wireRoomPointer(layer,f);
+  /* edge clicks: available in and out of Rooms mode */
+  const svgEl=layer.querySelector('svg');
+  if(svgEl){
+    let edgeTimer=null;
+    svgEl.addEventListener('click',e=>{
+      const t=e.target;
+      if(!t.classList||!t.classList.contains('redge'))return;
+      const room=f.rooms.find(r=>r.id===t.dataset.room);if(!room)return;
+      e.stopPropagation();
+      if(e.detail>=2){
+        clearTimeout(edgeTimer);
+        if(roomMode){selRoom=room.id;renderRooms();}
+        else if(hlRoom!==room.id)highlightRoom(room.id);
+        openRoomPop(room,document.querySelector(`#roomLayer .rlabel[data-room="${room.id}"]`));
+        return;
+      }
+      clearTimeout(edgeTimer);
+      edgeTimer=setTimeout(()=>{
+        if(roomMode){selRoom=room.id;closeRoomPop();renderRooms();}
+        else{const on=hlRoom!==room.id;highlightRoom(on?room.id:null);if(!on)closeRoomPop();}
+      },240);
+    });
+  }
 }
 /* highlight a room: emphasize its ikons, dim the rest, summarize contents */
 function highlightRoom(id){
@@ -723,7 +770,6 @@ function wireRoomPointer(layer,f){
         const a=room.pts[+t.dataset.after], b=room.pts[(vi)%room.pts.length];
         room.pts.splice(vi,0,{x:(a.x+b.x)/2,y:(a.y+b.y)/2});
       } else vi=+t.dataset.i;
-      const cands=snapCandidates(f,room,room.pts.filter((_,i)=>i!==vi));
       /* the room's own corners are alignment targets too (excluding the
          ones this drag moves) */
       room.pts.forEach((q,qi)=>{
@@ -754,7 +800,7 @@ function wireRoomPointer(layer,f){
       document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
       return;
     }
-    if(t.classList.contains('rfill')||t.classList.contains('hatchfill')){
+    if(t.classList.contains('rfill')||t.classList.contains('hatchfill')||t.classList.contains('redge')){
       e.preventDefault();e.stopPropagation();
       selRoom=room.id;closeRoomPop();
       layer.querySelectorAll('.rpoly').forEach(gg=>gg.classList.toggle('sel',gg.getAttribute('data-room')===room.id));
@@ -796,10 +842,10 @@ function startRoomDraw(e,f){
   const r=planRect();
   const fx=v=>Math.min(1,Math.max(0,v));
   const tol=8/Math.max(1,r.width);
-  const cands=snapCandidates(f,null);
-  const x0=fx(snapVal((e.clientX-r.left)/r.width,cands.xs,tol)), y0=fx(snapVal((e.clientY-r.top)/r.height,cands.ys,tol));
+  const sp0=roomSnapPoint({x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height},f,null,null,tol);
+  const x0=fx(sp0.x), y0=fx(sp0.y);
   const prev=el('div','room-draw');$('#planHolder').appendChild(prev);
-  let x1=x0,y1=y0;
+  let x1=x0,y1=y0,movedPx=0;
   const draw=()=>{
     const rx=Math.min(x0,x1),ry=Math.min(y0,y1),rw=Math.abs(x1-x0),rh=Math.abs(y1-y0);
     prev.style.cssText=`left:${rx*100}%;top:${ry*100}%;width:${rw*100}%;height:${rh*100}%`;
@@ -1048,7 +1094,7 @@ document.addEventListener('keydown',e=>{
     const veil=document.querySelector('.veil.open');
     if(veil){veil.classList.remove('open');return;}
     if(cropMode){cancelCrop();return;}
-    if(roomMode){setRoomMode(false);return;}
+    if(roomMode){ if(polyPts){cancelPoly();$('#hintbar').innerHTML='Drag for a box · tap corners for a custom shape · click a name to rename · <b>Esc</b> done';return;} setRoomMode(false);return;}
     if(hlRoom){highlightRoom(null);return;}
     if(document.body.classList.contains('lib-open')){closeLib();return;}
     if(armedItem)armItem(null);else{setSelMarker(null);renderMarkers();}
@@ -1237,6 +1283,7 @@ let pinch=null,pinchActive=false;
 stage.addEventListener('touchstart',e=>{
   if(e.touches.length===2){
     pinchActive=true;
+    document.querySelectorAll('.room-draw').forEach(d=>d.remove());   /* kill any in-flight draw preview */
     const r=stage.getBoundingClientRect(),[a,b]=e.touches;
     pinch={d:Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY),z:zoom,px:panX,py:panY,
            mx:(a.clientX+b.clientX)/2-r.left,my:(a.clientY+b.clientY)/2-r.top};

@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.16.0';
+const APP_VERSION='1.17.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -813,29 +813,33 @@ function wireRoomPointer(layer,f){
     if(t.classList.contains('rbg')){ startRoomDraw(e,f); return; }
 
     if(t.classList.contains('rseg')){
-      /* drag a whole wall perpendicular to itself — keeps the edge straight */
+      /* drag a whole wall freely — both corners move together, so the edge
+         stays straight and the same length. Shift locks to ortho; Alt skips snap. */
       e.preventDefault();e.stopPropagation();
       pushUndo(roomSnapshot(f,room));
       const ei=+t.dataset.edge, n=room.pts.length;
       const ai=ei, bi=(ei+1)%n;
       const a0={...room.pts[ai]}, b0={...room.pts[bi]};
-      const horiz=Math.abs(a0.y-b0.y)<Math.abs(a0.x-b0.x);   /* dominant orientation */
+      const horiz=Math.abs(a0.y-b0.y)<Math.abs(a0.x-b0.x);   /* a horizontal-ish wall's "ortho" axis is Y */
       const start=toFrac(e);
       const cands=snapCandidates(f,room);
       const mv=ev=>{
         if(ev.pointerId!==id)return;
         const p=toFrac(ev);
-        if(horiz){                       /* horizontal-ish wall moves in Y */
-          let ny=b0.y+(p.y-start.y);
-          if(!ev.altKey)ny=snapVal(ny,cands.ys,tol);
-          ny=Math.min(1,Math.max(0,ny));
-          room.pts[ai].y=ny; room.pts[bi].y=ny;
-        }else{                           /* vertical-ish wall moves in X */
-          let nx=b0.x+(p.x-start.x);
-          if(!ev.altKey)nx=snapVal(nx,cands.xs,tol);
-          nx=Math.min(1,Math.max(0,nx));
-          room.pts[ai].x=nx; room.pts[bi].x=nx;
+        let dx=p.x-start.x, dy=p.y-start.y;
+        if(ev.shiftKey){                       /* ortho: move only across the wall */
+          if(horiz)dx=0; else dy=0;
         }
+        let nax={x:a0.x+dx,y:a0.y+dy}, nbx={x:b0.x+dx,y:b0.y+dy};
+        if(!ev.altKey){                        /* snap the leading corner, shift both by the same correction */
+          const sa=roomSnapPoint(nax,f,room,null,tol), sb=roomSnapPoint(nbx,f,room,null,tol);
+          if(sa.sx&&Math.abs(sa.x-nax.x)>0){const c=sa.x-nax.x;nax.x+=c;nbx.x+=c;}
+          else if(sb.sx&&Math.abs(sb.x-nbx.x)>0){const c=sb.x-nbx.x;nax.x+=c;nbx.x+=c;}
+          if(sa.sy&&Math.abs(sa.y-nax.y)>0){const c=sa.y-nax.y;nax.y+=c;nbx.y+=c;}
+          else if(sb.sy&&Math.abs(sb.y-nbx.y)>0){const c=sb.y-nbx.y;nax.y+=c;nbx.y+=c;}
+        }
+        room.pts[ai]={x:Math.min(1,Math.max(0,nax.x)),y:Math.min(1,Math.max(0,nax.y))};
+        room.pts[bi]={x:Math.min(1,Math.max(0,nbx.x)),y:Math.min(1,Math.max(0,nbx.y))};
         updateRoomInPlace(layer,f,room);
       };
       const up=ev=>{if(ev.pointerId!==id)return;document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);renderRooms();};

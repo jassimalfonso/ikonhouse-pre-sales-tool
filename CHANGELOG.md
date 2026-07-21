@@ -4,6 +4,15 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.17.0] — 2026-07-17
+
+### Changed
+- **Free wall dragging.** A wall now moves freely in any direction — both
+  corners translate together, so the edge stays straight and the same
+  length. **Hold Shift** to constrain it to a straight (orthogonal) slide
+  across itself; **Alt** still bypasses snapping. (Previously a wall could
+  only move perpendicular to itself.)
+
 ## [1.16.0] — 2026-07-17
 
 ### Added
@@ -429,6 +438,15 @@ follows [Semantic Versioning](https://semver.org).
 
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
+
+## [1.17.0] — 2026-07-17
+
+### Changed
+- **Free wall dragging.** A wall now moves freely in any direction — both
+  corners translate together, so the edge stays straight and the same
+  length. **Hold Shift** to constrain it to a straight (orthogonal) slide
+  across itself; **Alt** still bypasses snapping. (Previously a wall could
+  only move perpendicular to itself.)
 
 ## [1.16.0] — 2026-07-17
 

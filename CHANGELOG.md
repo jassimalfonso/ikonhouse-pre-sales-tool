@@ -4,6 +4,58 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.19.0] — 2026-07-18
+
+### Changed
+- **Sheet legend redesigned as a categorized table.** Instead of a single
+  wrapping row of pills, the legend groups devices by category (in library
+  order) into balanced columns — each with a category header, device icon,
+  name and quantity. Cleaner and easier to scan; the floor-plan area keeps
+  its size (legend height is measured and reserved, plan never shrinks).
+- **Excel FD sheet — device columns now follow the library category order**
+  (4 Button Keypad first, matching the tool), with **device names rotated
+  vertically** in the header, a **darker-25% fill** on the header, floor-
+  title and totals rows, and a **white fill with thin borders** on every
+  data cell for a clean gridded look.
+
+### Removed
+- The separate "device schedule by room" export page (introduced in 1.18.0)
+  — it was cramped and redundant; the categorized legend and the Excel FD
+  sheet cover it better.
+
+## [1.18.1] — 2026-07-18
+
+### Fixed
+- **Room schedule sheet was missing from exports in 1.18.0.** A refactor
+  collision removed the schedule renderer and its export wiring (and left a
+  duplicated header/footer helper), so the PDF/PNG/package never actually
+  included the per-room table. The renderer is restored and wired into all
+  export paths; duplicate helpers removed.
+
+### Changed
+- **Out-of-scope is shown by cell fill only.** On the schedule sheet the
+  out-of-scope row now gets a darker-25% fill (with a small "Out of scope"
+  key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
+  white (no zebra striping). The Excel FD sheet matches: out-of-scope room
+  rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.19.0] — 2026-07-18
+
+### Changed
+- **Scrapped the separate "device schedule by room" page** — it was cramped
+  and hard to read. Removed from the PDF, PNG and package exports.
+- **On-sheet legend is now a categorized table.** Devices are grouped under
+  their library category headers (in the same order as the tool), each with
+  its colour/icon, name and quantity, balanced across columns beneath the
+  plan — the floor-plan layout and size are unchanged.
+
+### Excel FD sheet
+- Device columns now follow the **library category order** (4 Button Keypad
+  first, etc.), header labels **rotated 90° upright**, in-scope cells filled
+  white and **out-of-scope rooms filled grey (darker 25%)** with the plain
+  room name — the "(OUT OF SCOPE)" text tag is gone. (These use the
+  style-capable xlsx-js-style writer already bundled.)
+
 ## [1.18.0] — 2026-07-18
 
 ### Fixed
@@ -456,6 +508,58 @@ follows [Semantic Versioning](https://semver.org).
 
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
+
+## [1.19.0] — 2026-07-18
+
+### Changed
+- **Sheet legend redesigned as a categorized table.** Instead of a single
+  wrapping row of pills, the legend groups devices by category (in library
+  order) into balanced columns — each with a category header, device icon,
+  name and quantity. Cleaner and easier to scan; the floor-plan area keeps
+  its size (legend height is measured and reserved, plan never shrinks).
+- **Excel FD sheet — device columns now follow the library category order**
+  (4 Button Keypad first, matching the tool), with **device names rotated
+  vertically** in the header, a **darker-25% fill** on the header, floor-
+  title and totals rows, and a **white fill with thin borders** on every
+  data cell for a clean gridded look.
+
+### Removed
+- The separate "device schedule by room" export page (introduced in 1.18.0)
+  — it was cramped and redundant; the categorized legend and the Excel FD
+  sheet cover it better.
+
+## [1.18.1] — 2026-07-18
+
+### Fixed
+- **Room schedule sheet was missing from exports in 1.18.0.** A refactor
+  collision removed the schedule renderer and its export wiring (and left a
+  duplicated header/footer helper), so the PDF/PNG/package never actually
+  included the per-room table. The renderer is restored and wired into all
+  export paths; duplicate helpers removed.
+
+### Changed
+- **Out-of-scope is shown by cell fill only.** On the schedule sheet the
+  out-of-scope row now gets a darker-25% fill (with a small "Out of scope"
+  key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
+  white (no zebra striping). The Excel FD sheet matches: out-of-scope room
+  rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.19.0] — 2026-07-18
+
+### Changed
+- **Scrapped the separate "device schedule by room" page** — it was cramped
+  and hard to read. Removed from the PDF, PNG and package exports.
+- **On-sheet legend is now a categorized table.** Devices are grouped under
+  their library category headers (in the same order as the tool), each with
+  its colour/icon, name and quantity, balanced across columns beneath the
+  plan — the floor-plan layout and size are unchanged.
+
+### Excel FD sheet
+- Device columns now follow the **library category order** (4 Button Keypad
+  first, etc.), header labels **rotated 90° upright**, in-scope cells filled
+  white and **out-of-scope rooms filled grey (darker 25%)** with the plain
+  room name — the "(OUT OF SCOPE)" text tag is gone. (These use the
+  style-capable xlsx-js-style writer already bundled.)
 
 ## [1.18.0] — 2026-07-18
 

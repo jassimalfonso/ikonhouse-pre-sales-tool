@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.18.0';
+const APP_VERSION='1.19.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -1937,7 +1937,6 @@ $('#paperGo').addEventListener('click',async()=>{
       toast('Rendering sheet…');
       const f=activeFloor();
       const pages=[{cv:await renderSheet(f,paper,1,1),landscape:f.w>=f.h}];
-      if((f.rooms||[]).length)pages.push({cv:await renderRoomSheet(f,paper,1,1),landscape:f.w>=f.h});
       if(fmtChoice==='pdf'){ const doc=await pagesToPdf(pages,paper); doc.save(`${safeName()} - ${f.name} - ${paper.label}.pdf`); }
       else await downloadCanvas(pages[0].cv,`${safeName()} - ${f.name} - ${paper.label}.png`);
       toast('Layout sheet exported.');
@@ -1947,7 +1946,6 @@ $('#paperGo').addEventListener('click',async()=>{
       const pages=[];let i=1;
       for(const f of state.floors){
         pages.push({name:`${String(i).padStart(2,'0')} ${f.name}`,cv:await renderSheet(f,paper,i,state.floors.length),landscape:f.w>=f.h});
-        if((f.rooms||[]).length) pages.push({name:`${String(i).padStart(2,'0')} ${f.name} - schedule`,cv:await renderRoomSheet(f,paper,i,state.floors.length),landscape:f.w>=f.h});
         i++;
       }
       if(fmtChoice==='pdf'){ const doc=await pagesToPdf(pages,paper); doc.save(`${safeName()} - Layout Sheets - ${paper.label}.pdf`); }
@@ -2004,7 +2002,6 @@ async function exportPackage(paper){
   for(const f of state.floors){
     toast(`Building package — sheet ${i} of ${state.floors.length}…`);
     pages.push({name:`${String(i).padStart(2,'0')} ${f.name} - ${paper.label}.png`, cv:await renderSheet(f,paper,i,state.floors.length), landscape:f.w>=f.h});
-    if((f.rooms||[]).length)pages.push({name:`${String(i).padStart(2,'0')} ${f.name} - schedule - ${paper.label}.png`, cv:await renderRoomSheet(f,paper,i,state.floors.length), landscape:f.w>=f.h});
     i++;
   }
 
@@ -2076,29 +2073,83 @@ function fdSheetName(){
   return `FD ${String(d.getDate()).padStart(2,'0')}${d.toLocaleDateString('en-GB',{month:'long'})}${String(d.getFullYear()).slice(-2)}`;
 }
 function buildFdSheet(rows){
-  const devs=rows.map(r=>r.it);
+  /* order devices by library category (catOrder), matching the tool — so the
+     first column is the first category's first device (e.g. 4 Button Keypad) */
+  const catOrder=(state.catOrder&&state.catOrder.length)?state.catOrder:[...new Set(rows.map(r=>r.it.cat||'Other'))];
+  const ordered=[...rows].sort((a,b)=>{
+    const ca=catOrder.indexOf(a.it.cat||'Other'), cb=catOrder.indexOf(b.it.cat||'Other');
+    if(ca!==cb)return (ca<0?99:ca)-(cb<0?99:cb);
+    return state.items.indexOf(a.it)-state.items.indexOf(b.it);
+  });
+  const devs=ordered.map(r=>r.it);
   const countIn=(f,room,itemId)=>f.placements.filter(p=>p.itemId===itemId&&roomOf(p,f)===room).length;
+
   const aoa=[['','Field Device Sheet',...devs.map(d=>d.name)],[]];
+  const floorRowIdx=[];               /* 0-based rows that are floor section titles */
+  const outRowIdx=[];                 /* out-of-scope room rows → dark-25% fill */
+  const roomRowIdx=[];                /* data rows */
   state.floors.forEach(f=>{
+    floorRowIdx.push(aoa.length);
     aoa.push(['',f.name]);
     let n=1;
     (f.rooms||[]).forEach(room=>{
-      aoa.push([n++,room.name+(room.scope==='out'?' (OUT OF SCOPE)':''),...devs.map(d=>countIn(f,room,d.id)||'')]);
+      if(room.scope==='out')outRowIdx.push(aoa.length);
+      roomRowIdx.push(aoa.length);
+      aoa.push([n++,room.name,...devs.map(d=>countIn(f,room,d.id)||'')]);
     });
     const loose=devs.map(d=>countIn(f,null,d.id));
     if(loose.some(v=>v)||!(f.rooms||[]).length){
+      roomRowIdx.push(aoa.length);
       aoa.push([n++,(f.rooms||[]).length?'UNASSIGNED / GENERAL':'GENERAL',...loose.map(v=>v||'')]);
     }
     aoa.push([]);
   });
-  const totalRow=aoa.length+1;                       /* 1-based row of 'Total units' */
+  const totalRow=aoa.length+1;        /* 1-based row of 'Total units' */
   aoa.push(['','Total units',...devs.map(()=>0)]);
   const ws=XLSX.utils.aoa_to_sheet(aoa);
   devs.forEach((d,i)=>{
-    const col=XLSX.utils.encode_col(2+i);            /* device columns start at C */
+    const col=XLSX.utils.encode_col(2+i);
     ws[`${col}${totalRow}`]={t:'n',f:`SUM(${col}3:${col}${totalRow-1})`};
   });
-  ws['!cols']=[{wch:4.5},{wch:42},...devs.map(d=>({wch:Math.min(24,Math.max(11,d.name.length+2))}))];
+  ws['!cols']=[{wch:4.5},{wch:42},...devs.map(()=>({wch:5.5}))];
+
+  /* ── styling (xlsx-js-style) ── */
+  const WHITE={patternType:'solid',fgColor:{rgb:'FFFFFFFF'}};
+  const DARK25={patternType:'solid',fgColor:{rgb:'FFBFBFBF'}};   /* "darker 25%" grey */
+  const thin={style:'thin',color:{rgb:'FFD9D9D9'}};
+  const border={top:thin,bottom:thin,left:thin,right:thin};
+  const ncol=2+devs.length;
+  const at=(r,c)=>XLSX.utils.encode_cell({r,c});
+  const ensure=(r,c)=>{const a=at(r,c);if(!ws[a])ws[a]={t:'s',v:''};return ws[a];};
+  const R=XLSX.utils.decode_range(ws['!ref']); R.e.c=Math.max(R.e.c,ncol-1); ws['!ref']=XLSX.utils.encode_range(R);
+
+  /* header row 1: device names rotated 90° up, darker-25% fill */
+  for(let c=0;c<ncol;c++){
+    const cell=ensure(0,c);
+    cell.s={fill:c>=2?DARK25:WHITE, border,
+      alignment:{textRotation:c>=2?90:0,horizontal:c>=2?'center':'left',vertical:'bottom',wrapText:true},
+      font:{bold:true,sz:c>=2?9:11}};
+  }
+  if(!ws['!rows'])ws['!rows']=[];
+  ws['!rows'][0]={hpt:96};            /* tall header row for the rotated text */
+
+  /* body: white fill + borders on every data cell; floor titles + totals darker */
+  floorRowIdx.forEach(ri=>{
+    for(let c=0;c<ncol;c++){ const cell=ensure(ri,c);
+      cell.s={fill:DARK25,border,font:{bold:true,sz:11},alignment:{vertical:'center'}}; }
+  });
+  roomRowIdx.forEach(ri=>{
+    const dark=outRowIdx.includes(ri);
+    for(let c=0;c<ncol;c++){ const cell=ensure(ri,c);
+      cell.s={fill:dark?DARK25:WHITE,border,
+        alignment:{horizontal:c>=2?'center':(c===0?'center':'left'),vertical:'center'},
+        font:{sz:10}}; }
+  });
+  /* totals row */
+  for(let c=0;c<ncol;c++){ const cell=ensure(totalRow-1,c);
+    cell.s={fill:DARK25,border,font:{bold:true,sz:c>=2?10:11},
+      alignment:{horizontal:c>=2?'center':'left',vertical:'center'}}; }
+
   return ws;
 }
 function buildBoqWorkbook(rows){   /* requires XLSX to be loaded */
@@ -2195,22 +2246,29 @@ async function renderSheet(f,paper,idx,total){
   ctx.textAlign='right';
   ctx.fillText(`${paper.label}  ·  SHEET ${idx} / ${total}`,pw-M,ph-footH/2+Math.round(ph*0.0035));
 
-  /* legend measurement */
+  /* ── legend: devices grouped by category, laid out as columns of rows ── */
   const used=state.items.map(it=>({it,q:qtyOf(it.id,f.id)})).filter(r=>r.q>0);
-  const chipH=Math.round(ph*0.030), gap=Math.round(chipH*0.38);
-  const nameF=`500 ${Math.round(chipH*0.42)}px 'Inter',sans-serif`;
-  const cntF=`600 ${Math.round(chipH*0.40)}px 'JetBrains Mono',monospace`;
-  const chips=used.map(r=>{
-    ctx.font=nameF;const nw=ctx.measureText(r.it.name).width;
-    ctx.font=cntF;const cw=ctx.measureText('×'+r.q).width;
-    return {r,w:Math.round(chipH*0.28+chipH*0.72+chipH*0.30+nw+chipH*0.30+cw+chipH*0.42)};
+  const catOrder=(state.catOrder&&state.catOrder.length)?state.catOrder:[...new Set(used.map(r=>r.it.cat||'Other'))];
+  const groups=[];
+  catOrder.forEach(cat=>{
+    const rows=used.filter(r=>(r.it.cat||'Other')===cat);
+    if(rows.length)groups.push({cat,rows});
   });
-  const availW=pw-2*M;
-  let rows=1,x=0;
-  chips.forEach(c=>{ if(x+c.w>availW&&x>0){rows++;x=0;} x+=c.w+gap; });
-  const legH=used.length? rows*(chipH+gap)+gap : 0;
+  used.forEach(r=>{ if(!catOrder.includes(r.it.cat||'Other')&&!groups.some(g=>g.rows.includes(r))){ let g=groups.find(x=>x.cat===(r.it.cat||'Other')); if(!g){g={cat:r.it.cat||'Other',rows:[]};groups.push(g);} g.rows.push(r); } });
 
-  /* plan area */
+  const rowH=Math.round(ph*0.0182);
+  const catH=Math.round(rowH*1.25);
+  const colGap=Math.round(M*0.5);
+  const nCols=Math.min(4,Math.max(2,groups.length));
+  const colW=Math.round((pw-2*M-colGap*(nCols-1))/nCols);
+  /* greedy balance groups into columns by total height */
+  const gH=g=>catH+g.rows.length*rowH+Math.round(rowH*0.4);
+  const cols=Array.from({length:nCols},()=>({items:[],h:0}));
+  groups.forEach(g=>{ const t=cols.reduce((a,b)=>a.h<=b.h?a:b); t.items.push(g); t.h+=gH(g); });
+  const legContentH=Math.max(...cols.map(c=>c.h),0);
+  const legH=used.length? legContentH+Math.round(M*0.5) : 0;
+
+  /* plan area (unchanged geometry — legend height reserved below it) */
   const py0=headH+Math.round(M*0.55);
   const py1=ph-footH-legH-Math.round(M*0.45);
   const availPW=pw-2*M, availPH=py1-py0;
@@ -2235,33 +2293,45 @@ async function renderSheet(f,paper,idx,total){
     ctx.drawImage(iconCache[key],x0-g/2,y0-g/2,g,g);
   }
 
-  /* legend chips */
+  /* legend table */
   if(used.length){
-    let cx=M, cy=py1+Math.round(M*0.15);
-    for(const c of chips){
-      if(cx+c.w>M+availW&&cx>M){cx=M;cy+=chipH+gap;}
-      /* pill */
-      ctx.fillStyle=PAPER_SOFT;
-      roundRect(ctx,cx,cy,c.w,chipH,chipH/2);ctx.fill();
-      ctx.strokeStyle=PAPER_LINE;ctx.lineWidth=1.5;
-      roundRect(ctx,cx,cy,c.w,chipH,chipH/2);ctx.stroke();
-      /* dot + icon */
-      const dR=chipH*0.36, dX=cx+chipH*0.28+dR, dY=cy+chipH/2;
-      ctx.beginPath();ctx.arc(dX,dY,dR,0,Math.PI*2);ctx.fillStyle=c.r.it.color;ctx.fill();
-      if(!iconCache[c.r.it.icon])iconCache[c.r.it.icon]=await iconImage(c.r.it.icon,'#ffffff');
-      const g=dR*1.15;
-      ctx.drawImage(iconCache[c.r.it.icon],dX-g/2,dY-g/2,g,g);
-      /* text */
-      ctx.textAlign='left';ctx.textBaseline='middle';
-      ctx.font=nameF;ctx.fillStyle=PAPER_INK;
-      const tX=dX+dR+chipH*0.30;
-      ctx.fillText(c.r.it.name,tX,dY+1);
-      const nw=ctx.measureText(c.r.it.name).width;
-      ctx.font=cntF;ctx.fillStyle=PAPER_DIM;
-      ctx.fillText('×'+c.r.q,tX+nw+chipH*0.30,dY+1);
-      cx+=c.w+gap;
+    const topY=py1+Math.round(M*0.25);
+    const iconF=`500 ${Math.round(rowH*0.52)}px 'Inter',sans-serif`;
+    const cntF=`600 ${Math.round(rowH*0.50)}px 'JetBrains Mono',monospace`;
+    const catF=`600 ${Math.round(rowH*0.46)}px 'JetBrains Mono',monospace`;
+    for(let ci=0;ci<cols.length;ci++){
+      const colX=M+ci*(colW+colGap);
+      let yy=topY;
+      for(const g of cols[ci].items){
+        /* category header */
+        ctx.textAlign='left';ctx.textBaseline='middle';
+        ctx.fillStyle=PAPER_HL;ctx.font=catF;
+        ctx.fillText(g.cat.toUpperCase(),colX,yy+catH*0.55);
+        ctx.strokeStyle=PAPER_LINE;ctx.lineWidth=1;
+        ctx.beginPath();ctx.moveTo(colX,yy+catH-2);ctx.lineTo(colX+colW,yy+catH-2);ctx.stroke();
+        yy+=catH;
+        for(const r of g.rows){
+          const midY=yy+rowH/2;
+          /* dot + icon */
+          const dR=rowH*0.34, dX=colX+dR, dY=midY;
+          ctx.beginPath();ctx.arc(dX,dY,dR,0,Math.PI*2);ctx.fillStyle=r.it.color;ctx.fill();
+          const key=r.it.iconImg?('img:'+r.it.id):r.it.icon;
+          if(!iconCache[key])iconCache[key]=r.it.iconImg?await loadImg(r.it.iconImg):await iconImage(r.it.icon,'#ffffff');
+          const g2=dR*1.2;
+          ctx.drawImage(iconCache[key],dX-g2/2,dY-g2/2,g2,g2);
+          /* name + count (right-aligned) */
+          ctx.textAlign='left';ctx.fillStyle=PAPER_INK;ctx.font=iconF;
+          let nm=r.it.name; const maxNameW=colW-dR*2-rowH*1.6;
+          while(ctx.measureText(nm).width>maxNameW&&nm.length>3)nm=nm.slice(0,-2)+'…';
+          ctx.fillText(nm,dX+dR+rowH*0.4,midY+1);
+          ctx.textAlign='right';ctx.fillStyle=PAPER_HL;ctx.font=cntF;
+          ctx.fillText('×'+r.q,colX+colW,midY+1);
+          yy+=rowH;
+        }
+        yy+=Math.round(rowH*0.4);
+      }
     }
-    ctx.textBaseline='alphabetic';
+    ctx.textAlign='left';ctx.textBaseline='alphabetic';
   }
   return cv;
 }
@@ -2302,67 +2372,9 @@ function roundRect(ctx,x,y,w,h,r){
   ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);
   ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();
 }
-/* per-room device breakdown as a printed sheet (rooms × devices) */
-async function renderRoomSheet(f,paper,idx,total){
-  const land=f.w>=f.h;
-  const pw=land?paper.long:paper.short, ph=land?paper.short:paper.long;
-  const cv=document.createElement('canvas');cv.width=pw;cv.height=ph;
-  const ctx=cv.getContext('2d');
-  ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
-  ctx.fillStyle='#FFFFFF';ctx.fillRect(0,0,pw,ph);
-  const M=Math.round(Math.min(pw,ph)*0.06);
-  const headH=await drawSheetHeader(ctx,pw,f,paper,idx,total,'DEVICE SCHEDULE BY ROOM');
-  const devs=state.items.filter(it=>f.placements.some(p=>p.itemId===it.id));
-  const countIn=(room,id)=>f.placements.filter(p=>p.itemId===id&&roomOf(p,f)===room).length;
-  const rowsData=[];
-  (f.rooms||[]).forEach(r=>rowsData.push({label:r.name+(r.scope==='out'?'  (OUT OF SCOPE)':''),color:r.color,room:r}));
-  if(devs.some(d=>countIn(null,d.id)))rowsData.push({label:'Unassigned / general',color:'#9AA0A6',room:null});
-  const nCols=devs.length+2;
-  const colW=Math.min((pw-2*M)/nCols, Math.round((pw-2*M)/Math.max(6,nCols)));
-  const tableW=pw-2*M;
-  const roomColW=Math.round(tableW*0.34);
-  const dCol=(tableW-roomColW-Math.round(tableW*0.09))/Math.max(1,devs.length);
-  const rowH=Math.round(Math.min(pw,ph)*0.033);
-  let y=headH+M;
-  ctx.font=`600 ${Math.round(rowH*0.34)}px 'JetBrains Mono',monospace`;
-  ctx.fillStyle=PAPER_DIM;ctx.textBaseline='middle';
-  ctx.textAlign='left';ctx.fillText('ROOM / AREA',M+8,y+rowH/2);
-  ctx.textAlign='center';
-  devs.forEach((d,i)=>{
-    const cxp=M+roomColW+dCol*(i+0.5);
-    ctx.save();ctx.translate(cxp,y+rowH/2);
-    const nm=d.name.length>16?d.name.slice(0,15)+'…':d.name;
-    ctx.font=`500 ${Math.round(rowH*0.30)}px 'Inter',sans-serif`;ctx.fillStyle=PAPER_INK;
-    ctx.fillText(nm,0,0);ctx.restore();
-  });
-  ctx.textAlign='right';ctx.fillStyle=PAPER_DIM;ctx.font=`600 ${Math.round(rowH*0.34)}px 'JetBrains Mono',monospace`;
-  ctx.fillText('TOTAL',pw-M-8,y+rowH/2);
-  y+=rowH;ctx.strokeStyle=PAPER_HL;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(M,y);ctx.lineTo(pw-M,y);ctx.stroke();
-  for(const rd of rowsData){
-    const rowTotal=devs.reduce((a,d)=>a+countIn(rd.room,d.id),0);
-    ctx.fillStyle=PAPER_SOFT;
-    if(rowsData.indexOf(rd)%2)ctx.fillRect(M,y,tableW,rowH);
-    ctx.beginPath();ctx.arc(M+14,y+rowH/2,rowH*0.13,0,Math.PI*2);ctx.fillStyle=rd.color;ctx.fill();
-    ctx.textAlign='left';ctx.textBaseline='middle';
-    ctx.font=`500 ${Math.round(rowH*0.34)}px 'Inter',sans-serif`;ctx.fillStyle=PAPER_INK;
-    const lbl=rd.label.length>34?rd.label.slice(0,33)+'…':rd.label;
-    ctx.fillText(lbl,M+30,y+rowH/2);
-    ctx.textAlign='center';ctx.font=`500 ${Math.round(rowH*0.36)}px 'JetBrains Mono',monospace`;
-    devs.forEach((d,i)=>{
-      const c=countIn(rd.room,d.id);
-      ctx.fillStyle=c?PAPER_INK:PAPER_LINE;
-      ctx.fillText(c||'·',M+roomColW+dCol*(i+0.5),y+rowH/2);
-    });
-    ctx.textAlign='right';ctx.font=`700 ${Math.round(rowH*0.36)}px 'JetBrains Mono',monospace`;ctx.fillStyle=PAPER_HL;
-    ctx.fillText(String(rowTotal),pw-M-8,y+rowH/2);
-    y+=rowH;
-  }
-  ctx.strokeStyle=PAPER_LINE;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(M,y);ctx.lineTo(pw-M,y);ctx.stroke();
-  ctx.textBaseline='alphabetic';
-  drawSheetFooter(ctx,pw,ph,paper);
-  return cv;
-}
-
+/* per-room device schedule as a printed sheet (rooms × devices).
+   Out-of-scope rooms get a darker-25% cell fill across the row; every other
+   row is plain white. No zebra striping, no text tag — the fill is the flag. */
 /* ──────────── Cover page ──────────── */
 function wrapText(ctx,text,maxW){
   const words=text.split(/\s+/),lines=[];let line='';

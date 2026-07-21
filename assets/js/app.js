@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.17.0';
+const APP_VERSION='1.18.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -88,7 +88,7 @@ let state = {
   libSize:{w:324,h:60,fw:288,fh:520}, catOrder:[],
   items:[], floors:[], activeFloor:null, pinScale:1
 };
-let armedItem=null, selMarker=null, zoom=1, undoStack=[], redoStack=[], ctxTarget=null, draggingCat=null;
+let armedItem=null, selMarker=null, selSet=new Set(), zoom=1, undoStack=[], redoStack=[], ctxTarget=null, draggingCat=null;
 
 const SEED = [
  ['Ceiling Speaker','Audio','ceiling-speaker','#2E5CFF'],['Invisible Speaker','Audio','speaker','#0E7490'],
@@ -855,24 +855,25 @@ function wireRoomPointer(layer,f){
         const a=room.pts[+t.dataset.after], b=room.pts[(vi)%room.pts.length];
         room.pts.splice(vi,0,{x:(a.x+b.x)/2,y:(a.y+b.y)/2});
       } else vi=+t.dataset.i;
-      /* angle lock applies to pure 4-corner rectangles only: they resize
-         rigidly like rectangles. Once extra corners exist the shape is
-         freeform — every corner drags freely. */
-      const EPS=0.004, n0=room.pts.length;
-      const orig=room.pts.map(p=>({...p}));
+      /* corners move independently. Hold Shift to square up: the dragged
+         corner aligns to a neighbour's axis (keeps the adjoining walls
+         orthogonal on demand, without forcing it the rest of the time). */
+      const n0=room.pts.length;
       const pi=(vi-1+n0)%n0, ni=(vi+1)%n0;
-      const rectLock=!inserted&&n0===4;
-      const lockPrev=rectLock&&{v:Math.abs(orig[vi].x-orig[pi].x)<EPS, h:Math.abs(orig[vi].y-orig[pi].y)<EPS};
-      const lockNext=rectLock&&{v:Math.abs(orig[vi].x-orig[ni].x)<EPS, h:Math.abs(orig[vi].y-orig[ni].y)<EPS};
       const mv=ev=>{
         if(ev.pointerId!==id)return;
         const p=toFrac(ev);
         const sp=roomSnapPoint(p,f,room,room.pts.filter((_,qi)=>qi!==vi),ev.altKey?0:tol);
-        const nx=sp.x, ny=sp.y;
+        let nx=sp.x, ny=sp.y;
+        if(ev.shiftKey){                       /* square to whichever neighbour axis is closer */
+          const dpx=Math.abs(nx-room.pts[pi].x)+Math.abs(nx-room.pts[ni].x);
+          const dpy=Math.abs(ny-room.pts[pi].y)+Math.abs(ny-room.pts[ni].y);
+          const ax=Math.abs(nx-room.pts[pi].x)<Math.abs(nx-room.pts[ni].x)?room.pts[pi].x:room.pts[ni].x;
+          const ay=Math.abs(ny-room.pts[pi].y)<Math.abs(ny-room.pts[ni].y)?room.pts[pi].y:room.pts[ni].y;
+          if(Math.abs(nx-ax)<Math.abs(ny-ay))nx=ax; else ny=ay;
+        }
         showGuides(sp.sx?nx:null, sp.sy?ny:null);
         room.pts[vi]={x:nx,y:ny};
-        if(lockPrev){ if(lockPrev.v)room.pts[pi].x=nx; else if(lockPrev.h)room.pts[pi].y=ny; }
-        if(lockNext){ if(lockNext.v)room.pts[ni].x=nx; else if(lockNext.h)room.pts[ni].y=ny; }
         updateRoomInPlace(layer,f,room);
       };
       const up=ev=>{if(ev.pointerId!==id)return;clearGuides();document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);renderRooms();};
@@ -1110,6 +1111,7 @@ $('#planClick').addEventListener('contextmenu',e=>{ if(armedItem){e.preventDefau
 $('#planClick').addEventListener('click',e=>{
   if(panMoved||roomMode)return;
   const f=activeFloor(); if(!f||cropMode)return;
+  if(!armedItem&&selSet.size){ setSelSet([]); renderMarkers(); return; }
   if(!armedItem){setSelMarker(null);renderMarkers();return;}
   const r=planRect();
   const x=(e.clientX-r.left)/r.width, y=(e.clientY-r.top)/r.height;
@@ -1123,7 +1125,14 @@ $('#planClick').addEventListener('click',e=>{
 /* ──────────── Markers (pointer-based: mouse + touch) ──────────── */
 function setSelMarker(id){
   selMarker=id;
+  selSet.clear(); if(id)selSet.add(id);
   $('#pinActions').classList.toggle('open',!!id);
+}
+function setSelSet(ids){
+  selSet=new Set(ids);
+  selMarker=ids.length===1?ids[0]:null;
+  $('#pinActions').classList.toggle('open',selSet.size>0);
+  const pr=$('#paRemove'); if(pr)pr.textContent=selSet.size>1?`Remove ${selSet.size} ikons`:'Remove ikon';
 }
 function pinPx(){const f=activeFloor();if(!f)return 24;return Math.max(12,Math.min(70,f.w*0.021))*state.pinScale;}
 function renderMarkers(){
@@ -1134,12 +1143,17 @@ function renderMarkers(){
     const it=itemById(p.itemId);if(!it)return;
     let hlCls='';
     if(hlRoom){const rr=(f.rooms||[]).find(x=>x.id===hlRoom);hlCls=rr&&roomOf(p,f)===rr?' lit':' dim';}
-    const m=el('div','marker'+(selMarker===p.id?' sel':'')+hlCls,iconHtml(it));
+    const m=el('div','marker'+(selSet.has(p.id)?' sel':'')+hlCls,iconHtml(it));
     m.style.cssText=`left:${p.x*100}%;top:${p.y*100}%;width:${s}px;height:${s}px;background:${it.color}`;
     m.title=it.name;
     m.addEventListener('pointerdown',ev=>{
       if(armedItem||cropMode||(ev.pointerType==='mouse'&&ev.button!==0))return;
       ev.stopPropagation();ev.preventDefault();
+      if(ev.shiftKey||ev.ctrlKey||ev.metaKey){       /* toggle into the selection */
+        const ids=new Set(selSet); ids.has(p.id)?ids.delete(p.id):ids.add(p.id);
+        setSelSet([...ids]); renderMarkers(); return;
+      }
+      if(!selSet.has(p.id)) setSelMarker(p.id);       /* fresh single selection */
       startDrag(p,m,ev);
     });
     m.addEventListener('contextmenu',ev=>{
@@ -1166,30 +1180,46 @@ function startDrag(p,m,ev){
   const startX=ev.clientX,startY=ev.clientY;
   m.setPointerCapture(ev.pointerId);
   const f0=activeFloor();
-  const oxs=f0?f0.placements.filter(q=>q.id!==p.id).map(q=>q.x):[];
-  const oys=f0?f0.placements.filter(q=>q.id!==p.id).map(q=>q.y):[];
+  const group=selSet.size>1&&selSet.has(p.id);
+  const groupPts=group?f0.placements.filter(q=>selSet.has(q.id)):[p];
+  const origins=groupPts.map(q=>({q,x:q.x,y:q.y}));
+  const oxs=f0?f0.placements.filter(q=>!selSet.has(q.id)).map(q=>q.x):[];
+  const oys=f0?f0.placements.filter(q=>!selSet.has(q.id)).map(q=>q.y):[];
   const onMove=e=>{
     if(!moved&&Math.hypot(e.clientX-startX,e.clientY-startY)<4)return;
     moved=true;
     const r=planRect();
+    if(group){
+      let dx=(e.clientX-startX)/r.width, dy=(e.clientY-startY)/r.height;
+      origins.forEach(o=>{ o.q.x=Math.min(1,Math.max(0,o.x+dx)); o.q.y=Math.min(1,Math.max(0,o.y+dy)); });
+      renderMarkers();
+      return;
+    }
     let nx=Math.min(1,Math.max(0,(e.clientX-r.left)/r.width));
     let ny=Math.min(1,Math.max(0,(e.clientY-r.top)/r.height));
-    /* align with other ikons: snap to their x / y, guides show the line */
     const tx=6/Math.max(1,r.width), ty=6/Math.max(1,r.height);
     const sx=snapVal(nx,oxs,tx), sy=snapVal(ny,oys,ty);
     showGuides(sx!==nx?sx:null, sy!==ny?sy:null);
     p.x=sx;p.y=sy;
-    m.style.left=(p.x*100)+'%';m.style.top=(p.y*100)+'%';   // live update without re-render
+    m.style.left=(p.x*100)+'%';m.style.top=(p.y*100)+'%';
   };
   const onUp=()=>{
     m.removeEventListener('pointermove',onMove);m.removeEventListener('pointerup',onUp);m.removeEventListener('pointercancel',onUp);
     clearGuides();
-    setSelMarker(p.id);   // tap = select, drag = reposition (stays selected)
-    renderMarkers();
+    if(!moved&&!group)setSelMarker(p.id);
+    renderMarkers();renderBoq();
   };
   m.addEventListener('pointermove',onMove);
   m.addEventListener('pointerup',onUp);
   m.addEventListener('pointercancel',onUp);
+}
+function deleteSelection(){
+  const f=activeFloor();if(!f||!selSet.size)return;
+  const removed=f.placements.filter(p=>selSet.has(p.id));
+  removed.forEach(p=>pushUndo({type:'del',floorId:f.id,p}));
+  f.placements=f.placements.filter(p=>!selSet.has(p.id));
+  setSelSet([]);
+  renderMarkers();renderLibrary();renderBoq();updateChipCount();
 }
 function deletePlacement(id){
   const f=activeFloor();if(!f)return;
@@ -1198,7 +1228,7 @@ function deletePlacement(id){
   if(selMarker===id)setSelMarker(null);
   renderMarkers();renderLibrary();renderBoq();updateChipCount();
 }
-$('#paRemove').addEventListener('click',()=>deletePlacement(selMarker));
+$('#paRemove').addEventListener('click',()=>deleteSelection());
 $('#paDone').addEventListener('click',()=>{setSelMarker(null);renderMarkers();});
 document.addEventListener('click',()=>$('#ctx').style.display='none');
 $('#ctxDelete').addEventListener('click',()=>{if(ctxTarget){deletePlacement(ctxTarget.id);ctxTarget=null;}});
@@ -1260,8 +1290,8 @@ document.addEventListener('keydown',e=>{
     if(document.body.classList.contains('lib-open')){closeLib();return;}
     if(armedItem)armItem(null);else{setSelMarker(null);renderMarkers();}
   }
-  if((e.key==='Delete'||e.key==='Backspace')&&selMarker&&!e.target.matches('input,select,textarea')){
-    deletePlacement(selMarker);
+  if((e.key==='Delete'||e.key==='Backspace')&&selSet.size&&!e.target.matches('input,select,textarea')){
+    deleteSelection();
   }
   if((e.ctrlKey||e.metaKey)&&!e.target.matches('input,select,textarea')){
     const k=e.key.toLowerCase();
@@ -1415,6 +1445,45 @@ $('#pinSize').addEventListener('input',e=>{state.pinScale=e.target.value/100;ren
 
 document.addEventListener('keydown',e=>{if(e.code==='Space'&&!e.target.matches('input,select,textarea')){spaceHeld=true;stage.style.cursor='grab';e.preventDefault();}});
 document.addEventListener('keyup',e=>{if(e.code==='Space'){spaceHeld=false;stage.style.cursor='';}});
+
+/* marquee select: left-drag on empty plan when idle boxes a set of ikons */
+(function(){
+  let mq=null;
+  stage.addEventListener('pointerdown',e=>{
+    if(e.pointerType==='mouse'&&e.button!==0)return;
+    if(armedItem||cropMode||roomMode||spaceHeld||pinchActive)return;
+    if(e.target.closest('.marker,.room-layer,.crop-rect,button,input'))return;
+    const onPlan=e.target.closest('#planClick')||e.target.closest('#planHolder');
+    if(!onPlan)return;
+    const sx=e.clientX, sy=e.clientY, id=e.pointerId; let box=null;
+    const mv=ev=>{
+      if(ev.pointerId!==id)return;
+      if(!box&&Math.hypot(ev.clientX-sx,ev.clientY-sy)<5)return;
+      if(!box){box=el('div','marquee');$('#stage').appendChild(box);}
+      const sr=$('#stage').getBoundingClientRect();
+      const x0=Math.min(sx,ev.clientX)-sr.left, y0=Math.min(sy,ev.clientY)-sr.top;
+      const w=Math.abs(ev.clientX-sx), h=Math.abs(ev.clientY-sy);
+      box.style.cssText=`left:${x0}px;top:${y0}px;width:${w}px;height:${h}px`;
+    };
+    const up=ev=>{
+      if(ev.pointerId!==id)return;
+      document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);
+      if(box){
+        const r=planRect();
+        const x1=Math.min(sx,ev.clientX),x2=Math.max(sx,ev.clientX),y1=Math.min(sy,ev.clientY),y2=Math.max(sy,ev.clientY);
+        const f=activeFloor();const hits=[];
+        if(f)f.placements.forEach(p=>{
+          const px=r.left+p.x*r.width, py=r.top+p.y*r.height;
+          if(px>=x1&&px<=x2&&py>=y1&&py<=y2)hits.push(p.id);
+        });
+        box.remove();
+        setSelSet(hits);renderMarkers();
+        if(hits.length)toast(`${hits.length} ikon${hits.length>1?'s':''} selected — drag to move, Delete to remove.`);
+      }
+    };
+    document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
+  });
+})();
 
 /* drag to pan — mouse (background, or on the plan when nothing is armed;
    plus space-drag / middle-drag anywhere) and one-finger touch.
@@ -1868,6 +1937,7 @@ $('#paperGo').addEventListener('click',async()=>{
       toast('Rendering sheet…');
       const f=activeFloor();
       const pages=[{cv:await renderSheet(f,paper,1,1),landscape:f.w>=f.h}];
+      if((f.rooms||[]).length)pages.push({cv:await renderRoomSheet(f,paper,1,1),landscape:f.w>=f.h});
       if(fmtChoice==='pdf'){ const doc=await pagesToPdf(pages,paper); doc.save(`${safeName()} - ${f.name} - ${paper.label}.pdf`); }
       else await downloadCanvas(pages[0].cv,`${safeName()} - ${f.name} - ${paper.label}.png`);
       toast('Layout sheet exported.');
@@ -1875,7 +1945,11 @@ $('#paperGo').addEventListener('click',async()=>{
     if(pendingExport==='all'){
       toast('Rendering all sheets…');
       const pages=[];let i=1;
-      for(const f of state.floors){ pages.push({name:`${String(i).padStart(2,'0')} ${f.name}`,cv:await renderSheet(f,paper,i,state.floors.length),landscape:f.w>=f.h}); i++; }
+      for(const f of state.floors){
+        pages.push({name:`${String(i).padStart(2,'0')} ${f.name}`,cv:await renderSheet(f,paper,i,state.floors.length),landscape:f.w>=f.h});
+        if((f.rooms||[]).length) pages.push({name:`${String(i).padStart(2,'0')} ${f.name} - schedule`,cv:await renderRoomSheet(f,paper,i,state.floors.length),landscape:f.w>=f.h});
+        i++;
+      }
       if(fmtChoice==='pdf'){ const doc=await pagesToPdf(pages,paper); doc.save(`${safeName()} - Layout Sheets - ${paper.label}.pdf`); }
       else for(const p of pages) await downloadCanvas(p.cv,`${safeName()} - ${p.name} - ${paper.label}.png`);
       toast('All layout sheets exported.');
@@ -1930,6 +2004,7 @@ async function exportPackage(paper){
   for(const f of state.floors){
     toast(`Building package — sheet ${i} of ${state.floors.length}…`);
     pages.push({name:`${String(i).padStart(2,'0')} ${f.name} - ${paper.label}.png`, cv:await renderSheet(f,paper,i,state.floors.length), landscape:f.w>=f.h});
+    if((f.rooms||[]).length)pages.push({name:`${String(i).padStart(2,'0')} ${f.name} - schedule - ${paper.label}.png`, cv:await renderRoomSheet(f,paper,i,state.floors.length), landscape:f.w>=f.h});
     i++;
   }
 
@@ -2190,10 +2265,102 @@ async function renderSheet(f,paper,idx,total){
   }
   return cv;
 }
+async function drawSheetHeader(ctx,pw,f,paper,idx,total,kicker){
+  const ph=ctx.canvas.height, M=Math.round(pw*0.032);
+  const logo=await loadBrandImg();
+  const headH=Math.round(ph*0.088);
+  drawBrand(ctx,logo,M,headH*0.52,Math.round(headH*0.30));
+  ctx.textAlign='right';ctx.textBaseline='alphabetic';
+  ctx.fillStyle=PAPER_INK;
+  ctx.font=`600 ${Math.round(ph*0.020)}px 'Poppins',sans-serif`;
+  ctx.fillText(state.project,pw-M,headH*0.46);
+  const meta=[state.client&&('CLIENT  '+state.client.toUpperCase()),f.name.toUpperCase(),today().toUpperCase(),state.reference&&('REF '+state.reference.toUpperCase())].filter(Boolean).join('   ·   ');
+  ctx.font=`500 ${Math.round(ph*0.0105)}px 'JetBrains Mono',monospace`;
+  ctx.fillStyle=PAPER_DIM;
+  ctx.fillText(meta,pw-M,headH*0.46+Math.round(ph*0.022));
+  if(kicker){ ctx.textAlign='left';ctx.fillStyle=PAPER_HL;
+    ctx.font=`600 ${Math.round(ph*0.0105)}px 'JetBrains Mono',monospace`;
+    ctx.fillText(kicker,M+Math.round(pw*0.10),headH*0.46); }
+  ctx.fillStyle=PAPER_HL;ctx.fillRect(M,headH-4,Math.round(pw*0.055),4);
+  ctx.strokeStyle=PAPER_LINE;ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(0,headH);ctx.lineTo(pw,headH);ctx.stroke();
+  return headH;
+}
+function drawSheetFooter(ctx,pw,ph,paper,idx,total){
+  const M=Math.round(pw*0.032), footH=Math.round(ph*0.045);
+  ctx.strokeStyle=PAPER_LINE;ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(0,ph-footH);ctx.lineTo(pw,ph-footH);ctx.stroke();
+  ctx.textAlign='left';ctx.textBaseline='alphabetic';
+  ctx.font=`500 ${Math.round(ph*0.0095)}px 'JetBrains Mono',monospace`;
+  ctx.fillStyle=PAPER_DIM;
+  ctx.fillText('DEVICE LOCATION PLAN  ·  '+preparedByLine(),M,ph-footH/2+Math.round(ph*0.0035));
+  if(idx){ ctx.textAlign='right';
+    ctx.fillText(`${paper.label}  ·  SHEET ${idx} / ${total}`,pw-M,ph-footH/2+Math.round(ph*0.0035)); }
+}
 function roundRect(ctx,x,y,w,h,r){
   ctx.beginPath();
   ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);
   ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();
+}
+/* per-room device breakdown as a printed sheet (rooms × devices) */
+async function renderRoomSheet(f,paper,idx,total){
+  const land=f.w>=f.h;
+  const pw=land?paper.long:paper.short, ph=land?paper.short:paper.long;
+  const cv=document.createElement('canvas');cv.width=pw;cv.height=ph;
+  const ctx=cv.getContext('2d');
+  ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+  ctx.fillStyle='#FFFFFF';ctx.fillRect(0,0,pw,ph);
+  const M=Math.round(Math.min(pw,ph)*0.06);
+  const headH=await drawSheetHeader(ctx,pw,f,paper,idx,total,'DEVICE SCHEDULE BY ROOM');
+  const devs=state.items.filter(it=>f.placements.some(p=>p.itemId===it.id));
+  const countIn=(room,id)=>f.placements.filter(p=>p.itemId===id&&roomOf(p,f)===room).length;
+  const rowsData=[];
+  (f.rooms||[]).forEach(r=>rowsData.push({label:r.name+(r.scope==='out'?'  (OUT OF SCOPE)':''),color:r.color,room:r}));
+  if(devs.some(d=>countIn(null,d.id)))rowsData.push({label:'Unassigned / general',color:'#9AA0A6',room:null});
+  const nCols=devs.length+2;
+  const colW=Math.min((pw-2*M)/nCols, Math.round((pw-2*M)/Math.max(6,nCols)));
+  const tableW=pw-2*M;
+  const roomColW=Math.round(tableW*0.34);
+  const dCol=(tableW-roomColW-Math.round(tableW*0.09))/Math.max(1,devs.length);
+  const rowH=Math.round(Math.min(pw,ph)*0.033);
+  let y=headH+M;
+  ctx.font=`600 ${Math.round(rowH*0.34)}px 'JetBrains Mono',monospace`;
+  ctx.fillStyle=PAPER_DIM;ctx.textBaseline='middle';
+  ctx.textAlign='left';ctx.fillText('ROOM / AREA',M+8,y+rowH/2);
+  ctx.textAlign='center';
+  devs.forEach((d,i)=>{
+    const cxp=M+roomColW+dCol*(i+0.5);
+    ctx.save();ctx.translate(cxp,y+rowH/2);
+    const nm=d.name.length>16?d.name.slice(0,15)+'…':d.name;
+    ctx.font=`500 ${Math.round(rowH*0.30)}px 'Inter',sans-serif`;ctx.fillStyle=PAPER_INK;
+    ctx.fillText(nm,0,0);ctx.restore();
+  });
+  ctx.textAlign='right';ctx.fillStyle=PAPER_DIM;ctx.font=`600 ${Math.round(rowH*0.34)}px 'JetBrains Mono',monospace`;
+  ctx.fillText('TOTAL',pw-M-8,y+rowH/2);
+  y+=rowH;ctx.strokeStyle=PAPER_HL;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(M,y);ctx.lineTo(pw-M,y);ctx.stroke();
+  for(const rd of rowsData){
+    const rowTotal=devs.reduce((a,d)=>a+countIn(rd.room,d.id),0);
+    ctx.fillStyle=PAPER_SOFT;
+    if(rowsData.indexOf(rd)%2)ctx.fillRect(M,y,tableW,rowH);
+    ctx.beginPath();ctx.arc(M+14,y+rowH/2,rowH*0.13,0,Math.PI*2);ctx.fillStyle=rd.color;ctx.fill();
+    ctx.textAlign='left';ctx.textBaseline='middle';
+    ctx.font=`500 ${Math.round(rowH*0.34)}px 'Inter',sans-serif`;ctx.fillStyle=PAPER_INK;
+    const lbl=rd.label.length>34?rd.label.slice(0,33)+'…':rd.label;
+    ctx.fillText(lbl,M+30,y+rowH/2);
+    ctx.textAlign='center';ctx.font=`500 ${Math.round(rowH*0.36)}px 'JetBrains Mono',monospace`;
+    devs.forEach((d,i)=>{
+      const c=countIn(rd.room,d.id);
+      ctx.fillStyle=c?PAPER_INK:PAPER_LINE;
+      ctx.fillText(c||'·',M+roomColW+dCol*(i+0.5),y+rowH/2);
+    });
+    ctx.textAlign='right';ctx.font=`700 ${Math.round(rowH*0.36)}px 'JetBrains Mono',monospace`;ctx.fillStyle=PAPER_HL;
+    ctx.fillText(String(rowTotal),pw-M-8,y+rowH/2);
+    y+=rowH;
+  }
+  ctx.strokeStyle=PAPER_LINE;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(M,y);ctx.lineTo(pw-M,y);ctx.stroke();
+  ctx.textBaseline='alphabetic';
+  drawSheetFooter(ctx,pw,ph,paper);
+  return cv;
 }
 
 /* ──────────── Cover page ──────────── */

@@ -745,3 +745,5 @@ body.compact #dockRow,body.compact .vm-dock-label{display:none}
 body.dev-dragging{cursor:grabbing}
 body.dev-dragging .item-row{opacity:.5}
 .cat-head.drop{background:var(--hl-soft);box-shadow:inset 0 0 0 1.5px var(--hl-line);border-radius:7px}
+/* marquee selection box */
+.marquee{position:absolute;z-index:60;border:1.5px solid var(--hl);background:color-mix(in srgb, var(--hl) 12%, transparent);border-radius:2px;pointer-events:none}

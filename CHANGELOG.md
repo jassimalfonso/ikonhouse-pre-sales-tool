@@ -4,6 +4,24 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.18.0] — 2026-07-18
+
+### Fixed
+- **Room corners moved their neighbours.** The 4-corner "rectangle lock"
+  dragged adjacent corners along to keep edges square, so a corner couldn''t
+  be moved on its own. Corners are now fully independent — hold **Shift**
+  while dragging a corner to square it to a neighbour on demand.
+
+### Added
+- **Multi-select ikons.** Drag a box on empty plan to marquee-select; Shift/
+  Ctrl-click to add or remove individual ikons. Drag any selected ikon to
+  move the whole group, or press Delete / Remove to delete them together.
+  Click empty plan to clear.
+- **Device schedule by room on the exported sheets.** Each floor plan is now
+  followed by a printed rooms × devices table (with per-room totals and
+  out-of-scope tags) in the PDF, the sheet PNGs, and the full package — so
+  the plan set tells the whole story without opening the Excel file.
+
 ## [1.17.0] — 2026-07-17
 
 ### Changed
@@ -438,6 +456,24 @@ follows [Semantic Versioning](https://semver.org).
 
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
+
+## [1.18.0] — 2026-07-18
+
+### Fixed
+- **Room corners moved their neighbours.** The 4-corner "rectangle lock"
+  dragged adjacent corners along to keep edges square, so a corner couldn''t
+  be moved on its own. Corners are now fully independent — hold **Shift**
+  while dragging a corner to square it to a neighbour on demand.
+
+### Added
+- **Multi-select ikons.** Drag a box on empty plan to marquee-select; Shift/
+  Ctrl-click to add or remove individual ikons. Drag any selected ikon to
+  move the whole group, or press Delete / Remove to delete them together.
+  Click empty plan to clear.
+- **Device schedule by room on the exported sheets.** Each floor plan is now
+  followed by a printed rooms × devices table (with per-room totals and
+  out-of-scope tags) in the PDF, the sheet PNGs, and the full package — so
+  the plan set tells the whole story without opening the Excel file.
 
 ## [1.17.0] — 2026-07-17
 

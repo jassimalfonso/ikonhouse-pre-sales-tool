@@ -4,6 +4,23 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.16.0] — 2026-07-17
+
+### Added
+- **Drag walls to move them.** Selecting or highlighting a room now shows
+  its edges as draggable segments — drag a wall and it slides perpendicular
+  to itself, keeping the line perfectly straight and both corners together.
+  Snaps to neighbouring walls (hold Alt to bypass).
+- **Right-click a corner to delete it** (in addition to double-click); a
+  room keeps a minimum of three corners.
+- **Drag devices between categories** in the library — press-and-hold on
+  touch, click-drag on desktop, onto any category header (which highlights
+  as you hover). The move is saved with the project.
+- **Save feedback:** Ctrl/Cmd+S now shows “Saving…” then “Saved ✓”.
+
+### Changed
+- The Touch Panel icon is now **landscape** (matching a wall-mounted panel).
+
 ## [1.15.2] — 2026-07-17
 
 ### Changed
@@ -412,6 +429,23 @@ follows [Semantic Versioning](https://semver.org).
 
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
+
+## [1.16.0] — 2026-07-17
+
+### Added
+- **Drag walls to move them.** Selecting or highlighting a room now shows
+  its edges as draggable segments — drag a wall and it slides perpendicular
+  to itself, keeping the line perfectly straight and both corners together.
+  Snaps to neighbouring walls (hold Alt to bypass).
+- **Right-click a corner to delete it** (in addition to double-click); a
+  room keeps a minimum of three corners.
+- **Drag devices between categories** in the library — press-and-hold on
+  touch, click-drag on desktop, onto any category header (which highlights
+  as you hover). The move is saved with the project.
+- **Save feedback:** Ctrl/Cmd+S now shows “Saving…” then “Saved ✓”.
+
+### Changed
+- The Touch Panel icon is now **landscape** (matching a wall-mounted panel).
 
 ## [1.15.2] — 2026-07-17
 

@@ -17,7 +17,7 @@ const ICONS = {
   'keypad':'<rect x="4.5" y="4" width="15" height="16" rx="1.2"/><rect x="9" y="6.4" width="6" height="2.5" rx="0.6"/><rect x="9" y="10" width="6" height="2.5" rx="0.6"/><rect x="9" y="13.6" width="6" height="2.5" rx="0.6"/><rect x="9" y="17.2" width="6" height="1.6" rx="0.5"/>',
   'keypad-2col':'<rect x="4.5" y="4" width="15" height="16" rx="1.2"/><rect x="7" y="6.8" width="4.2" height="2.6" rx="0.6"/><rect x="12.8" y="6.8" width="4.2" height="2.6" rx="0.6"/><rect x="7" y="10.7" width="4.2" height="2.6" rx="0.6"/><rect x="12.8" y="10.7" width="4.2" height="2.6" rx="0.6"/><rect x="7" y="14.6" width="4.2" height="2.6" rx="0.6"/><rect x="12.8" y="14.6" width="4.2" height="2.6" rx="0.6"/>',
   'keypad-2':'<rect x="4.5" y="4" width="15" height="16" rx="1.2"/><rect x="8" y="7.2" width="8" height="3.6" rx="0.8"/><rect x="8" y="13.2" width="8" height="3.6" rx="0.8"/>',
-  'touch':'<rect x="5.5" y="3" width="13" height="18" rx="2"/><path d="M10.3 18.7h3.4"/>',
+  'touch':'<rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="M18.7 10.3v3.4"/>',
   'thermostat':'<rect x="4.5" y="4" width="15" height="16" rx="1.2"/><rect x="7.3" y="6.8" width="9.4" height="4.4" rx="0.8"/><circle cx="15.4" cy="7.9" r="0.45" fill="currentColor"/><path d="M8.6 14.6h.01M12 14.6h.01M15.4 14.6h.01M12 17.3h.01"/>',
   'sensor':'<circle cx="12" cy="12" r="1.4" fill="currentColor"/><path d="M7.5 7.5a6.4 6.4 0 0 0 0 9M16.5 7.5a6.4 6.4 0 0 1 0 9M4.8 4.8a10.2 10.2 0 0 0 0 14.4M19.2 4.8a10.2 10.2 0 0 1 0 14.4"/>',
   'blinds':'<rect x="4" y="3" width="16" height="18" rx="1.5"/><path d="M4 7.5h16M4 12h16M4 16.5h16"/>',
@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.15.2';
+const APP_VERSION='1.16.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -246,7 +246,14 @@ function renderLibrary(){
         <span class="item-qty ${qty?'on':''}">${qty||'—'}</span>
         <button class="item-edit" title="Edit"><svg viewBox="0 0 24 24"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg></button>
         <button class="item-del" title="Delete device"><svg viewBox="0 0 24 24"><path d="M5 7h14M9 7V5h6v2m-8 0l1 13h8l1-13"/></svg></button>`;
+      row.dataset.item=item.id;
+      row.addEventListener('pointerdown',e=>{
+        if(e.target.closest('.item-edit,.item-del'))return;
+        if(e.pointerType==='mouse'&&e.button!==0)return;
+        startDeviceDrag(item,row,e);
+      });
       row.addEventListener('click',e=>{
+        if(dragDevSuppressClick)return;
         if(e.target.closest('.item-del')){
           if(!confirm(`Delete “${item.name}”${qty?` and its ${qty} placed ikon${qty>1?'s':''}`:''}?`))return;
           state.items=state.items.filter(i=>i.id!==item.id);
@@ -280,6 +287,43 @@ $('#btnNewCat').addEventListener('click',()=>{
   renderLibrary();
   toast(`Category “${name}” created — add devices to it anytime.`);
 });
+let dragDevSuppressClick=false;
+function startDeviceDrag(item,row,e){
+  const id=e.pointerId, sx=e.clientX, sy=e.clientY;
+  let armed=e.pointerType!=='touch', started=false, holdT=null;
+  const begin=()=>{ started=true; document.body.classList.add('dev-dragging');
+    if(navigator.vibrate&&e.pointerType==='touch')navigator.vibrate(10); };
+  if(!armed){ holdT=setTimeout(()=>{armed=true;begin();},300); }
+  const overCat=cl=>{ const h=cl&&cl.closest?cl.closest('.cat-head,.item-row'):null;
+    return h?(h.dataset.cat|| (h.dataset.item?itemById(h.dataset.item)?.cat:null)):null; };
+  const mv=ev=>{
+    if(ev.pointerId!==id)return;
+    if(!armed){ if(Math.hypot(ev.clientX-sx,ev.clientY-sy)>8){clearTimeout(holdT);cleanup();} return; }
+    if(!started&&Math.hypot(ev.clientX-sx,ev.clientY-sy)<5)return;
+    if(!started)begin();
+    const el2=document.elementFromPoint(ev.clientX,ev.clientY);
+    document.querySelectorAll('.cat-head.drop').forEach(h=>h.classList.remove('drop'));
+    const head=el2&&el2.closest?el2.closest('.cat-head'):null;
+    const rowEl=el2&&el2.closest?el2.closest('.item-row'):null;
+    const tgt=head||(rowEl?document.querySelector(`.cat-head[data-cat="${(itemById(rowEl.dataset.item)||{}).cat}"]`):null);
+    if(tgt)tgt.classList.add('drop');
+  };
+  const up=ev=>{
+    if(ev.pointerId!==id)return;
+    clearTimeout(holdT);cleanup();
+    if(started){
+      const el2=document.elementFromPoint(ev.clientX,ev.clientY);
+      const head=el2&&el2.closest?el2.closest('.cat-head'):null;
+      const rowEl=el2&&el2.closest?el2.closest('.item-row'):null;
+      let cat=head?head.dataset.cat:(rowEl?(itemById(rowEl.dataset.item)||{}).cat:null);
+      document.body.classList.remove('dev-dragging');
+      document.querySelectorAll('.cat-head.drop').forEach(h=>h.classList.remove('drop'));
+      if(cat&&cat!==item.cat){ item.cat=cat; dragDevSuppressClick=true; renderLibrary(); renderBoq(); toast(`Moved to “${cat}”.`); setTimeout(()=>dragDevSuppressClick=false,60); }
+    }
+  };
+  const cleanup=()=>{document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);};
+  document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
+}
 function startCatDrag(cat,e){
   const id=e.pointerId, sx=e.clientX, sy=e.clientY; let started=false, armed=e.pointerType!=='touch';
   let holdT=null;
@@ -651,6 +695,10 @@ function renderRooms(){
     svg+=`<polygon class="rfill" points="${d}"/>`;
     svg+=`<polygon class="redge" data-room="${r.id}" points="${d}"/>`;
     if((roomMode&&r.id===selRoom)||(!roomMode&&r.id===hlRoom)){
+      r.pts.forEach((p,i)=>{                 /* draggable wall segments */
+        const q=r.pts[(i+1)%r.pts.length];
+        svg+=`<line class="rseg" data-room="${r.id}" data-edge="${i}" x1="${p.x*f.w}" y1="${p.y*f.h}" x2="${q.x*f.w}" y2="${q.y*f.h}"/>`;
+      });
       r.pts.forEach((p,i)=>{
         const q=r.pts[(i+1)%r.pts.length];
         svg+=`<rect class="rmid" data-room="${r.id}" data-after="${i}" x="${(p.x+q.x)/2*f.w-handleR*0.6}" y="${(p.y+q.y)/2*f.h-handleR*0.6}" width="${handleR*1.2}" height="${handleR*1.2}"/>`;
@@ -764,6 +812,36 @@ function wireRoomPointer(layer,f){
 
     if(t.classList.contains('rbg')){ startRoomDraw(e,f); return; }
 
+    if(t.classList.contains('rseg')){
+      /* drag a whole wall perpendicular to itself — keeps the edge straight */
+      e.preventDefault();e.stopPropagation();
+      pushUndo(roomSnapshot(f,room));
+      const ei=+t.dataset.edge, n=room.pts.length;
+      const ai=ei, bi=(ei+1)%n;
+      const a0={...room.pts[ai]}, b0={...room.pts[bi]};
+      const horiz=Math.abs(a0.y-b0.y)<Math.abs(a0.x-b0.x);   /* dominant orientation */
+      const start=toFrac(e);
+      const cands=snapCandidates(f,room);
+      const mv=ev=>{
+        if(ev.pointerId!==id)return;
+        const p=toFrac(ev);
+        if(horiz){                       /* horizontal-ish wall moves in Y */
+          let ny=b0.y+(p.y-start.y);
+          if(!ev.altKey)ny=snapVal(ny,cands.ys,tol);
+          ny=Math.min(1,Math.max(0,ny));
+          room.pts[ai].y=ny; room.pts[bi].y=ny;
+        }else{                           /* vertical-ish wall moves in X */
+          let nx=b0.x+(p.x-start.x);
+          if(!ev.altKey)nx=snapVal(nx,cands.xs,tol);
+          nx=Math.min(1,Math.max(0,nx));
+          room.pts[ai].x=nx; room.pts[bi].x=nx;
+        }
+        updateRoomInPlace(layer,f,room);
+      };
+      const up=ev=>{if(ev.pointerId!==id)return;document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);renderRooms();};
+      document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
+      return;
+    }
     if(t.classList.contains('rvtx')||t.classList.contains('rmid')){
       e.preventDefault();e.stopPropagation();
       pushUndo(roomSnapshot(f,room));
@@ -822,15 +900,16 @@ function wireRoomPointer(layer,f){
       document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
     }
   });
-  svg.addEventListener('dblclick',e=>{
-    const t=e.target;
-    if(!t.classList.contains('rvtx'))return;
-    const room=f.rooms.find(r=>r.id===t.dataset.room);
-    if(room.pts.length<=3){toast('A room needs at least 3 corners.');return;}
+  const deleteVertex=(t)=>{
+    if(!t.classList||!t.classList.contains('rvtx'))return false;
+    const room=f.rooms.find(r=>r.id===t.dataset.room);if(!room)return false;
+    if(room.pts.length<=3){toast('A room needs at least 3 corners.');return true;}
     pushUndo(roomSnapshot(f,room));
     room.pts.splice(+t.dataset.i,1);
-    renderRooms();
-  });
+    renderRooms();return true;
+  };
+  svg.addEventListener('dblclick',e=>{ deleteVertex(e.target); });
+  svg.addEventListener('contextmenu',e=>{ if(deleteVertex(e.target))e.preventDefault(); });
 }
 /* ── room drawing on the layer background rect (.rbg):
       tap corners for a custom shape, drag for a box.
@@ -2211,13 +2290,13 @@ async function saveProjectAs(){
       suggestedName:`${safeName()}.ikonplan`,
       types:[{description:'ikonhouse project',accept:{'application/json':['.ikonplan']}}]
     });
-    await writeProject(projHandle);
-    toast('Saved.');
+    toast('Saving…');await writeProject(projHandle);
+    toast('Saved ✓');
   }catch(err){ if(err&&err.name!=='AbortError')downloadProject(); }
 }
 async function saveProject(){
   if(projHandle){
-    try{ await writeProject(projHandle); toast('Saved.'); return; }
+    try{ toast('Saving…'); await writeProject(projHandle); toast('Saved ✓'); return; }
     catch(err){ /* permission lost or file moved — fall through to Save as */ }
   }
   saveProjectAs();

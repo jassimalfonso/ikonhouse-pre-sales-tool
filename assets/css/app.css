@@ -736,3 +736,12 @@ body.compact #dockRow,body.compact .vm-dock-label{display:none}
 .poly-prev svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
 .poly-prev polyline{fill:color-mix(in srgb, var(--hl) 8%, transparent);stroke:var(--hl);stroke-width:1.6;vector-effect:non-scaling-stroke;stroke-dasharray:6 4}
 .poly-prev circle{fill:var(--panel);stroke:var(--hl);stroke-width:2;vector-effect:non-scaling-stroke}
+
+/* draggable wall segments */
+.rseg{stroke:transparent;stroke-width:14;vector-effect:non-scaling-stroke;pointer-events:stroke;cursor:move}
+@media (pointer:coarse){ .rseg{stroke-width:20} }
+.rvtx{cursor:pointer}
+/* device drag-between-categories */
+body.dev-dragging{cursor:grabbing}
+body.dev-dragging .item-row{opacity:.5}
+.cat-head.drop{background:var(--hl-soft);box-shadow:inset 0 0 0 1.5px var(--hl-line);border-radius:7px}

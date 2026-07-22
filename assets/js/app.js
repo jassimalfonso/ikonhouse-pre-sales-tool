@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.19.0';
+const APP_VERSION='1.21.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -142,6 +142,16 @@ document.querySelectorAll('#themeRow [data-theme-opt]').forEach(b=>{
   b.addEventListener('click',()=>{ state.theme=b.dataset.themeOpt; applyTheme(); });
 });
 $('#themeToggle').addEventListener('click',()=>{ state.theme=state.theme==='dark'?'light':'dark'; applyTheme(); });
+function applyAutoNum(){ const c=$('#autoNumOpt'); if(c)c.checked=!!state.autoNumber; }
+$('#autoNumOpt').addEventListener('change',e=>{
+  state.autoNumber=e.target.checked;
+  if(state.autoNumber){
+    /* assign sequence numbers to any ikons that lack them, per device */
+    state.floors.forEach(f=>f.placements.forEach(p=>{ if(!p.seq)p.seq=nextSeq(p.itemId); }));
+    toast('Auto-numbering on.');
+  } else toast('Auto-numbering off — numbers hidden.');
+  renderMarkers();
+});
 /* View menu (theme + docking) */
 $('#btnView').addEventListener('click',e=>{e.stopPropagation();$('#viewMenu').classList.toggle('open');$('#exportMenu').classList.remove('open');});
 document.addEventListener('click',()=>$('#viewMenu').classList.remove('open'));
@@ -704,7 +714,9 @@ function renderRooms(){
         svg+=`<rect class="rmid" data-room="${r.id}" data-after="${i}" x="${(p.x+q.x)/2*f.w-handleR*0.6}" y="${(p.y+q.y)/2*f.h-handleR*0.6}" width="${handleR*1.2}" height="${handleR*1.2}"/>`;
       });
       r.pts.forEach((p,i)=>{
-        svg+=`<circle class="rvtx" data-room="${r.id}" data-i="${i}" cx="${p.x*f.w}" cy="${p.y*f.h}" r="${handleR}"/>`;
+        let shared=false;
+        (f.rooms||[]).forEach(o=>{ if(o.id===r.id)return; o.pts.forEach(q=>{ if(Math.abs(q.x-p.x)<0.006&&Math.abs(q.y-p.y)<0.006)shared=true; }); });
+        svg+=`<circle class="rvtx${shared?' linked':''}" data-room="${r.id}" data-i="${i}" cx="${p.x*f.w}" cy="${p.y*f.h}" r="${handleR}"/>`;
       });
     }
     svg+=`</g>`;
@@ -812,6 +824,16 @@ function wireRoomPointer(layer,f){
 
     if(t.classList.contains('rbg')){ startRoomDraw(e,f); return; }
 
+    if(t.classList.contains('rseg')&&e.detail>=2){
+      /* double-click a wall → split it: insert a node at the click point */
+      e.preventDefault();e.stopPropagation();
+      pushUndo(roomSnapshot(f,room));
+      const ei=+t.dataset.edge;
+      const pt=toFrac(e);
+      room.pts.splice(ei+1,0,{x:pt.x,y:pt.y});
+      renderRooms();
+      return;
+    }
     if(t.classList.contains('rseg')){
       /* drag a whole wall freely — both corners move together, so the edge
          stays straight and the same length. Shift locks to ortho; Alt skips snap. */
@@ -827,7 +849,7 @@ function wireRoomPointer(layer,f){
         if(ev.pointerId!==id)return;
         const p=toFrac(ev);
         let dx=p.x-start.x, dy=p.y-start.y;
-        if(ev.shiftKey){                       /* ortho: move only across the wall */
+        if(!ev.shiftKey){                      /* default: ortho (straight across the wall); Shift = free */
           if(horiz)dx=0; else dy=0;
         }
         let nax={x:a0.x+dx,y:a0.y+dy}, nbx={x:b0.x+dx,y:b0.y+dy};
@@ -855,25 +877,31 @@ function wireRoomPointer(layer,f){
         const a=room.pts[+t.dataset.after], b=room.pts[(vi)%room.pts.length];
         room.pts.splice(vi,0,{x:(a.x+b.x)/2,y:(a.y+b.y)/2});
       } else vi=+t.dataset.i;
-      /* corners move independently. Hold Shift to square up: the dragged
-         corner aligns to a neighbour's axis (keeps the adjoining walls
-         orthogonal on demand, without forcing it the rest of the time). */
+      /* corners move independently, but LINKED rooms stay linked: any other
+         room's corner sharing this exact position moves along with it.
+         Hold Shift to square the dragged corner to a neighbour axis. */
       const n0=room.pts.length;
       const pi=(vi-1+n0)%n0, ni=(vi+1)%n0;
+      const LINK=0.006;
+      const v0={...room.pts[vi]};
+      const linked=[];                       /* {room, idx} sharing this node */
+      (f.rooms||[]).forEach(rr=>{ if(rr===room)return;
+        rr.pts.forEach((q,qi)=>{ if(Math.abs(q.x-v0.x)<LINK&&Math.abs(q.y-v0.y)<LINK)linked.push({room:rr,idx:qi}); });
+      });
+      if(linked.length)linked.forEach(l=>pushUndo(roomSnapshot(f,l.room)));   /* also undoable */
       const mv=ev=>{
         if(ev.pointerId!==id)return;
         const p=toFrac(ev);
         const sp=roomSnapPoint(p,f,room,room.pts.filter((_,qi)=>qi!==vi),ev.altKey?0:tol);
         let nx=sp.x, ny=sp.y;
         if(ev.shiftKey){                       /* square to whichever neighbour axis is closer */
-          const dpx=Math.abs(nx-room.pts[pi].x)+Math.abs(nx-room.pts[ni].x);
-          const dpy=Math.abs(ny-room.pts[pi].y)+Math.abs(ny-room.pts[ni].y);
           const ax=Math.abs(nx-room.pts[pi].x)<Math.abs(nx-room.pts[ni].x)?room.pts[pi].x:room.pts[ni].x;
           const ay=Math.abs(ny-room.pts[pi].y)<Math.abs(ny-room.pts[ni].y)?room.pts[pi].y:room.pts[ni].y;
           if(Math.abs(nx-ax)<Math.abs(ny-ay))nx=ax; else ny=ay;
         }
         showGuides(sp.sx?nx:null, sp.sy?ny:null);
         room.pts[vi]={x:nx,y:ny};
+        linked.forEach(l=>{ l.room.pts[l.idx]={x:nx,y:ny}; updateRoomInPlace(layer,f,l.room); });
         updateRoomInPlace(layer,f,room);
       };
       const up=ev=>{if(ev.pointerId!==id)return;clearGuides();document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);renderRooms();};
@@ -1117,10 +1145,41 @@ $('#planClick').addEventListener('click',e=>{
   const x=(e.clientX-r.left)/r.width, y=(e.clientY-r.top)/r.height;
   if(x<0||x>1||y<0||y>1)return;
   const p={id:uid(),itemId:armedItem,x,y};
+  if(state.autoNumber)p.seq=nextSeq(armedItem);
   f.placements.push(p);
   pushUndo({type:'add',floorId:f.id,p});
   renderMarkers();renderLibrary();renderBoq();updateChipCount();
 });
+/* next per-device sequence number across the whole project */
+function devCode(it){
+  const words=(it.name||'?').replace(/[^A-Za-z0-9 ]/g,'').trim().split(/\s+/);
+  let code=words.length>=2?(words[0][0]+words[1][0]):(it.name||'?').slice(0,2);
+  return code.toUpperCase();
+}
+function nextSeq(itemId){
+  let max=0;
+  state.floors.forEach(f=>f.placements.forEach(p=>{ if(p.itemId===itemId&&p.seq>max)max=p.seq; }));
+  return max+1;
+}
+/* copy / paste selected ikons */
+let clipboard=null;
+function copySelection(){
+  const f=activeFloor();if(!f||!selSet.size)return;
+  clipboard=f.placements.filter(p=>selSet.has(p.id)).map(p=>({itemId:p.itemId,x:p.x,y:p.y}));
+  toast(`Copied ${clipboard.length} ikon${clipboard.length>1?'s':''}.`);
+}
+function pasteClipboard(){
+  const f=activeFloor();if(!f||!clipboard||!clipboard.length)return;
+  const ids=[];
+  clipboard.forEach(c=>{
+    const p={id:uid(),itemId:c.itemId,x:Math.min(1,c.x+0.03),y:Math.min(1,c.y+0.03)};
+    if(state.autoNumber)p.seq=nextSeq(c.itemId);
+    f.placements.push(p);pushUndo({type:'add',floorId:f.id,p});ids.push(p.id);
+  });
+  setSelSet(ids);
+  renderMarkers();renderLibrary();renderBoq();updateChipCount();
+  toast(`Pasted ${ids.length} ikon${ids.length>1?'s':''}.`);
+}
 
 /* ──────────── Markers (pointer-based: mouse + touch) ──────────── */
 function setSelMarker(id){
@@ -1143,7 +1202,8 @@ function renderMarkers(){
     const it=itemById(p.itemId);if(!it)return;
     let hlCls='';
     if(hlRoom){const rr=(f.rooms||[]).find(x=>x.id===hlRoom);hlCls=rr&&roomOf(p,f)===rr?' lit':' dim';}
-    const m=el('div','marker'+(selSet.has(p.id)?' sel':'')+hlCls,iconHtml(it));
+    const seqBadge=(state.autoNumber&&p.seq)?`<span class="seq">${p.seq}</span>`:'';
+    const m=el('div','marker'+(selSet.has(p.id)?' sel':'')+hlCls,iconHtml(it)+seqBadge);
     m.style.cssText=`left:${p.x*100}%;top:${p.y*100}%;width:${s}px;height:${s}px;background:${it.color}`;
     m.title=it.name;
     m.addEventListener('pointerdown',ev=>{
@@ -2291,6 +2351,16 @@ async function renderSheet(f,paper,idx,total){
     if(!iconCache[key])iconCache[key]=it.iconImg?await loadImg(it.iconImg):await iconImage(it.icon,'#ffffff');
     const g=pin*0.56;
     ctx.drawImage(iconCache[key],x0-g/2,y0-g/2,g,g);
+    if(state.autoNumber&&p.seq){
+      const lbl=devCode(it)+'-'+String(p.seq).padStart(2,'0');
+      ctx.font=`600 ${Math.round(pin*0.42)}px 'JetBrains Mono',monospace`;
+      ctx.textAlign='left';ctx.textBaseline='middle';
+      const tx=x0+pin*0.62, ty=y0;
+      const tw=ctx.measureText(lbl).width;
+      ctx.fillStyle='rgba(255,255,255,.82)';
+      roundRect(ctx,tx-pin*0.1,ty-pin*0.28,tw+pin*0.2,pin*0.56,pin*0.14);ctx.fill();
+      ctx.fillStyle=PAPER_INK;ctx.fillText(lbl,tx,ty+1);
+    }
   }
 
   /* legend table */
@@ -2488,6 +2558,8 @@ $('#mSave').addEventListener('click',()=>{closeMenu();saveProject();});
 $('#mSaveAs').addEventListener('click',()=>{closeMenu();saveProjectAs();});
 document.addEventListener('keydown',e=>{
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();saveProject();}
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='c'&&selSet.size&&!e.target.matches('input,select,textarea')){e.preventDefault();copySelection();}
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='v'&&clipboard&&!e.target.matches('input,select,textarea')){e.preventDefault();pasteClipboard();}
 });
 async function openViaPicker(){
   try{
@@ -2510,7 +2582,7 @@ function loadProjectText(txt){
     if(roomMode)setRoomMode(false);
     $('#projName').value=state.project;
     $('#pinSize').value=(state.pinScale||1)*100;
-    applyTheme();renderBrand();applyDock();renderLibrary();renderFloors();showFloor();renderBoq();
+    applyTheme();renderBrand();applyDock();applyAutoNum();renderLibrary();renderFloors();showFloor();renderBoq();
     dismissOnboard();
     toast('Project loaded.');
     return true;
@@ -2641,5 +2713,5 @@ $('#welcome').addEventListener('pointermove',e=>{
 $('#welcome').addEventListener('pointerleave',()=>{ obFx.mx=-9999; obFx.my=-9999; });
 
 /* ──────────── Init ──────────── */
-applyTheme();renderBrand();applyDock();closeLib();renderLibrary();renderFloors();showFloor();obStartFx();
+applyTheme();renderBrand();applyDock();applyAutoNum();closeLib();renderLibrary();renderFloors();showFloor();obStartFx();
 if(!isCompact())setTimeout(()=>toast('Tip: drag the ⠿ grip on the device library to dock it left, right, top or bottom.'),1600);

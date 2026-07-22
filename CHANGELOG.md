@@ -4,6 +4,34 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.21.0] — 2026-07-18
+
+### Added
+- **Copy & paste ikons.** Select one or more ikons and Ctrl/Cmd+C, then
+  Ctrl/Cmd+V to drop copies (offset slightly, auto-selected) — pairs with
+  marquee multi-select for quickly replicating a device cluster.
+- **Auto-numbering.** Each placed ikon gets a per-device sequence shown as a
+  small badge on the plan and printed as a code on exported sheets
+  (e.g. SP-01, 4B-02, TH-03). **Toggle it off** in the View menu →
+  Placement; turning it back on numbers everything consistently.
+- **Split a wall.** Double-click a wall segment to insert a node exactly at
+  the click point — branch a new corner or start a connected room from a
+  precise spot. (Midpoint handles still add a centre node.)
+
+## [1.20.0] — 2026-07-18
+
+### Added
+- **Linked rooms via shared nodes.** When two rooms share a corner (drop or
+  snap one room''s corner onto another''s), that node is marked with a bronze
+  ring, and dragging it moves *both* rooms'' corners together — adjacent
+  rooms stay connected as you adjust the layout. Right-click / double-click a
+  node to remove it, which unlinks the rooms there. Linked edits are undoable.
+
+### Changed
+- **Inverted the wall-drag ortho default:** dragging a wall now keeps it
+  straight (moving only across itself) by default; **hold Shift** to move it
+  freely in any direction. (Previously free by default, Shift for straight.)
+
 ## [1.19.0] — 2026-07-18
 
 ### Changed
@@ -38,6 +66,34 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.21.0] — 2026-07-18
+
+### Added
+- **Copy & paste ikons.** Select one or more ikons and Ctrl/Cmd+C, then
+  Ctrl/Cmd+V to drop copies (offset slightly, auto-selected) — pairs with
+  marquee multi-select for quickly replicating a device cluster.
+- **Auto-numbering.** Each placed ikon gets a per-device sequence shown as a
+  small badge on the plan and printed as a code on exported sheets
+  (e.g. SP-01, 4B-02, TH-03). **Toggle it off** in the View menu →
+  Placement; turning it back on numbers everything consistently.
+- **Split a wall.** Double-click a wall segment to insert a node exactly at
+  the click point — branch a new corner or start a connected room from a
+  precise spot. (Midpoint handles still add a centre node.)
+
+## [1.20.0] — 2026-07-18
+
+### Added
+- **Linked rooms via shared nodes.** When two rooms share a corner (drop or
+  snap one room''s corner onto another''s), that node is marked with a bronze
+  ring, and dragging it moves *both* rooms'' corners together — adjacent
+  rooms stay connected as you adjust the layout. Right-click / double-click a
+  node to remove it, which unlinks the rooms there. Linked edits are undoable.
+
+### Changed
+- **Inverted the wall-drag ortho default:** dragging a wall now keeps it
+  straight (moving only across itself) by default; **hold Shift** to move it
+  freely in any direction. (Previously free by default, Shift for straight.)
 
 ## [1.19.0] — 2026-07-18
 
@@ -509,6 +565,34 @@ follows [Semantic Versioning](https://semver.org).
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
 
+## [1.21.0] — 2026-07-18
+
+### Added
+- **Copy & paste ikons.** Select one or more ikons and Ctrl/Cmd+C, then
+  Ctrl/Cmd+V to drop copies (offset slightly, auto-selected) — pairs with
+  marquee multi-select for quickly replicating a device cluster.
+- **Auto-numbering.** Each placed ikon gets a per-device sequence shown as a
+  small badge on the plan and printed as a code on exported sheets
+  (e.g. SP-01, 4B-02, TH-03). **Toggle it off** in the View menu →
+  Placement; turning it back on numbers everything consistently.
+- **Split a wall.** Double-click a wall segment to insert a node exactly at
+  the click point — branch a new corner or start a connected room from a
+  precise spot. (Midpoint handles still add a centre node.)
+
+## [1.20.0] — 2026-07-18
+
+### Added
+- **Linked rooms via shared nodes.** When two rooms share a corner (drop or
+  snap one room''s corner onto another''s), that node is marked with a bronze
+  ring, and dragging it moves *both* rooms'' corners together — adjacent
+  rooms stay connected as you adjust the layout. Right-click / double-click a
+  node to remove it, which unlinks the rooms there. Linked edits are undoable.
+
+### Changed
+- **Inverted the wall-drag ortho default:** dragging a wall now keeps it
+  straight (moving only across itself) by default; **hold Shift** to move it
+  freely in any direction. (Previously free by default, Shift for straight.)
+
 ## [1.19.0] — 2026-07-18
 
 ### Changed
@@ -543,6 +627,34 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.21.0] — 2026-07-18
+
+### Added
+- **Copy & paste ikons.** Select one or more ikons and Ctrl/Cmd+C, then
+  Ctrl/Cmd+V to drop copies (offset slightly, auto-selected) — pairs with
+  marquee multi-select for quickly replicating a device cluster.
+- **Auto-numbering.** Each placed ikon gets a per-device sequence shown as a
+  small badge on the plan and printed as a code on exported sheets
+  (e.g. SP-01, 4B-02, TH-03). **Toggle it off** in the View menu →
+  Placement; turning it back on numbers everything consistently.
+- **Split a wall.** Double-click a wall segment to insert a node exactly at
+  the click point — branch a new corner or start a connected room from a
+  precise spot. (Midpoint handles still add a centre node.)
+
+## [1.20.0] — 2026-07-18
+
+### Added
+- **Linked rooms via shared nodes.** When two rooms share a corner (drop or
+  snap one room''s corner onto another''s), that node is marked with a bronze
+  ring, and dragging it moves *both* rooms'' corners together — adjacent
+  rooms stay connected as you adjust the layout. Right-click / double-click a
+  node to remove it, which unlinks the rooms there. Linked edits are undoable.
+
+### Changed
+- **Inverted the wall-drag ortho default:** dragging a wall now keeps it
+  straight (moving only across itself) by default; **hold Shift** to move it
+  freely in any direction. (Previously free by default, Shift for straight.)
 
 ## [1.19.0] — 2026-07-18
 

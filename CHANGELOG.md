@@ -4,6 +4,23 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.21.1] — 2026-07-18
+
+### Fixed
+- **Room creation silently cancelled near an adjacent room.** Snapping could
+  pull the rectangle''s end corner back onto its own start edge, collapsing
+  the box below the minimum size so nothing was created. A snap that would
+  collapse the rectangle is now ignored, and a genuinely too-small drag says
+  so instead of failing quietly.
+- **Pasted (or multi-selected) ikons could not be dragged.** The group drag
+  re-rendered all markers on every movement, detaching the element holding
+  the pointer capture and ending the drag instantly. Group moves now update
+  marker positions in place, with a single re-render on release.
+- **Rooms that were merely close resized together.** The node-link tolerance
+  was ~0.6% of the plan — wide enough to bind neighbouring-but-separate
+  corners. Linking now requires true coincidence (nodes snapped exactly
+  together), so only genuinely shared corners move as one.
+
 ## [1.21.0] — 2026-07-18
 
 ### Added
@@ -66,6 +83,23 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.21.1] — 2026-07-18
+
+### Fixed
+- **Room creation silently cancelled near an adjacent room.** Snapping could
+  pull the rectangle''s end corner back onto its own start edge, collapsing
+  the box below the minimum size so nothing was created. A snap that would
+  collapse the rectangle is now ignored, and a genuinely too-small drag says
+  so instead of failing quietly.
+- **Pasted (or multi-selected) ikons could not be dragged.** The group drag
+  re-rendered all markers on every movement, detaching the element holding
+  the pointer capture and ending the drag instantly. Group moves now update
+  marker positions in place, with a single re-render on release.
+- **Rooms that were merely close resized together.** The node-link tolerance
+  was ~0.6% of the plan — wide enough to bind neighbouring-but-separate
+  corners. Linking now requires true coincidence (nodes snapped exactly
+  together), so only genuinely shared corners move as one.
 
 ## [1.21.0] — 2026-07-18
 
@@ -565,6 +599,23 @@ follows [Semantic Versioning](https://semver.org).
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
 
+## [1.21.1] — 2026-07-18
+
+### Fixed
+- **Room creation silently cancelled near an adjacent room.** Snapping could
+  pull the rectangle''s end corner back onto its own start edge, collapsing
+  the box below the minimum size so nothing was created. A snap that would
+  collapse the rectangle is now ignored, and a genuinely too-small drag says
+  so instead of failing quietly.
+- **Pasted (or multi-selected) ikons could not be dragged.** The group drag
+  re-rendered all markers on every movement, detaching the element holding
+  the pointer capture and ending the drag instantly. Group moves now update
+  marker positions in place, with a single re-render on release.
+- **Rooms that were merely close resized together.** The node-link tolerance
+  was ~0.6% of the plan — wide enough to bind neighbouring-but-separate
+  corners. Linking now requires true coincidence (nodes snapped exactly
+  together), so only genuinely shared corners move as one.
+
 ## [1.21.0] — 2026-07-18
 
 ### Added
@@ -627,6 +678,23 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.21.1] — 2026-07-18
+
+### Fixed
+- **Room creation silently cancelled near an adjacent room.** Snapping could
+  pull the rectangle''s end corner back onto its own start edge, collapsing
+  the box below the minimum size so nothing was created. A snap that would
+  collapse the rectangle is now ignored, and a genuinely too-small drag says
+  so instead of failing quietly.
+- **Pasted (or multi-selected) ikons could not be dragged.** The group drag
+  re-rendered all markers on every movement, detaching the element holding
+  the pointer capture and ending the drag instantly. Group moves now update
+  marker positions in place, with a single re-render on release.
+- **Rooms that were merely close resized together.** The node-link tolerance
+  was ~0.6% of the plan — wide enough to bind neighbouring-but-separate
+  corners. Linking now requires true coincidence (nodes snapped exactly
+  together), so only genuinely shared corners move as one.
 
 ## [1.21.0] — 2026-07-18
 

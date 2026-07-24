@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.21.0';
+const APP_VERSION='1.21.1';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -589,6 +589,8 @@ $('#floatGrip').addEventListener('pointerdown',e=>{
 
 /* ──────────── Rooms / areas (polygon engine) ──────────── */
 let roomMode=false, selRoom=null, hlRoom=null;
+/* rooms link only when nodes truly coincide (snapping produces exact equality) */
+const NODE_LINK_EPS=0.0009;
 const ROOM_COLORS=['#AE8B5C','#2E5CFF','#16B364','#F59E0B','#E5484D','#7C4DFF','#0FA3A3','#64748B'];
 /* migrate legacy {x,y,w,h} rectangles to point lists; ensure color/scope */
 function migrateRoom(r){
@@ -715,7 +717,7 @@ function renderRooms(){
       });
       r.pts.forEach((p,i)=>{
         let shared=false;
-        (f.rooms||[]).forEach(o=>{ if(o.id===r.id)return; o.pts.forEach(q=>{ if(Math.abs(q.x-p.x)<0.006&&Math.abs(q.y-p.y)<0.006)shared=true; }); });
+        (f.rooms||[]).forEach(o=>{ if(o.id===r.id)return; o.pts.forEach(q=>{ if(Math.abs(q.x-p.x)<NODE_LINK_EPS&&Math.abs(q.y-p.y)<NODE_LINK_EPS)shared=true; }); });
         svg+=`<circle class="rvtx${shared?' linked':''}" data-room="${r.id}" data-i="${i}" cx="${p.x*f.w}" cy="${p.y*f.h}" r="${handleR}"/>`;
       });
     }
@@ -882,7 +884,7 @@ function wireRoomPointer(layer,f){
          Hold Shift to square the dragged corner to a neighbour axis. */
       const n0=room.pts.length;
       const pi=(vi-1+n0)%n0, ni=(vi+1)%n0;
-      const LINK=0.006;
+      const LINK=NODE_LINK_EPS;
       const v0={...room.pts[vi]};
       const linked=[];                       /* {room, idx} sharing this node */
       (f.rooms||[]).forEach(rr=>{ if(rr===room)return;
@@ -1013,8 +1015,12 @@ function startRoomDraw(e,f){
     if(pinchActive){aborted=true;prev.remove();stop();return;}   /* second finger = zoom */
     movedPx=Math.max(movedPx,Math.hypot(ev.clientX-e.clientX,ev.clientY-e.clientY));
     if(movedPx<6)return;
-    const sp=roomSnapPoint({x:(ev.clientX-r.left)/r.width,y:(ev.clientY-r.top)/r.height},f,null,null,ev.altKey?0:tol);
-    x1=fx(sp.x);y1=fx(sp.y);draw();
+    const raw={x:(ev.clientX-r.left)/r.width,y:(ev.clientY-r.top)/r.height};
+    const sp=roomSnapPoint(raw,f,null,null,ev.altKey?0:tol);
+    /* never let a snap collapse the rectangle onto its own start edge */
+    x1=fx(Math.abs(sp.x-x0)<0.015?raw.x:sp.x);
+    y1=fx(Math.abs(sp.y-y0)<0.015?raw.y:sp.y);
+    draw();
   };
   const up=ev=>{
     if(ev.pointerId!==id||aborted)return;
@@ -1039,7 +1045,7 @@ function startRoomDraw(e,f){
     }
     if(polyPts)cancelPoly();                          /* a drag supersedes stray corners */
     const g=draw();prev.remove();
-    if(g.rw<0.015||g.rh<0.015)return;
+    if(g.rw<0.015||g.rh<0.015){toast('Too small — drag a larger area, or tap corners to outline a shape.');return;}
     const name=prompt('Room / area name',`Room ${(f.rooms||[]).length+1}`);
     if(name===null)return;
     const room=migrateRoom({id:uid(),name:(name.trim()||`Room ${(f.rooms||[]).length+1}`),
@@ -1204,6 +1210,7 @@ function renderMarkers(){
     if(hlRoom){const rr=(f.rooms||[]).find(x=>x.id===hlRoom);hlCls=rr&&roomOf(p,f)===rr?' lit':' dim';}
     const seqBadge=(state.autoNumber&&p.seq)?`<span class="seq">${p.seq}</span>`:'';
     const m=el('div','marker'+(selSet.has(p.id)?' sel':'')+hlCls,iconHtml(it)+seqBadge);
+    m.dataset.pid=p.id;
     m.style.cssText=`left:${p.x*100}%;top:${p.y*100}%;width:${s}px;height:${s}px;background:${it.color}`;
     m.title=it.name;
     m.addEventListener('pointerdown',ev=>{
@@ -1242,7 +1249,8 @@ function startDrag(p,m,ev){
   const f0=activeFloor();
   const group=selSet.size>1&&selSet.has(p.id);
   const groupPts=group?f0.placements.filter(q=>selSet.has(q.id)):[p];
-  const origins=groupPts.map(q=>({q,x:q.x,y:q.y}));
+  const origins=groupPts.map(q=>({q,x:q.x,y:q.y,
+    el:$('#planHolder').querySelector(`.marker[data-pid="${q.id}"]`)}));
   const oxs=f0?f0.placements.filter(q=>!selSet.has(q.id)).map(q=>q.x):[];
   const oys=f0?f0.placements.filter(q=>!selSet.has(q.id)).map(q=>q.y):[];
   const onMove=e=>{
@@ -1251,8 +1259,10 @@ function startDrag(p,m,ev){
     const r=planRect();
     if(group){
       let dx=(e.clientX-startX)/r.width, dy=(e.clientY-startY)/r.height;
-      origins.forEach(o=>{ o.q.x=Math.min(1,Math.max(0,o.x+dx)); o.q.y=Math.min(1,Math.max(0,o.y+dy)); });
-      renderMarkers();
+      origins.forEach(o=>{
+        o.q.x=Math.min(1,Math.max(0,o.x+dx)); o.q.y=Math.min(1,Math.max(0,o.y+dy));
+        if(o.el){o.el.style.left=(o.q.x*100)+'%';o.el.style.top=(o.q.y*100)+'%';}   /* in place: keeps pointer capture alive */
+      });
       return;
     }
     let nx=Math.min(1,Math.max(0,(e.clientX-r.left)/r.width));

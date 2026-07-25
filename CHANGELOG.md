@@ -4,6 +4,32 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.25.0] — 2026-07-25
+
+### Added
+- **Create a room from a node on desktop too.** Press and hold a corner with
+  the mouse (~0.5s — slightly longer than touch, since pausing mid-click is
+  common) then drag to size the new room; it shares the anchor corner, so the
+  two rooms stay linked. **Ctrl/⌘-drag** from a corner does the same instantly,
+  with no waiting.
+- The node **pulses while the hold arms**, so it is clear which gesture is
+  about to fire, and **Esc** cancels a spawn in progress.
+
+## [1.24.1] — 2026-07-25
+
+### Fixed
+- **Pinch-to-zoom on the floor plan.** The zoom maths were correct, but three
+  competing gesture handlers were fighting the pinch:
+  - the one-finger pan only *paused* while a pinch was active, so when the
+    second finger lifted it resumed from its original origin and snapped the
+    plan back — undoing the zoom''s framing. A pinch now ends the pan outright.
+  - in Rooms mode the plan is the SVG room layer, which sits outside
+    `#planClick`, so the stage pan handler ran *alongside* the room layer''s own
+    pan — two systems writing the same pan offsets from different origins.
+  - marquee select ignored pinches entirely, drawing a selection box (and
+    selecting ikons) during a two-finger gesture.
+- Pinches with three or more fingers on screen are now recognised too.
+
 ## [1.24.0] — 2026-07-25
 
 ### Fixed
@@ -142,6 +168,32 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.25.0] — 2026-07-25
+
+### Added
+- **Create a room from a node on desktop too.** Press and hold a corner with
+  the mouse (~0.5s — slightly longer than touch, since pausing mid-click is
+  common) then drag to size the new room; it shares the anchor corner, so the
+  two rooms stay linked. **Ctrl/⌘-drag** from a corner does the same instantly,
+  with no waiting.
+- The node **pulses while the hold arms**, so it is clear which gesture is
+  about to fire, and **Esc** cancels a spawn in progress.
+
+## [1.24.1] — 2026-07-25
+
+### Fixed
+- **Pinch-to-zoom on the floor plan.** The zoom maths were correct, but three
+  competing gesture handlers were fighting the pinch:
+  - the one-finger pan only *paused* while a pinch was active, so when the
+    second finger lifted it resumed from its original origin and snapped the
+    plan back — undoing the zoom''s framing. A pinch now ends the pan outright.
+  - in Rooms mode the plan is the SVG room layer, which sits outside
+    `#planClick`, so the stage pan handler ran *alongside* the room layer''s own
+    pan — two systems writing the same pan offsets from different origins.
+  - marquee select ignored pinches entirely, drawing a selection box (and
+    selecting ikons) during a two-finger gesture.
+- Pinches with three or more fingers on screen are now recognised too.
 
 ## [1.24.0] — 2026-07-25
 
@@ -717,6 +769,32 @@ follows [Semantic Versioning](https://semver.org).
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
 
+## [1.25.0] — 2026-07-25
+
+### Added
+- **Create a room from a node on desktop too.** Press and hold a corner with
+  the mouse (~0.5s — slightly longer than touch, since pausing mid-click is
+  common) then drag to size the new room; it shares the anchor corner, so the
+  two rooms stay linked. **Ctrl/⌘-drag** from a corner does the same instantly,
+  with no waiting.
+- The node **pulses while the hold arms**, so it is clear which gesture is
+  about to fire, and **Esc** cancels a spawn in progress.
+
+## [1.24.1] — 2026-07-25
+
+### Fixed
+- **Pinch-to-zoom on the floor plan.** The zoom maths were correct, but three
+  competing gesture handlers were fighting the pinch:
+  - the one-finger pan only *paused* while a pinch was active, so when the
+    second finger lifted it resumed from its original origin and snapped the
+    plan back — undoing the zoom''s framing. A pinch now ends the pan outright.
+  - in Rooms mode the plan is the SVG room layer, which sits outside
+    `#planClick`, so the stage pan handler ran *alongside* the room layer''s own
+    pan — two systems writing the same pan offsets from different origins.
+  - marquee select ignored pinches entirely, drawing a selection box (and
+    selecting ikons) during a two-finger gesture.
+- Pinches with three or more fingers on screen are now recognised too.
+
 ## [1.24.0] — 2026-07-25
 
 ### Fixed
@@ -855,6 +933,32 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.25.0] — 2026-07-25
+
+### Added
+- **Create a room from a node on desktop too.** Press and hold a corner with
+  the mouse (~0.5s — slightly longer than touch, since pausing mid-click is
+  common) then drag to size the new room; it shares the anchor corner, so the
+  two rooms stay linked. **Ctrl/⌘-drag** from a corner does the same instantly,
+  with no waiting.
+- The node **pulses while the hold arms**, so it is clear which gesture is
+  about to fire, and **Esc** cancels a spawn in progress.
+
+## [1.24.1] — 2026-07-25
+
+### Fixed
+- **Pinch-to-zoom on the floor plan.** The zoom maths were correct, but three
+  competing gesture handlers were fighting the pinch:
+  - the one-finger pan only *paused* while a pinch was active, so when the
+    second finger lifted it resumed from its original origin and snapped the
+    plan back — undoing the zoom''s framing. A pinch now ends the pan outright.
+  - in Rooms mode the plan is the SVG room layer, which sits outside
+    `#planClick`, so the stage pan handler ran *alongside* the room layer''s own
+    pan — two systems writing the same pan offsets from different origins.
+  - marquee select ignored pinches entirely, drawing a selection box (and
+    selecting ikons) during a two-finger gesture.
+- Pinches with three or more fingers on screen are now recognised too.
 
 ## [1.24.0] — 2026-07-25
 

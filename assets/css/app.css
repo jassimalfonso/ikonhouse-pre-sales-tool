@@ -804,3 +804,6 @@ body.dev-dragging .item-row{opacity:.5}
 .rvtx{stroke-width:1.6}
 .rvtx.linked{stroke-width:2}
 .rmid{stroke-width:1.4;opacity:.85}
+/* a node pulses while a hold-to-create is arming */
+@keyframes nodeArm{0%{r:var(--nr,7)}100%{stroke-width:4;opacity:.75}}
+.rvtx.arming{stroke:var(--hl);stroke-width:3.5;animation:nodeArm .5s ease-out forwards}

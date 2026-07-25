@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.24.0';
+const APP_VERSION='1.25.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -690,7 +690,7 @@ function setRoomMode(on){
   $('#planHolder').classList.toggle('rooming',on);
   $('#hintbar').style.display=on?'block':'none';
   if(on){
-    $('#hintbar').innerHTML='Drag a box · <b>tap corners</b> for a shape · drag walls &amp; corners to adjust · hold a corner for a linked room <button class="hint-done">Done</button>';
+    $('#hintbar').innerHTML='Drag a box · <b>tap corners</b> for a shape · drag walls &amp; corners to adjust · <b>hold</b> (or Ctrl-drag) a corner for a linked room <button class="hint-done">Done</button>';
     toast('Rooms — drag on the plan to draw an area.');
   } else { closeRoomPop(); cancelPoly(); }
   renderRooms();renderMarkers();
@@ -901,18 +901,25 @@ function wireRoomPointer(layer,f){
       (f.rooms||[]).forEach(rr=>{ if(rr===room)return;
         rr.pts.forEach((q,qi)=>{ if(Math.abs(q.x-v0.x)<NODE_LINK_EPS&&Math.abs(q.y-v0.y)<NODE_LINK_EPS)linked.push({room:rr,idx:qi}); });
       });
-      /* one gesture, three outcomes: hold still → NEW linked room from this
-         node (touch); move → drag the corner; quick release → nothing */
+      /* one gesture, three outcomes: hold still (or Ctrl/⌘-drag) → NEW linked
+         room from this node; move → drag the corner; quick release → nothing.
+         Mouse gets a slightly longer hold, since pausing mid-click is common. */
       let pushed=inserted, dragging=inserted, spawned=false, holdT=null;
       const sx0=e.clientX, sy0=e.clientY;
       const stop=()=>{clearTimeout(holdT);document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);};
-      if(!inserted&&e.pointerType==='touch'){
-        holdT=setTimeout(()=>{
-          spawned=true; stop();
-          if(navigator.vibrate)navigator.vibrate(12);
-          toast('New room from this corner — drag to size it.');
-          beginRoomFromNode({...v0},id,sx0,sy0,f);
-        },420);
+      const spawnRoom=()=>{
+        spawned=true; stop();
+        t.classList.remove('arming');
+        if(navigator.vibrate&&e.pointerType==='touch')navigator.vibrate(12);
+        toast('New room from this corner — drag to size it, Esc cancels.');
+        beginRoomFromNode({...v0},id,sx0,sy0,f);
+      };
+      if(!inserted&&(e.ctrlKey||e.metaKey)){
+        spawnRoom();                       /* Ctrl/⌘-drag: immediate, no waiting */
+      }else if(!inserted){
+        const holdMs=e.pointerType==='touch'?420:520;
+        t.classList.add('arming');         /* the node pulses while the hold arms */
+        holdT=setTimeout(spawnRoom,holdMs);
       }
       const ensurePushed=()=>{ if(pushed)return; pushed=true;
         pushUndo(roomSnapshot(f,room));
@@ -922,7 +929,7 @@ function wireRoomPointer(layer,f){
         if(ev.pointerId!==id||spawned)return;
         if(!dragging){
           if(Math.hypot(ev.clientX-sx0,ev.clientY-sy0)<6)return;   /* within hold slop */
-          dragging=true; clearTimeout(holdT);
+          dragging=true; clearTimeout(holdT); t.classList.remove('arming');
         }
         ensurePushed();
         const p=toFrac(ev);
@@ -938,7 +945,7 @@ function wireRoomPointer(layer,f){
         linked.forEach(l=>{ l.room.pts[l.idx]={x:nx,y:ny}; updateRoomInPlace(layer,f,l.room); });
         updateRoomInPlace(layer,f,room);
       };
-      const up=ev=>{ if(ev.pointerId!==id||spawned)return; stop(); clearGuides(); renderRooms(); };
+      const up=ev=>{ if(ev.pointerId!==id||spawned)return; t.classList.remove('arming'); stop(); clearGuides(); renderRooms(); };
       document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
       return;
     }
@@ -1016,11 +1023,15 @@ function polySnap(raw,f,tol){
 }
 function cancelPoly(){ polyPts=null; polyPreview(null); }
 /* grow a new room from an existing corner, keeping that node shared */
+let spawnAbort=null;
 function beginRoomFromNode(anchor,id,sx,sy,f){
   const r=planRect(), fx=v=>Math.min(1,Math.max(0,v));
   const tol=5/Math.max(1,r.width);
   const prev=el('div','room-draw');$('#planHolder').appendChild(prev);
   let cur={...anchor};
+  spawnAbort=()=>{ prev.remove(); spawnAbort=null;
+    document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);
+    toast('Cancelled.'); };
   const draw=()=>{
     const rx=Math.min(anchor.x,cur.x),ry=Math.min(anchor.y,cur.y);
     const rw=Math.abs(cur.x-anchor.x),rh=Math.abs(cur.y-anchor.y);
@@ -1036,6 +1047,7 @@ function beginRoomFromNode(anchor,id,sx,sy,f){
   };
   const up=ev=>{
     if(ev.pointerId!==id)return;
+    spawnAbort=null;
     document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);
     const g=draw();prev.remove();
     if(g.rw<0.015||g.rh<0.015){toast('Too small — drag further to size the room.');return;}
@@ -1447,7 +1459,7 @@ document.addEventListener('keydown',e=>{
     const veil=document.querySelector('.veil.open');
     if(veil){veil.classList.remove('open');return;}
     if(cropMode){cancelCrop();return;}
-    if(roomMode){ if(polyPts){cancelPoly();$('#hintbar').innerHTML='Drag for a box · tap corners for a custom shape · click a name to rename · <b>Esc</b> done';return;} setRoomMode(false);return;}
+    if(roomMode){ if(spawnAbort){spawnAbort();return;} if(polyPts){cancelPoly();$('#hintbar').innerHTML='Drag for a box · tap corners for a custom shape · click a name to rename · <b>Esc</b> done';return;} setRoomMode(false);return;}
     if(hlRoom){highlightRoom(null);return;}
     if(document.body.classList.contains('lib-open')){closeLib();return;}
     if(armedItem)armItem(null);else{setSelMarker(null);renderMarkers();}
@@ -1632,6 +1644,9 @@ stage.addEventListener('pointerdown',e=>{
     const sx=e.clientX, sy=e.clientY, id=e.pointerId; let box=null;
     const mv=ev=>{
       if(ev.pointerId!==id)return;
+      if(pinchActive){ if(box)box.remove(); box=null;
+        document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);
+        return; }
       if(!box&&Math.hypot(ev.clientX-sx,ev.clientY-sy)<5)return;
       if(!box){box=el('div','marquee');$('#stage').appendChild(box);}
       const sr=$('#stage').getBoundingClientRect();
@@ -1667,13 +1682,19 @@ stage.addEventListener('pointerdown',e=>{
   if(e.target.closest('button,input,a,.marker,.crop-rect')||e.target.classList.contains('ch'))return;
   const mouse=e.pointerType==='mouse';
   const onPlan=!!e.target.closest('#planClick');
-  if(roomMode&&onPlan&&e.button!==1&&!spaceHeld)return;   /* left-drag draws; middle or space+drag pans */
+  const onRoomLayer=!!(e.target.closest&&e.target.closest('#roomLayer'));
+  if(roomMode&&(onPlan||onRoomLayer)&&e.button!==1&&!spaceHeld)return;   /* the room layer drives its own pan/draw */
   const allow = e.button===1 || spaceHeld || !mouse || (e.button===0 && (!onPlan || !armedItem));
   if(!allow || pinchActive) return;
   if(e.button===1||spaceHeld) e.preventDefault();   /* stop middle-click autoscroll / page scroll on space */
   const id=e.pointerId, sx=e.clientX, sy=e.clientY, px0=panX, py0=panY; let moved=false;
+  const endPan=()=>{
+    document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);
+    stage.style.cursor=spaceHeld?'grab':'';
+  };
   const mv=ev=>{
-    if(ev.pointerId!==id||pinchActive)return;
+    if(ev.pointerId!==id)return;
+    if(pinchActive){ endPan(); setTimeout(()=>panMoved=false,0); return; }  /* pinch wins outright */
     if(!moved&&Math.hypot(ev.clientX-sx,ev.clientY-sy)<4)return;
     moved=true;panMoved=true;stage.style.cursor='grabbing';
     panX=px0+(ev.clientX-sx); panY=py0+(ev.clientY-sy);
@@ -1681,8 +1702,7 @@ stage.addEventListener('pointerdown',e=>{
   };
   const up=ev=>{
     if(ev.pointerId!==id)return;
-    document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);
-    stage.style.cursor=spaceHeld?'grab':'';
+    endPan();
     setTimeout(()=>panMoved=false,0);   /* lets the click handler skip the post-drag click */
   };
   document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
@@ -1691,7 +1711,7 @@ stage.addEventListener('pointerdown',e=>{
 /* two-finger pinch: zooms around and follows the midpoint */
 let pinch=null,pinchActive=false;
 stage.addEventListener('touchstart',e=>{
-  if(e.touches.length===2){
+  if(e.touches.length>=2){
     pinchActive=true;
     document.querySelectorAll('.room-draw').forEach(d=>d.remove());   /* kill any in-flight draw preview */
     const r=stage.getBoundingClientRect(),[a,b]=e.touches;
@@ -1700,7 +1720,7 @@ stage.addEventListener('touchstart',e=>{
   }
 },{passive:true});
 stage.addEventListener('touchmove',e=>{
-  if(pinch&&e.touches.length===2){
+  if(pinch&&e.touches.length>=2){
     e.preventDefault();
     const r=stage.getBoundingClientRect(),[a,b]=e.touches;
     const d=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);

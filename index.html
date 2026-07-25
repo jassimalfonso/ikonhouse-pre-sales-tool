@@ -7,7 +7,7 @@
 <title>ikonhouse — AV Pre-Sales Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/app.css?v=1.22.0">
+<link rel="stylesheet" href="assets/css/app.css?v=1.23.0">
 </head>
 <body>
 
@@ -57,6 +57,8 @@
       <div class="vm-note">On this screen size the library lives in the slide-in <b>Devices</b> sheet — docking applies on larger screens.</div>
       <div class="vm-label">Placement</div>
       <label class="vm-toggle"><input type="checkbox" id="autoNumOpt" checked> Auto-number ikons (SP-01, KP-02…)</label>
+      <div class="vm-label">Help</div>
+      <button class="vm-wide" id="btnGestures"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.4 2.34c-.8.32-1.4 1-1.4 1.86v.3"/><circle cx="11.5" cy="16.6" r=".6"/></svg>Gestures &amp; tips</button>
     </div>
   </div>
   <button class="tb-btn" id="btnBoq"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg><span class="lbl">BoQ</span></button>
@@ -150,7 +152,22 @@
     <button id="paDone">Done</button>
   </div>
 
-  <div class="crop-bar" id="cropBar">
+  <div class="veil" id="helpVeil">
+  <div class="modal help-modal">
+    <div class="m-head"><span>Gestures &amp; tips</span><button class="modal-x" id="helpClose">✕</button></div>
+    <div class="help-cols">
+      <div><h4>Canvas</h4>
+        <p>Pinch / Ctrl+scroll — zoom · two-finger or Space+drag — pan · drag empty plan — select several ikons · tap empty plan — clear selection</p></div>
+      <div><h4>Ikons</h4>
+        <p>Tap a device, then tap the plan to place · drag to move (snaps to rows/columns) · Shift-click adds to a selection · Ctrl+C / Ctrl+V copies &amp; pastes · Delete removes</p></div>
+      <div><h4>Rooms</h4>
+        <p>Drag — draw a box · tap corners — custom shape (tap the first corner to close) · drag a wall — straight by default, <b>Shift</b> = free · drag a corner — reshape (<b>Shift</b> squares, <b>Alt</b> = no snap) · double-tap a wall — split it · press &amp; hold a corner — new linked room · double-tap a corner — delete it · tap a room edge — highlight · double-tap — edit</p></div>
+      <div><h4>Library</h4>
+        <p>Drag the ⠿ grip to dock anywhere · drag devices between categories · ▲▼ or press &amp; hold to reorder categories</p></div>
+    </div>
+  </div>
+</div>
+<div class="crop-bar" id="cropBar">
     <div class="crop-ratios" id="cropRatios"></div>
     <div class="crop-actions">
       <button class="btn ghost" id="cropReset" title="Reset the frame to the whole plan">Reset</button>
@@ -275,7 +292,7 @@
     </div>
   </div>
   <div class="ob-credit">Developed by Jassim Alfonso with Claude</div>
-  <div class="ob-foot">IKONHOUSE · PRE-SALES TOOL · V1.22</div>
+  <div class="ob-foot">IKONHOUSE · PRE-SALES TOOL · V1.23</div>
 </div>
 
 <div class="onboard" id="setup" style="display:none">
@@ -300,6 +317,6 @@
   </div>
 </div>
 
-<script src="assets/js/app.js?v=1.22.0"></script>
+<script src="assets/js/app.js?v=1.23.0"></script>
 </body>
 </html>

@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.22.0';
+const APP_VERSION='1.23.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -293,6 +293,10 @@ function renderLibrary(){
 }
 $('#libSearch').addEventListener('input',renderLibrary);
 $('#libList').addEventListener('contextmenu',e=>{ if(e.target.closest('.cat-head'))e.preventDefault(); });
+$('#btnGestures').addEventListener('click',()=>{ $('#viewMenu').classList.remove('open'); $('#helpVeil').style.display='grid'; });
+$('#helpClose').addEventListener('click',()=>$('#helpVeil').style.display='none');
+$('#helpVeil').addEventListener('click',e=>{ if(e.target.id==='helpVeil')$('#helpVeil').style.display='none'; });
+$('#hintbar').addEventListener('click',e=>{ if(e.target.classList.contains('hint-done'))setRoomMode(false); });
 $('#btnNewCat').addEventListener('click',()=>{
   const n=prompt('New category name');
   if(!n||!n.trim())return;
@@ -686,7 +690,7 @@ function setRoomMode(on){
   $('#planHolder').classList.toggle('rooming',on);
   $('#hintbar').style.display=on?'block':'none';
   if(on){
-    $('#hintbar').innerHTML='Drag to draw · drag corners to reshape · <b>◦</b> midpoints add corners · dbl-click removes · click name for color & scope · <b>Esc</b> done';
+    $('#hintbar').innerHTML='Drag a box · <b>tap corners</b> for a shape · drag walls &amp; corners to adjust · hold a corner for a linked room <button class="hint-done">Done</button>';
     toast('Rooms — drag on the plan to draw an area.');
   } else { closeRoomPop(); cancelPoly(); }
   renderRooms();renderMarkers();
@@ -748,7 +752,10 @@ function renderRooms(){
         pushUndo({type:'room-del',floorId:f.id,room:JSON.parse(JSON.stringify(r))});
         f.rooms=f.rooms.filter(x=>x.id!==r.id);
         if(selRoom===r.id)selRoom=null;
-        closeRoomPop();renderRooms();return;
+        if(hlRoom===r.id)highlightRoom(null);
+        closeRoomPop();renderRooms();
+        toast(`“${r.name}” deleted — Ctrl+Z to undo.`);
+        return;
       }
       if(e.detail>=2){                                  /* double-click: edit */
         clearTimeout(labTimer);
@@ -878,54 +885,50 @@ function wireRoomPointer(layer,f){
       document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
       return;
     }
-    if(t.classList.contains('rvtx')&&(e.pointerType==='touch'||e.shiftKey===false)){
-      /* press & hold on a corner (then move) starts a NEW room anchored there,
-         so adjacent rooms share the node and stay linked */
-      const holdRoom=room, holdIdx=+t.dataset.i;
-      const anchor={...holdRoom.pts[holdIdx]};
-      const hid=e.pointerId, hsx=e.clientX, hsy=e.clientY;
-      let spawned=false;
-      const hold=setTimeout(()=>{
-        spawned=true;
-        if(navigator.vibrate)navigator.vibrate(12);
-        toast('New room from this corner — drag to size it.');
-        beginRoomFromNode(anchor,hid,hsx,hsy,f);
-      },420);
-      const cancelHold=ev=>{
-        if(ev.pointerId!==hid)return;
-        if(ev.type==='pointermove'&&Math.hypot(ev.clientX-hsx,ev.clientY-hsy)<7&&!spawned)return;
-        clearTimeout(hold);
-        document.removeEventListener('pointermove',cancelHold);document.removeEventListener('pointerup',cancelHold);document.removeEventListener('pointercancel',cancelHold);
-      };
-      document.addEventListener('pointermove',cancelHold);document.addEventListener('pointerup',cancelHold);document.addEventListener('pointercancel',cancelHold);
-    }
     if(t.classList.contains('rvtx')||t.classList.contains('rmid')){
       e.preventDefault();e.stopPropagation();
-      pushUndo(roomSnapshot(f,room));
       let vi, inserted=false;
       if(t.classList.contains('rmid')){
         vi=+t.dataset.after+1; inserted=true;
+        pushUndo(roomSnapshot(f,room));
         const a=room.pts[+t.dataset.after], b=room.pts[(vi)%room.pts.length];
         room.pts.splice(vi,0,{x:(a.x+b.x)/2,y:(a.y+b.y)/2});
       } else vi=+t.dataset.i;
-      /* corners move independently, but LINKED rooms stay linked: any other
-         room's corner sharing this exact position moves along with it.
-         Hold Shift to square the dragged corner to a neighbour axis. */
       const n0=room.pts.length;
       const pi=(vi-1+n0)%n0, ni=(vi+1)%n0;
-      const LINK=NODE_LINK_EPS;
       const v0={...room.pts[vi]};
-      const linked=[];                       /* {room, idx} sharing this node */
+      const linked=[];
       (f.rooms||[]).forEach(rr=>{ if(rr===room)return;
-        rr.pts.forEach((q,qi)=>{ if(Math.abs(q.x-v0.x)<LINK&&Math.abs(q.y-v0.y)<LINK)linked.push({room:rr,idx:qi}); });
+        rr.pts.forEach((q,qi)=>{ if(Math.abs(q.x-v0.x)<NODE_LINK_EPS&&Math.abs(q.y-v0.y)<NODE_LINK_EPS)linked.push({room:rr,idx:qi}); });
       });
-      if(linked.length)linked.forEach(l=>pushUndo(roomSnapshot(f,l.room)));   /* also undoable */
+      /* one gesture, three outcomes: hold still → NEW linked room from this
+         node (touch); move → drag the corner; quick release → nothing */
+      let pushed=inserted, dragging=inserted, spawned=false, holdT=null;
+      const sx0=e.clientX, sy0=e.clientY;
+      const stop=()=>{clearTimeout(holdT);document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);};
+      if(!inserted&&e.pointerType==='touch'){
+        holdT=setTimeout(()=>{
+          spawned=true; stop();
+          if(navigator.vibrate)navigator.vibrate(12);
+          toast('New room from this corner — drag to size it.');
+          beginRoomFromNode({...v0},id,sx0,sy0,f);
+        },420);
+      }
+      const ensurePushed=()=>{ if(pushed)return; pushed=true;
+        pushUndo(roomSnapshot(f,room));
+        linked.forEach(l=>pushUndo(roomSnapshot(f,l.room)));
+      };
       const mv=ev=>{
-        if(ev.pointerId!==id)return;
+        if(ev.pointerId!==id||spawned)return;
+        if(!dragging){
+          if(Math.hypot(ev.clientX-sx0,ev.clientY-sy0)<6)return;   /* within hold slop */
+          dragging=true; clearTimeout(holdT);
+        }
+        ensurePushed();
         const p=toFrac(ev);
         const sp=roomSnapPoint(p,f,room,room.pts.filter((_,qi)=>qi!==vi),ev.altKey?0:tol);
         let nx=sp.x, ny=sp.y;
-        if(ev.shiftKey){                       /* square to whichever neighbour axis is closer */
+        if(ev.shiftKey){                       /* square to the nearer neighbour axis */
           const ax=Math.abs(nx-room.pts[pi].x)<Math.abs(nx-room.pts[ni].x)?room.pts[pi].x:room.pts[ni].x;
           const ay=Math.abs(ny-room.pts[pi].y)<Math.abs(ny-room.pts[ni].y)?room.pts[pi].y:room.pts[ni].y;
           if(Math.abs(nx-ax)<Math.abs(ny-ay))nx=ax; else ny=ay;
@@ -935,7 +938,7 @@ function wireRoomPointer(layer,f){
         linked.forEach(l=>{ l.room.pts[l.idx]={x:nx,y:ny}; updateRoomInPlace(layer,f,l.room); });
         updateRoomInPlace(layer,f,room);
       };
-      const up=ev=>{if(ev.pointerId!==id)return;clearGuides();document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);renderRooms();};
+      const up=ev=>{ if(ev.pointerId!==id||spawned)return; stop(); clearGuides(); renderRooms(); };
       document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
       return;
     }
@@ -973,7 +976,14 @@ function wireRoomPointer(layer,f){
     renderRooms();return true;
   };
   svg.addEventListener('dblclick',e=>{ deleteVertex(e.target); });
-  svg.addEventListener('contextmenu',e=>{ if(deleteVertex(e.target))e.preventDefault(); });
+  let lastPtrType='mouse';
+  svg.addEventListener('pointerdown',e=>{lastPtrType=e.pointerType;},true);
+  svg.addEventListener('contextmenu',e=>{
+    if(e.target.classList&&(e.target.classList.contains('rvtx')||e.target.classList.contains('rseg')||e.target.classList.contains('redge'))){
+      e.preventDefault();                              /* long-press on touch: no browser menu, no delete */
+      if(lastPtrType==='mouse')deleteVertex(e.target); /* desktop right-click still deletes a node */
+    }
+  });
 }
 /* ── room drawing on the layer background rect (.rbg):
       tap corners for a custom shape, drag for a box.
@@ -1773,7 +1783,7 @@ function renderCropRect(){
 }
 /* crop rect: move + corner resize (pointer events, mouse & touch) */
 $('#cropRect').addEventListener('pointerdown',ev=>{
-  if(ev.target.classList.contains('ch'))return;
+  if(ev.target.classList.contains('ch')||ev.target.classList.contains('che'))return;
   ev.preventDefault();ev.stopPropagation();
   const f=activeFloor();const r0={...crop};
   const rect=planRect();const k=f.w/rect.width;
@@ -1798,6 +1808,45 @@ $('#cropRect').addEventListener('pointerdown',ev=>{
   };
   const up=()=>{t.removeEventListener('pointermove',mv);t.removeEventListener('pointerup',up);t.removeEventListener('pointercancel',up);};
   t.addEventListener('pointermove',mv);t.addEventListener('pointerup',up);t.addEventListener('pointercancel',up);
+});
+$('#cropReset').addEventListener('click',()=>{
+  const f=activeFloor();if(!f)return;
+  if(cropRatio==null)crop={x:0,y:0,w:f.w,h:f.h};
+  else fitCropToRatio();
+  renderRatioChips();renderCropRect();
+  toast('Frame reset.');
+});
+document.querySelectorAll('.che').forEach(h=>{
+  h.addEventListener('pointerdown',ev=>{
+    ev.preventDefault();ev.stopPropagation();
+    const f=activeFloor();const dir=h.dataset.h;
+    const rect=planRect();const k=f.w/rect.width;
+    const r0={...crop};
+    h.setPointerCapture(ev.pointerId);
+    const mv=e=>{
+      const px=Math.min(f.w,Math.max(0,(e.clientX-rect.left)*k));
+      const py=Math.min(f.h,Math.max(0,(e.clientY-rect.top)*k));
+      let x=r0.x,y=r0.y,w=r0.w,hh=r0.h;
+      if(dir==='e'){w=Math.max(60,Math.min(f.w-x,px-x));}
+      if(dir==='w'){const rgt=r0.x+r0.w;x=Math.min(rgt-60,Math.max(0,px));w=rgt-x;}
+      if(dir==='s'){hh=Math.max(60,Math.min(f.h-y,py-y));}
+      if(dir==='n'){const bot=r0.y+r0.h;y=Math.min(bot-60,Math.max(0,py));hh=bot-y;}
+      if(cropRatio!=null){                    /* keep the ratio: derive the other axis about its centre */
+        if(dir==='e'||dir==='w'){
+          const c=y+hh/2; hh=w/cropRatio;
+          if(hh>f.h){hh=f.h;w=hh*cropRatio;if(dir==='w')x=r0.x+r0.w-w;}
+          y=Math.max(0,Math.min(f.h-hh,c-hh/2));
+        }else{
+          const c=x+w/2; w=hh*cropRatio;
+          if(w>f.w){w=f.w;hh=w/cropRatio;if(dir==='n')y=r0.y+r0.h-hh;}
+          x=Math.max(0,Math.min(f.w-w,c-w/2));
+        }
+      }
+      crop={x,y,w,h:hh};renderCropRect();
+    };
+    const up=()=>{h.removeEventListener('pointermove',mv);h.removeEventListener('pointerup',up);h.removeEventListener('pointercancel',up);};
+    h.addEventListener('pointermove',mv);h.addEventListener('pointerup',up);h.addEventListener('pointercancel',up);
+  });
 });
 document.querySelectorAll('.ch').forEach(h=>{
   h.addEventListener('pointerdown',ev=>{

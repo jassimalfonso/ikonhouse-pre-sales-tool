@@ -4,6 +4,30 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.23.0] — 2026-07-25
+
+### Fixed
+- **Press & hold on a corner deleted it and spawned a room (Android).** The
+  browser''s long-press fires a context-menu event, which was mapped to
+  right-click-delete — so holding a node triggered the delete *and* the
+  new-room gesture together. Corner interactions are now one coherent
+  handler: hold still → new linked room; move → drag the corner; and on
+  touch the context menu is suppressed without deleting. Desktop right-click
+  still deletes a node; double-tap deletes on touch.
+- **Crop edge bars did not resize.** They were unwired (and fell through to
+  the frame-move gesture). All four edge bars now resize their side —
+  honouring the selected ratio about the frame''s centre — and the **Reset**
+  button restores the recommended framing.
+- **Room ✕ unreliable on touch** — the target was too small; it''s now
+  26px on touch, clears any stale highlight, and confirms with an
+  undo-able toast.
+
+### Added
+- **Gestures & tips** reference (View menu → Help) — every canvas, ikon,
+  room, and library gesture on one card.
+- **Done chip** in the Rooms-mode hint bar — an obvious exit on touch,
+  alongside Esc.
+
 ## [1.22.0] — 2026-07-21
 
 ### Added
@@ -101,6 +125,30 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.23.0] — 2026-07-25
+
+### Fixed
+- **Press & hold on a corner deleted it and spawned a room (Android).** The
+  browser''s long-press fires a context-menu event, which was mapped to
+  right-click-delete — so holding a node triggered the delete *and* the
+  new-room gesture together. Corner interactions are now one coherent
+  handler: hold still → new linked room; move → drag the corner; and on
+  touch the context menu is suppressed without deleting. Desktop right-click
+  still deletes a node; double-tap deletes on touch.
+- **Crop edge bars did not resize.** They were unwired (and fell through to
+  the frame-move gesture). All four edge bars now resize their side —
+  honouring the selected ratio about the frame''s centre — and the **Reset**
+  button restores the recommended framing.
+- **Room ✕ unreliable on touch** — the target was too small; it''s now
+  26px on touch, clears any stale highlight, and confirms with an
+  undo-able toast.
+
+### Added
+- **Gestures & tips** reference (View menu → Help) — every canvas, ikon,
+  room, and library gesture on one card.
+- **Done chip** in the Rooms-mode hint bar — an obvious exit on touch,
+  alongside Esc.
 
 ## [1.22.0] — 2026-07-21
 
@@ -635,6 +683,30 @@ follows [Semantic Versioning](https://semver.org).
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
 
+## [1.23.0] — 2026-07-25
+
+### Fixed
+- **Press & hold on a corner deleted it and spawned a room (Android).** The
+  browser''s long-press fires a context-menu event, which was mapped to
+  right-click-delete — so holding a node triggered the delete *and* the
+  new-room gesture together. Corner interactions are now one coherent
+  handler: hold still → new linked room; move → drag the corner; and on
+  touch the context menu is suppressed without deleting. Desktop right-click
+  still deletes a node; double-tap deletes on touch.
+- **Crop edge bars did not resize.** They were unwired (and fell through to
+  the frame-move gesture). All four edge bars now resize their side —
+  honouring the selected ratio about the frame''s centre — and the **Reset**
+  button restores the recommended framing.
+- **Room ✕ unreliable on touch** — the target was too small; it''s now
+  26px on touch, clears any stale highlight, and confirms with an
+  undo-able toast.
+
+### Added
+- **Gestures & tips** reference (View menu → Help) — every canvas, ikon,
+  room, and library gesture on one card.
+- **Done chip** in the Rooms-mode hint bar — an obvious exit on touch,
+  alongside Esc.
+
 ## [1.22.0] — 2026-07-21
 
 ### Added
@@ -732,6 +804,30 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.23.0] — 2026-07-25
+
+### Fixed
+- **Press & hold on a corner deleted it and spawned a room (Android).** The
+  browser''s long-press fires a context-menu event, which was mapped to
+  right-click-delete — so holding a node triggered the delete *and* the
+  new-room gesture together. Corner interactions are now one coherent
+  handler: hold still → new linked room; move → drag the corner; and on
+  touch the context menu is suppressed without deleting. Desktop right-click
+  still deletes a node; double-tap deletes on touch.
+- **Crop edge bars did not resize.** They were unwired (and fell through to
+  the frame-move gesture). All four edge bars now resize their side —
+  honouring the selected ratio about the frame''s centre — and the **Reset**
+  button restores the recommended framing.
+- **Room ✕ unreliable on touch** — the target was too small; it''s now
+  26px on touch, clears any stale highlight, and confirms with an
+  undo-able toast.
+
+### Added
+- **Gestures & tips** reference (View menu → Help) — every canvas, ikon,
+  room, and library gesture on one card.
+- **Done chip** in the Rooms-mode hint bar — an obvious exit on touch,
+  alongside Esc.
 
 ## [1.22.0] — 2026-07-21
 

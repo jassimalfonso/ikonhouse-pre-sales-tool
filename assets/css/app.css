@@ -764,3 +764,24 @@ body.dev-dragging .item-row{opacity:.5}
 .vm-toggle input{accent-color:var(--hl);width:15px;height:15px}
 /* wall segment shows a split cursor on hover */
 .plan-holder.rooming .rseg{cursor:move}
+/* category reorder arrows: always visible on touch, on hover for mouse */
+.ct-btn[data-act="up"],.ct-btn[data-act="down"]{font-size:8px;letter-spacing:-.5px}
+@media (pointer:coarse){ .cat-tools{display:inline-flex !important} }
+
+/* ── Crop: edge handles + thirds grid (easier than corners alone on touch) ── */
+.che{position:absolute;background:var(--hl);border:2px solid #fff;border-radius:4px;box-shadow:0 1px 5px rgba(0,0,0,.4)}
+.che[data-h="n"]{top:-7px;left:50%;transform:translateX(-50%);width:44px;height:12px;cursor:ns-resize}
+.che[data-h="s"]{bottom:-7px;left:50%;transform:translateX(-50%);width:44px;height:12px;cursor:ns-resize}
+.che[data-h="w"]{left:-7px;top:50%;transform:translateY(-50%);width:12px;height:44px;cursor:ew-resize}
+.che[data-h="e"]{right:-7px;top:50%;transform:translateY(-50%);width:12px;height:44px;cursor:ew-resize}
+@media (pointer:coarse){
+  .che[data-h="n"],.che[data-h="s"]{width:60px;height:16px}
+  .che[data-h="w"],.che[data-h="e"]{width:16px;height:60px}
+}
+.crop-grid{position:absolute;inset:0;pointer-events:none;
+  background:
+    linear-gradient(to right, transparent calc(33.33% - .5px), rgba(255,255,255,.45) calc(33.33% - .5px) calc(33.33% + .5px), transparent calc(33.33% + .5px)),
+    linear-gradient(to right, transparent calc(66.66% - .5px), rgba(255,255,255,.45) calc(66.66% - .5px) calc(66.66% + .5px), transparent calc(66.66% + .5px)),
+    linear-gradient(to bottom, transparent calc(33.33% - .5px), rgba(255,255,255,.45) calc(33.33% - .5px) calc(33.33% + .5px), transparent calc(33.33% + .5px)),
+    linear-gradient(to bottom, transparent calc(66.66% - .5px), rgba(255,255,255,.45) calc(66.66% - .5px) calc(66.66% + .5px), transparent calc(66.66% + .5px));
+}

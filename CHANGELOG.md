@@ -4,6 +4,24 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.22.0] — 2026-07-21
+
+### Added
+- **Tap outside to deselect a room.** After creating or selecting a room,
+  tapping empty plan in Rooms mode clears the selection so you can start the
+  next room immediately.
+- **Grow a new room from a corner.** Press & hold an existing room''s node
+  (~0.4s, a short buzz confirms), then drag: a new room is anchored at that
+  exact corner, so the two rooms share the node and stay linked.
+- **Category reorder arrows** (▲ ▼) on every category header — always
+  visible on touch — alongside the existing press-and-hold drag.
+
+### Changed
+- **Crop is easier to handle**, especially on touch: draggable **edge
+  handles** on all four sides (not just corners), a rule-of-thirds grid
+  inside the frame, and a **Reset** button that restores the frame to the
+  whole plan. Ratio presets and pinch/drag behaviour are unchanged.
+
 ## [1.21.1] — 2026-07-18
 
 ### Fixed
@@ -83,6 +101,24 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.22.0] — 2026-07-21
+
+### Added
+- **Tap outside to deselect a room.** After creating or selecting a room,
+  tapping empty plan in Rooms mode clears the selection so you can start the
+  next room immediately.
+- **Grow a new room from a corner.** Press & hold an existing room''s node
+  (~0.4s, a short buzz confirms), then drag: a new room is anchored at that
+  exact corner, so the two rooms share the node and stay linked.
+- **Category reorder arrows** (▲ ▼) on every category header — always
+  visible on touch — alongside the existing press-and-hold drag.
+
+### Changed
+- **Crop is easier to handle**, especially on touch: draggable **edge
+  handles** on all four sides (not just corners), a rule-of-thirds grid
+  inside the frame, and a **Reset** button that restores the frame to the
+  whole plan. Ratio presets and pinch/drag behaviour are unchanged.
 
 ## [1.21.1] — 2026-07-18
 
@@ -599,6 +635,24 @@ follows [Semantic Versioning](https://semver.org).
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
 
+## [1.22.0] — 2026-07-21
+
+### Added
+- **Tap outside to deselect a room.** After creating or selecting a room,
+  tapping empty plan in Rooms mode clears the selection so you can start the
+  next room immediately.
+- **Grow a new room from a corner.** Press & hold an existing room''s node
+  (~0.4s, a short buzz confirms), then drag: a new room is anchored at that
+  exact corner, so the two rooms share the node and stay linked.
+- **Category reorder arrows** (▲ ▼) on every category header — always
+  visible on touch — alongside the existing press-and-hold drag.
+
+### Changed
+- **Crop is easier to handle**, especially on touch: draggable **edge
+  handles** on all four sides (not just corners), a rule-of-thirds grid
+  inside the frame, and a **Reset** button that restores the frame to the
+  whole plan. Ratio presets and pinch/drag behaviour are unchanged.
+
 ## [1.21.1] — 2026-07-18
 
 ### Fixed
@@ -678,6 +732,24 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.22.0] — 2026-07-21
+
+### Added
+- **Tap outside to deselect a room.** After creating or selecting a room,
+  tapping empty plan in Rooms mode clears the selection so you can start the
+  next room immediately.
+- **Grow a new room from a corner.** Press & hold an existing room''s node
+  (~0.4s, a short buzz confirms), then drag: a new room is anchored at that
+  exact corner, so the two rooms share the node and stay linked.
+- **Category reorder arrows** (▲ ▼) on every category header — always
+  visible on touch — alongside the existing press-and-hold drag.
+
+### Changed
+- **Crop is easier to handle**, especially on touch: draggable **edge
+  handles** on all four sides (not just corners), a rule-of-thirds grid
+  inside the frame, and a **Reset** button that restores the frame to the
+  whole plan. Ratio presets and pinch/drag behaviour are unchanged.
 
 ## [1.21.1] — 2026-07-18
 

@@ -7,7 +7,7 @@
 <title>ikonhouse — AV Pre-Sales Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/app.css?v=1.21.1">
+<link rel="stylesheet" href="assets/css/app.css?v=1.22.0">
 </head>
 <body>
 
@@ -126,6 +126,9 @@
         <div class="crop-rect" id="cropRect">
           <span class="ch" data-h="nw"></span><span class="ch" data-h="ne"></span>
           <span class="ch" data-h="sw"></span><span class="ch" data-h="se"></span>
+          <span class="che" data-h="n"></span><span class="che" data-h="s"></span>
+          <span class="che" data-h="w"></span><span class="che" data-h="e"></span>
+          <span class="crop-grid"></span>
         </div>
       </div>
     </div>
@@ -150,6 +153,7 @@
   <div class="crop-bar" id="cropBar">
     <div class="crop-ratios" id="cropRatios"></div>
     <div class="crop-actions">
+      <button class="btn ghost" id="cropReset" title="Reset the frame to the whole plan">Reset</button>
       <button class="btn ghost" id="cropCancel">Cancel</button>
       <button class="btn pri" id="cropApply">Apply crop</button>
     </div>
@@ -271,7 +275,7 @@
     </div>
   </div>
   <div class="ob-credit">Developed by Jassim Alfonso with Claude</div>
-  <div class="ob-foot">IKONHOUSE · PRE-SALES TOOL · V1.21</div>
+  <div class="ob-foot">IKONHOUSE · PRE-SALES TOOL · V1.22</div>
 </div>
 
 <div class="onboard" id="setup" style="display:none">
@@ -296,6 +300,6 @@
   </div>
 </div>
 
-<script src="assets/js/app.js?v=1.21.1"></script>
+<script src="assets/js/app.js?v=1.22.0"></script>
 </body>
 </html>

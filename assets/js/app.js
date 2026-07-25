@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.21.1';
+const APP_VERSION='1.22.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -201,13 +201,21 @@ function renderLibrary(){
   cats.forEach(cat=>{
     const head=el('div','cat-head'+(draggingCat===cat?' dragging':''),
       `<span class="grip">⋮⋮</span><span class="cat-nm">${cat}</span>
-       <span class="cat-tools"><button class="ct-btn" data-act="add" title="Add a device to this category">＋</button><button class="ct-btn" data-act="ren" title="Rename category">✎</button><button class="ct-btn" data-act="del" title="Delete category">✕</button></span>`);
+       <span class="cat-tools"><button class="ct-btn" data-act="up" title="Move category up">▲</button><button class="ct-btn" data-act="down" title="Move category down">▼</button><button class="ct-btn" data-act="add" title="Add a device to this category">＋</button><button class="ct-btn" data-act="ren" title="Rename category">✎</button><button class="ct-btn" data-act="del" title="Delete category">✕</button></span>`);
     head.dataset.cat=cat; head.title='Drag to reorder categories';
     head.addEventListener('pointerdown',e=>{
       if(e.target.closest('.ct-btn'))return;               /* buttons, not a drag */
       if(e.pointerType!=='touch')e.preventDefault();       /* touch keeps native scroll until the hold arms */
       startCatDrag(cat,e);
     });
+    const moveCat=(dir)=>{
+      const o=state.catOrder, i=o.indexOf(cat), j=i+dir;
+      if(i<0||j<0||j>=o.length)return;
+      o.splice(j,0,o.splice(i,1)[0]);
+      renderLibrary();
+    };
+    head.querySelector('[data-act="up"]').addEventListener('click',e=>{e.stopPropagation();moveCat(-1);});
+    head.querySelector('[data-act="down"]').addEventListener('click',e=>{e.stopPropagation();moveCat(1);});
     head.querySelector('[data-act="add"]').addEventListener('click',e=>{
       e.stopPropagation();
       openItemModal();
@@ -870,6 +878,27 @@ function wireRoomPointer(layer,f){
       document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
       return;
     }
+    if(t.classList.contains('rvtx')&&(e.pointerType==='touch'||e.shiftKey===false)){
+      /* press & hold on a corner (then move) starts a NEW room anchored there,
+         so adjacent rooms share the node and stay linked */
+      const holdRoom=room, holdIdx=+t.dataset.i;
+      const anchor={...holdRoom.pts[holdIdx]};
+      const hid=e.pointerId, hsx=e.clientX, hsy=e.clientY;
+      let spawned=false;
+      const hold=setTimeout(()=>{
+        spawned=true;
+        if(navigator.vibrate)navigator.vibrate(12);
+        toast('New room from this corner — drag to size it.');
+        beginRoomFromNode(anchor,hid,hsx,hsy,f);
+      },420);
+      const cancelHold=ev=>{
+        if(ev.pointerId!==hid)return;
+        if(ev.type==='pointermove'&&Math.hypot(ev.clientX-hsx,ev.clientY-hsy)<7&&!spawned)return;
+        clearTimeout(hold);
+        document.removeEventListener('pointermove',cancelHold);document.removeEventListener('pointerup',cancelHold);document.removeEventListener('pointercancel',cancelHold);
+      };
+      document.addEventListener('pointermove',cancelHold);document.addEventListener('pointerup',cancelHold);document.addEventListener('pointercancel',cancelHold);
+    }
     if(t.classList.contains('rvtx')||t.classList.contains('rmid')){
       e.preventDefault();e.stopPropagation();
       pushUndo(roomSnapshot(f,room));
@@ -976,6 +1005,43 @@ function polySnap(raw,f,tol){
   return sp;
 }
 function cancelPoly(){ polyPts=null; polyPreview(null); }
+/* grow a new room from an existing corner, keeping that node shared */
+function beginRoomFromNode(anchor,id,sx,sy,f){
+  const r=planRect(), fx=v=>Math.min(1,Math.max(0,v));
+  const tol=5/Math.max(1,r.width);
+  const prev=el('div','room-draw');$('#planHolder').appendChild(prev);
+  let cur={...anchor};
+  const draw=()=>{
+    const rx=Math.min(anchor.x,cur.x),ry=Math.min(anchor.y,cur.y);
+    const rw=Math.abs(cur.x-anchor.x),rh=Math.abs(cur.y-anchor.y);
+    prev.style.cssText=`left:${rx*100}%;top:${ry*100}%;width:${rw*100}%;height:${rh*100}%`;
+    return{rx,ry,rw,rh};
+  };
+  const mv=ev=>{
+    if(ev.pointerId!==id)return;
+    const raw={x:(ev.clientX-r.left)/r.width,y:(ev.clientY-r.top)/r.height};
+    const sp=roomSnapPoint(raw,f,null,null,ev.altKey?0:tol);
+    cur={x:fx(Math.abs(sp.x-anchor.x)<0.015?raw.x:sp.x),y:fx(Math.abs(sp.y-anchor.y)<0.015?raw.y:sp.y)};
+    draw();
+  };
+  const up=ev=>{
+    if(ev.pointerId!==id)return;
+    document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);
+    const g=draw();prev.remove();
+    if(g.rw<0.015||g.rh<0.015){toast('Too small — drag further to size the room.');return;}
+    const name=prompt('Room / area name',`Room ${(f.rooms||[]).length+1}`);
+    if(name===null)return;
+    /* corner order chosen so the anchor stays an exact shared node */
+    const pts=[{x:g.rx,y:g.ry},{x:g.rx+g.rw,y:g.ry},{x:g.rx+g.rw,y:g.ry+g.rh},{x:g.rx,y:g.ry+g.rh}];
+    const room=migrateRoom({id:uid(),name:(name.trim()||`Room ${(f.rooms||[]).length+1}`),pts});
+    (f.rooms=f.rooms||[]).push(room);
+    pushUndo({type:'room-add',floorId:f.id,room:JSON.parse(JSON.stringify(room))});
+    selRoom=room.id;renderRooms();
+    const lab=document.querySelector(`#roomLayer .rlabel[data-room="${room.id}"]`);
+    if(lab)openRoomPop(room,lab);
+  };
+  document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
+}
 function finishPoly(){
   const f=activeFloor();
   if(!polyPts||polyPts.length<3){cancelPoly();return;}
@@ -996,6 +1062,7 @@ function startRoomDraw(e,f){
   if(pinchActive)return;
   e.preventDefault();e.stopPropagation();
   closeRoomPop();
+  if(selRoom&&!polyPts){ selRoom=null; renderRooms(); }   /* tap outside clears the last room */
   const r=planRect();
   const fx=v=>Math.min(1,Math.max(0,v));
   const tol=5/Math.max(1,r.width);

@@ -4,6 +4,19 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.26.0] — 2026-07-25
+
+### Added
+- **"How to use" guide**, reachable from a **?** button in the toolbar (the
+  gestures card was previously buried in the View menu). Three tabs:
+  - **Quick start** — five steps from floor plan to client package, written as
+    a walkthrough rather than a feature list.
+  - **Gestures** — grouped by what you are doing, with keys shown as keycaps.
+  - **Outputs** — what each export contains and when to reach for it.
+- The guide **opens once automatically** the first time someone enters the
+  workspace, and never again (dismissal is remembered locally). **Esc** or
+  **Got it** closes it.
+
 ## [1.25.0] — 2026-07-25
 
 ### Added
@@ -168,6 +181,19 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.26.0] — 2026-07-25
+
+### Added
+- **"How to use" guide**, reachable from a **?** button in the toolbar (the
+  gestures card was previously buried in the View menu). Three tabs:
+  - **Quick start** — five steps from floor plan to client package, written as
+    a walkthrough rather than a feature list.
+  - **Gestures** — grouped by what you are doing, with keys shown as keycaps.
+  - **Outputs** — what each export contains and when to reach for it.
+- The guide **opens once automatically** the first time someone enters the
+  workspace, and never again (dismissal is remembered locally). **Esc** or
+  **Got it** closes it.
 
 ## [1.25.0] — 2026-07-25
 
@@ -769,6 +795,19 @@ follows [Semantic Versioning](https://semver.org).
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
 
+## [1.26.0] — 2026-07-25
+
+### Added
+- **"How to use" guide**, reachable from a **?** button in the toolbar (the
+  gestures card was previously buried in the View menu). Three tabs:
+  - **Quick start** — five steps from floor plan to client package, written as
+    a walkthrough rather than a feature list.
+  - **Gestures** — grouped by what you are doing, with keys shown as keycaps.
+  - **Outputs** — what each export contains and when to reach for it.
+- The guide **opens once automatically** the first time someone enters the
+  workspace, and never again (dismissal is remembered locally). **Esc** or
+  **Got it** closes it.
+
 ## [1.25.0] — 2026-07-25
 
 ### Added
@@ -933,6 +972,19 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.26.0] — 2026-07-25
+
+### Added
+- **"How to use" guide**, reachable from a **?** button in the toolbar (the
+  gestures card was previously buried in the View menu). Three tabs:
+  - **Quick start** — five steps from floor plan to client package, written as
+    a walkthrough rather than a feature list.
+  - **Gestures** — grouped by what you are doing, with keys shown as keycaps.
+  - **Outputs** — what each export contains and when to reach for it.
+- The guide **opens once automatically** the first time someone enters the
+  workspace, and never again (dismissal is remembered locally). **Esc** or
+  **Got it** closes it.
 
 ## [1.25.0] — 2026-07-25
 

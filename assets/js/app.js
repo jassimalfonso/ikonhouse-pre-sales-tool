@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.25.0';
+const APP_VERSION='1.26.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -293,9 +293,28 @@ function renderLibrary(){
 }
 $('#libSearch').addEventListener('input',renderLibrary);
 $('#libList').addEventListener('contextmenu',e=>{ if(e.target.closest('.cat-head'))e.preventDefault(); });
-$('#btnGestures').addEventListener('click',()=>{ $('#viewMenu').classList.remove('open'); $('#helpVeil').style.display='grid'; });
-$('#helpClose').addEventListener('click',()=>$('#helpVeil').style.display='none');
-$('#helpVeil').addEventListener('click',e=>{ if(e.target.id==='helpVeil')$('#helpVeil').style.display='none'; });
+function openGuide(tab){
+  if(tab)showGuideTab(tab);
+  $('#viewMenu').classList.remove('open');
+  $('#helpVeil').style.display='grid';
+}
+function closeGuide(){ $('#helpVeil').style.display='none'; try{localStorage.setItem('ikon.guideSeen','1');}catch(_){} }
+function showGuideTab(name){
+  document.querySelectorAll('.guide-tabs .gt').forEach(b=>b.classList.toggle('on',b.dataset.tab===name));
+  document.querySelectorAll('.guide-pane').forEach(p=>p.classList.toggle('on',p.dataset.pane===name));
+}
+document.querySelectorAll('.guide-tabs .gt').forEach(b=>b.addEventListener('click',()=>showGuideTab(b.dataset.tab)));
+$('#btnHelp').addEventListener('click',()=>openGuide('start'));
+$('#btnGestures').addEventListener('click',()=>openGuide('gest'));
+$('#helpClose').addEventListener('click',closeGuide);
+$('#helpDone').addEventListener('click',closeGuide);
+$('#helpVeil').addEventListener('click',e=>{ if(e.target.id==='helpVeil')closeGuide(); });
+/* first time in: show the quick start once, after the welcome screen clears */
+function maybeFirstRunGuide(){
+  let seen=false; try{seen=localStorage.getItem('ikon.guideSeen')==='1';}catch(_){seen=true;}
+  if(seen)return;
+  setTimeout(()=>openGuide('start'),700);
+}
 $('#hintbar').addEventListener('click',e=>{ if(e.target.classList.contains('hint-done'))setRoomMode(false); });
 $('#btnNewCat').addEventListener('click',()=>{
   const n=prompt('New category name');
@@ -1455,6 +1474,7 @@ $('#btnUndo').addEventListener('click',doUndo);
 $('#btnRedo').addEventListener('click',doRedo);
 
 document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&$('#helpVeil').style.display==='grid'){ closeGuide(); return; }
   if(e.key==='Escape'){
     const veil=document.querySelector('.veil.open');
     if(veil){veil.classList.remove('open');return;}
@@ -2774,7 +2794,7 @@ window.addEventListener('beforeunload',e=>{
 window.addEventListener('resize',()=>{ applyDock(); if(activeFloor()&&!cropMode) fitZoom(); });
 
 /* ──────────── Onboarding ──────────── */
-function dismissOnboard(){ $('#welcome').style.display='none'; $('#setup').style.display='none'; obStopFx(); }
+function dismissOnboard(){ $('#welcome').style.display='none'; $('#setup').style.display='none'; obStopFx(); maybeFirstRunGuide(); }
 $('#obStart').addEventListener('click',()=>{ $('#welcome').style.display='none'; obStopFx(); $('#setup').style.display='grid'; setTimeout(()=>$('#sName').focus(),60); });
 $('#obOpen').addEventListener('click',()=>$('#fileProject').click());
 $('#obGo').addEventListener('click',()=>{

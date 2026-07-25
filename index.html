@@ -7,7 +7,7 @@
 <title>ikonhouse — AV Pre-Sales Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/app.css?v=1.25.0">
+<link rel="stylesheet" href="assets/css/app.css?v=1.26.0">
 </head>
 <body>
 
@@ -31,6 +31,9 @@
   <button class="tb-btn icon-only" id="themeToggle" title="Light / dark mode">
     <svg viewBox="0 0 24 24" class="ic-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
     <svg viewBox="0 0 24 24" class="ic-moon"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+  </button>
+  <button class="tb-btn icon-only" id="btnHelp" title="How to use this tool">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.2a2.5 2.5 0 1 1 3.4 2.32c-.82.33-1.4 1.02-1.4 1.9v.28"/><circle cx="11.5" cy="16.7" r=".7" fill="currentColor" stroke="none"/></svg>
   </button>
   <button class="tb-btn icon-only" id="btnStartOver" title="Start over — new project">
     <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 3v6h6"/></svg>
@@ -153,17 +156,60 @@
   </div>
 
   <div class="veil" id="helpVeil">
-  <div class="modal help-modal">
-    <div class="m-head"><span>Gestures &amp; tips</span><button class="modal-x" id="helpClose">✕</button></div>
-    <div class="help-cols">
-      <div><h4>Canvas</h4>
-        <p>Pinch / Ctrl+scroll — zoom · two-finger or Space+drag — pan · drag empty plan — select several ikons · tap empty plan — clear selection</p></div>
-      <div><h4>Ikons</h4>
-        <p>Tap a device, then tap the plan to place · drag to move (snaps to rows/columns) · Shift-click adds to a selection · Ctrl+C / Ctrl+V copies &amp; pastes · Delete removes</p></div>
-      <div><h4>Rooms</h4>
-        <p>Drag — draw a box · tap corners — custom shape (tap the first corner to close) · drag a wall — straight by default, <b>Shift</b> = free · drag a corner — reshape (<b>Shift</b> squares, <b>Alt</b> = no snap) · double-tap a wall — split it · press &amp; hold (or <b>Ctrl</b>-drag) a corner — new linked room · double-tap a corner — delete it · tap a room edge — highlight · double-tap — edit</p></div>
-      <div><h4>Library</h4>
-        <p>Drag the ⠿ grip to dock anywhere · drag devices between categories · ▲▼ or press &amp; hold to reorder categories</p></div>
+  <div class="modal guide-modal">
+    <div class="m-head">
+      <span>How to use</span>
+      <button class="modal-x" id="helpClose">✕</button>
+    </div>
+    <div class="guide-tabs">
+      <button class="gt on" data-tab="start">Quick start</button>
+      <button class="gt" data-tab="gest">Gestures</button>
+      <button class="gt" data-tab="out">Outputs</button>
+    </div>
+
+    <div class="guide-pane on" data-pane="start">
+      <p class="guide-lead">Five steps from a floor plan to a client-ready package. You can jump around — nothing here is locked.</p>
+      <ol class="steps">
+        <li><b>Add your floor plan.</b> Drop a PDF or image onto the canvas, or use <i>Floors → Add floor</i>. Multi-page PDFs become one floor per page. Then <i>Crop</i> to trim it to the drawing itself.</li>
+        <li><b>Set up your device library.</b> Create a category, then add devices to it with a name, colour and icon. Prices are optional — add them and the BoQ totals itself. The library is saved inside each project.</li>
+        <li><b>Place your ikons.</b> Tap a device, then tap the plan. Keep tapping to place more. Drag to reposition — they snap into line with each other so runs look tidy.</li>
+        <li><b>Draw rooms.</b> Turn on <i>Rooms</i>, then drag a box or tap corner-to-corner for odd shapes. Rooms decide which devices belong where, and can be marked out of scope.</li>
+        <li><b>Export.</b> Choose a paper size and take the PDF plan set, the Excel FD sheet and BoQ, or the full package — which includes the editable design file so anyone can reopen it.</li>
+      </ol>
+      <div class="guide-note"><b>Save as you go</b> — <kbd>Ctrl</kbd>+<kbd>S</kbd> writes straight back to your project file. Made a mistake? <kbd>Ctrl</kbd>+<kbd>Z</kbd> undoes almost everything, including room edits.</div>
+    </div>
+
+    <div class="guide-pane" data-pane="gest">
+      <p class="guide-lead">Everything responds to the same few gestures. Tap to select, double-tap to edit, hold to create.</p>
+      <div class="help-cols">
+        <div><h4>Getting around</h4>
+          <p>Pinch or <kbd>Ctrl</kbd>+scroll to zoom · swipe, two fingers, or <kbd>Space</kbd>+drag to pan · tap outside the plan to cancel whatever you are doing</p></div>
+        <div><h4>Ikons</h4>
+          <p>Tap a device then tap the plan to place · drag to move — they snap into rows and columns · drag a box on empty plan to select several · <kbd>Shift</kbd>-click to add one to the selection · <kbd>Ctrl</kbd>+<kbd>C</kbd> / <kbd>Ctrl</kbd>+<kbd>V</kbd> to copy a cluster · <kbd>Delete</kbd> to remove</p></div>
+        <div><h4>Rooms &amp; walls</h4>
+          <p>Drag for a quick box · tap corner to corner for any shape, then tap the first corner to close · drag a wall to move it — straight by default, <kbd>Shift</kbd> frees it · drag a corner to reshape, <kbd>Shift</kbd> squares it, <kbd>Alt</kbd> turns snapping off · double-tap a wall to split it · <b>hold a corner</b> (or <kbd>Ctrl</kbd>-drag) to grow a new room that stays joined · double-tap a corner to remove it</p></div>
+        <div><h4>Library</h4>
+          <p>Drag the ⠿ grip to dock it left, right, top, bottom or floating · drag devices between categories · ▲▼ or hold to reorder categories</p></div>
+      </div>
+    </div>
+
+    <div class="guide-pane" data-pane="out">
+      <p class="guide-lead">Everything you export carries your branding, the project details, and the date.</p>
+      <div class="help-cols">
+        <div><h4>Plan sheets (PDF / PNG)</h4>
+          <p>A cover page plus one sheet per floor, at A4, A3 or A1. Each sheet carries the plan and a legend grouped by category. Turn on auto-numbering and every ikon prints a code such as CS-01.</p></div>
+        <div><h4>Excel</h4>
+          <p>An <b>FD sheet</b> listing rooms down the side and devices across the top, in your library's order, with out-of-scope rooms shaded. Plus a priced <b>BoQ Summary</b>.</p></div>
+        <div><h4>Full package</h4>
+          <p>A zip with the PDF, the Excel, the sheet images, and the editable <b>.ikonplan</b> file — with a note explaining how to reopen it. Send this and the recipient has everything.</p></div>
+        <div><h4>Checking as you go</h4>
+          <p>Open the <b>BoQ</b> drawer any time for live totals and a room-by-room matrix, so the numbers are never a surprise at export time.</p></div>
+      </div>
+    </div>
+
+    <div class="guide-foot">
+      <span class="guide-hint">Reopen this any time from <b>?</b> in the toolbar.</span>
+      <button class="btn pri" id="helpDone">Got it</button>
     </div>
   </div>
 </div>
@@ -292,7 +338,7 @@
     </div>
   </div>
   <div class="ob-credit">Developed by Jassim Alfonso with Claude</div>
-  <div class="ob-foot">IKONHOUSE · PRE-SALES TOOL · V1.25</div>
+  <div class="ob-foot">IKONHOUSE · PRE-SALES TOOL · V1.26</div>
 </div>
 
 <div class="onboard" id="setup" style="display:none">
@@ -317,6 +363,6 @@
   </div>
 </div>
 
-<script src="assets/js/app.js?v=1.25.0"></script>
+<script src="assets/js/app.js?v=1.26.0"></script>
 </body>
 </html>

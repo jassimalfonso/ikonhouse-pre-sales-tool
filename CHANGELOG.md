@@ -4,6 +4,23 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.24.0] — 2026-07-25
+
+### Fixed
+- **Panning the plan no longer draws rooms** (touch): a quick one-finger
+  swipe on the plan now pans it — matching every photo/map app — while a
+  deliberate, slower drag still draws a box. Tap-corners, pinch-zoom and
+  hold-for-linked-room are unchanged.
+
+### Added
+- **Tap outside the plan to cancel** (Rooms mode): tapping the area around
+  the floor plan clears the selected box and any in-progress outline —
+  outside Rooms mode it clears a highlight.
+
+### Changed
+- **Room nodes slimmed further** (~20%) with thinner rings — visible and
+  catchable without cluttering the outline.
+
 ## [1.23.0] — 2026-07-25
 
 ### Fixed
@@ -125,6 +142,23 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.24.0] — 2026-07-25
+
+### Fixed
+- **Panning the plan no longer draws rooms** (touch): a quick one-finger
+  swipe on the plan now pans it — matching every photo/map app — while a
+  deliberate, slower drag still draws a box. Tap-corners, pinch-zoom and
+  hold-for-linked-room are unchanged.
+
+### Added
+- **Tap outside the plan to cancel** (Rooms mode): tapping the area around
+  the floor plan clears the selected box and any in-progress outline —
+  outside Rooms mode it clears a highlight.
+
+### Changed
+- **Room nodes slimmed further** (~20%) with thinner rings — visible and
+  catchable without cluttering the outline.
 
 ## [1.23.0] — 2026-07-25
 
@@ -683,6 +717,23 @@ follows [Semantic Versioning](https://semver.org).
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
 
+## [1.24.0] — 2026-07-25
+
+### Fixed
+- **Panning the plan no longer draws rooms** (touch): a quick one-finger
+  swipe on the plan now pans it — matching every photo/map app — while a
+  deliberate, slower drag still draws a box. Tap-corners, pinch-zoom and
+  hold-for-linked-room are unchanged.
+
+### Added
+- **Tap outside the plan to cancel** (Rooms mode): tapping the area around
+  the floor plan clears the selected box and any in-progress outline —
+  outside Rooms mode it clears a highlight.
+
+### Changed
+- **Room nodes slimmed further** (~20%) with thinner rings — visible and
+  catchable without cluttering the outline.
+
 ## [1.23.0] — 2026-07-25
 
 ### Fixed
@@ -804,6 +855,23 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.24.0] — 2026-07-25
+
+### Fixed
+- **Panning the plan no longer draws rooms** (touch): a quick one-finger
+  swipe on the plan now pans it — matching every photo/map app — while a
+  deliberate, slower drag still draws a box. Tap-corners, pinch-zoom and
+  hold-for-linked-room are unchanged.
+
+### Added
+- **Tap outside the plan to cancel** (Rooms mode): tapping the area around
+  the floor plan clears the selected box and any in-progress outline —
+  outside Rooms mode it clears a highlight.
+
+### Changed
+- **Room nodes slimmed further** (~20%) with thinner rings — visible and
+  catchable without cluttering the outline.
 
 ## [1.23.0] — 2026-07-25
 

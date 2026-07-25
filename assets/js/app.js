@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.23.0';
+const APP_VERSION='1.24.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -706,7 +706,7 @@ function renderRooms(){
   if(!f||!(f.rooms||[]).length&&!roomMode)return;
   migrateRooms(f);
   layer=el('div','room-layer');layer.id='roomLayer';
-  const hb=matchMedia('(pointer:coarse)').matches?11:7;   /* catchable, not bulky */
+  const hb=matchMedia('(pointer:coarse)').matches?9:6.5;  /* catchable, unobtrusive */
   const handleR=Math.max(hb*0.75,hb*(f.w/Math.max(1,planRect().width)));
   let svg=`<svg viewBox="0 0 ${f.w} ${f.h}" preserveAspectRatio="none">`;
   svg+=`<defs><pattern id="rhatch" width="8" height="8" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="8" stroke-width="5.5"/></pattern></defs>`;
@@ -1087,10 +1087,24 @@ function startRoomDraw(e,f){
   };
   const id=e.pointerId;
   const stop=()=>{document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);};
+  const isTouch=e.pointerType==='touch', t0=performance.now();
+  let panning=false, lastX=e.clientX, lastY=e.clientY;
   const mv=ev=>{
     if(ev.pointerId!==id)return;
     if(pinchActive){aborted=true;prev.remove();stop();return;}   /* second finger = zoom */
     movedPx=Math.max(movedPx,Math.hypot(ev.clientX-e.clientX,ev.clientY-e.clientY));
+    if(panning){                                   /* a quick swipe = pan the plan */
+      panX+=ev.clientX-lastX; panY+=ev.clientY-lastY;
+      lastX=ev.clientX; lastY=ev.clientY;
+      clampPan();applyView();
+      return;
+    }
+    if(isTouch&&movedPx>=10&&performance.now()-t0<140){
+      panning=true;prev.remove();
+      lastX=ev.clientX;lastY=ev.clientY;
+      return;
+    }
+    lastX=ev.clientX;lastY=ev.clientY;
     if(movedPx<6)return;
     const raw={x:(ev.clientX-r.left)/r.width,y:(ev.clientY-r.top)/r.height};
     const sp=roomSnapPoint(raw,f,null,null,ev.altKey?0:tol);
@@ -1102,6 +1116,7 @@ function startRoomDraw(e,f){
   const up=ev=>{
     if(ev.pointerId!==id||aborted)return;
     stop();
+    if(panning)return;                             /* it was a pan, not a room */
     if(pinchActive){prev.remove();return;}
     if(movedPx<6){                                    /* tap: a polygon corner */
       prev.remove();
@@ -1592,6 +1607,18 @@ $('#pinSize').addEventListener('input',e=>{state.pinScale=e.target.value/100;ren
 
 document.addEventListener('keydown',e=>{if(e.code==='Space'&&!e.target.matches('input,select,textarea')){spaceHeld=true;stage.style.cursor='grab';e.preventDefault();}});
 document.addEventListener('keyup',e=>{if(e.code==='Space'){spaceHeld=false;stage.style.cursor='';}});
+
+/* tapping the stage background (outside the plan) is a universal "cancel":
+   clears room selection, an in-progress outline, and any highlight */
+stage.addEventListener('pointerdown',e=>{
+  if(e.target.closest('#planHolder,button,input,.crop-bar,.hintbar'))return;
+  if(roomMode){
+    let changed=false;
+    if(polyPts){cancelPoly();changed=true;}
+    if(selRoom){selRoom=null;changed=true;}
+    if(changed){closeRoomPop();renderRooms();}
+  }else if(hlRoom){ highlightRoom(null); closeRoomPop(); }
+});
 
 /* marquee select: left-drag on empty plan when idle boxes a set of ikons */
 (function(){

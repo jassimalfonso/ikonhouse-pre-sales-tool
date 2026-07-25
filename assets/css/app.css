@@ -800,3 +800,7 @@ body.dev-dragging .item-row{opacity:.5}
 .vm-wide{display:flex;align-items:center;gap:8px;width:100%;padding:8px 6px;font-size:12.5px;color:var(--txt);border-radius:8px}
 .vm-wide:hover{background:var(--hl-soft);color:var(--hl)}
 .vm-wide svg{width:15px;height:15px}
+/* softer node styling: thinner rings, gentler shadow */
+.rvtx{stroke-width:1.6}
+.rvtx.linked{stroke-width:2}
+.rmid{stroke-width:1.4;opacity:.85}

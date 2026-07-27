@@ -895,3 +895,6 @@ body.dev-dragging .item-row{opacity:.5}
 }
 /* horizontal docks stay compact — vertical space is scarce there */
 body.dock-top .cat-head,body.dock-bottom .cat-head{padding:8px 8px 6px;font-size:9.5px}
+/* the two plan sliders sit side by side; opacity is the narrower of the pair */
+#pinOpacity{max-width:88px}
+@media (max-width:520px){ #pinOpacity{max-width:64px} }

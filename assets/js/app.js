@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.27.1';
+const APP_VERSION='1.28.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -86,7 +86,7 @@ let state = {
   project:'Untitled Project', client:'', location:'', reference:'', preparedBy:'',
   theme:SYS_THEME(), brandLogo:null, libDock:'left', lastDock:'left', libHidden:false, libFloat:null,
   libSize:{w:324,h:60,fw:288,fh:520}, catOrder:[],
-  items:[], floors:[], activeFloor:null, pinScale:1
+  items:[], floors:[], activeFloor:null, pinScale:1, pinOpacity:1
 };
 let armedItem=null, selMarker=null, selSet=new Set(), zoom=1, undoStack=[], redoStack=[], ctxTarget=null, draggingCat=null;
 
@@ -1365,7 +1365,7 @@ function setSelSet(ids){
   $('#pinActions').classList.toggle('open',selSet.size>0);
   const pr=$('#paRemove'); if(pr)pr.textContent=selSet.size>1?`Remove ${selSet.size} ikons`:'Remove ikon';
 }
-function pinPx(){const f=activeFloor();if(!f)return 24;return Math.max(12,Math.min(70,f.w*0.021))*state.pinScale;}
+function pinPx(){const f=activeFloor();if(!f)return 24;return Math.max(5,Math.min(70,f.w*0.021)*state.pinScale);}
 function renderMarkers(){
   const holder=$('#planHolder');holder.querySelectorAll('.marker').forEach(m=>m.remove());
   const f=activeFloor();if(!f)return;
@@ -1377,7 +1377,7 @@ function renderMarkers(){
     const seqBadge=(state.autoNumber&&p.seq)?`<span class="seq">${p.seq}</span>`:'';
     const m=el('div','marker'+(selSet.has(p.id)?' sel':'')+hlCls,iconHtml(it)+seqBadge);
     m.dataset.pid=p.id;
-    m.style.cssText=`left:${p.x*100}%;top:${p.y*100}%;width:${s}px;height:${s}px;background:${it.color}`;
+    m.style.cssText=`left:${p.x*100}%;top:${p.y*100}%;width:${s}px;height:${s}px;background:${it.color};opacity:${state.pinOpacity??1}`;
     m.title=it.name;
     m.addEventListener('pointerdown',ev=>{
       if(armedItem||cropMode||(ev.pointerType==='mouse'&&ev.button!==0))return;
@@ -1679,6 +1679,7 @@ stage.addEventListener('wheel',e=>{
   else{ panX-=e.deltaX; panY-=e.deltaY; clampPan(); applyView(); }     /* scroll / trackpad = pan */
 },{passive:false});
 $('#pinSize').addEventListener('input',e=>{state.pinScale=e.target.value/100;renderMarkers();});
+$('#pinOpacity').addEventListener('input',e=>{state.pinOpacity=e.target.value/100;renderMarkers();});
 
 document.addEventListener('keydown',e=>{if(e.code==='Space'&&!e.target.matches('input,select,textarea')){spaceHeld=true;stage.style.cursor='grab';e.preventDefault();}});
 document.addEventListener('keyup',e=>{if(e.code==='Space'){spaceHeld=false;stage.style.cursor='';}});
@@ -2065,14 +2066,22 @@ $('#fileIcon').addEventListener('change',e=>{
 });
 function buildColorRow(){
   const r=$('#colorRow');r.innerHTML='';
+  const sync=()=>{
+    r.querySelectorAll('.color-opt').forEach(b=>b.classList.toggle('on',b.dataset.c.toLowerCase()===mColor.toLowerCase()));
+    cust.classList.toggle('on',!PALETTE.some(c=>c.toLowerCase()===mColor.toLowerCase()));
+    renderIconPreview();
+  };
   PALETTE.forEach(c=>{
-    const b=el('button','color-opt'+(c.toLowerCase()===mColor.toLowerCase()?' on':''));
-    b.style.background=c;b.addEventListener('click',()=>{mColor=c;buildColorRow();});
+    const b=el('button','color-opt');b.dataset.c=c;b.style.background=c;
+    b.addEventListener('click',()=>{mColor=c;cust.value=c;sync();});
     r.appendChild(b);
   });
+  /* NB: never re-render this row while the picker is open — replacing the
+     input closes the OS colour dialog mid-pick. */
   const cust=el('input');cust.type='color';cust.className='color-custom';cust.value=mColor;cust.title='Custom color';
-  cust.addEventListener('input',e=>{mColor=e.target.value;buildColorRow();});
+  cust.addEventListener('input',e=>{mColor=e.target.value;sync();});
   r.appendChild(cust);
+  sync();
 }
 function openItemModal(id){
   editingId=id||null;
@@ -2575,8 +2584,9 @@ async function renderSheet(f,paper,idx,total){
   ctx.strokeStyle=PAPER_LINE;ctx.lineWidth=2;ctx.strokeRect(dx,dy,dw,dh);
 
   /* pins */
-  const pin=Math.max(10,Math.min(70,f.w*0.021))*state.pinScale*s;
+  const pin=Math.max(5*s,Math.min(70,f.w*0.021)*state.pinScale*s);
   const iconCache={};
+  ctx.globalAlpha=state.pinOpacity??1;          /* sheets match what's on screen */
   for(const p of f.placements){
     const it=itemById(p.itemId);if(!it)continue;
     const x0=dx+p.x*dw, y0=dy+p.y*dh;
@@ -2598,6 +2608,8 @@ async function renderSheet(f,paper,idx,total){
       ctx.fillStyle=PAPER_INK;ctx.fillText(lbl,tx,ty+1);
     }
   }
+
+  ctx.globalAlpha=1;
 
   /* legend table */
   if(used.length){
@@ -2811,13 +2823,14 @@ function loadProjectText(txt){
     const s=JSON.parse(txt);
     if(!s.items||!s.floors)throw 0;
     s.floors&&s.floors.forEach(f=>{f.rooms=f.rooms||[];});
-    state=Object.assign({version:APP_VERSION,theme:SYS_THEME(),brandLogo:null,pinScale:1,client:'',location:'',reference:'',preparedBy:'',libDock:'left',lastDock:'left',libHidden:false,libFloat:null,libSize:{w:324,h:60,fw:288,fh:520},catOrder:[]},s);
+    state=Object.assign({version:APP_VERSION,theme:SYS_THEME(),brandLogo:null,pinScale:1,pinOpacity:1,client:'',location:'',reference:'',preparedBy:'',libDock:'left',lastDock:'left',libHidden:false,libFloat:null,libSize:{w:324,h:60,fw:288,fh:520},catOrder:[]},s);
     projHandle=null;                            /* re-linked by the picker path */
     armedItem=null;setSelMarker(null);undoStack=[];redoStack=[];
     if(cropMode)cancelCrop();
     if(roomMode)setRoomMode(false);
     $('#projName').value=state.project;
     $('#pinSize').value=(state.pinScale||1)*100;
+    $('#pinOpacity').value=(state.pinOpacity??1)*100;
     applyTheme();renderBrand();applyDock();applyAutoNum();renderLibrary();renderFloors();showFloor();renderBoq();
     dismissOnboard();
     toast('Project loaded.');

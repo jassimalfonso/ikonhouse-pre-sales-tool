@@ -4,6 +4,24 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.28.0] — 2026-07-26
+
+### Fixed
+- **The device dialog vanished when picking a custom ikon colour.** Choosing a
+  colour rebuilt the whole swatch row, which replaced the `<input type="color">`
+  element the OS picker was attached to — closing the picker (and appearing to
+  close the dialog) mid-pick. The row now updates its selection in place.
+
+### Added
+- **Ikon opacity slider** next to the size slider: drop it to see walls and
+  dimensions on the plan through the ikons. It applies on screen and on the
+  exported sheets, and is saved with the project.
+
+### Changed
+- **Ikons can go much smaller.** The size slider starts at 20% (was 50%) and
+  the hard 12px floor that quietly overrode it is now 5px — so ikons stay
+  proportionate on dense or large-format plans.
+
 ## [1.27.1] — 2026-07-26
 
 ### Changed
@@ -202,6 +220,24 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.28.0] — 2026-07-26
+
+### Fixed
+- **The device dialog vanished when picking a custom ikon colour.** Choosing a
+  colour rebuilt the whole swatch row, which replaced the `<input type="color">`
+  element the OS picker was attached to — closing the picker (and appearing to
+  close the dialog) mid-pick. The row now updates its selection in place.
+
+### Added
+- **Ikon opacity slider** next to the size slider: drop it to see walls and
+  dimensions on the plan through the ikons. It applies on screen and on the
+  exported sheets, and is saved with the project.
+
+### Changed
+- **Ikons can go much smaller.** The size slider starts at 20% (was 50%) and
+  the hard 12px floor that quietly overrode it is now 5px — so ikons stay
+  proportionate on dense or large-format plans.
 
 ## [1.27.1] — 2026-07-26
 
@@ -837,6 +873,24 @@ follows [Semantic Versioning](https://semver.org).
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
 
+## [1.28.0] — 2026-07-26
+
+### Fixed
+- **The device dialog vanished when picking a custom ikon colour.** Choosing a
+  colour rebuilt the whole swatch row, which replaced the `<input type="color">`
+  element the OS picker was attached to — closing the picker (and appearing to
+  close the dialog) mid-pick. The row now updates its selection in place.
+
+### Added
+- **Ikon opacity slider** next to the size slider: drop it to see walls and
+  dimensions on the plan through the ikons. It applies on screen and on the
+  exported sheets, and is saved with the project.
+
+### Changed
+- **Ikons can go much smaller.** The size slider starts at 20% (was 50%) and
+  the hard 12px floor that quietly overrode it is now 5px — so ikons stay
+  proportionate on dense or large-format plans.
+
 ## [1.27.1] — 2026-07-26
 
 ### Changed
@@ -1035,6 +1089,24 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.28.0] — 2026-07-26
+
+### Fixed
+- **The device dialog vanished when picking a custom ikon colour.** Choosing a
+  colour rebuilt the whole swatch row, which replaced the `<input type="color">`
+  element the OS picker was attached to — closing the picker (and appearing to
+  close the dialog) mid-pick. The row now updates its selection in place.
+
+### Added
+- **Ikon opacity slider** next to the size slider: drop it to see walls and
+  dimensions on the plan through the ikons. It applies on screen and on the
+  exported sheets, and is saved with the project.
+
+### Changed
+- **Ikons can go much smaller.** The size slider starts at 20% (was 50%) and
+  the hard 12px floor that quietly overrode it is now 5px — so ikons stay
+  proportionate on dense or large-format plans.
 
 ## [1.27.1] — 2026-07-26
 

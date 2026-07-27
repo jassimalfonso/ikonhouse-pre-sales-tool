@@ -7,7 +7,7 @@
 <title>ikonhouse — AV Pre-Sales Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/app.css?v=1.27.1">
+<link rel="stylesheet" href="assets/css/app.css?v=1.28.0">
 </head>
 <body>
 
@@ -94,7 +94,8 @@
   <button class="tb-btn icon-only" id="btnUndo" title="Undo (Ctrl+Z)"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button>
   <button class="tb-btn icon-only" id="btnRedo" title="Redo (Ctrl+Y)"><svg viewBox="0 0 24 24"><path d="M15 14l5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg></button>
   <div class="spacer"></div>
-  <div class="sizegrp"><label>IKON</label><input type="range" id="pinSize" min="50" max="220" value="100"></div>
+  <div class="sizegrp"><label>IKON</label><input type="range" id="pinSize" min="20" max="220" value="100" title="Ikon size"></div>
+  <div class="sizegrp"><label>OPACITY</label><input type="range" id="pinOpacity" min="25" max="100" value="100" title="Ikon opacity — lower it to read the plan underneath"></div>
   <div class="zoomgrp">
     <button id="zoomOut">−</button><span class="zl" id="zoomLbl">100%</span><button id="zoomIn">+</button><button id="zoomFit">FIT</button>
   </div>
@@ -197,7 +198,7 @@
       <p class="guide-lead">Everything you export carries your branding, the project details, and the date.</p>
       <div class="help-cols">
         <div><h4>Plan sheets (PDF / PNG)</h4>
-          <p>A cover page plus one sheet per floor, at A4, A3 or A1. Each sheet carries the plan and a legend grouped by category. Turn on auto-numbering and every ikon prints a code such as CS-01.</p></div>
+          <p>A cover page plus one sheet per floor, at A4, A3 or A1. Each sheet carries the plan and a legend grouped by category. Turn on auto-numbering and every ikon prints a code such as CS-01. Ikon size and opacity carry through from the toolbar sliders.</p></div>
         <div><h4>Excel</h4>
           <p>An <b>FD sheet</b> listing rooms down the side and devices across the top, in your library's order, with out-of-scope rooms shaded. Plus a priced <b>BoQ Summary</b>.</p></div>
         <div><h4>Full package</h4>
@@ -338,7 +339,7 @@
     </div>
   </div>
   <div class="ob-credit">Developed by Jassim Alfonso with Claude</div>
-  <div class="ob-foot">IKONHOUSE · PRE-SALES TOOL · V1.27</div>
+  <div class="ob-foot">IKONHOUSE · PRE-SALES TOOL · V1.28</div>
 </div>
 
 <div class="onboard" id="setup" style="display:none">
@@ -363,6 +364,6 @@
   </div>
 </div>
 
-<script src="assets/js/app.js?v=1.27.1"></script>
+<script src="assets/js/app.js?v=1.28.0"></script>
 </body>
 </html>

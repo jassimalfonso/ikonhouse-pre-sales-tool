@@ -4,6 +4,27 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.27.1] — 2026-07-26
+
+### Changed
+- **Category headers are larger and better balanced** — more breathing room
+  above each group, slightly bigger type with a little more contrast, and
+  round 24px tool buttons (30px on touch) that no longer feel cramped. The
+  tools now reserve their space instead of appearing on hover, so headers
+  never shift as the pointer moves across them. Horizontal docks keep the
+  compact spacing, where vertical space is scarce.
+
+## [1.27.0] — 2026-07-26
+
+### Added
+- **Reorder devices within a category.** Each device row now has ▲▼ buttons
+  (always visible on touch, on hover with a mouse), and dragging a device onto
+  another drops it into that position — within its own category, or into
+  another category if you drop it on a device there. Dropping on a category
+  header still moves it to the end of that category, as before.
+- The order is stored with the project and flows through to the exports, so
+  the FD sheet''s column order follows the library exactly.
+
 ## [1.26.0] — 2026-07-25
 
 ### Added
@@ -181,6 +202,27 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.27.1] — 2026-07-26
+
+### Changed
+- **Category headers are larger and better balanced** — more breathing room
+  above each group, slightly bigger type with a little more contrast, and
+  round 24px tool buttons (30px on touch) that no longer feel cramped. The
+  tools now reserve their space instead of appearing on hover, so headers
+  never shift as the pointer moves across them. Horizontal docks keep the
+  compact spacing, where vertical space is scarce.
+
+## [1.27.0] — 2026-07-26
+
+### Added
+- **Reorder devices within a category.** Each device row now has ▲▼ buttons
+  (always visible on touch, on hover with a mouse), and dragging a device onto
+  another drops it into that position — within its own category, or into
+  another category if you drop it on a device there. Dropping on a category
+  header still moves it to the end of that category, as before.
+- The order is stored with the project and flows through to the exports, so
+  the FD sheet''s column order follows the library exactly.
 
 ## [1.26.0] — 2026-07-25
 
@@ -795,6 +837,27 @@ follows [Semantic Versioning](https://semver.org).
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
 
+## [1.27.1] — 2026-07-26
+
+### Changed
+- **Category headers are larger and better balanced** — more breathing room
+  above each group, slightly bigger type with a little more contrast, and
+  round 24px tool buttons (30px on touch) that no longer feel cramped. The
+  tools now reserve their space instead of appearing on hover, so headers
+  never shift as the pointer moves across them. Horizontal docks keep the
+  compact spacing, where vertical space is scarce.
+
+## [1.27.0] — 2026-07-26
+
+### Added
+- **Reorder devices within a category.** Each device row now has ▲▼ buttons
+  (always visible on touch, on hover with a mouse), and dragging a device onto
+  another drops it into that position — within its own category, or into
+  another category if you drop it on a device there. Dropping on a category
+  header still moves it to the end of that category, as before.
+- The order is stored with the project and flows through to the exports, so
+  the FD sheet''s column order follows the library exactly.
+
 ## [1.26.0] — 2026-07-25
 
 ### Added
@@ -972,6 +1035,27 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.27.1] — 2026-07-26
+
+### Changed
+- **Category headers are larger and better balanced** — more breathing room
+  above each group, slightly bigger type with a little more contrast, and
+  round 24px tool buttons (30px on touch) that no longer feel cramped. The
+  tools now reserve their space instead of appearing on hover, so headers
+  never shift as the pointer moves across them. Horizontal docks keep the
+  compact spacing, where vertical space is scarce.
+
+## [1.27.0] — 2026-07-26
+
+### Added
+- **Reorder devices within a category.** Each device row now has ▲▼ buttons
+  (always visible on touch, on hover with a mouse), and dragging a device onto
+  another drops it into that position — within its own category, or into
+  another category if you drop it on a device there. Dropping on a category
+  header still moves it to the end of that category, as before.
+- The order is stored with the project and flows through to the exports, so
+  the FD sheet''s column order follows the library exactly.
 
 ## [1.26.0] — 2026-07-25
 

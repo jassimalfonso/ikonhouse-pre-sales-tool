@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.26.0';
+const APP_VERSION='1.27.1';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -262,16 +262,22 @@ function renderLibrary(){
       row.innerHTML=`<span class="item-chip" style="background:${item.color}">${iconHtml(item)}</span>
         <span class="item-meta"><span class="nm">${item.name}</span>${item.model?`<span class="md">${item.model}</span>`:''}</span>
         <span class="item-qty ${qty?'on':''}">${qty||'—'}</span>
+        <button class="item-mv" data-dir="-1" title="Move up">▲</button>
+        <button class="item-mv" data-dir="1" title="Move down">▼</button>
         <button class="item-edit" title="Edit"><svg viewBox="0 0 24 24"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg></button>
         <button class="item-del" title="Delete device"><svg viewBox="0 0 24 24"><path d="M5 7h14M9 7V5h6v2m-8 0l1 13h8l1-13"/></svg></button>`;
       row.dataset.item=item.id;
       row.addEventListener('pointerdown',e=>{
-        if(e.target.closest('.item-edit,.item-del'))return;
+        if(e.target.closest('.item-edit,.item-del,.item-mv'))return;
         if(e.pointerType==='mouse'&&e.button!==0)return;
         startDeviceDrag(item,row,e);
       });
+      row.querySelectorAll('.item-mv').forEach(b=>b.addEventListener('click',e=>{
+        e.stopPropagation(); moveDeviceInCat(item,+b.dataset.dir);
+      }));
       row.addEventListener('click',e=>{
         if(dragDevSuppressClick)return;
+        if(e.target.closest('.item-mv'))return;
         if(e.target.closest('.item-del')){
           if(!confirm(`Delete “${item.name}”${qty?` and its ${qty} placed ikon${qty>1?'s':''}`:''}?`))return;
           state.items=state.items.filter(i=>i.id!==item.id);
@@ -328,6 +334,33 @@ $('#btnNewCat').addEventListener('click',()=>{
   renderLibrary();
   toast(`Category “${name}” created — add devices to it anytime.`);
 });
+/* device order comes from their position in state.items, so reordering there
+   persists with the project. Swapping two entries of the same category keeps
+   the grouping intact. */
+function catPeers(item){
+  const c=item.cat||'Other';
+  return state.items.map((it,i)=>({it,i})).filter(o=>(o.it.cat||'Other')===c);
+}
+function moveDeviceInCat(item,dir){
+  const peers=catPeers(item);
+  const pos=peers.findIndex(o=>o.it.id===item.id);
+  const tgt=pos+dir;
+  if(pos<0||tgt<0||tgt>=peers.length)return;
+  const a=peers[pos].i, b=peers[tgt].i;
+  [state.items[a],state.items[b]]=[state.items[b],state.items[a]];
+  renderLibrary();renderBoq();
+}
+function placeDeviceAt(item,targetItem){
+  if(item.id===targetItem.id)return false;
+  const from=state.items.findIndex(i=>i.id===item.id);
+  if(from<0)return false;
+  const moved=state.items[from];
+  moved.cat=targetItem.cat||'Other';          /* dropping also adopts that category */
+  state.items.splice(from,1);
+  const to=state.items.findIndex(i=>i.id===targetItem.id);
+  state.items.splice(to<0?state.items.length:to,0,moved);
+  return true;
+}
 let dragDevSuppressClick=false;
 function startDeviceDrag(item,row,e){
   const id=e.pointerId, sx=e.clientX, sy=e.clientY;
@@ -343,11 +376,11 @@ function startDeviceDrag(item,row,e){
     if(!started&&Math.hypot(ev.clientX-sx,ev.clientY-sy)<5)return;
     if(!started)begin();
     const el2=document.elementFromPoint(ev.clientX,ev.clientY);
-    document.querySelectorAll('.cat-head.drop').forEach(h=>h.classList.remove('drop'));
+    document.querySelectorAll('.cat-head.drop,.item-row.drop-at').forEach(h=>h.classList.remove('drop','drop-at'));
     const head=el2&&el2.closest?el2.closest('.cat-head'):null;
     const rowEl=el2&&el2.closest?el2.closest('.item-row'):null;
-    const tgt=head||(rowEl?document.querySelector(`.cat-head[data-cat="${(itemById(rowEl.dataset.item)||{}).cat}"]`):null);
-    if(tgt)tgt.classList.add('drop');
+    if(rowEl&&rowEl.dataset.item!==item.id) rowEl.classList.add('drop-at');   /* insertion point */
+    else if(head) head.classList.add('drop');
   };
   const up=ev=>{
     if(ev.pointerId!==id)return;
@@ -356,10 +389,20 @@ function startDeviceDrag(item,row,e){
       const el2=document.elementFromPoint(ev.clientX,ev.clientY);
       const head=el2&&el2.closest?el2.closest('.cat-head'):null;
       const rowEl=el2&&el2.closest?el2.closest('.item-row'):null;
-      let cat=head?head.dataset.cat:(rowEl?(itemById(rowEl.dataset.item)||{}).cat:null);
       document.body.classList.remove('dev-dragging');
-      document.querySelectorAll('.cat-head.drop').forEach(h=>h.classList.remove('drop'));
-      if(cat&&cat!==item.cat){ item.cat=cat; dragDevSuppressClick=true; renderLibrary(); renderBoq(); toast(`Moved to “${cat}”.`); setTimeout(()=>dragDevSuppressClick=false,60); }
+      document.querySelectorAll('.cat-head.drop,.item-row.drop-at').forEach(h=>h.classList.remove('drop','drop-at'));
+      const overItem=rowEl?itemById(rowEl.dataset.item):null;
+      if(overItem&&overItem.id!==item.id){                 /* dropped on a device: take its place */
+        const crossed=(overItem.cat||'Other')!==(item.cat||'Other');
+        if(placeDeviceAt(item,overItem)){
+          dragDevSuppressClick=true; renderLibrary(); renderBoq();
+          if(crossed)toast(`Moved to “${overItem.cat||'Other'}”.`);
+          setTimeout(()=>dragDevSuppressClick=false,60);
+        }
+      }else{
+        const cat=head?head.dataset.cat:null;
+        if(cat&&cat!==item.cat){ item.cat=cat; dragDevSuppressClick=true; renderLibrary(); renderBoq(); toast(`Moved to “${cat}”.`); setTimeout(()=>dragDevSuppressClick=false,60); }
+      }
     }
   };
   const cleanup=()=>{document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);};

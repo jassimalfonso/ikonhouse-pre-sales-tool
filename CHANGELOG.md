@@ -4,6 +4,28 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.31.0] — 2026-08-11
+
+### Added
+- **Greyscale floor plan** (View menu → Placement): drops the architect''s
+  drawing to greyscale while ikons, rooms and labels keep their colour, so
+  devices read clearly against a busy plan. Applies on screen and on the
+  exported sheets, is saved with the project, and switches back at any time.
+
+## [1.30.0] — 2026-08-11
+
+### Added
+- **Room schedule order panel** (toolbar button beside Rooms): every room on
+  every floor in one list, showing its position, colour, ikon count and
+  out-of-scope tag. **Drag a room** to move it, or use ▲▼ — the order is
+  exactly what the Excel FD sheet and the BoQ breakdown use. Rooms stay within
+  their own floor.
+- **Sort by position** orders every floor the way a reader scans the plan —
+  top to bottom, left to right within each band — as a one-click starting
+  point before fine-tuning.
+- The room editor''s order section now links straight through with
+  **“Reorder all…”**.
+
 ## [1.29.0] — 2026-08-11
 
 ### Added
@@ -229,6 +251,28 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.31.0] — 2026-08-11
+
+### Added
+- **Greyscale floor plan** (View menu → Placement): drops the architect''s
+  drawing to greyscale while ikons, rooms and labels keep their colour, so
+  devices read clearly against a busy plan. Applies on screen and on the
+  exported sheets, is saved with the project, and switches back at any time.
+
+## [1.30.0] — 2026-08-11
+
+### Added
+- **Room schedule order panel** (toolbar button beside Rooms): every room on
+  every floor in one list, showing its position, colour, ikon count and
+  out-of-scope tag. **Drag a room** to move it, or use ▲▼ — the order is
+  exactly what the Excel FD sheet and the BoQ breakdown use. Rooms stay within
+  their own floor.
+- **Sort by position** orders every floor the way a reader scans the plan —
+  top to bottom, left to right within each band — as a one-click starting
+  point before fine-tuning.
+- The room editor''s order section now links straight through with
+  **“Reorder all…”**.
 
 ## [1.29.0] — 2026-08-11
 
@@ -891,6 +935,28 @@ follows [Semantic Versioning](https://semver.org).
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
 
+## [1.31.0] — 2026-08-11
+
+### Added
+- **Greyscale floor plan** (View menu → Placement): drops the architect''s
+  drawing to greyscale while ikons, rooms and labels keep their colour, so
+  devices read clearly against a busy plan. Applies on screen and on the
+  exported sheets, is saved with the project, and switches back at any time.
+
+## [1.30.0] — 2026-08-11
+
+### Added
+- **Room schedule order panel** (toolbar button beside Rooms): every room on
+  every floor in one list, showing its position, colour, ikon count and
+  out-of-scope tag. **Drag a room** to move it, or use ▲▼ — the order is
+  exactly what the Excel FD sheet and the BoQ breakdown use. Rooms stay within
+  their own floor.
+- **Sort by position** orders every floor the way a reader scans the plan —
+  top to bottom, left to right within each band — as a one-click starting
+  point before fine-tuning.
+- The room editor''s order section now links straight through with
+  **“Reorder all…”**.
+
 ## [1.29.0] — 2026-08-11
 
 ### Added
@@ -1116,6 +1182,28 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.31.0] — 2026-08-11
+
+### Added
+- **Greyscale floor plan** (View menu → Placement): drops the architect''s
+  drawing to greyscale while ikons, rooms and labels keep their colour, so
+  devices read clearly against a busy plan. Applies on screen and on the
+  exported sheets, is saved with the project, and switches back at any time.
+
+## [1.30.0] — 2026-08-11
+
+### Added
+- **Room schedule order panel** (toolbar button beside Rooms): every room on
+  every floor in one list, showing its position, colour, ikon count and
+  out-of-scope tag. **Drag a room** to move it, or use ▲▼ — the order is
+  exactly what the Excel FD sheet and the BoQ breakdown use. Rooms stay within
+  their own floor.
+- **Sort by position** orders every floor the way a reader scans the plan —
+  top to bottom, left to right within each band — as a one-click starting
+  point before fine-tuning.
+- The room editor''s order section now links straight through with
+  **“Reorder all…”**.
 
 ## [1.29.0] — 2026-08-11
 

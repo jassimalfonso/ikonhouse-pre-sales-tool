@@ -7,7 +7,7 @@
 <title>ikonhouse — AV Pre-Sales Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/app.css?v=1.29.0">
+<link rel="stylesheet" href="assets/css/app.css?v=1.31.0">
 </head>
 <body>
 
@@ -60,6 +60,7 @@
       <div class="vm-note">On this screen size the library lives in the slide-in <b>Devices</b> sheet — docking applies on larger screens.</div>
       <div class="vm-label">Placement</div>
       <label class="vm-toggle"><input type="checkbox" id="autoNumOpt" checked> Auto-number ikons (SP-01, KP-02…)</label>
+      <label class="vm-toggle"><input type="checkbox" id="planGrayOpt"> Greyscale floor plan (ikons keep colour)</label>
       <div class="vm-label">Help</div>
       <button class="vm-wide" id="btnGestures"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.4 2.34c-.8.32-1.4 1-1.4 1.86v.3"/><circle cx="11.5" cy="16.6" r=".6"/></svg>Gestures &amp; tips</button>
     </div>
@@ -90,6 +91,9 @@
   <button class="tb-btn" id="btnCrop"><svg viewBox="0 0 24 24"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/></svg><span class="lbl">Crop</span></button>
   <button class="tb-btn icon-only" id="btnRotateCCW" title="Rotate plan 90° counter-clockwise"><svg viewBox="0 0 24 24"><path d="M3 3v6h6"/><path d="M3 9a8.5 8.5 0 1 1 2.5 6.1"/></svg></button>
   <button class="tb-btn" id="btnRotate" title="Rotate plan 90° clockwise"><svg viewBox="0 0 24 24"><path d="M21 3v6h-6"/><path d="M21 9a8.5 8.5 0 1 0-2.5 6.1"/></svg><span class="lbl">Rotate</span></button>
+  <button class="tb-btn icon-only" id="btnRoomOrder" title="Room schedule order — sets the row order in the FD sheet & BoQ">
+    <svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M4 5.5l-1 1M3 11l1 1 1-1M3.5 17.5h1.5l-1.5 2h1.5"/></svg>
+  </button>
   <button class="tb-btn" id="btnRooms" title="Define rooms / areas on the plan"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 3v10M12 13h9M3 13h4"/></svg><span class="lbl">Rooms</span></button>
   <button class="tb-btn icon-only" id="btnUndo" title="Undo (Ctrl+Z)"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button>
   <button class="tb-btn icon-only" id="btnRedo" title="Redo (Ctrl+Y)"><svg viewBox="0 0 24 24"><path d="M15 14l5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg></button>
@@ -174,7 +178,7 @@
         <li><b>Add your floor plan.</b> Drop a PDF or image onto the canvas, or use <i>Floors → Add floor</i>. Multi-page PDFs become one floor per page. Then <i>Crop</i> to trim it to the drawing itself.</li>
         <li><b>Set up your device library.</b> Create a category, then add devices to it with a name, colour and icon. Prices are optional — add them and the BoQ totals itself. The library is saved inside each project.</li>
         <li><b>Place your ikons.</b> Tap a device, then tap the plan. Keep tapping to place more. Drag to reposition — they snap into line with each other so runs look tidy.</li>
-        <li><b>Draw rooms.</b> Turn on <i>Rooms</i>, then drag a box or tap corner-to-corner for odd shapes. Rooms decide which devices belong where, can be marked out of scope, and can be ordered — that order becomes the row order in the FD sheet and BoQ.</li>
+        <li><b>Draw rooms.</b> Turn on <i>Rooms</i>, then drag a box or tap corner-to-corner for odd shapes. Rooms decide which devices belong where and can be marked out of scope. Use <i>Room schedule order</i> in the toolbar to arrange them — that order becomes the row order in the FD sheet and BoQ.</li>
         <li><b>Export.</b> Choose a paper size and take the PDF plan set, the Excel FD sheet and BoQ, or the full package — which includes the editable design file so anyone can reopen it.</li>
       </ol>
       <div class="guide-note"><b>Save as you go</b> — <kbd>Ctrl</kbd>+<kbd>S</kbd> writes straight back to your project file. Made a mistake? <kbd>Ctrl</kbd>+<kbd>Z</kbd> undoes almost everything, including room edits.</div>
@@ -198,7 +202,7 @@
       <p class="guide-lead">Everything you export carries your branding, the project details, and the date.</p>
       <div class="help-cols">
         <div><h4>Plan sheets (PDF / PNG)</h4>
-          <p>A cover page plus one sheet per floor, at A4, A3 or A1. Each sheet carries the plan and a legend grouped by category. Turn on auto-numbering and every ikon prints a code such as CS-01. Ikon size and opacity carry through from the toolbar sliders.</p></div>
+          <p>A cover page plus one sheet per floor, at A4, A3 or A1. Each sheet carries the plan and a legend grouped by category. Turn on auto-numbering and every ikon prints a code such as CS-01. Ikon size and opacity carry through from the toolbar sliders, as does greyscale if you turn it on.</p></div>
         <div><h4>Excel</h4>
           <p>An <b>FD sheet</b> listing rooms down the side and devices across the top, in your library's order, with out-of-scope rooms shaded. Plus a priced <b>BoQ Summary</b>.</p></div>
         <div><h4>Full package</h4>
@@ -291,6 +295,20 @@
 </div>
 
 <!-- paper size modal -->
+<div class="veil" id="roomOrderVeil">
+  <div class="modal roomorder-modal">
+    <div class="m-head">
+      <span>Room schedule order</span>
+      <button class="modal-x" id="roomOrderClose">✕</button>
+    </div>
+    <p class="ro-lead">Rooms appear in this order in the Excel FD sheet and the BoQ breakdown. Drag a room, or use ▲▼, to arrange them the way you want the schedule to read.</p>
+    <div class="ro-body" id="roomOrderList"></div>
+    <div class="ro-foot">
+      <button class="btn ghost" id="roomOrderSort" title="Order rooms by their position on the plan, top-left to bottom-right">Sort by position</button>
+      <button class="btn pri" id="roomOrderDone">Done</button>
+    </div>
+  </div>
+</div>
 <div class="veil" id="paperVeil">
   <div class="modal modal-sm">
     <div class="modal-h"><h3 id="paperTitle">Export layout sheet</h3><button class="modal-x" data-close="paperVeil">✕</button></div>
@@ -339,7 +357,7 @@
     </div>
   </div>
   <div class="ob-credit">Developed by Jassim Alfonso with Claude</div>
-  <div class="ob-foot">IKONHOUSE · PRE-SALES TOOL · V1.29</div>
+  <div class="ob-foot">IKONHOUSE · PRE-SALES TOOL · V1.31</div>
 </div>
 
 <div class="onboard" id="setup" style="display:none">
@@ -364,6 +382,6 @@
   </div>
 </div>
 
-<script src="assets/js/app.js?v=1.29.0"></script>
+<script src="assets/js/app.js?v=1.31.0"></script>
 </body>
 </html>

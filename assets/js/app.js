@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.29.0';
+const APP_VERSION='1.31.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -86,7 +86,7 @@ let state = {
   project:'Untitled Project', client:'', location:'', reference:'', preparedBy:'',
   theme:SYS_THEME(), brandLogo:null, libDock:'left', lastDock:'left', libHidden:false, libFloat:null,
   libSize:{w:324,h:60,fw:288,fh:520}, catOrder:[],
-  items:[], floors:[], activeFloor:null, pinScale:1, pinOpacity:1
+  items:[], floors:[], activeFloor:null, pinScale:1, pinOpacity:1, planGray:false
 };
 let armedItem=null, selMarker=null, selSet=new Set(), zoom=1, undoStack=[], redoStack=[], ctxTarget=null, draggingCat=null;
 
@@ -143,6 +143,11 @@ document.querySelectorAll('#themeRow [data-theme-opt]').forEach(b=>{
 });
 $('#themeToggle').addEventListener('click',()=>{ state.theme=state.theme==='dark'?'light':'dark'; applyTheme(); });
 function applyAutoNum(){ const c=$('#autoNumOpt'); if(c)c.checked=!!state.autoNumber; }
+$('#planGrayOpt').addEventListener('change',e=>{
+  state.planGray=e.target.checked;
+  applyPlanGray();
+  toast(state.planGray?'Floor plan in greyscale — ikons keep their colour.':'Floor plan colour restored.');
+});
 $('#autoNumOpt').addEventListener('change',e=>{
   state.autoNumber=e.target.checked;
   if(state.autoNumber){
@@ -311,6 +316,11 @@ function showGuideTab(name){
 }
 document.querySelectorAll('.guide-tabs .gt').forEach(b=>b.addEventListener('click',()=>showGuideTab(b.dataset.tab)));
 $('#btnHelp').addEventListener('click',()=>openGuide('start'));
+$('#btnRoomOrder').addEventListener('click',()=>{ renderRoomOrder(); $('#roomOrderVeil').style.display='grid'; });
+$('#roomOrderClose').addEventListener('click',()=>$('#roomOrderVeil').style.display='none');
+$('#roomOrderDone').addEventListener('click',()=>$('#roomOrderVeil').style.display='none');
+$('#roomOrderSort').addEventListener('click',sortRoomsByPosition);
+$('#roomOrderVeil').addEventListener('click',e=>{ if(e.target.id==='roomOrderVeil')$('#roomOrderVeil').style.display='none'; });
 $('#btnGestures').addEventListener('click',()=>openGuide('gest'));
 $('#helpClose').addEventListener('click',closeGuide);
 $('#helpDone').addEventListener('click',closeGuide);
@@ -1237,6 +1247,91 @@ document.addEventListener('pointermove',e=>{
 function closeRoomPop(){const p=$('#roomPop');if(p)p.remove();}
 /* rooms are written to the FD sheet and BoQ in f.rooms order, so this is the
    schedule order the client sees */
+/* ── Room schedule order: one list, every floor, drag or arrows ── */
+function renderRoomOrder(){
+  const host=$('#roomOrderList');if(!host)return;
+  host.innerHTML='';
+  let any=false;
+  state.floors.forEach(f=>{
+    migrateRooms(f);
+    if(!(f.rooms||[]).length)return;
+    any=true;
+    const sec=el('div','ro-floor');
+    sec.innerHTML=`<div class="ro-floor-nm">${f.name}</div>`;
+    const list=el('div','ro-list');list.dataset.floor=f.id;
+    f.rooms.forEach((r,i)=>{
+      const n=f.placements.filter(p=>roomOf(p,f)===r).length;
+      const row=el('div','ro-row'+(r.scope==='out'?' out':''));
+      row.dataset.room=r.id;row.dataset.floor=f.id;
+      row.innerHTML=`<span class="ro-grip">⋮⋮</span>
+        <span class="ro-num">${i+1}</span>
+        <span class="ro-dot" style="background:${r.color}"></span>
+        <span class="ro-nm">${r.name}</span>
+        ${r.scope==='out'?'<span class="ro-out">OUT</span>':''}
+        <span class="ro-count">${n} ikon${n===1?'':'s'}</span>
+        <span class="ro-mvs"><button class="ro-mv" data-dir="-1" title="Move up">▲</button><button class="ro-mv" data-dir="1" title="Move down">▼</button></span>`;
+      row.querySelectorAll('.ro-mv').forEach(b=>b.addEventListener('click',e=>{
+        e.stopPropagation();
+        if(moveRoomOrder(f,r,+b.dataset.dir)){renderRoomOrder();renderBoq();}
+      }));
+      row.addEventListener('pointerdown',e=>{
+        if(e.target.closest('.ro-mv'))return;
+        startRoomOrderDrag(f,r,row,e);
+      });
+      list.appendChild(row);
+    });
+    sec.appendChild(list);host.appendChild(sec);
+  });
+  if(!any)host.innerHTML='<p class="ro-empty">No rooms yet. Draw rooms on the plan and they will appear here.</p>';
+}
+function startRoomOrderDrag(f,room,row,e){
+  if(e.pointerType==='mouse'&&e.button!==0)return;
+  const id=e.pointerId, sy=e.clientY;
+  let armed=e.pointerType!=='touch', started=false, holdT=null;
+  const begin=()=>{started=true;row.classList.add('dragging');if(navigator.vibrate&&e.pointerType==='touch')navigator.vibrate(10);};
+  if(!armed)holdT=setTimeout(()=>{armed=true;begin();},280);
+  const mv=ev=>{
+    if(ev.pointerId!==id)return;
+    if(!armed){ if(Math.abs(ev.clientY-sy)>8){clearTimeout(holdT);cleanup();} return; }
+    if(!started){ if(Math.abs(ev.clientY-sy)<5)return; begin(); }
+    const el2=document.elementFromPoint(ev.clientX,ev.clientY);
+    const over=el2&&el2.closest?el2.closest('.ro-row'):null;
+    if(!over||over===row)return;
+    if(over.dataset.floor!==row.dataset.floor)return;      /* rooms belong to their floor */
+    const target=f.rooms.find(x=>x.id===over.dataset.room);
+    const from=f.rooms.indexOf(room), to=f.rooms.indexOf(target);
+    if(from<0||to<0)return;
+    f.rooms.splice(to,0,f.rooms.splice(from,1)[0]);
+    renderRoomOrder();
+    const fresh=$('#roomOrderList').querySelector(`.ro-row[data-room="${room.id}"]`);
+    if(fresh){fresh.classList.add('dragging');row=fresh;}
+  };
+  const cleanup=()=>{document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);};
+  const up=ev=>{
+    if(ev.pointerId!==id)return;
+    clearTimeout(holdT);cleanup();
+    if(started){renderRoomOrder();renderBoq();}
+  };
+  document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
+}
+/* order rooms the way a reader scans the plan: top to bottom, then left to right */
+function sortRoomsByPosition(){
+  state.floors.forEach(f=>{
+    if(!(f.rooms||[]).length)return;
+    const band=0.12;                    /* rooms within this vertical band count as one row */
+    f.rooms.sort((a,b)=>{
+      const ca=roomCentre(a), cb=roomCentre(b);
+      if(Math.abs(ca.y-cb.y)>band)return ca.y-cb.y;
+      return ca.x-cb.x;
+    });
+  });
+  renderRoomOrder();renderBoq();
+  toast('Rooms ordered by position on the plan.');
+}
+function roomCentre(r){
+  const n=r.pts.length;
+  return {x:r.pts.reduce((a,p)=>a+p.x,0)/n, y:r.pts.reduce((a,p)=>a+p.y,0)/n};
+}
 function moveRoomOrder(f,room,dir){
   const a=f.rooms.indexOf(room), b=a+dir;
   if(a<0||b<0||b>=f.rooms.length)return false;
@@ -1266,13 +1361,15 @@ function openRoomPop(r,anchor){
         <button class="rp-mv" data-dir="-1" title="Move earlier">▲</button>
         <button class="rp-mv" data-dir="1" title="Move later">▼</button>
         <span class="rp-pos">${(f.rooms||[]).indexOf(r)+1} of ${(f.rooms||[]).length}</span>
-        <span class="rp-ordhint">sets the row order in the FD sheet &amp; BoQ</span>
+        <button class="rp-allorder">Reorder all…</button><span class="rp-ordhint">sets the row order in the FD sheet &amp; BoQ</span>
       </div></div>
     <div class="rp-row"><button class="rp-del">Delete room</button><button class="rp-done">Done</button></div>`;
   const snap=roomSnapshot(f,r);let changed=false;
   pop.addEventListener('pointerdown',e=>e.stopPropagation());
   pop.querySelector('.rp-name').addEventListener('input',e=>{changed=true;r.name=e.target.value.trim()||r.name;});
   pop.querySelectorAll('.rp-c').forEach(b=>b.addEventListener('click',()=>{changed=true;r.color=b.dataset.c;renderRooms();openRoomPop(r,anchor);}));
+  const allBtn=pop.querySelector('.rp-allorder');
+  if(allBtn)allBtn.addEventListener('click',()=>{ closeRoomPop(); renderRoomOrder(); $('#roomOrderVeil').style.display='grid'; });
   pop.querySelectorAll('.rp-mv').forEach(b=>b.addEventListener('click',()=>{
     if(moveRoomOrder(f,r,+b.dataset.dir)){ renderBoq(); openRoomPop(r,anchor); }
   }));
@@ -1535,6 +1632,7 @@ $('#btnUndo').addEventListener('click',doUndo);
 $('#btnRedo').addEventListener('click',doRedo);
 
 document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&$('#roomOrderVeil').style.display==='grid'){ $('#roomOrderVeil').style.display='none'; return; }
   if(e.key==='Escape'&&$('#helpVeil').style.display==='grid'){ closeGuide(); return; }
   if(e.key==='Escape'){
     const veil=document.querySelector('.veil.open');
@@ -1586,7 +1684,7 @@ function showFloor(){
   $('#emptyState').style.display=f?'none':'block';
   $('#planHolder').style.display=f?'block':'none';
   setSelMarker(null);
-  if(f){$('#planImg').src=f.img;requestAnimationFrame(()=>{fitZoom();renderMarkers();renderRooms();});}
+  if(f){$('#planImg').src=f.img;applyPlanGray();requestAnimationFrame(()=>{fitZoom();renderMarkers();renderRooms();});}
 }
 function addFloor(name,dataUrl,w,h){
   const f={id:uid(),name,img:dataUrl,w,h,placements:[],rooms:[]};
@@ -1655,6 +1753,11 @@ stage.addEventListener('drop',e=>{[...(e.dataTransfer?.files||[])].forEach(route
    window (left, right, wherever). A soft clamp keeps ≥60px visible so the
    plan can never be lost off-screen. */
 let panX=0, panY=0, panMoved=false, spaceHeld=false;
+function applyPlanGray(){
+  const img=$('#planImg');
+  if(img)img.style.filter=state.planGray?'grayscale(1)':'';
+  const t=$('#planGrayOpt'); if(t)t.checked=!!state.planGray;
+}
 function applyView(){
   const h=$('#planHolder');
   h.style.transform=`translate(${panX}px, ${panY}px) scale(${zoom})`;
@@ -2598,7 +2701,9 @@ async function renderSheet(f,paper,idx,total){
   const s=Math.min(availPW/f.w,availPH/f.h);
   const dw=f.w*s,dh=f.h*s;
   const dx=M+(availPW-dw)/2, dy=py0+(availPH-dh)/2;
+  if(state.planGray)ctx.filter='grayscale(1)';        /* plan only — reset before the pins */
   ctx.drawImage(base,dx,dy,dw,dh);
+  ctx.filter='none';
   ctx.strokeStyle=PAPER_LINE;ctx.lineWidth=2;ctx.strokeRect(dx,dy,dw,dh);
 
   /* pins */
@@ -2841,7 +2946,7 @@ function loadProjectText(txt){
     const s=JSON.parse(txt);
     if(!s.items||!s.floors)throw 0;
     s.floors&&s.floors.forEach(f=>{f.rooms=f.rooms||[];});
-    state=Object.assign({version:APP_VERSION,theme:SYS_THEME(),brandLogo:null,pinScale:1,pinOpacity:1,client:'',location:'',reference:'',preparedBy:'',libDock:'left',lastDock:'left',libHidden:false,libFloat:null,libSize:{w:324,h:60,fw:288,fh:520},catOrder:[]},s);
+    state=Object.assign({version:APP_VERSION,theme:SYS_THEME(),brandLogo:null,pinScale:1,pinOpacity:1,planGray:false,client:'',location:'',reference:'',preparedBy:'',libDock:'left',lastDock:'left',libHidden:false,libFloat:null,libSize:{w:324,h:60,fw:288,fh:520},catOrder:[]},s);
     projHandle=null;                            /* re-linked by the picker path */
     armedItem=null;setSelMarker(null);undoStack=[];redoStack=[];
     if(cropMode)cancelCrop();
@@ -2849,7 +2954,8 @@ function loadProjectText(txt){
     $('#projName').value=state.project;
     $('#pinSize').value=(state.pinScale||1)*100;
     $('#pinOpacity').value=(state.pinOpacity??1)*100;
-    applyTheme();renderBrand();applyDock();applyAutoNum();renderLibrary();renderFloors();showFloor();renderBoq();
+    applyPlanGray();
+    applyTheme();renderBrand();applyDock();applyAutoNum();applyPlanGray();renderLibrary();renderFloors();showFloor();renderBoq();
     dismissOnboard();
     toast('Project loaded.');
     return true;
@@ -2980,5 +3086,5 @@ $('#welcome').addEventListener('pointermove',e=>{
 $('#welcome').addEventListener('pointerleave',()=>{ obFx.mx=-9999; obFx.my=-9999; });
 
 /* ──────────── Init ──────────── */
-applyTheme();renderBrand();applyDock();applyAutoNum();closeLib();renderLibrary();renderFloors();showFloor();obStartFx();
+applyTheme();renderBrand();applyDock();applyAutoNum();applyPlanGray();closeLib();renderLibrary();renderFloors();showFloor();obStartFx();
 if(!isCompact())setTimeout(()=>toast('Tip: drag the ⠿ grip on the device library to dock it left, right, top or bottom.'),1600);

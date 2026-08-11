@@ -997,9 +997,9 @@ body.dock-top .cat-head,body.dock-bottom .cat-head{padding:8px 8px 6px;font-size
 #btnSkribble.on{color:var(--hl);background:var(--hl-soft);border-color:var(--hl-line)}
 .skribble-cv{
   position:absolute;inset:0;width:100%;height:100%;
-  pointer-events:none;opacity:.42;mix-blend-mode:multiply;z-index:7;
+  pointer-events:none;opacity:.72;z-index:7;
 }
-[data-theme="dark"] .skribble-cv{mix-blend-mode:screen;opacity:.5}
+[data-theme="dark"] .skribble-cv{opacity:.66}
 body.skribbling .plan-click{cursor:crosshair;touch-action:none}
 body.skribbling .marker{pointer-events:none}
 .skribble-bar{
@@ -1027,3 +1027,20 @@ body.skribbling .marker{pointer-events:none}
 /* the plan sliders are compact so several fit the toolbar */
 #roomOpacity,#seqSize{max-width:78px}
 @media (max-width:640px){ #roomOpacity,#seqSize{max-width:56px} }
+
+/* skribble colour swatches */
+.sk-colors{display:flex;gap:5px;align-items:center}
+.sk-c{width:19px;height:19px;border-radius:50%;border:2px solid transparent;flex:none;transition:transform .1s ease}
+.sk-c:hover{transform:scale(1.12)}
+.sk-c.on{border-color:var(--txt);box-shadow:0 0 0 2px var(--panel) inset}
+/* brush footprint under the pointer */
+.brush-cursor{
+  position:fixed;left:-999px;top:0;transform:translate(-50%,-50%);
+  border:2px solid var(--hl);border-radius:50%;
+  pointer-events:none;z-index:118;opacity:0;transition:opacity .12s ease;
+  box-shadow:0 0 0 1px rgba(255,255,255,.55), 0 1px 6px rgba(0,0,0,.3);
+}
+.brush-cursor.show{opacity:.95}
+body.skribbling .plan-click{cursor:none}
+@media (pointer:coarse){ body.skribbling .plan-click{cursor:crosshair} }
+@media (max-width:640px){ .sk-colors{display:none} }

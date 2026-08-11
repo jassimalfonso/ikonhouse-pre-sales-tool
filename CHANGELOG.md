@@ -4,6 +4,21 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.36.0] — 2026-08-11
+
+### Added
+- **Pick the room colour before you skribble** — a swatch row in the brush
+  bar. The stroke paints in that colour and the room is created with it, so
+  you can colour-code as you go instead of editing afterwards.
+- **Brush footprint on the cursor** — a ring under the pointer showing the
+  exact area the brush will cover, tinted to the chosen colour and resizing
+  live with the thickness slider.
+
+### Fixed
+- **The skribble trail was too faint to follow.** It was drawn at 42% with a
+  multiply blend, which sank into the drawing underneath. It now paints at
+  full strength in the chosen colour, so it is obvious where you have been.
+
 ## [1.35.0] — 2026-08-11
 
 ### Added
@@ -324,6 +339,21 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.36.0] — 2026-08-11
+
+### Added
+- **Pick the room colour before you skribble** — a swatch row in the brush
+  bar. The stroke paints in that colour and the room is created with it, so
+  you can colour-code as you go instead of editing afterwards.
+- **Brush footprint on the cursor** — a ring under the pointer showing the
+  exact area the brush will cover, tinted to the chosen colour and resizing
+  live with the thickness slider.
+
+### Fixed
+- **The skribble trail was too faint to follow.** It was drawn at 42% with a
+  multiply blend, which sank into the drawing underneath. It now paints at
+  full strength in the chosen colour, so it is obvious where you have been.
 
 ## [1.35.0] — 2026-08-11
 
@@ -1081,6 +1111,21 @@ follows [Semantic Versioning](https://semver.org).
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
 
+## [1.36.0] — 2026-08-11
+
+### Added
+- **Pick the room colour before you skribble** — a swatch row in the brush
+  bar. The stroke paints in that colour and the room is created with it, so
+  you can colour-code as you go instead of editing afterwards.
+- **Brush footprint on the cursor** — a ring under the pointer showing the
+  exact area the brush will cover, tinted to the chosen colour and resizing
+  live with the thickness slider.
+
+### Fixed
+- **The skribble trail was too faint to follow.** It was drawn at 42% with a
+  multiply blend, which sank into the drawing underneath. It now paints at
+  full strength in the chosen colour, so it is obvious where you have been.
+
 ## [1.35.0] — 2026-08-11
 
 ### Added
@@ -1401,6 +1446,21 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.36.0] — 2026-08-11
+
+### Added
+- **Pick the room colour before you skribble** — a swatch row in the brush
+  bar. The stroke paints in that colour and the room is created with it, so
+  you can colour-code as you go instead of editing afterwards.
+- **Brush footprint on the cursor** — a ring under the pointer showing the
+  exact area the brush will cover, tinted to the chosen colour and resizing
+  live with the thickness slider.
+
+### Fixed
+- **The skribble trail was too faint to follow.** It was drawn at 42% with a
+  multiply blend, which sank into the drawing underneath. It now paints at
+  full strength in the chosen colour, so it is obvious where you have been.
 
 ## [1.35.0] — 2026-08-11
 

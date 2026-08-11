@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.35.0';
+const APP_VERSION='1.36.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -86,7 +86,7 @@ let state = {
   project:'Untitled Project', client:'', location:'', reference:'', preparedBy:'',
   theme:SYS_THEME(), brandLogo:null, libDock:'left', lastDock:'left', libHidden:false, libFloat:null,
   libSize:{w:324,h:60,fw:288,fh:520}, catOrder:[],
-  items:[], floors:[], activeFloor:null, pinScale:1, pinOpacity:1, planGray:false, brushSize:46, roomOpacity:1, seqScale:1
+  items:[], floors:[], activeFloor:null, pinScale:1, pinOpacity:1, planGray:false, brushSize:46, roomOpacity:1, seqScale:1, skribbleColor:null
 };
 let armedItem=null, selMarker=null, selSet=new Set(), zoom=1, undoStack=[], redoStack=[], ctxTarget=null, draggingCat=null;
 
@@ -1415,11 +1415,14 @@ function setSkribbleMode(on){
     if(roomMode)setRoomMode(false);
     if(cropMode)cancelCrop();
     armItem(null);setSelSet([]);renderMarkers();
-    ensureSkCanvas();
+    ensureSkCanvas();renderSkColors();ensureBrushCursor();updateBrushDot();
+    document.addEventListener('pointermove',moveBrushCursor);
     $('#hintbar').innerHTML='<b>Skribble</b> — brush over an area, release and it becomes a room · adjust the brush below · <b>Esc</b> done';
     $('#hintbar').classList.add('show');
   }else{
     if(skCv){skCv.remove();skCv=null;skCtx=null;}
+    document.removeEventListener('pointermove',moveBrushCursor);
+    const bc=$('#brushCursor'); if(bc)bc.remove();
     $('#hintbar').classList.remove('show');
   }
 }
@@ -1435,7 +1438,7 @@ function ensureSkCanvas(){
   $('#planHolder').appendChild(skCv);
   skCtx=skCv.getContext('2d',{willReadFrequently:true});
   skCtx.lineCap='round';skCtx.lineJoin='round';
-  skCtx.strokeStyle='#C08A4A';skCtx.fillStyle='#C08A4A';
+  skCtx.strokeStyle=skColor();skCtx.fillStyle=skColor();
   return skCv;
 }
 function skBrushMaskWidth(){
@@ -1486,7 +1489,7 @@ function commitSkribble(f){
   const snapped=pts.map(q=>{const sp=roomSnapPoint(q,f,null,null,tol);return {x:sp.x,y:sp.y};});
   const name=prompt('Room / area name',`Room ${(f.rooms||[]).length+1}`);
   if(name===null)return;
-  const room=migrateRoom({id:uid(),name:(name.trim()||`Room ${(f.rooms||[]).length+1}`),pts:snapped});
+  const room=migrateRoom({id:uid(),name:(name.trim()||`Room ${(f.rooms||[]).length+1}`),pts:snapped,color:skColor()});
   (f.rooms=f.rooms||[]).push(room);
   pushUndo({type:'room-add',floorId:f.id,room:JSON.parse(JSON.stringify(room))});
   selRoom=room.id;
@@ -1494,10 +1497,43 @@ function commitSkribble(f){
   const lab=document.querySelector(`#roomLayer .rlabel[data-room="${room.id}"]`);
   if(lab)openRoomPop(room,lab);
 }
+function skColor(){ return state.skribbleColor||ROOM_COLORS[0]; }
 function updateBrushDot(){
-  const d=$('#brushDot');if(!d)return;
-  const px=Math.max(6,Math.min(34,(state.brushSize||46)*0.36));
-  d.style.width=px+'px';d.style.height=px+'px';
+  const d=$('#brushDot');
+  if(d){
+    const px=Math.max(6,Math.min(34,(state.brushSize||46)*0.36));
+    d.style.width=px+'px';d.style.height=px+'px';d.style.background=skColor();
+  }
+  const c=$('#brushCursor');
+  if(c){ const b=state.brushSize||46; c.style.width=b+'px';c.style.height=b+'px';
+         c.style.borderColor=skColor();c.style.background=skColor()+'33'; }
+}
+function renderSkColors(){
+  const box=$('#skColors');if(!box)return;
+  box.innerHTML='';
+  ROOM_COLORS.forEach(c=>{
+    const b=el('button','sk-c'+(c===skColor()?' on':''));
+    b.style.background=c;b.title='Room colour';
+    b.addEventListener('click',()=>{
+      state.skribbleColor=c;
+      renderSkColors();updateBrushDot();
+      if(skCtx){skCtx.strokeStyle=c;skCtx.fillStyle=c;}
+    });
+    box.appendChild(b);
+  });
+}
+/* a ring under the pointer showing the exact brush footprint */
+function ensureBrushCursor(){
+  let c=$('#brushCursor');
+  if(!c){ c=el('div','brush-cursor');c.id='brushCursor';document.body.appendChild(c); }
+  return c;
+}
+function moveBrushCursor(e){
+  const c=$('#brushCursor');if(!c)return;
+  const r=planRect();
+  const on=e&&e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom;
+  c.classList.toggle('show',!!on);
+  if(on){ c.style.left=e.clientX+'px'; c.style.top=e.clientY+'px'; }
 }
 
 /* ── Room schedule order: one list, every floor, drag or arrows ── */
@@ -3264,7 +3300,7 @@ function loadProjectText(txt){
     const s=JSON.parse(txt);
     if(!s.items||!s.floors)throw 0;
     s.floors&&s.floors.forEach(f=>{f.rooms=f.rooms||[];});
-    state=Object.assign({version:APP_VERSION,theme:SYS_THEME(),brandLogo:null,pinScale:1,pinOpacity:1,planGray:false,brushSize:46,roomOpacity:1,seqScale:1,cropRatio:null,client:'',location:'',reference:'',preparedBy:'',libDock:'left',lastDock:'left',libHidden:false,libFloat:null,libSize:{w:324,h:60,fw:288,fh:520},catOrder:[]},s);
+    state=Object.assign({version:APP_VERSION,theme:SYS_THEME(),brandLogo:null,pinScale:1,pinOpacity:1,planGray:false,brushSize:46,roomOpacity:1,seqScale:1,cropRatio:null,skribbleColor:null,client:'',location:'',reference:'',preparedBy:'',libDock:'left',lastDock:'left',libHidden:false,libFloat:null,libSize:{w:324,h:60,fw:288,fh:520},catOrder:[]},s);
     projHandle=null;                            /* re-linked by the picker path */
     armedItem=null;setSelMarker(null);undoStack=[];redoStack=[];
     if(cropMode)cancelCrop();

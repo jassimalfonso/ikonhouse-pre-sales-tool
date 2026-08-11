@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.34.0';
+const APP_VERSION='1.35.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -1876,6 +1876,18 @@ function applyHistory(a,stackFrom,stackTo){
       renderRooms();
     }
   }
+  if(a.type==='floors'){                       /* one step covering every floor */
+    const cur=floorsSnapshot();
+    a.items.forEach(it=>{
+      const ff=state.floors.find(x=>x.id===it.floorId);if(!ff)return;
+      ff.img=it.prev.img;ff.w=it.prev.w;ff.h=it.prev.h;
+      ff.placements=it.prev.placements;ff.rooms=it.prev.rooms||[];
+    });
+    stackTo.push(cur);
+    if(cropMode)cancelCrop();
+    showFloor();renderMarkers();renderLibrary();renderBoq();updateChipCount();
+    return;
+  }
   if(a.type==='floor'){                        /* crop / rotate snapshot — swap states */
     const cur=floorSnapshot(f);
     f.img=a.prev.img;f.w=a.prev.w;f.h=a.prev.h;f.placements=a.prev.placements;f.rooms=a.prev.rooms||[];
@@ -1887,6 +1899,7 @@ function applyHistory(a,stackFrom,stackTo){
 function doUndo(){ const a=undoStack.pop(); if(a) applyHistory(a,undoStack,redoStack); }
 function doRedo(){ const a=redoStack.pop(); if(a) applyHistory(a,redoStack,undoStack); }
 const floorSnapshot=f=>({type:'floor',floorId:f.id,prev:{img:f.img,w:f.w,h:f.h,placements:f.placements.map(p=>({...p})),rooms:(f.rooms||[]).map(r=>({...r}))}});
+const floorsSnapshot=()=>({type:'floors',items:state.floors.map(f=>floorSnapshot(f))});
 const pushUndo=a=>{ undoStack.push(a); redoStack=[]; };   /* a fresh action invalidates redo */
 $('#btnUndo').addEventListener('click',doUndo);
 $('#btnRedo').addEventListener('click',doRedo);
@@ -2228,7 +2241,8 @@ function enterCrop(){
   if(roomMode)setRoomMode(false);
   armItem(null);setSelMarker(null);
   cropMode=true;
-  cropRatio=recommendedRatio();
+  /* reuse the framing chosen for the previous plan, so pages stay consistent */
+  cropRatio=(state.cropRatio!==undefined&&state.cropRatio!==null)?state.cropRatio:recommendedRatio();
   fitCropToRatio();
   $('#cropLayer').style.display='block';
   $('#cropBar').classList.add('open');
@@ -2280,7 +2294,7 @@ function renderRatioChips(){
     const on=(r.v==null&&cropRatio==null)||(r.v!=null&&cropRatio!=null&&Math.abs(r.v-cropRatio)<0.001);
     const isRec=r.v!=null&&Math.abs(r.v-rec)<0.001;
     const b=el('button','ratio-chip'+(on?' on':''),r.label+(isRec?'<span class="rec">RECOMMENDED</span>':''));
-    b.addEventListener('click',()=>{cropRatio=r.v;fitCropToRatio();renderRatioChips();renderCropRect();});
+    b.addEventListener('click',()=>{cropRatio=r.v;state.cropRatio=r.v;fitCropToRatio();renderRatioChips();renderCropRect();});
     box.appendChild(b);
   });
 }
@@ -2392,32 +2406,59 @@ document.querySelectorAll('.ch').forEach(h=>{
     h.addEventListener('pointermove',mv);h.addEventListener('pointerup',up);h.addEventListener('pointercancel',up);
   });
 });
+/* crop one floor to a pixel rect in that floor's own coordinates */
+async function cropFloorTo(f,rect){
+  const inside=p=>{const px=p.x*f.w,py=p.y*f.h;return px>=rect.x&&px<=rect.x+rect.w&&py>=rect.y&&py<=rect.y+rect.h;};
+  const img=await loadImg(f.img);
+  const cv=document.createElement('canvas');
+  cv.width=Math.round(rect.w);cv.height=Math.round(rect.h);
+  const c=cv.getContext('2d');
+  c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';
+  c.drawImage(img,rect.x,rect.y,rect.w,rect.h,0,0,cv.width,cv.height);
+  f.img=cv.toDataURL('image/png');            /* lossless — crops never soften line art */
+  f.placements=f.placements.filter(inside).map(p=>({...p,
+    x:(p.x*f.w-rect.x)/rect.w,
+    y:(p.y*f.h-rect.y)/rect.h
+  }));
+  f.rooms=(f.rooms||[]).map(r=>{
+    migrateRoom(r);
+    const px=r.pts.map(p=>({x:p.x*f.w,y:p.y*f.h}));
+    const cl=clipPolyRect(px,rect.x,rect.y,rect.x+rect.w,rect.y+rect.h);
+    if(cl.length<3)return null;
+    const pts=cl.map(p=>({x:(p.x-rect.x)/rect.w,y:(p.y-rect.y)/rect.h}));
+    if(polyArea(pts)<0.0004)return null;
+    return {...r,pts};
+  }).filter(Boolean);
+  f.w=cv.width;f.h=cv.height;
+}
+/* the same framing, expressed as fractions, applied to every floor */
+$('#cropAll').addEventListener('click',async()=>{
+  const f=activeFloor();if(!f)return;
+  if(state.floors.length<2){toast('Only one floor plan in this project.');return;}
+  const fr={x:crop.x/f.w,y:crop.y/f.h,w:crop.w/f.w,h:crop.h/f.h};
+  let dropped=0;
+  state.floors.forEach(g=>{
+    const r={x:fr.x*g.w,y:fr.y*g.h,w:fr.w*g.w,h:fr.h*g.h};
+    dropped+=g.placements.filter(p=>{const px=p.x*g.w,py=p.y*g.h;return !(px>=r.x&&px<=r.x+r.w&&py>=r.y&&py<=r.y+r.h);}).length;
+  });
+  if(!confirm(`Apply this framing to all ${state.floors.length} floor plans?`+(dropped?`\n\n${dropped} ikon${dropped>1?'s':''} fall outside it and will be removed.`:''))) return;
+  toast('Applying framing…');
+  pushUndo(floorsSnapshot());
+  for(const g of state.floors){
+    await cropFloorTo(g,{x:fr.x*g.w,y:fr.y*g.h,w:fr.w*g.w,h:fr.h*g.h});
+  }
+  state.cropRatio=cropRatio;
+  cancelCrop();showFloor();renderLibrary();renderBoq();
+  toast(`All ${state.floors.length} plans framed alike — Undo restores them.`);
+});
 $('#cropApply').addEventListener('click',async()=>{
   const f=activeFloor();if(!f)return;
   const inside=p=>{const px=p.x*f.w,py=p.y*f.h;return px>=crop.x&&px<=crop.x+crop.w&&py>=crop.y&&py<=crop.y+crop.h;};
   const dropped=f.placements.filter(p=>!inside(p)).length;
   if(dropped&&!confirm(`${dropped} ikon${dropped>1?`s`:``} fall outside the crop and will be removed. Continue?`))return;
   pushUndo(floorSnapshot(f));
-  const img=await loadImg(f.img);
-  const cv=document.createElement('canvas');
-  cv.width=Math.round(crop.w);cv.height=Math.round(crop.h);
-  cv.getContext('2d').drawImage(img,crop.x,crop.y,crop.w,crop.h,0,0,cv.width,cv.height);
-  f.img=cv.toDataURL('image/jpeg',0.92);
-  f.placements=f.placements.filter(inside).map(p=>({...p,
-    x:(p.x*f.w-crop.x)/crop.w,
-    y:(p.y*f.h-crop.y)/crop.h
-  }));
-  /* rooms: clip each polygon to the crop, drop slivers */
-  f.rooms=(f.rooms||[]).map(r=>{
-    migrateRoom(r);
-    const px=r.pts.map(p=>({x:p.x*f.w,y:p.y*f.h}));
-    const cl=clipPolyRect(px,crop.x,crop.y,crop.x+crop.w,crop.y+crop.h);
-    if(cl.length<3)return null;
-    const pts=cl.map(p=>({x:(p.x-crop.x)/crop.w,y:(p.y-crop.y)/crop.h}));
-    if(polyArea(pts)<0.0004)return null;
-    return {...r,pts};
-  }).filter(Boolean);
-  f.w=cv.width;f.h=cv.height;
+  state.cropRatio=cropRatio;                  /* remember the framing for the next plan */
+  await cropFloorTo(f,crop);
   cancelCrop();showFloor();renderLibrary();renderBoq();
   toast('Plan cropped — Undo (Ctrl+Z or ↩) restores it.');
 });
@@ -3223,7 +3264,7 @@ function loadProjectText(txt){
     const s=JSON.parse(txt);
     if(!s.items||!s.floors)throw 0;
     s.floors&&s.floors.forEach(f=>{f.rooms=f.rooms||[];});
-    state=Object.assign({version:APP_VERSION,theme:SYS_THEME(),brandLogo:null,pinScale:1,pinOpacity:1,planGray:false,brushSize:46,roomOpacity:1,seqScale:1,client:'',location:'',reference:'',preparedBy:'',libDock:'left',lastDock:'left',libHidden:false,libFloat:null,libSize:{w:324,h:60,fw:288,fh:520},catOrder:[]},s);
+    state=Object.assign({version:APP_VERSION,theme:SYS_THEME(),brandLogo:null,pinScale:1,pinOpacity:1,planGray:false,brushSize:46,roomOpacity:1,seqScale:1,cropRatio:null,client:'',location:'',reference:'',preparedBy:'',libDock:'left',lastDock:'left',libHidden:false,libFloat:null,libSize:{w:324,h:60,fw:288,fh:520},catOrder:[]},s);
     projHandle=null;                            /* re-linked by the picker path */
     armedItem=null;setSelMarker(null);undoStack=[];redoStack=[];
     if(cropMode)cancelCrop();

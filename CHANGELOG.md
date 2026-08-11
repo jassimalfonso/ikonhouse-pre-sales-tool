@@ -4,6 +4,22 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.35.0] — 2026-08-11
+
+### Added
+- **“Apply to all plans” in the crop bar** — frames every floor plan exactly
+  like the one in front of you, so pages match when flipping through the
+  exported set. The framing is applied proportionally, so plans that came from
+  the same source (a multi-page PDF, for instance) end up pixel-identical.
+  Warns first if ikons would fall outside, and it is a single undo step.
+- **The crop ratio is now sticky** — the aspect you pick carries to the next
+  plan and is saved with the project, instead of resetting each time.
+
+### Fixed
+- **Cropping re-encoded plans as JPEG**, quietly undoing the lossless pipeline
+  and softening line art with every crop. Crops are lossless PNG again, with
+  high-quality resampling.
+
 ## [1.34.0] — 2026-08-11
 
 ### Changed
@@ -308,6 +324,22 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.35.0] — 2026-08-11
+
+### Added
+- **“Apply to all plans” in the crop bar** — frames every floor plan exactly
+  like the one in front of you, so pages match when flipping through the
+  exported set. The framing is applied proportionally, so plans that came from
+  the same source (a multi-page PDF, for instance) end up pixel-identical.
+  Warns first if ikons would fall outside, and it is a single undo step.
+- **The crop ratio is now sticky** — the aspect you pick carries to the next
+  plan and is saved with the project, instead of resetting each time.
+
+### Fixed
+- **Cropping re-encoded plans as JPEG**, quietly undoing the lossless pipeline
+  and softening line art with every crop. Crops are lossless PNG again, with
+  high-quality resampling.
 
 ## [1.34.0] — 2026-08-11
 
@@ -1049,6 +1081,22 @@ follows [Semantic Versioning](https://semver.org).
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
 
+## [1.35.0] — 2026-08-11
+
+### Added
+- **“Apply to all plans” in the crop bar** — frames every floor plan exactly
+  like the one in front of you, so pages match when flipping through the
+  exported set. The framing is applied proportionally, so plans that came from
+  the same source (a multi-page PDF, for instance) end up pixel-identical.
+  Warns first if ikons would fall outside, and it is a single undo step.
+- **The crop ratio is now sticky** — the aspect you pick carries to the next
+  plan and is saved with the project, instead of resetting each time.
+
+### Fixed
+- **Cropping re-encoded plans as JPEG**, quietly undoing the lossless pipeline
+  and softening line art with every crop. Crops are lossless PNG again, with
+  high-quality resampling.
+
 ## [1.34.0] — 2026-08-11
 
 ### Changed
@@ -1353,6 +1401,22 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.35.0] — 2026-08-11
+
+### Added
+- **“Apply to all plans” in the crop bar** — frames every floor plan exactly
+  like the one in front of you, so pages match when flipping through the
+  exported set. The framing is applied proportionally, so plans that came from
+  the same source (a multi-page PDF, for instance) end up pixel-identical.
+  Warns first if ikons would fall outside, and it is a single undo step.
+- **The crop ratio is now sticky** — the aspect you pick carries to the next
+  plan and is saved with the project, instead of resetting each time.
+
+### Fixed
+- **Cropping re-encoded plans as JPEG**, quietly undoing the lossless pipeline
+  and softening line art with every crop. Crops are lossless PNG again, with
+  high-quality resampling.
 
 ## [1.34.0] — 2026-08-11
 

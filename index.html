@@ -7,7 +7,7 @@
 <title>ikonhouse — AV Pre-Sales Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/app.css?v=1.34.0">
+<link rel="stylesheet" href="assets/css/app.css?v=1.35.0">
 </head>
 <body>
 
@@ -184,7 +184,7 @@
     <div class="guide-pane on" data-pane="start">
       <p class="guide-lead">Five steps from a floor plan to a client-ready package. You can jump around — nothing here is locked.</p>
       <ol class="steps">
-        <li><b>Add your floor plan.</b> Drop a PDF or image onto the canvas, or use <i>Floors → Add floor</i>. Multi-page PDFs become one floor per page. Then <i>Crop</i> to trim it to the drawing itself.</li>
+        <li><b>Add your floor plan.</b> Drop a PDF or image onto the canvas, or use <i>Floors → Add floor</i>. Multi-page PDFs become one floor per page. Then <i>Crop</i> to trim it to the drawing itself — with several plans, <i>Apply to all plans</i> gives them matching framing so the pages line up when flipping through.</li>
         <li><b>Set up your device library.</b> Create a category, then add devices to it with a name, colour and icon. Prices are optional — add them and the BoQ totals itself. The library is saved inside each project.</li>
         <li><b>Place your ikons.</b> Tap a device, then tap the plan. Keep tapping to place more. Drag to reposition — they snap into line with each other so runs look tidy.</li>
         <li><b>Draw rooms.</b> Use <i>Skribble</i> to brush over an area — release and it becomes a room — or turn on <i>Rooms</i> to drag a box or tap corner-to-corner. Rooms decide which devices belong where and can be marked out of scope. Use <i>Room schedule order</i> in the toolbar to arrange them — that order becomes the row order in the FD sheet and BoQ.</li>
@@ -242,6 +242,7 @@
     <div class="crop-ratios" id="cropRatios"></div>
     <div class="crop-actions">
       <button class="btn ghost" id="cropReset" title="Reset the frame to the whole plan">Reset</button>
+      <button class="btn ghost" id="cropAll" title="Give every floor plan this same framing, so pages match when flipping through">Apply to all plans</button>
       <button class="btn ghost" id="cropCancel">Cancel</button>
       <button class="btn pri" id="cropApply">Apply crop</button>
     </div>
@@ -377,7 +378,7 @@
     </div>
   </div>
   <div class="ob-credit">Developed by Jassim Alfonso with Claude</div>
-  <div class="ob-foot">IKONHOUSE · PRE-SALES TOOL · V1.34</div>
+  <div class="ob-foot">IKONHOUSE · PRE-SALES TOOL · V1.35</div>
 </div>
 
 <div class="onboard" id="setup" style="display:none">
@@ -402,6 +403,6 @@
   </div>
 </div>
 
-<script src="assets/js/app.js?v=1.34.0"></script>
+<script src="assets/js/app.js?v=1.35.0"></script>
 </body>
 </html>

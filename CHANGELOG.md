@@ -4,6 +4,41 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.34.0] — 2026-08-11
+
+### Changed
+- **Out-of-scope rooms turn grey automatically.** Marking a room out of scope
+  switches it to a neutral grey; unmarking restores the colour it had before,
+  so scope reads at a glance without hunting through the palette.
+- **Room fills are a little stronger** by default — clearly present without
+  drowning the drawing underneath.
+
+### Added
+- **Room fill strength slider** (toolbar, "ROOM"): from barely-there to
+  emphatic, covering fill, outline and out-of-scope hatching together.
+- **Auto-number size slider** (toolbar, "No."): the sequence badges were too
+  small to read on dense plans — they now scale from 70% to 220%, on screen
+  and on exported sheets. Both settings save with the project.
+
+## [1.33.0] — 2026-08-11
+
+### Added
+- **Skribble — brush an area to create a room.** A new toolbar mode: brush
+  over part of the plan with your finger, stylus or mouse and release; the
+  painted area becomes a room. Scribble back and forth to cover an odd shape
+  in one continuous motion.
+  - **Brush thickness** is adjustable from the bar at the bottom, with a live
+    size dot — fine for a cupboard, broad for a lounge. Saved with the project.
+  - The stroke is traced, simplified and **squared up**, so wobbly hand
+    movements still produce clean, presentable outlines, and the result snaps
+    to neighbouring rooms exactly like a drawn one.
+  - The result is an ordinary polygon — the same corner, wall and linking
+    tools apply afterwards.
+  - Stray dabs are ignored (the largest painted area wins) and strokes too
+    small to be a room are rejected rather than making slivers.
+  - Deliberately shape-only: no wall detection, so it behaves identically on
+    CAD linework, scans and photographed plans.
+
 ## [1.32.0] — 2026-08-11
 
 ### Changed
@@ -273,6 +308,41 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.34.0] — 2026-08-11
+
+### Changed
+- **Out-of-scope rooms turn grey automatically.** Marking a room out of scope
+  switches it to a neutral grey; unmarking restores the colour it had before,
+  so scope reads at a glance without hunting through the palette.
+- **Room fills are a little stronger** by default — clearly present without
+  drowning the drawing underneath.
+
+### Added
+- **Room fill strength slider** (toolbar, "ROOM"): from barely-there to
+  emphatic, covering fill, outline and out-of-scope hatching together.
+- **Auto-number size slider** (toolbar, "No."): the sequence badges were too
+  small to read on dense plans — they now scale from 70% to 220%, on screen
+  and on exported sheets. Both settings save with the project.
+
+## [1.33.0] — 2026-08-11
+
+### Added
+- **Skribble — brush an area to create a room.** A new toolbar mode: brush
+  over part of the plan with your finger, stylus or mouse and release; the
+  painted area becomes a room. Scribble back and forth to cover an odd shape
+  in one continuous motion.
+  - **Brush thickness** is adjustable from the bar at the bottom, with a live
+    size dot — fine for a cupboard, broad for a lounge. Saved with the project.
+  - The stroke is traced, simplified and **squared up**, so wobbly hand
+    movements still produce clean, presentable outlines, and the result snaps
+    to neighbouring rooms exactly like a drawn one.
+  - The result is an ordinary polygon — the same corner, wall and linking
+    tools apply afterwards.
+  - Stray dabs are ignored (the largest painted area wins) and strokes too
+    small to be a room are rejected rather than making slivers.
+  - Deliberately shape-only: no wall detection, so it behaves identically on
+    CAD linework, scans and photographed plans.
 
 ## [1.32.0] — 2026-08-11
 
@@ -979,6 +1049,41 @@ follows [Semantic Versioning](https://semver.org).
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
 
+## [1.34.0] — 2026-08-11
+
+### Changed
+- **Out-of-scope rooms turn grey automatically.** Marking a room out of scope
+  switches it to a neutral grey; unmarking restores the colour it had before,
+  so scope reads at a glance without hunting through the palette.
+- **Room fills are a little stronger** by default — clearly present without
+  drowning the drawing underneath.
+
+### Added
+- **Room fill strength slider** (toolbar, "ROOM"): from barely-there to
+  emphatic, covering fill, outline and out-of-scope hatching together.
+- **Auto-number size slider** (toolbar, "No."): the sequence badges were too
+  small to read on dense plans — they now scale from 70% to 220%, on screen
+  and on exported sheets. Both settings save with the project.
+
+## [1.33.0] — 2026-08-11
+
+### Added
+- **Skribble — brush an area to create a room.** A new toolbar mode: brush
+  over part of the plan with your finger, stylus or mouse and release; the
+  painted area becomes a room. Scribble back and forth to cover an odd shape
+  in one continuous motion.
+  - **Brush thickness** is adjustable from the bar at the bottom, with a live
+    size dot — fine for a cupboard, broad for a lounge. Saved with the project.
+  - The stroke is traced, simplified and **squared up**, so wobbly hand
+    movements still produce clean, presentable outlines, and the result snaps
+    to neighbouring rooms exactly like a drawn one.
+  - The result is an ordinary polygon — the same corner, wall and linking
+    tools apply afterwards.
+  - Stray dabs are ignored (the largest painted area wins) and strokes too
+    small to be a room are rejected rather than making slivers.
+  - Deliberately shape-only: no wall detection, so it behaves identically on
+    CAD linework, scans and photographed plans.
+
 ## [1.32.0] — 2026-08-11
 
 ### Changed
@@ -1248,6 +1353,41 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.34.0] — 2026-08-11
+
+### Changed
+- **Out-of-scope rooms turn grey automatically.** Marking a room out of scope
+  switches it to a neutral grey; unmarking restores the colour it had before,
+  so scope reads at a glance without hunting through the palette.
+- **Room fills are a little stronger** by default — clearly present without
+  drowning the drawing underneath.
+
+### Added
+- **Room fill strength slider** (toolbar, "ROOM"): from barely-there to
+  emphatic, covering fill, outline and out-of-scope hatching together.
+- **Auto-number size slider** (toolbar, "No."): the sequence badges were too
+  small to read on dense plans — they now scale from 70% to 220%, on screen
+  and on exported sheets. Both settings save with the project.
+
+## [1.33.0] — 2026-08-11
+
+### Added
+- **Skribble — brush an area to create a room.** A new toolbar mode: brush
+  over part of the plan with your finger, stylus or mouse and release; the
+  painted area becomes a room. Scribble back and forth to cover an odd shape
+  in one continuous motion.
+  - **Brush thickness** is adjustable from the bar at the bottom, with a live
+    size dot — fine for a cupboard, broad for a lounge. Saved with the project.
+  - The stroke is traced, simplified and **squared up**, so wobbly hand
+    movements still produce clean, presentable outlines, and the result snaps
+    to neighbouring rooms exactly like a drawn one.
+  - The result is an ordinary polygon — the same corner, wall and linking
+    tools apply afterwards.
+  - Stray dabs are ignored (the largest painted area wins) and strokes too
+    small to be a room are rejected rather than making slivers.
+  - Deliberately shape-only: no wall detection, so it behaves identically on
+    CAD linework, scans and photographed plans.
 
 ## [1.32.0] — 2026-08-11
 

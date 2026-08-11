@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.32.0';
+const APP_VERSION='1.34.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -86,7 +86,7 @@ let state = {
   project:'Untitled Project', client:'', location:'', reference:'', preparedBy:'',
   theme:SYS_THEME(), brandLogo:null, libDock:'left', lastDock:'left', libHidden:false, libFloat:null,
   libSize:{w:324,h:60,fw:288,fh:520}, catOrder:[],
-  items:[], floors:[], activeFloor:null, pinScale:1, pinOpacity:1, planGray:false
+  items:[], floors:[], activeFloor:null, pinScale:1, pinOpacity:1, planGray:false, brushSize:46, roomOpacity:1, seqScale:1
 };
 let armedItem=null, selMarker=null, selSet=new Set(), zoom=1, undoStack=[], redoStack=[], ctxTarget=null, draggingCat=null;
 
@@ -317,6 +317,12 @@ function showGuideTab(name){
 }
 document.querySelectorAll('.guide-tabs .gt').forEach(b=>b.addEventListener('click',()=>showGuideTab(b.dataset.tab)));
 $('#btnHelp').addEventListener('click',()=>openGuide('start'));
+$('#btnSkribble').addEventListener('click',()=>setSkribbleMode(!skribbleMode));
+$('#skribbleDone').addEventListener('click',()=>setSkribbleMode(false));
+$('#brushSize').addEventListener('input',e=>{ state.brushSize=+e.target.value; updateBrushDot(); });
+$('#roomOpacity').addEventListener('input',e=>{ state.roomOpacity=+e.target.value/100; applyRoomLook(); });
+$('#seqSize').addEventListener('input',e=>{ state.seqScale=+e.target.value/100; applyRoomLook(); renderMarkers(); });
+$('#planClick').addEventListener('pointerdown',e=>{ if(skribbleMode)startSkribble(e); });
 $('#btnRoomOrder').addEventListener('click',()=>{ renderRoomOrder(); $('#roomOrderVeil').style.display='grid'; });
 $('#roomOrderClose').addEventListener('click',()=>$('#roomOrderVeil').style.display='none');
 $('#roomOrderDone').addEventListener('click',()=>$('#roomOrderVeil').style.display='none');
@@ -678,6 +684,7 @@ let roomMode=false, selRoom=null, hlRoom=null;
 /* rooms link only when nodes truly coincide (snapping produces exact equality) */
 const NODE_LINK_EPS=0.0009;
 const ROOM_COLORS=['#AE8B5C','#2E5CFF','#16B364','#F59E0B','#E5484D','#7C4DFF','#0FA3A3','#64748B'];
+const OUT_SCOPE_COLOR='#8A8F98';   /* out-of-scope rooms read as grey by default */
 /* migrate legacy {x,y,w,h} rectangles to point lists; ensure color/scope */
 function migrateRoom(r){
   if(!r.pts){ r.pts=[{x:r.x,y:r.y},{x:r.x+r.w,y:r.y},{x:r.x+r.w,y:r.y+r.h},{x:r.x,y:r.y+r.h}]; delete r.x;delete r.y;delete r.w;delete r.h; }
@@ -756,6 +763,7 @@ function roomSnapPoint(p,f,exceptRoom,selfPts,tol){
   return {x:Math.min(1,Math.max(0,x)),y:Math.min(1,Math.max(0,y)),sx,sy};
 }
 function setRoomMode(on){
+  if(on&&skribbleMode)setSkribbleMode(false);
   roomMode=on;
   if(on){ armItem(null); if(cropMode)cancelCrop(); setSelMarker(null); if(hlRoom)highlightRoom(null); }
   selRoom=null;
@@ -1249,6 +1257,249 @@ document.addEventListener('pointermove',e=>{
 function closeRoomPop(){const p=$('#roomPop');if(p)p.remove();}
 /* rooms are written to the FD sheet and BoQ in f.rooms order, so this is the
    schedule order the client sees */
+/* ── skribble geometry (unit-tested) ── */
+
+
+/* largest connected blob of a binary grid (1 = painted) */
+function largestBlob(bin,w,h){
+  const seen=new Uint8Array(w*h);
+  let best=null,bestN=0;
+  const q=new Int32Array(w*h);
+  for(let i=0;i<w*h;i++){
+    if(!bin[i]||seen[i])continue;
+    let head=0,tail=0,n=0;q[tail++]=i;seen[i]=1;
+    const cells=[];
+    while(head<tail){
+      const c=q[head++];cells.push(c);n++;
+      const x=c%w,y=(c/w)|0;
+      if(x>0&&bin[c-1]&&!seen[c-1]){seen[c-1]=1;q[tail++]=c-1;}
+      if(x<w-1&&bin[c+1]&&!seen[c+1]){seen[c+1]=1;q[tail++]=c+1;}
+      if(y>0&&bin[c-w]&&!seen[c-w]){seen[c-w]=1;q[tail++]=c-w;}
+      if(y<h-1&&bin[c+w]&&!seen[c+w]){seen[c+w]=1;q[tail++]=c+w;}
+    }
+    if(n>bestN){bestN=n;best=cells;}
+  }
+  if(!best)return null;
+  const only=new Uint8Array(w*h);
+  best.forEach(c=>only[c]=1);
+  return {grid:only,count:bestN};
+}
+
+/* Moore-neighbour boundary trace, clockwise */
+function traceBlob(bin,w,h){
+  let start=-1;
+  for(let i=0;i<w*h;i++){ if(bin[i]){start=i;break;} }
+  if(start<0)return [];
+  const N=[[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1],[0,-1],[1,-1]];  /* clockwise */
+  const at=(x,y)=>(x<0||y<0||x>=w||y>=h)?0:bin[y*w+x];
+  const sx=start%w, sy=(start/w)|0;
+  const out=[{x:sx,y:sy}];
+  let cx=sx,cy=sy,dir=6;                    /* came from "up" */
+  const maxSteps=w*h*4;
+  for(let step=0;step<maxSteps;step++){
+    let found=false;
+    for(let k=1;k<=8;k++){
+      const d=(dir+k)%8, nx=cx+N[d][0], ny=cy+N[d][1];
+      if(at(nx,ny)){
+        cx=nx;cy=ny;dir=(d+5)%8;            /* back up to keep hugging the edge */
+        out.push({x:cx,y:cy});found=true;break;
+      }
+    }
+    if(!found)break;
+    if(cx===sx&&cy===sy)break;
+  }
+  return out;
+}
+
+/* Ramer–Douglas–Peucker */
+function rdp(pts,eps){
+  if(pts.length<3)return pts.slice();
+  const d2=(p,a,b)=>{
+    const dx=b.x-a.x, dy=b.y-a.y, L=dx*dx+dy*dy;
+    if(!L)return (p.x-a.x)**2+(p.y-a.y)**2;
+    let t=((p.x-a.x)*dx+(p.y-a.y)*dy)/L;t=Math.max(0,Math.min(1,t));
+    return (p.x-(a.x+t*dx))**2+(p.y-(a.y+t*dy))**2;
+  };
+  const keep=new Uint8Array(pts.length);keep[0]=keep[pts.length-1]=1;
+  const stack=[[0,pts.length-1]];
+  const e2=eps*eps;
+  while(stack.length){
+    const [a,b]=stack.pop();
+    let far=-1,fd=0;
+    for(let i=a+1;i<b;i++){const d=d2(pts[i],pts[a],pts[b]);if(d>fd){fd=d;far=i;}}
+    if(far>0&&fd>e2){keep[far]=1;stack.push([a,far],[far,b]);}
+  }
+  return pts.filter((_,i)=>keep[i]);
+}
+
+/* square up: segments close to horizontal / vertical become exactly so */
+function orthogonalize(pts,tolDeg=26){
+  const n=pts.length;if(n<3)return pts;
+  const p=pts.map(q=>({...q}));
+  const tol=Math.tan(tolDeg*Math.PI/180);
+  for(let pass=0;pass<2;pass++){
+    for(let i=0;i<n;i++){
+      const a=p[i], b=p[(i+1)%n];
+      const dx=Math.abs(b.x-a.x), dy=Math.abs(b.y-a.y);
+      if(dx===0&&dy===0)continue;
+      if(dy<=dx*tol){ const m=(a.y+b.y)/2; a.y=m;b.y=m; }        /* horizontal */
+      else if(dx<=dy*tol){ const m=(a.x+b.x)/2; a.x=m;b.x=m; }   /* vertical */
+    }
+  }
+  return p;
+}
+
+/* drop points that collapsed onto each other or sit on a straight run */
+function tidy(pts,minGap){
+  const out=[];
+  for(const q of pts){
+    const last=out[out.length-1];
+    if(last&&Math.hypot(q.x-last.x,q.y-last.y)<minGap)continue;
+    out.push(q);
+  }
+  while(out.length>2){
+    const a=out[out.length-1],b=out[0];
+    if(Math.hypot(a.x-b.x,a.y-b.y)<minGap)out.pop(); else break;
+  }
+  /* collinear removal */
+  const res=[];
+  for(let i=0;i<out.length;i++){
+    const a=out[(i-1+out.length)%out.length], b=out[i], c=out[(i+1)%out.length];
+    const cross=(b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x);
+    const scale=Math.max(1e-9,Math.hypot(c.x-a.x,c.y-a.y));
+    if(Math.abs(cross)/scale>minGap*0.5)res.push(b);
+  }
+  return res.length>=3?res:out;
+}
+
+function polyAreaAbs(pts){
+  return Math.abs(pts.reduce((a,p,i)=>{const q=pts[(i+1)%pts.length];return a+(p.x*q.y-q.x*p.y);},0))/2;
+}
+
+/* full pipeline: binary mask → polygon in 0..1 plan coordinates */
+function skribbleToPolygon(bin,w,h,opts={}){
+  const blob=largestBlob(bin,w,h);
+  if(!blob)return null;
+  if(blob.count < (opts.minCells??40))return null;
+  let contour=traceBlob(blob.grid,w,h);
+  if(contour.length<8)return null;
+  const diag=Math.hypot(w,h);
+  let eps=opts.eps??diag*0.012;
+  let pts=rdp(contour,eps);
+  /* keep the corner count sane on wobbly strokes */
+  let guard=0;
+  while(pts.length>28&&guard++<6){ eps*=1.5; pts=rdp(contour,eps); }
+  pts=orthogonalize(pts,opts.tolDeg??26);
+  pts=tidy(pts,Math.max(2,diag*0.008));
+  if(pts.length<3)return null;
+  const frac=pts.map(q=>({x:Math.min(1,Math.max(0,q.x/w)),y:Math.min(1,Math.max(0,q.y/h))}));
+  if(polyAreaAbs(frac)<(opts.minArea??0.0008))return null;
+  return frac;
+}
+
+
+
+/* ══════════════ Skribble: brush an area, get a room ══════════════
+   A stroke is painted into an off-screen mask, then traced, simplified and
+   squared up into an ordinary editable polygon. No wall detection — the
+   shape comes purely from what was brushed, so it works on any drawing. */
+let skribbleMode=false, skCv=null, skCtx=null, skPainting=false, skDrew=false;
+const SK_MAX=520;                       /* mask resolution (long side) */
+
+function setSkribbleMode(on){
+  skribbleMode=on;
+  document.body.classList.toggle('skribbling',on);
+  $('#btnSkribble').classList.toggle('on',on);
+  $('#skribbleBar').classList.toggle('open',on);
+  if(on){
+    if(roomMode)setRoomMode(false);
+    if(cropMode)cancelCrop();
+    armItem(null);setSelSet([]);renderMarkers();
+    ensureSkCanvas();
+    $('#hintbar').innerHTML='<b>Skribble</b> — brush over an area, release and it becomes a room · adjust the brush below · <b>Esc</b> done';
+    $('#hintbar').classList.add('show');
+  }else{
+    if(skCv){skCv.remove();skCv=null;skCtx=null;}
+    $('#hintbar').classList.remove('show');
+  }
+}
+function ensureSkCanvas(){
+  const f=activeFloor();if(!f)return null;
+  if(skCv&&skCv.isConnected&&skCv.dataset.floor===f.id)return skCv;
+  if(skCv)skCv.remove();
+  const k=SK_MAX/Math.max(f.w,f.h);
+  skCv=document.createElement('canvas');
+  skCv.className='skribble-cv';skCv.id='skribbleCv';skCv.dataset.floor=f.id;
+  skCv.width=Math.max(8,Math.round(f.w*k));
+  skCv.height=Math.max(8,Math.round(f.h*k));
+  $('#planHolder').appendChild(skCv);
+  skCtx=skCv.getContext('2d',{willReadFrequently:true});
+  skCtx.lineCap='round';skCtx.lineJoin='round';
+  skCtx.strokeStyle='#C08A4A';skCtx.fillStyle='#C08A4A';
+  return skCv;
+}
+function skBrushMaskWidth(){
+  const r=planRect();
+  const px=(state.brushSize||46);
+  return Math.max(2,px*(skCv.width/Math.max(1,r.width)));
+}
+function startSkribble(e){
+  const f=activeFloor();if(!f||!ensureSkCanvas())return;
+  if(e.pointerType==='mouse'&&e.button!==0)return;
+  if(pinchActive||spaceHeld)return;
+  e.preventDefault();e.stopPropagation();
+  const r=planRect(), id=e.pointerId;
+  const toMask=ev=>({x:((ev.clientX-r.left)/r.width)*skCv.width, y:((ev.clientY-r.top)/r.height)*skCv.height});
+  skPainting=true;skDrew=false;
+  skCtx.lineWidth=skBrushMaskWidth();
+  let p=toMask(e);
+  skCtx.beginPath();skCtx.arc(p.x,p.y,skCtx.lineWidth/2,0,Math.PI*2);skCtx.fill();
+  skCtx.beginPath();skCtx.moveTo(p.x,p.y);
+  const mv=ev=>{
+    if(ev.pointerId!==id)return;
+    if(pinchActive){cancel();return;}                 /* a pinch is a zoom, not a stroke */
+    const q=toMask(ev);
+    skCtx.lineTo(q.x,q.y);skCtx.stroke();
+    skCtx.beginPath();skCtx.moveTo(q.x,q.y);
+    skDrew=true;
+  };
+  const cancel=()=>{stop();skCtx.clearRect(0,0,skCv.width,skCv.height);skPainting=false;};
+  const stop=()=>{document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);};
+  const up=ev=>{
+    if(ev.pointerId!==id)return;
+    stop();skPainting=false;
+    commitSkribble(f);
+  };
+  document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
+}
+function commitSkribble(f){
+  if(!skCv||!skCtx)return;
+  const w=skCv.width,h=skCv.height;
+  const img=skCtx.getImageData(0,0,w,h).data;
+  const bin=new Uint8Array(w*h);
+  for(let i=0,p=3;i<w*h;i++,p+=4) bin[i]=img[p]>110?1:0;
+  skCtx.clearRect(0,0,w,h);
+  const pts=skribbleToPolygon(bin,w,h);
+  if(!pts){ toast('That stroke was too small — brush over a wider area.'); return; }
+  /* let it click onto neighbouring rooms, exactly like a drawn room */
+  const tol=5/Math.max(1,planRect().width);
+  const snapped=pts.map(q=>{const sp=roomSnapPoint(q,f,null,null,tol);return {x:sp.x,y:sp.y};});
+  const name=prompt('Room / area name',`Room ${(f.rooms||[]).length+1}`);
+  if(name===null)return;
+  const room=migrateRoom({id:uid(),name:(name.trim()||`Room ${(f.rooms||[]).length+1}`),pts:snapped});
+  (f.rooms=f.rooms||[]).push(room);
+  pushUndo({type:'room-add',floorId:f.id,room:JSON.parse(JSON.stringify(room))});
+  selRoom=room.id;
+  renderRooms();renderBoq();
+  const lab=document.querySelector(`#roomLayer .rlabel[data-room="${room.id}"]`);
+  if(lab)openRoomPop(room,lab);
+}
+function updateBrushDot(){
+  const d=$('#brushDot');if(!d)return;
+  const px=Math.max(6,Math.min(34,(state.brushSize||46)*0.36));
+  d.style.width=px+'px';d.style.height=px+'px';
+}
+
 /* ── Room schedule order: one list, every floor, drag or arrows ── */
 function renderRoomOrder(){
   const host=$('#roomOrderList');if(!host)return;
@@ -1375,7 +1626,14 @@ function openRoomPop(r,anchor){
   pop.querySelectorAll('.rp-mv').forEach(b=>b.addEventListener('click',()=>{
     if(moveRoomOrder(f,r,+b.dataset.dir)){ renderBoq(); openRoomPop(r,anchor); }
   }));
-  pop.querySelector('.rp-out').addEventListener('change',e=>{changed=true;r.scope=e.target.checked?'out':'in';renderRooms();openRoomPop(r,anchor);});
+  pop.querySelector('.rp-out').addEventListener('change',e=>{
+    changed=true;
+    const wasOut=r.scope==='out';
+    r.scope=e.target.checked?'out':'in';
+    if(r.scope==='out'){ if(!wasOut){ r.colorIn=r.color; r.color=OUT_SCOPE_COLOR; } }
+    else if(wasOut){ r.color=r.colorIn||ROOM_COLORS[0]; delete r.colorIn; }
+    renderRooms();renderBoq();openRoomPop(r,anchor);
+  });
   pop.querySelector('.rp-del').addEventListener('click',()=>{
     pushUndo({type:'room-del',floorId:f.id,room:JSON.parse(JSON.stringify(r))});
     f.rooms=f.rooms.filter(x=>x.id!==r.id);selRoom=null;closeRoomPop();renderRooms();
@@ -1634,6 +1892,7 @@ $('#btnUndo').addEventListener('click',doUndo);
 $('#btnRedo').addEventListener('click',doRedo);
 
 document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&skribbleMode){ setSkribbleMode(false); return; }
   if(e.key==='Escape'&&$('#roomOrderVeil').style.display==='grid'){ $('#roomOrderVeil').style.display='none'; return; }
   if(e.key==='Escape'&&$('#helpVeil').style.display==='grid'){ closeGuide(); return; }
   if(e.key==='Escape'){
@@ -1686,7 +1945,7 @@ function showFloor(){
   $('#emptyState').style.display=f?'none':'block';
   $('#planHolder').style.display=f?'block':'none';
   setSelMarker(null);
-  if(f){$('#planImg').src=f.img;applyPlanGray();requestAnimationFrame(()=>{fitZoom();renderMarkers();renderRooms();});}
+  if(f){$('#planImg').src=f.img;applyPlanGray();if(skribbleMode)ensureSkCanvas();requestAnimationFrame(()=>{fitZoom();renderMarkers();renderRooms();});}
 }
 function addFloor(name,dataUrl,w,h){
   const f={id:uid(),name,img:dataUrl,w,h,placements:[],rooms:[]};
@@ -1755,6 +2014,15 @@ stage.addEventListener('drop',e=>{[...(e.dataTransfer?.files||[])].forEach(route
    window (left, right, wherever). A soft clamp keeps ≥60px visible so the
    plan can never be lost off-screen. */
 let panX=0, panY=0, panMoved=false, spaceHeld=false;
+function applyRoomLook(){
+  const h=$('#planHolder');
+  if(h){
+    h.style.setProperty('--room-a',state.roomOpacity??1);
+    h.style.setProperty('--seq-k',state.seqScale??1);
+  }
+  const r=$('#roomOpacity'); if(r)r.value=Math.round((state.roomOpacity??1)*100);
+  const q=$('#seqSize');     if(q)q.value=Math.round((state.seqScale??1)*100);
+}
 function applyPlanGray(){
   const img=$('#planImg');
   if(img)img.style.filter=state.planGray?'grayscale(1)':'';
@@ -1830,7 +2098,7 @@ stage.addEventListener('pointerdown',e=>{
   let mq=null;
   stage.addEventListener('pointerdown',e=>{
     if(e.pointerType==='mouse'&&e.button!==0)return;
-    if(armedItem||cropMode||roomMode||spaceHeld||pinchActive)return;
+    if(armedItem||cropMode||roomMode||skribbleMode||spaceHeld||pinchActive)return;
     if(e.target.closest('.marker,.room-layer,.crop-rect,button,input'))return;
     const onPlan=e.target.closest('#planClick')||e.target.closest('#planHolder');
     if(!onPlan)return;
@@ -1875,6 +2143,7 @@ stage.addEventListener('pointerdown',e=>{
   if(e.target.closest('button,input,a,.marker,.crop-rect')||e.target.classList.contains('ch'))return;
   const mouse=e.pointerType==='mouse';
   const onPlan=!!e.target.closest('#planClick');
+  if(skribbleMode&&!spaceHeld&&e.button!==1)return;   /* brushing owns the plan */
   const onRoomLayer=!!(e.target.closest&&e.target.closest('#roomLayer'));
   if(roomMode&&(onPlan||onRoomLayer)&&e.button!==1&&!spaceHeld)return;   /* the room layer drives its own pan/draw */
   const allow = e.button===1 || spaceHeld || !mouse || (e.button===0 && (!onPlan || !armedItem));
@@ -2730,7 +2999,7 @@ async function renderSheet(f,paper,idx,total){
     ctx.drawImage(iconCache[key],x0-g/2,y0-g/2,g,g);
     if(state.autoNumber&&p.seq){
       const lbl=devCode(it)+'-'+String(p.seq).padStart(2,'0');
-      ctx.font=`600 ${Math.round(pin*0.42)}px 'JetBrains Mono',monospace`;
+      ctx.font=`600 ${Math.round(pin*0.42*(state.seqScale??1))}px 'JetBrains Mono',monospace`;
       ctx.textAlign='left';ctx.textBaseline='middle';
       const tx=x0+pin*0.62, ty=y0;
       const tw=ctx.measureText(lbl).width;
@@ -2954,7 +3223,7 @@ function loadProjectText(txt){
     const s=JSON.parse(txt);
     if(!s.items||!s.floors)throw 0;
     s.floors&&s.floors.forEach(f=>{f.rooms=f.rooms||[];});
-    state=Object.assign({version:APP_VERSION,theme:SYS_THEME(),brandLogo:null,pinScale:1,pinOpacity:1,planGray:false,client:'',location:'',reference:'',preparedBy:'',libDock:'left',lastDock:'left',libHidden:false,libFloat:null,libSize:{w:324,h:60,fw:288,fh:520},catOrder:[]},s);
+    state=Object.assign({version:APP_VERSION,theme:SYS_THEME(),brandLogo:null,pinScale:1,pinOpacity:1,planGray:false,brushSize:46,roomOpacity:1,seqScale:1,client:'',location:'',reference:'',preparedBy:'',libDock:'left',lastDock:'left',libHidden:false,libFloat:null,libSize:{w:324,h:60,fw:288,fh:520},catOrder:[]},s);
     projHandle=null;                            /* re-linked by the picker path */
     armedItem=null;setSelMarker(null);undoStack=[];redoStack=[];
     if(cropMode)cancelCrop();
@@ -2963,7 +3232,9 @@ function loadProjectText(txt){
     $('#pinSize').value=(state.pinScale||1)*100;
     $('#pinOpacity').value=(state.pinOpacity??1)*100;
     applyPlanGray();
-    applyTheme();renderBrand();applyDock();applyAutoNum();applyPlanGray();renderLibrary();renderFloors();showFloor();renderBoq();
+    $('#brushSize').value=state.brushSize||46;updateBrushDot();
+    applyRoomLook();applyRoomLook();
+    applyTheme();renderBrand();applyDock();applyAutoNum();applyPlanGray();$('#brushSize').value=state.brushSize||46;updateBrushDot();applyRoomLook();renderLibrary();renderFloors();showFloor();renderBoq();
     dismissOnboard();
     toast('Project loaded.');
     return true;
@@ -3094,5 +3365,5 @@ $('#welcome').addEventListener('pointermove',e=>{
 $('#welcome').addEventListener('pointerleave',()=>{ obFx.mx=-9999; obFx.my=-9999; });
 
 /* ──────────── Init ──────────── */
-applyTheme();renderBrand();applyDock();applyAutoNum();applyPlanGray();closeLib();renderLibrary();renderFloors();showFloor();obStartFx();
+applyTheme();renderBrand();applyDock();applyAutoNum();applyPlanGray();$('#brushSize').value=state.brushSize||46;updateBrushDot();applyRoomLook();closeLib();renderLibrary();renderFloors();showFloor();obStartFx();
 if(!isCompact())setTimeout(()=>toast('Tip: drag the ⠿ grip on the device library to dock it left, right, top or bottom.'),1600);

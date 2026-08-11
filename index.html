@@ -7,7 +7,7 @@
 <title>ikonhouse — AV Pre-Sales Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/app.css?v=1.32.0">
+<link rel="stylesheet" href="assets/css/app.css?v=1.34.0">
 </head>
 <body>
 
@@ -94,6 +94,7 @@
   <button class="tb-btn icon-only" id="btnRoomOrder" title="Room schedule order — sets the row order in the FD sheet & BoQ">
     <svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M4 5.5l-1 1M3 11l1 1 1-1M3.5 17.5h1.5l-1.5 2h1.5"/></svg>
   </button>
+  <button class="tb-btn" id="btnSkribble" title="Skribble — brush over an area to create a room from it"><svg viewBox="0 0 24 24"><path d="M3 21c2.5.4 4.2-.6 5.2-2.2"/><path d="M8.2 18.8a3 3 0 0 0-3-3l9.2-9.2 3 3z"/><path d="M17.4 9.6l2.4-2.4a2.1 2.1 0 0 0-3-3l-2.4 2.4z"/></svg><span class="lbl">Skribble</span></button>
   <button class="tb-btn" id="btnRooms" title="Define rooms / areas on the plan"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 3v10M12 13h9M3 13h4"/></svg><span class="lbl">Rooms</span></button>
   <button class="tb-btn icon-only" id="btnUndo" title="Undo (Ctrl+Z)"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button>
   <button class="tb-btn icon-only" id="btnRedo" title="Redo (Ctrl+Y)"><svg viewBox="0 0 24 24"><path d="M15 14l5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg></button>
@@ -106,6 +107,8 @@
   </button>
   <div class="sizegrp"><label>IKON</label><input type="range" id="pinSize" min="20" max="220" value="100" title="Ikon size"></div>
   <div class="sizegrp"><label>OPACITY</label><input type="range" id="pinOpacity" min="25" max="100" value="100" title="Ikon opacity — lower it to read the plan underneath"></div>
+  <div class="sizegrp"><label>ROOM</label><input type="range" id="roomOpacity" min="20" max="200" value="100" title="Room fill strength"></div>
+  <div class="sizegrp"><label>No.</label><input type="range" id="seqSize" min="70" max="220" value="100" title="Auto-number size"></div>
   <div class="zoomgrp">
     <button id="zoomOut">−</button><span class="zl" id="zoomLbl">100%</span><button id="zoomIn">+</button><button id="zoomFit">FIT</button>
   </div>
@@ -184,7 +187,7 @@
         <li><b>Add your floor plan.</b> Drop a PDF or image onto the canvas, or use <i>Floors → Add floor</i>. Multi-page PDFs become one floor per page. Then <i>Crop</i> to trim it to the drawing itself.</li>
         <li><b>Set up your device library.</b> Create a category, then add devices to it with a name, colour and icon. Prices are optional — add them and the BoQ totals itself. The library is saved inside each project.</li>
         <li><b>Place your ikons.</b> Tap a device, then tap the plan. Keep tapping to place more. Drag to reposition — they snap into line with each other so runs look tidy.</li>
-        <li><b>Draw rooms.</b> Turn on <i>Rooms</i>, then drag a box or tap corner-to-corner for odd shapes. Rooms decide which devices belong where and can be marked out of scope. Use <i>Room schedule order</i> in the toolbar to arrange them — that order becomes the row order in the FD sheet and BoQ.</li>
+        <li><b>Draw rooms.</b> Use <i>Skribble</i> to brush over an area — release and it becomes a room — or turn on <i>Rooms</i> to drag a box or tap corner-to-corner. Rooms decide which devices belong where and can be marked out of scope. Use <i>Room schedule order</i> in the toolbar to arrange them — that order becomes the row order in the FD sheet and BoQ.</li>
         <li><b>Export.</b> Choose a paper size and take the PDF plan set, the Excel FD sheet and BoQ, or the full package — which includes the editable design file so anyone can reopen it.</li>
       </ol>
       <div class="guide-note"><b>Save as you go</b> — <kbd>Ctrl</kbd>+<kbd>S</kbd> writes straight back to your project file. Made a mistake? <kbd>Ctrl</kbd>+<kbd>Z</kbd> undoes almost everything, including room edits.</div>
@@ -198,7 +201,7 @@
         <div><h4>Ikons</h4>
           <p>Tap a device then tap the plan to place · drag to move — they snap into rows and columns · drag a box on empty plan to select several · <kbd>Shift</kbd>-click to add one to the selection · <kbd>Ctrl</kbd>+<kbd>C</kbd> / <kbd>Ctrl</kbd>+<kbd>V</kbd> to copy a cluster · <kbd>Delete</kbd> to remove</p></div>
         <div><h4>Rooms &amp; walls</h4>
-          <p>Drag for a quick box · tap corner to corner for any shape, then tap the first corner to close · drag a wall to move it — straight by default, <kbd>Shift</kbd> frees it · drag a corner to reshape, <kbd>Shift</kbd> squares it, <kbd>Alt</kbd> turns snapping off · double-tap a wall to split it · <b>hold a corner</b> (or <kbd>Ctrl</kbd>-drag) to grow a new room that stays joined · double-tap a corner to remove it</p></div>
+          <p><b>Skribble</b> — brush over an area and release, and it becomes a room · drag for a quick box · tap corner to corner for any shape, then tap the first corner to close · drag a wall to move it — straight by default, <kbd>Shift</kbd> frees it · drag a corner to reshape, <kbd>Shift</kbd> squares it, <kbd>Alt</kbd> turns snapping off · double-tap a wall to split it · <b>hold a corner</b> (or <kbd>Ctrl</kbd>-drag) to grow a new room that stays joined · double-tap a corner to remove it</p></div>
         <div><h4>Library</h4>
           <p>Drag the ⠿ grip to dock it left, right, top, bottom or floating · ▲▼ or hold to reorder categories · <b>▲▼ on a device</b> reorders it in its category · drag a device onto another to drop it into that spot, or onto a category header to move it there</p></div>
       </div>
@@ -222,6 +225,17 @@
       <span class="guide-hint">Reopen this any time from <b>?</b> in the toolbar.</span>
       <button class="btn pri" id="helpDone">Got it</button>
     </div>
+  </div>
+</div>
+<div class="skribble-bar" id="skribbleBar">
+  <div class="sk-brush">
+    <span class="sk-lab">BRUSH</span>
+    <input type="range" id="brushSize" min="10" max="140" value="46" title="Brush thickness">
+    <span class="sk-dot" id="brushDot"></span>
+  </div>
+  <div class="sk-hint">Brush over an area — release to turn it into a room</div>
+  <div class="crop-actions">
+    <button class="btn ghost" id="skribbleDone">Done</button>
   </div>
 </div>
 <div class="crop-bar" id="cropBar">
@@ -363,7 +377,7 @@
     </div>
   </div>
   <div class="ob-credit">Developed by Jassim Alfonso with Claude</div>
-  <div class="ob-foot">IKONHOUSE · PRE-SALES TOOL · V1.32</div>
+  <div class="ob-foot">IKONHOUSE · PRE-SALES TOOL · V1.34</div>
 </div>
 
 <div class="onboard" id="setup" style="display:none">
@@ -388,6 +402,6 @@
   </div>
 </div>
 
-<script src="assets/js/app.js?v=1.32.0"></script>
+<script src="assets/js/app.js?v=1.34.0"></script>
 </body>
 </html>

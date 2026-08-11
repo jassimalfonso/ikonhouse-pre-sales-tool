@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.31.0';
+const APP_VERSION='1.31.1';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -143,11 +143,8 @@ document.querySelectorAll('#themeRow [data-theme-opt]').forEach(b=>{
 });
 $('#themeToggle').addEventListener('click',()=>{ state.theme=state.theme==='dark'?'light':'dark'; applyTheme(); });
 function applyAutoNum(){ const c=$('#autoNumOpt'); if(c)c.checked=!!state.autoNumber; }
-$('#planGrayOpt').addEventListener('change',e=>{
-  state.planGray=e.target.checked;
-  applyPlanGray();
-  toast(state.planGray?'Floor plan in greyscale — ikons keep their colour.':'Floor plan colour restored.');
-});
+$('#planGrayOpt').addEventListener('change',e=>setPlanGray(e.target.checked));
+$('#btnGray').addEventListener('click',()=>setPlanGray(!state.planGray));
 $('#autoNumOpt').addEventListener('change',e=>{
   state.autoNumber=e.target.checked;
   if(state.autoNumber){
@@ -1757,6 +1754,12 @@ function applyPlanGray(){
   const img=$('#planImg');
   if(img)img.style.filter=state.planGray?'grayscale(1)':'';
   const t=$('#planGrayOpt'); if(t)t.checked=!!state.planGray;
+  const b=$('#btnGray'); if(b)b.classList.toggle('on',!!state.planGray);
+}
+function setPlanGray(on){
+  state.planGray=!!on;
+  applyPlanGray();
+  toast(state.planGray?'Floor plan in greyscale — ikons keep their colour.':'Floor plan colour restored.');
 }
 function applyView(){
   const h=$('#planHolder');

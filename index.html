@@ -7,7 +7,7 @@
 <title>ikonhouse — AV Pre-Sales Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/app.css?v=1.31.0">
+<link rel="stylesheet" href="assets/css/app.css?v=1.31.1">
 </head>
 <body>
 
@@ -98,6 +98,9 @@
   <button class="tb-btn icon-only" id="btnUndo" title="Undo (Ctrl+Z)"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button>
   <button class="tb-btn icon-only" id="btnRedo" title="Redo (Ctrl+Y)"><svg viewBox="0 0 24 24"><path d="M15 14l5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg></button>
   <div class="spacer"></div>
+  <button class="tb-btn icon-only" id="btnGray" title="Greyscale the floor plan — ikons keep their colour">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor" stroke="none"/></svg>
+  </button>
   <div class="sizegrp"><label>IKON</label><input type="range" id="pinSize" min="20" max="220" value="100" title="Ikon size"></div>
   <div class="sizegrp"><label>OPACITY</label><input type="range" id="pinOpacity" min="25" max="100" value="100" title="Ikon opacity — lower it to read the plan underneath"></div>
   <div class="zoomgrp">
@@ -382,6 +385,6 @@
   </div>
 </div>
 
-<script src="assets/js/app.js?v=1.31.0"></script>
+<script src="assets/js/app.js?v=1.31.1"></script>
 </body>
 </html>

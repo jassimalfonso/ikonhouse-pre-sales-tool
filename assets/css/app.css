@@ -962,3 +962,5 @@ body.dock-top .cat-head,body.dock-bottom .cat-head{padding:8px 8px 6px;font-size
   .ro-foot{flex-direction:column-reverse;align-items:stretch}
   .ro-foot .btn{width:100%}
 }
+/* active state for the greyscale toolbar toggle */
+#btnGray.on{color:var(--hl);background:var(--hl-soft);border-color:var(--hl-line)}

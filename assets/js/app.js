@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.31.1';
+const APP_VERSION='1.32.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -142,18 +142,22 @@ document.querySelectorAll('#themeRow [data-theme-opt]').forEach(b=>{
   b.addEventListener('click',()=>{ state.theme=b.dataset.themeOpt; applyTheme(); });
 });
 $('#themeToggle').addEventListener('click',()=>{ state.theme=state.theme==='dark'?'light':'dark'; applyTheme(); });
-function applyAutoNum(){ const c=$('#autoNumOpt'); if(c)c.checked=!!state.autoNumber; }
-$('#planGrayOpt').addEventListener('change',e=>setPlanGray(e.target.checked));
-$('#btnGray').addEventListener('click',()=>setPlanGray(!state.planGray));
-$('#autoNumOpt').addEventListener('change',e=>{
-  state.autoNumber=e.target.checked;
+function applyAutoNum(){
+  const c=$('#autoNumOpt'); if(c)c.checked=!!state.autoNumber;
+  const b=$('#btnAutoNum'); if(b)b.classList.toggle('on',!!state.autoNumber);
+}
+function setAutoNum(on){
+  state.autoNumber=!!on;
   if(state.autoNumber){
-    /* assign sequence numbers to any ikons that lack them, per device */
     state.floors.forEach(f=>f.placements.forEach(p=>{ if(!p.seq)p.seq=nextSeq(p.itemId); }));
     toast('Auto-numbering on.');
   } else toast('Auto-numbering off — numbers hidden.');
-  renderMarkers();
-});
+  applyAutoNum(); renderMarkers();
+}
+$('#planGrayOpt').addEventListener('change',e=>setPlanGray(e.target.checked));
+$('#btnGray').addEventListener('click',()=>setPlanGray(!state.planGray));
+$('#autoNumOpt').addEventListener('change',e=>setAutoNum(e.target.checked));
+$('#btnAutoNum').addEventListener('click',()=>setAutoNum(!state.autoNumber));
 /* View menu (theme + docking) */
 $('#btnView').addEventListener('click',e=>{e.stopPropagation();$('#viewMenu').classList.toggle('open');$('#exportMenu').classList.remove('open');});
 document.addEventListener('click',()=>$('#viewMenu').classList.remove('open'));
@@ -372,7 +376,7 @@ let dragDevSuppressClick=false;
 function startDeviceDrag(item,row,e){
   const id=e.pointerId, sx=e.clientX, sy=e.clientY;
   let armed=e.pointerType!=='touch', started=false, holdT=null;
-  const begin=()=>{ started=true; document.body.classList.add('dev-dragging');
+  const begin=()=>{ started=true; document.body.classList.add('dev-dragging'); row.classList.add('lifted');
     if(navigator.vibrate&&e.pointerType==='touch')navigator.vibrate(10); };
   if(!armed){ holdT=setTimeout(()=>{armed=true;begin();},300); }
   const overCat=cl=>{ const h=cl&&cl.closest?cl.closest('.cat-head,.item-row'):null;
@@ -397,6 +401,7 @@ function startDeviceDrag(item,row,e){
       const head=el2&&el2.closest?el2.closest('.cat-head'):null;
       const rowEl=el2&&el2.closest?el2.closest('.item-row'):null;
       document.body.classList.remove('dev-dragging');
+      document.querySelectorAll('.item-row.lifted').forEach(r=>r.classList.remove('lifted'));
       document.querySelectorAll('.cat-head.drop,.item-row.drop-at').forEach(h=>h.classList.remove('drop','drop-at'));
       const overItem=rowEl?itemById(rowEl.dataset.item):null;
       if(overItem&&overItem.id!==item.id){                 /* dropped on a device: take its place */

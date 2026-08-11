@@ -4,6 +4,20 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.32.0] — 2026-08-11
+
+### Changed
+- **Placement toggles live in the toolbar.** Auto-numbering joins greyscale as
+  a toolbar button that lights up when active, so both can be flipped mid-work
+  without opening a menu. The View menu toggles remain and stay in sync.
+- **Reordering now feels like picking something up.** Dragging a category, a
+  device, or a room in the schedule lifts it toward you — a slight scale, a
+  soft tilt and a real shadow — while the rest of the list recedes. Previously
+  the dragged item just dimmed, which read as "disabled" rather than "held".
+  Respects reduced-motion preferences.
+- **The room schedule panel has room to breathe** — wider, more padding, and
+  noticeably more space between rows, floor groups and the footer.
+
 ## [1.31.1] — 2026-08-11
 
 ### Changed
@@ -259,6 +273,20 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.32.0] — 2026-08-11
+
+### Changed
+- **Placement toggles live in the toolbar.** Auto-numbering joins greyscale as
+  a toolbar button that lights up when active, so both can be flipped mid-work
+  without opening a menu. The View menu toggles remain and stay in sync.
+- **Reordering now feels like picking something up.** Dragging a category, a
+  device, or a room in the schedule lifts it toward you — a slight scale, a
+  soft tilt and a real shadow — while the rest of the list recedes. Previously
+  the dragged item just dimmed, which read as "disabled" rather than "held".
+  Respects reduced-motion preferences.
+- **The room schedule panel has room to breathe** — wider, more padding, and
+  noticeably more space between rows, floor groups and the footer.
 
 ## [1.31.1] — 2026-08-11
 
@@ -951,6 +979,20 @@ follows [Semantic Versioning](https://semver.org).
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
 
+## [1.32.0] — 2026-08-11
+
+### Changed
+- **Placement toggles live in the toolbar.** Auto-numbering joins greyscale as
+  a toolbar button that lights up when active, so both can be flipped mid-work
+  without opening a menu. The View menu toggles remain and stay in sync.
+- **Reordering now feels like picking something up.** Dragging a category, a
+  device, or a room in the schedule lifts it toward you — a slight scale, a
+  soft tilt and a real shadow — while the rest of the list recedes. Previously
+  the dragged item just dimmed, which read as "disabled" rather than "held".
+  Respects reduced-motion preferences.
+- **The room schedule panel has room to breathe** — wider, more padding, and
+  noticeably more space between rows, floor groups and the footer.
+
 ## [1.31.1] — 2026-08-11
 
 ### Changed
@@ -1206,6 +1248,20 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.32.0] — 2026-08-11
+
+### Changed
+- **Placement toggles live in the toolbar.** Auto-numbering joins greyscale as
+  a toolbar button that lights up when active, so both can be flipped mid-work
+  without opening a menu. The View menu toggles remain and stay in sync.
+- **Reordering now feels like picking something up.** Dragging a category, a
+  device, or a room in the schedule lifts it toward you — a slight scale, a
+  soft tilt and a real shadow — while the rest of the list recedes. Previously
+  the dragged item just dimmed, which read as "disabled" rather than "held".
+  Respects reduced-motion preferences.
+- **The room schedule panel has room to breathe** — wider, more padding, and
+  noticeably more space between rows, floor groups and the footer.
 
 ## [1.31.1] — 2026-08-11
 

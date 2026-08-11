@@ -4,6 +4,19 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.37.0] — 2026-08-11
+
+### Added
+- **Skribble respects existing rooms.** The brush is clipped to the area not
+  already claimed, so paint simply stops at a neighbouring room''s wall as you
+  draw — you can sweep straight over a boundary and the new room ends exactly
+  where the other begins, sharing the wall instead of fighting for it. Rooms
+  no longer overlap by accident, and device counts stay unambiguous.
+  - **Hold Alt** while starting a stroke to ignore boundaries and overlap
+    deliberately (for a zone spanning several rooms).
+  - Brushing entirely inside an existing room now says so, rather than
+    failing silently.
+
 ## [1.36.1] — 2026-08-11
 
 ### Changed
@@ -351,6 +364,19 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.37.0] — 2026-08-11
+
+### Added
+- **Skribble respects existing rooms.** The brush is clipped to the area not
+  already claimed, so paint simply stops at a neighbouring room''s wall as you
+  draw — you can sweep straight over a boundary and the new room ends exactly
+  where the other begins, sharing the wall instead of fighting for it. Rooms
+  no longer overlap by accident, and device counts stay unambiguous.
+  - **Hold Alt** while starting a stroke to ignore boundaries and overlap
+    deliberately (for a zone spanning several rooms).
+  - Brushing entirely inside an existing room now says so, rather than
+    failing silently.
 
 ## [1.36.1] — 2026-08-11
 
@@ -1135,6 +1161,19 @@ follows [Semantic Versioning](https://semver.org).
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
 
+## [1.37.0] — 2026-08-11
+
+### Added
+- **Skribble respects existing rooms.** The brush is clipped to the area not
+  already claimed, so paint simply stops at a neighbouring room''s wall as you
+  draw — you can sweep straight over a boundary and the new room ends exactly
+  where the other begins, sharing the wall instead of fighting for it. Rooms
+  no longer overlap by accident, and device counts stay unambiguous.
+  - **Hold Alt** while starting a stroke to ignore boundaries and overlap
+    deliberately (for a zone spanning several rooms).
+  - Brushing entirely inside an existing room now says so, rather than
+    failing silently.
+
 ## [1.36.1] — 2026-08-11
 
 ### Changed
@@ -1482,6 +1521,19 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.37.0] — 2026-08-11
+
+### Added
+- **Skribble respects existing rooms.** The brush is clipped to the area not
+  already claimed, so paint simply stops at a neighbouring room''s wall as you
+  draw — you can sweep straight over a boundary and the new room ends exactly
+  where the other begins, sharing the wall instead of fighting for it. Rooms
+  no longer overlap by accident, and device counts stay unambiguous.
+  - **Hold Alt** while starting a stroke to ignore boundaries and overlap
+    deliberately (for a zone spanning several rooms).
+  - Brushing entirely inside an existing room now says so, rather than
+    failing silently.
 
 ## [1.36.1] — 2026-08-11
 

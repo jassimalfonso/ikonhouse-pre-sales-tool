@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.36.1';
+const APP_VERSION='1.37.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -1403,7 +1403,7 @@ function skribbleToPolygon(bin,w,h,opts={}){
    A stroke is painted into an off-screen mask, then traced, simplified and
    squared up into an ordinary editable polygon. No wall detection — the
    shape comes purely from what was brushed, so it works on any drawing. */
-let skribbleMode=false, skCv=null, skCtx=null, skPainting=false, skDrew=false;
+let skribbleMode=false, skCv=null, skCtx=null, skPainting=false, skDrew=false, skClipped=false;
 const SK_MAX=520;                       /* mask resolution (long side) */
 
 function setSkribbleMode(on){
@@ -1454,6 +1454,22 @@ function startSkribble(e){
   const r=planRect(), id=e.pointerId;
   const toMask=ev=>({x:((ev.clientX-r.left)/r.width)*skCv.width, y:((ev.clientY-r.top)/r.height)*skCv.height});
   skPainting=true;skDrew=false;
+  /* respect existing rooms: clip the brush so it cannot paint inside them.
+     The stroke simply stops at their walls — hold Alt to ignore and overlap. */
+  skClipped=false;
+  if(!e.altKey && typeof Path2D!=='undefined' && skCtx.clip){
+    const rooms=(f.rooms||[]).filter(r=>(r.pts||[]).length>2);
+    if(rooms.length){
+      const path=new Path2D();
+      path.rect(0,0,skCv.width,skCv.height);
+      rooms.forEach(r=>{
+        path.moveTo(r.pts[0].x*skCv.width,r.pts[0].y*skCv.height);
+        for(let i=1;i<r.pts.length;i++)path.lineTo(r.pts[i].x*skCv.width,r.pts[i].y*skCv.height);
+        path.closePath();
+      });
+      skCtx.save();skCtx.clip(path,'evenodd');skClipped=true;   /* even-odd = everything but the rooms */
+    }
+  }
   skCtx.lineWidth=skBrushMaskWidth();
   let p=toMask(e);
   skCtx.beginPath();skCtx.arc(p.x,p.y,skCtx.lineWidth/2,0,Math.PI*2);skCtx.fill();
@@ -1466,11 +1482,12 @@ function startSkribble(e){
     skCtx.beginPath();skCtx.moveTo(q.x,q.y);
     skDrew=true;
   };
-  const cancel=()=>{stop();skCtx.clearRect(0,0,skCv.width,skCv.height);skPainting=false;};
+  const unclip=()=>{ if(skClipped){skCtx.restore();skClipped=false;} };
+  const cancel=()=>{stop();unclip();skCtx.clearRect(0,0,skCv.width,skCv.height);skPainting=false;};
   const stop=()=>{document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);};
   const up=ev=>{
     if(ev.pointerId!==id)return;
-    stop();skPainting=false;
+    stop();unclip();skPainting=false;
     commitSkribble(f);
   };
   document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
@@ -1483,7 +1500,12 @@ function commitSkribble(f){
   for(let i=0,p=3;i<w*h;i++,p+=4) bin[i]=img[p]>110?1:0;
   skCtx.clearRect(0,0,w,h);
   const pts=skribbleToPolygon(bin,w,h);
-  if(!pts){ toast('That stroke was too small — brush over a wider area.'); return; }
+  if(!pts){
+    toast((f.rooms||[]).length
+      ? 'Nothing to add there — that area already belongs to another room. Hold Alt to overlap.'
+      : 'That stroke was too small — brush over a wider area.');
+    return;
+  }
   /* let it click onto neighbouring rooms, exactly like a drawn room */
   const tol=5/Math.max(1,planRect().width);
   const snapped=pts.map(q=>{const sp=roomSnapPoint(q,f,null,null,tol);return {x:sp.x,y:sp.y};});

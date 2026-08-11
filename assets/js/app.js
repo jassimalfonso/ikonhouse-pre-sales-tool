@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.36.0';
+const APP_VERSION='1.36.1';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -684,7 +684,7 @@ let roomMode=false, selRoom=null, hlRoom=null;
 /* rooms link only when nodes truly coincide (snapping produces exact equality) */
 const NODE_LINK_EPS=0.0009;
 const ROOM_COLORS=['#AE8B5C','#2E5CFF','#16B364','#F59E0B','#E5484D','#7C4DFF','#0FA3A3','#64748B'];
-const OUT_SCOPE_COLOR='#8A8F98';   /* out-of-scope rooms read as grey by default */
+const OUT_SCOPE_COLOR='#E5484D';   /* out-of-scope rooms read red — unmistakable on the plan */
 /* migrate legacy {x,y,w,h} rectangles to point lists; ensure color/scope */
 function migrateRoom(r){
   if(!r.pts){ r.pts=[{x:r.x,y:r.y},{x:r.x+r.w,y:r.y},{x:r.x+r.w,y:r.y+r.h},{x:r.x,y:r.y+r.h}]; delete r.x;delete r.y;delete r.w;delete r.h; }
@@ -1493,9 +1493,11 @@ function commitSkribble(f){
   (f.rooms=f.rooms||[]).push(room);
   pushUndo({type:'room-add',floorId:f.id,room:JSON.parse(JSON.stringify(room))});
   selRoom=room.id;
+  setSkribbleMode(false);          /* hand straight back to normal editing */
   renderRooms();renderBoq();
   const lab=document.querySelector(`#roomLayer .rlabel[data-room="${room.id}"]`);
   if(lab)openRoomPop(room,lab);
+  toast('Room created — drag its corners or walls to fine-tune.');
 }
 function skColor(){ return state.skribbleColor||ROOM_COLORS[0]; }
 function updateBrushDot(){
@@ -1530,8 +1532,10 @@ function ensureBrushCursor(){
 }
 function moveBrushCursor(e){
   const c=$('#brushCursor');if(!c)return;
+  if(!skribbleMode){c.classList.remove('show');return;}
   const r=planRect();
-  const on=e&&e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom;
+  const overUI=e&&e.target&&e.target.closest&&e.target.closest('#roomPop,.skribble-bar,.veil,.lib-panel,.topbar,.hintbar');
+  const on=!overUI&&e&&e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom;
   c.classList.toggle('show',!!on);
   if(on){ c.style.left=e.clientX+'px'; c.style.top=e.clientY+'px'; }
 }

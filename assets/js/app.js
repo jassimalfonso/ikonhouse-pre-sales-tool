@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.37.0';
+const APP_VERSION='1.37.1';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -1376,6 +1376,41 @@ function polyAreaAbs(pts){
   return Math.abs(pts.reduce((a,p,i)=>{const q=pts[(i+1)%pts.length];return a+(p.x*q.y-q.x*p.y);},0))/2;
 }
 
+/* fill a polygon into a grid (even-odd scanline), val 1 = paint, 0 = erase */
+function rasterPoly(pts,w,h,grid,val){
+  if(pts.length<3)return;
+  let minY=Infinity,maxY=-Infinity;
+  pts.forEach(p=>{if(p.y<minY)minY=p.y;if(p.y>maxY)maxY=p.y;});
+  const y0=Math.max(0,Math.floor(minY)), y1=Math.min(h-1,Math.ceil(maxY));
+  for(let y=y0;y<=y1;y++){
+    const yc=y+0.5, xs=[];
+    for(let i=0,j=pts.length-1;i<pts.length;j=i++){
+      const a=pts[j], b=pts[i];
+      if((a.y>yc)!==(b.y>yc)) xs.push(a.x+(yc-a.y)/(b.y-a.y)*(b.x-a.x));
+    }
+    xs.sort((p,q)=>p-q);
+    for(let k=0;k+1<xs.length;k+=2){
+      const xa=Math.max(0,Math.ceil(xs[k]-0.5)), xb=Math.min(w-1,Math.floor(xs[k+1]-0.5));
+      for(let x=xa;x<=xb;x++) grid[y*w+x]=val;
+    }
+  }
+}
+/* remove any part of a polygon that falls inside an existing room, so rooms
+   share walls instead of overlapping (squaring-up can otherwise push an edge
+   back over a boundary the brush respected) */
+function subtractRooms(pts,rooms,w,h){
+  const g=new Uint8Array(w*h);
+  rasterPoly(pts.map(p=>({x:p.x*w,y:p.y*h})),w,h,g,1);
+  let touched=false;
+  rooms.forEach(r=>{
+    if(!r.pts||r.pts.length<3)return;
+    touched=true;
+    rasterPoly(r.pts.map(p=>({x:p.x*w,y:p.y*h})),w,h,g,0);
+  });
+  if(!touched)return pts;
+  const out=skribbleToPolygon(g,w,h,{noOrtho:true,eps:Math.hypot(w,h)*0.006});
+  return out||null;
+}
 /* full pipeline: binary mask → polygon in 0..1 plan coordinates */
 function skribbleToPolygon(bin,w,h,opts={}){
   const blob=largestBlob(bin,w,h);
@@ -1389,7 +1424,7 @@ function skribbleToPolygon(bin,w,h,opts={}){
   /* keep the corner count sane on wobbly strokes */
   let guard=0;
   while(pts.length>28&&guard++<6){ eps*=1.5; pts=rdp(contour,eps); }
-  pts=orthogonalize(pts,opts.tolDeg??26);
+  if(!opts.noOrtho)pts=orthogonalize(pts,opts.tolDeg??26);
   pts=tidy(pts,Math.max(2,diag*0.008));
   if(pts.length<3)return null;
   const frac=pts.map(q=>({x:Math.min(1,Math.max(0,q.x/w)),y:Math.min(1,Math.max(0,q.y/h))}));
@@ -1403,7 +1438,7 @@ function skribbleToPolygon(bin,w,h,opts={}){
    A stroke is painted into an off-screen mask, then traced, simplified and
    squared up into an ordinary editable polygon. No wall detection — the
    shape comes purely from what was brushed, so it works on any drawing. */
-let skribbleMode=false, skCv=null, skCtx=null, skPainting=false, skDrew=false, skClipped=false;
+let skribbleMode=false, skCv=null, skCtx=null, skPainting=false, skDrew=false, skClipped=false, skIgnoreRooms=false;
 const SK_MAX=520;                       /* mask resolution (long side) */
 
 function setSkribbleMode(on){
@@ -1456,7 +1491,7 @@ function startSkribble(e){
   skPainting=true;skDrew=false;
   /* respect existing rooms: clip the brush so it cannot paint inside them.
      The stroke simply stops at their walls — hold Alt to ignore and overlap. */
-  skClipped=false;
+  skClipped=false;skIgnoreRooms=!!e.altKey;
   if(!e.altKey && typeof Path2D!=='undefined' && skCtx.clip){
     const rooms=(f.rooms||[]).filter(r=>(r.pts||[]).length>2);
     if(rooms.length){
@@ -1499,12 +1534,18 @@ function commitSkribble(f){
   const bin=new Uint8Array(w*h);
   for(let i=0,p=3;i<w*h;i++,p+=4) bin[i]=img[p]>110?1:0;
   skCtx.clearRect(0,0,w,h);
-  const pts=skribbleToPolygon(bin,w,h);
+  let pts=skribbleToPolygon(bin,w,h);
   if(!pts){
     toast((f.rooms||[]).length
       ? 'Nothing to add there — that area already belongs to another room. Hold Alt to overlap.'
       : 'That stroke was too small — brush over a wider area.');
     return;
+  }
+  /* trim away anything that squaring-up pushed over a neighbour's wall */
+  if(!skIgnoreRooms&&(f.rooms||[]).length){
+    const trimmed=subtractRooms(pts,f.rooms,w,h);
+    if(!trimmed){ toast('Nothing to add there — that area already belongs to another room. Hold Alt to overlap.'); return; }
+    pts=trimmed;
   }
   /* let it click onto neighbouring rooms, exactly like a drawn room */
   const tol=5/Math.max(1,planRect().width);
@@ -3337,7 +3378,8 @@ function loadProjectText(txt){
     applyPlanGray();
     $('#brushSize').value=state.brushSize||46;updateBrushDot();
     applyRoomLook();applyRoomLook();
-    applyTheme();renderBrand();applyDock();applyAutoNum();applyPlanGray();$('#brushSize').value=state.brushSize||46;updateBrushDot();applyRoomLook();renderLibrary();renderFloors();showFloor();renderBoq();
+    $('#obFoot').textContent=`IKONHOUSE · PRE-SALES TOOL · V${APP_VERSION}`;   /* single source of truth */
+applyTheme();renderBrand();applyDock();applyAutoNum();applyPlanGray();$('#brushSize').value=state.brushSize||46;updateBrushDot();applyRoomLook();renderLibrary();renderFloors();showFloor();renderBoq();
     dismissOnboard();
     toast('Project loaded.');
     return true;
@@ -3468,5 +3510,6 @@ $('#welcome').addEventListener('pointermove',e=>{
 $('#welcome').addEventListener('pointerleave',()=>{ obFx.mx=-9999; obFx.my=-9999; });
 
 /* ──────────── Init ──────────── */
+$('#obFoot').textContent=`IKONHOUSE · PRE-SALES TOOL · V${APP_VERSION}`;   /* single source of truth */
 applyTheme();renderBrand();applyDock();applyAutoNum();applyPlanGray();$('#brushSize').value=state.brushSize||46;updateBrushDot();applyRoomLook();closeLib();renderLibrary();renderFloors();showFloor();obStartFx();
 if(!isCompact())setTimeout(()=>toast('Tip: drag the ⠿ grip on the device library to dock it left, right, top or bottom.'),1600);

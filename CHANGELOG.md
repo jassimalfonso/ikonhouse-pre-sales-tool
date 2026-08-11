@@ -4,6 +4,18 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.37.1] — 2026-08-11
+
+### Fixed
+- **Skribbled rooms could still overlap a neighbour.** Clipping the brush kept
+  the painted area clean, but squaring-up afterwards could push a straightened
+  edge back over a boundary. The finished outline is now genuinely subtracted
+  from existing rooms before the room is created, so shapes butt against each
+  other along shared walls instead of overlapping.
+- **The version now reads in full (e.g. V1.37.1)** on the welcome screen, and
+  is taken directly from `APP_VERSION` rather than being typed separately —
+  so it can no longer fall out of step with a release.
+
 ## [1.37.0] — 2026-08-11
 
 ### Added
@@ -364,6 +376,18 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.37.1] — 2026-08-11
+
+### Fixed
+- **Skribbled rooms could still overlap a neighbour.** Clipping the brush kept
+  the painted area clean, but squaring-up afterwards could push a straightened
+  edge back over a boundary. The finished outline is now genuinely subtracted
+  from existing rooms before the room is created, so shapes butt against each
+  other along shared walls instead of overlapping.
+- **The version now reads in full (e.g. V1.37.1)** on the welcome screen, and
+  is taken directly from `APP_VERSION` rather than being typed separately —
+  so it can no longer fall out of step with a release.
 
 ## [1.37.0] — 2026-08-11
 
@@ -1161,6 +1185,18 @@ follows [Semantic Versioning](https://semver.org).
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
 
+## [1.37.1] — 2026-08-11
+
+### Fixed
+- **Skribbled rooms could still overlap a neighbour.** Clipping the brush kept
+  the painted area clean, but squaring-up afterwards could push a straightened
+  edge back over a boundary. The finished outline is now genuinely subtracted
+  from existing rooms before the room is created, so shapes butt against each
+  other along shared walls instead of overlapping.
+- **The version now reads in full (e.g. V1.37.1)** on the welcome screen, and
+  is taken directly from `APP_VERSION` rather than being typed separately —
+  so it can no longer fall out of step with a release.
+
 ## [1.37.0] — 2026-08-11
 
 ### Added
@@ -1521,6 +1557,18 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.37.1] — 2026-08-11
+
+### Fixed
+- **Skribbled rooms could still overlap a neighbour.** Clipping the brush kept
+  the painted area clean, but squaring-up afterwards could push a straightened
+  edge back over a boundary. The finished outline is now genuinely subtracted
+  from existing rooms before the room is created, so shapes butt against each
+  other along shared walls instead of overlapping.
+- **The version now reads in full (e.g. V1.37.1)** on the welcome screen, and
+  is taken directly from `APP_VERSION` rather than being typed separately —
+  so it can no longer fall out of step with a release.
 
 ## [1.37.0] — 2026-08-11
 

@@ -898,3 +898,12 @@ body.dock-top .cat-head,body.dock-bottom .cat-head{padding:8px 8px 6px;font-size
 /* the two plan sliders sit side by side; opacity is the narrower of the pair */
 #pinOpacity{max-width:88px}
 @media (max-width:520px){ #pinOpacity{max-width:64px} }
+/* room order controls in the editor */
+.rp-order{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.rp-mv{
+  min-width:26px;height:26px;display:grid;place-items:center;font-size:9px;
+  border:1px solid var(--line-2);border-radius:6px;color:var(--dim);
+}
+.rp-mv:hover{color:var(--hl);border-color:var(--hl-line);background:var(--hl-soft)}
+.rp-pos{font-family:var(--font-m);font-size:11px;color:var(--txt)}
+.rp-ordhint{flex-basis:100%;font-size:10px;color:var(--dim);line-height:1.5}

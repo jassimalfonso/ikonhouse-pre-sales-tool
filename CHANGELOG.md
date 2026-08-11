@@ -4,6 +4,15 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.29.0] — 2026-08-11
+
+### Added
+- **Order rooms in the schedule while you design.** The room editor gains an
+  "Order in schedule" section — ▲▼ move a room earlier or later, with its
+  position shown (e.g. "3 of 11"). That order is exactly the row order used in
+  the Excel FD sheet and the BoQ room breakdown, so the client-facing schedule
+  can follow the building rather than the order rooms happened to be drawn.
+
 ## [1.28.0] — 2026-07-26
 
 ### Fixed
@@ -220,6 +229,15 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.29.0] — 2026-08-11
+
+### Added
+- **Order rooms in the schedule while you design.** The room editor gains an
+  "Order in schedule" section — ▲▼ move a room earlier or later, with its
+  position shown (e.g. "3 of 11"). That order is exactly the row order used in
+  the Excel FD sheet and the BoQ room breakdown, so the client-facing schedule
+  can follow the building rather than the order rooms happened to be drawn.
 
 ## [1.28.0] — 2026-07-26
 
@@ -873,6 +891,15 @@ follows [Semantic Versioning](https://semver.org).
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
 
+## [1.29.0] — 2026-08-11
+
+### Added
+- **Order rooms in the schedule while you design.** The room editor gains an
+  "Order in schedule" section — ▲▼ move a room earlier or later, with its
+  position shown (e.g. "3 of 11"). That order is exactly the row order used in
+  the Excel FD sheet and the BoQ room breakdown, so the client-facing schedule
+  can follow the building rather than the order rooms happened to be drawn.
+
 ## [1.28.0] — 2026-07-26
 
 ### Fixed
@@ -1089,6 +1116,15 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.29.0] — 2026-08-11
+
+### Added
+- **Order rooms in the schedule while you design.** The room editor gains an
+  "Order in schedule" section — ▲▼ move a room earlier or later, with its
+  position shown (e.g. "3 of 11"). That order is exactly the row order used in
+  the Excel FD sheet and the BoQ room breakdown, so the client-facing schedule
+  can follow the building rather than the order rooms happened to be drawn.
 
 ## [1.28.0] — 2026-07-26
 

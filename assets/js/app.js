@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.28.0';
+const APP_VERSION='1.29.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -1235,6 +1235,14 @@ document.addEventListener('pointermove',e=>{
 
 /* room popover: name, color, scope, delete */
 function closeRoomPop(){const p=$('#roomPop');if(p)p.remove();}
+/* rooms are written to the FD sheet and BoQ in f.rooms order, so this is the
+   schedule order the client sees */
+function moveRoomOrder(f,room,dir){
+  const a=f.rooms.indexOf(room), b=a+dir;
+  if(a<0||b<0||b>=f.rooms.length)return false;
+  [f.rooms[a],f.rooms[b]]=[f.rooms[b],f.rooms[a]];
+  return true;
+}
 function openRoomPop(r,anchor){
   closeRoomPop();
   const f=activeFloor();
@@ -1253,11 +1261,21 @@ function openRoomPop(r,anchor){
       <div class="rp-colors">${ROOM_COLORS.map(c=>`<button class="rp-c ${c===r.color?'on':''}" data-c="${c}" style="background:${c}"></button>`).join('')}</div></div>
     <div class="rp-sec"><label class="rp-lab">Status</label>
       <label class="rp-scope"><input type="checkbox" class="rp-out" ${r.scope==='out'?'checked':''}> Out of scope — hatched on the plan, tagged in the Excel FD sheet</label></div>
+    <div class="rp-sec"><label class="rp-lab">Order in schedule</label>
+      <div class="rp-order">
+        <button class="rp-mv" data-dir="-1" title="Move earlier">▲</button>
+        <button class="rp-mv" data-dir="1" title="Move later">▼</button>
+        <span class="rp-pos">${(f.rooms||[]).indexOf(r)+1} of ${(f.rooms||[]).length}</span>
+        <span class="rp-ordhint">sets the row order in the FD sheet &amp; BoQ</span>
+      </div></div>
     <div class="rp-row"><button class="rp-del">Delete room</button><button class="rp-done">Done</button></div>`;
   const snap=roomSnapshot(f,r);let changed=false;
   pop.addEventListener('pointerdown',e=>e.stopPropagation());
   pop.querySelector('.rp-name').addEventListener('input',e=>{changed=true;r.name=e.target.value.trim()||r.name;});
   pop.querySelectorAll('.rp-c').forEach(b=>b.addEventListener('click',()=>{changed=true;r.color=b.dataset.c;renderRooms();openRoomPop(r,anchor);}));
+  pop.querySelectorAll('.rp-mv').forEach(b=>b.addEventListener('click',()=>{
+    if(moveRoomOrder(f,r,+b.dataset.dir)){ renderBoq(); openRoomPop(r,anchor); }
+  }));
   pop.querySelector('.rp-out').addEventListener('change',e=>{changed=true;r.scope=e.target.checked?'out':'in';renderRooms();openRoomPop(r,anchor);});
   pop.querySelector('.rp-del').addEventListener('click',()=>{
     pushUndo({type:'room-del',floorId:f.id,room:JSON.parse(JSON.stringify(r))});

@@ -4,6 +4,20 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.46.0] — 2026-08-12
+
+### Added
+- **Select several rooms at once.** Shift/Ctrl-click room edges to build a
+  selection (once one is picked, plain clicks keep adding). Selected rooms are
+  outlined boldly and a bar appears with the actions that apply to all of them.
+- **Mark rooms out of scope in bulk**, from that bar or with the <kbd>O</kbd>
+  shortcut — which also works on a single highlighted room, and toggles back
+  in scope. Each room''s own colour is remembered and restored.
+- **Recolour several rooms at once** from the same bar. Recolouring a room
+  that is currently out of scope stores the colour for when it returns, so the
+  out-of-scope convention is never broken by accident.
+- Tapping the plan or pressing <kbd>Esc</kbd> clears the selection.
+
 ## [1.45.0] — 2026-08-12
 
 ### Added
@@ -74,6 +88,20 @@ follows [Semantic Versioning](https://semver.org).
   clean blocks unless an angle was clearly intended.
 - **The guide has room to breathe** — more padding throughout, wider steps
   with clearer numbering, and noticeably more space between sections.
+
+## [1.46.0] — 2026-08-12
+
+### Added
+- **Select several rooms at once.** Shift/Ctrl-click room edges to build a
+  selection (once one is picked, plain clicks keep adding). Selected rooms are
+  outlined boldly and a bar appears with the actions that apply to all of them.
+- **Mark rooms out of scope in bulk**, from that bar or with the <kbd>O</kbd>
+  shortcut — which also works on a single highlighted room, and toggles back
+  in scope. Each room''s own colour is remembered and restored.
+- **Recolour several rooms at once** from the same bar. Recolouring a room
+  that is currently out of scope stores the colour for when it returns, so the
+  out-of-scope convention is never broken by accident.
+- Tapping the plan or pressing <kbd>Esc</kbd> clears the selection.
 
 ## [1.45.0] — 2026-08-12
 
@@ -585,6 +613,20 @@ follows [Semantic Versioning](https://semver.org).
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
 
+## [1.46.0] — 2026-08-12
+
+### Added
+- **Select several rooms at once.** Shift/Ctrl-click room edges to build a
+  selection (once one is picked, plain clicks keep adding). Selected rooms are
+  outlined boldly and a bar appears with the actions that apply to all of them.
+- **Mark rooms out of scope in bulk**, from that bar or with the <kbd>O</kbd>
+  shortcut — which also works on a single highlighted room, and toggles back
+  in scope. Each room''s own colour is remembered and restored.
+- **Recolour several rooms at once** from the same bar. Recolouring a room
+  that is currently out of scope stores the colour for when it returns, so the
+  out-of-scope convention is never broken by accident.
+- Tapping the plan or pressing <kbd>Esc</kbd> clears the selection.
+
 ## [1.45.0] — 2026-08-12
 
 ### Added
@@ -655,6 +697,20 @@ follows [Semantic Versioning](https://semver.org).
   clean blocks unless an angle was clearly intended.
 - **The guide has room to breathe** — more padding throughout, wider steps
   with clearer numbering, and noticeably more space between sections.
+
+## [1.46.0] — 2026-08-12
+
+### Added
+- **Select several rooms at once.** Shift/Ctrl-click room edges to build a
+  selection (once one is picked, plain clicks keep adding). Selected rooms are
+  outlined boldly and a bar appears with the actions that apply to all of them.
+- **Mark rooms out of scope in bulk**, from that bar or with the <kbd>O</kbd>
+  shortcut — which also works on a single highlighted room, and toggles back
+  in scope. Each room''s own colour is remembered and restored.
+- **Recolour several rooms at once** from the same bar. Recolouring a room
+  that is currently out of scope stores the colour for when it returns, so the
+  out-of-scope convention is never broken by accident.
+- Tapping the plan or pressing <kbd>Esc</kbd> clears the selection.
 
 ## [1.45.0] — 2026-08-12
 
@@ -1601,6 +1657,20 @@ follows [Semantic Versioning](https://semver.org).
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
 
+## [1.46.0] — 2026-08-12
+
+### Added
+- **Select several rooms at once.** Shift/Ctrl-click room edges to build a
+  selection (once one is picked, plain clicks keep adding). Selected rooms are
+  outlined boldly and a bar appears with the actions that apply to all of them.
+- **Mark rooms out of scope in bulk**, from that bar or with the <kbd>O</kbd>
+  shortcut — which also works on a single highlighted room, and toggles back
+  in scope. Each room''s own colour is remembered and restored.
+- **Recolour several rooms at once** from the same bar. Recolouring a room
+  that is currently out of scope stores the colour for when it returns, so the
+  out-of-scope convention is never broken by accident.
+- Tapping the plan or pressing <kbd>Esc</kbd> clears the selection.
+
 ## [1.45.0] — 2026-08-12
 
 ### Added
@@ -1671,6 +1741,20 @@ follows [Semantic Versioning](https://semver.org).
   clean blocks unless an angle was clearly intended.
 - **The guide has room to breathe** — more padding throughout, wider steps
   with clearer numbering, and noticeably more space between sections.
+
+## [1.46.0] — 2026-08-12
+
+### Added
+- **Select several rooms at once.** Shift/Ctrl-click room edges to build a
+  selection (once one is picked, plain clicks keep adding). Selected rooms are
+  outlined boldly and a bar appears with the actions that apply to all of them.
+- **Mark rooms out of scope in bulk**, from that bar or with the <kbd>O</kbd>
+  shortcut — which also works on a single highlighted room, and toggles back
+  in scope. Each room''s own colour is remembered and restored.
+- **Recolour several rooms at once** from the same bar. Recolouring a room
+  that is currently out of scope stores the colour for when it returns, so the
+  out-of-scope convention is never broken by accident.
+- Tapping the plan or pressing <kbd>Esc</kbd> clears the selection.
 
 ## [1.45.0] — 2026-08-12
 
@@ -2182,6 +2266,20 @@ follows [Semantic Versioning](https://semver.org).
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
 
+## [1.46.0] — 2026-08-12
+
+### Added
+- **Select several rooms at once.** Shift/Ctrl-click room edges to build a
+  selection (once one is picked, plain clicks keep adding). Selected rooms are
+  outlined boldly and a bar appears with the actions that apply to all of them.
+- **Mark rooms out of scope in bulk**, from that bar or with the <kbd>O</kbd>
+  shortcut — which also works on a single highlighted room, and toggles back
+  in scope. Each room''s own colour is remembered and restored.
+- **Recolour several rooms at once** from the same bar. Recolouring a room
+  that is currently out of scope stores the colour for when it returns, so the
+  out-of-scope convention is never broken by accident.
+- Tapping the plan or pressing <kbd>Esc</kbd> clears the selection.
+
 ## [1.45.0] — 2026-08-12
 
 ### Added
@@ -2252,6 +2350,20 @@ follows [Semantic Versioning](https://semver.org).
   clean blocks unless an angle was clearly intended.
 - **The guide has room to breathe** — more padding throughout, wider steps
   with clearer numbering, and noticeably more space between sections.
+
+## [1.46.0] — 2026-08-12
+
+### Added
+- **Select several rooms at once.** Shift/Ctrl-click room edges to build a
+  selection (once one is picked, plain clicks keep adding). Selected rooms are
+  outlined boldly and a bar appears with the actions that apply to all of them.
+- **Mark rooms out of scope in bulk**, from that bar or with the <kbd>O</kbd>
+  shortcut — which also works on a single highlighted room, and toggles back
+  in scope. Each room''s own colour is remembered and restored.
+- **Recolour several rooms at once** from the same bar. Recolouring a room
+  that is currently out of scope stores the colour for when it returns, so the
+  out-of-scope convention is never broken by accident.
+- Tapping the plan or pressing <kbd>Esc</kbd> clears the selection.
 
 ## [1.45.0] — 2026-08-12
 

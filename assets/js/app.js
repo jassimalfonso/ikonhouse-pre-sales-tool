@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.45.0';
+const APP_VERSION='1.46.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -699,7 +699,7 @@ $('#floatGrip').addEventListener('pointerdown',e=>{
 });
 
 /* ──────────── Rooms / areas (polygon engine) ──────────── */
-let roomMode=false, selRoom=null, hlRoom=null;
+let roomMode=false, selRoom=null, hlRoom=null, selRooms=new Set();
 /* rooms link only when nodes truly coincide (snapping produces exact equality) */
 const NODE_LINK_EPS=0.0009;
 const ROOM_COLORS=['#AE8B5C','#2E5CFF','#16B364','#F59E0B','#E5484D','#7C4DFF','#0FA3A3','#64748B'];
@@ -819,7 +819,7 @@ function renderRooms(){
   if(roomMode)svg+=`<rect class="rbg" x="0" y="0" width="${f.w}" height="${f.h}"/>`;
   f.rooms.forEach(r=>{
     const d=r.pts.map(p=>`${p.x*f.w},${p.y*f.h}`).join(' ');
-    const cls=['rpoly',r.id===selRoom?'sel':'',r.id===hlRoom?'hl':'',r.scope==='out'?'out':''].join(' ');
+    const cls=['rpoly',r.id===selRoom?'sel':'',r.id===hlRoom?'hl':'',selRooms.has(r.id)?'multi':'',r.scope==='out'?'out':''].join(' ');
     svg+=`<g class="${cls}" data-room="${r.id}" style="color:${r.color}">`;
     if(r.scope==='out')svg+=`<polygon class="hatchfill" points="${d}"/>`;
     svg+=`<polygon class="rfill" points="${d}"/>`;
@@ -897,6 +897,11 @@ function renderRooms(){
       if(!t.classList||!t.classList.contains('redge'))return;
       const room=f.rooms.find(r=>r.id===t.dataset.room);if(!room)return;
       e.stopPropagation();
+      if(e.shiftKey||e.ctrlKey||e.metaKey||selRooms.size){   /* add to / remove from the set */
+        clearTimeout(edgeTimer);
+        toggleRoomSel(room.id);
+        return;
+      }
       if(e.detail>=2){
         clearTimeout(edgeTimer);
         if(roomMode){selRoom=room.id;renderRooms();}
@@ -911,6 +916,64 @@ function renderRooms(){
       },240);
     });
   }
+}
+/* ── working on several rooms at once ── */
+function toggleRoomSel(id){
+  if(selRooms.has(id))selRooms.delete(id); else selRooms.add(id);
+  if(selRooms.size){ highlightRoom(null); closeRoomPop(); }
+  renderRooms();renderRoomBulk();
+}
+function clearRoomSel(){ selRooms.clear(); renderRooms(); renderRoomBulk(); }
+function selectedRooms(){
+  const f=activeFloor();if(!f)return [];
+  return (f.rooms||[]).filter(r=>selRooms.has(r.id));
+}
+function bulkScope(makeOut){
+  const f=activeFloor();if(!f)return;
+  let rooms=selectedRooms();
+  if(!rooms.length)rooms=(f.rooms||[]).filter(r=>r.id===(selRoom||hlRoom));
+  if(!rooms.length){toast('Select a room first — Shift-click to pick several.');return;}
+  const out=makeOut===undefined?!rooms.every(r=>r.scope==='out'):makeOut;
+  rooms.forEach(r=>{
+    pushUndo(roomSnapshot(f,r));
+    const wasOut=r.scope==='out';
+    r.scope=out?'out':'in';
+    if(out){ if(!wasOut){ r.colorIn=r.color; r.color=outScopeColor(); } }
+    else if(wasOut){ r.color=r.colorIn||ROOM_COLORS[0]; delete r.colorIn; }
+  });
+  renderRooms();renderBoq();renderRoomBulk();
+  toast(`${rooms.length} room${rooms.length>1?'s':''} ${out?'marked out of scope':'back in scope'}.`);
+}
+function bulkColor(c){
+  const f=activeFloor();if(!f)return;
+  const rooms=selectedRooms();
+  if(!rooms.length)return;
+  rooms.forEach(r=>{
+    pushUndo(roomSnapshot(f,r));
+    if(r.scope==='out')r.colorIn=c;    /* keeps the scope colour, restores this later */
+    else r.color=c;
+  });
+  renderRooms();renderRoomBulk();
+  toast(`${rooms.length} room${rooms.length>1?'s':''} recoloured.`);
+}
+function renderRoomBulk(){
+  const bar=$('#roomBulk');if(!bar)return;
+  const rooms=selectedRooms();
+  bar.classList.toggle('show',rooms.length>0);
+  if(!rooms.length){bar.innerHTML='';return;}
+  const allOut=rooms.every(r=>r.scope==='out');
+  bar.innerHTML=`<span class="rbk-count">${rooms.length} room${rooms.length>1?'s':''} selected</span>
+    <span class="rbk-colors"></span>
+    <button class="rbk-act" data-act="scope">${allOut?'Back in scope':'Out of scope'} <kbd>O</kbd></button>
+    <button class="rbk-act ghost" data-act="clear">Done</button>`;
+  const cw=bar.querySelector('.rbk-colors');
+  ROOM_COLORS.forEach(c=>{
+    const b=el('button','rbk-c');b.style.background=c;b.title='Set colour';
+    b.addEventListener('click',()=>bulkColor(c));
+    cw.appendChild(b);
+  });
+  bar.querySelector('[data-act="scope"]').addEventListener('click',()=>bulkScope(!allOut));
+  bar.querySelector('[data-act="clear"]').addEventListener('click',clearRoomSel);
 }
 /* highlight a room: emphasize its ikons, dim the rest, summarize contents */
 function highlightRoom(id){
@@ -1939,6 +2002,7 @@ $('#planClick').addEventListener('contextmenu',e=>{ if(armedItem){e.preventDefau
 $('#planClick').addEventListener('click',e=>{
   if(panMoved||roomMode)return;
   const f=activeFloor(); if(!f||cropMode)return;
+  if(selRooms.size){ clearRoomSel(); return; }
   if(!armedItem&&hlRoom){ highlightRoom(null); closeRoomPop(); return; }   /* tap the plan to let a room go */
   if(!armedItem&&selSet.size){ multiSelect=false; setSelSet([]); renderMarkers(); return; }
   if(!armedItem){setSelMarker(null);renderMarkers();return;}
@@ -3574,6 +3638,7 @@ document.addEventListener('keydown',e=>{
     const k=e.key.toLowerCase();
     if(k==='r'){e.preventDefault();setRoomMode(!roomMode);return;}
     if(k==='k'){e.preventDefault();setSkribbleMode(!skribbleMode);return;}
+    if(k==='o'){e.preventDefault();bulkScope();return;}
     if(k==='c'){e.preventDefault();cropMode?cancelCrop():enterCrop();return;}
     if(k==='g'){e.preventDefault();setPlanGray(!state.planGray);return;}
     if(k==='n'){e.preventDefault();setAutoNum(!state.autoNumber);return;}

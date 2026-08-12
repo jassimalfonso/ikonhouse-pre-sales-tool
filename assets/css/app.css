@@ -1150,3 +1150,27 @@ body.skribbling .room-layer *{pointer-events:none !important}
   .os-c{width:21px;height:21px}
   .os-custom{width:23px;height:23px}
 }
+
+/* rooms picked for a bulk change */
+.rpoly.multi .rfill{stroke-dasharray:none;stroke-width:3;stroke-opacity:1;fill-opacity:calc(.22 * var(--room-a,1))}
+/* bulk action bar */
+.room-bulk{
+  position:fixed;left:50%;bottom:18px;transform:translate(-50%,150%);
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center;
+  padding:11px 16px;border-radius:14px;z-index:121;
+  background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow);
+  transition:transform .2s cubic-bezier(.2,.8,.3,1);max-width:calc(100vw - 24px);
+}
+.room-bulk.show{transform:translate(-50%,0)}
+.rbk-count{font-family:var(--font-m);font-size:11px;color:var(--dim);white-space:nowrap}
+.rbk-colors{display:flex;gap:5px}
+.rbk-c{width:19px;height:19px;border-radius:50%;flex:none;transition:transform .1s ease}
+.rbk-c:hover{transform:scale(1.14)}
+.rbk-act{
+  padding:7px 13px;border-radius:9px;font-size:12px;font-weight:600;
+  background:var(--hl);color:#fff;white-space:nowrap;display:flex;align-items:center;gap:7px;
+}
+.rbk-act kbd{background:rgba(255,255,255,.22);border:none;color:#fff;font-size:9.5px;padding:1px 4px;border-radius:3px}
+.rbk-act.ghost{background:transparent;color:var(--dim);border:1px solid var(--line-2);font-weight:500}
+.rbk-act.ghost:hover{color:var(--txt)}
+@media (max-width:620px){ .rbk-count{display:none} .room-bulk{gap:10px;padding:10px 13px} }

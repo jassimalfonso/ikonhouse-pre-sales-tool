@@ -4,6 +4,15 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.45.0] — 2026-08-12
+
+### Added
+- **The out-of-scope colour is now yours to choose** — a swatch row (plus a
+  full colour picker) beside the plan sliders, under **OUT**. Changing it
+  restyles every out-of-scope room across all floors at once, leaves in-scope
+  rooms alone, and keeps each room''s original colour remembered for when it
+  comes back into scope. Saved with the project; red remains the default.
+
 ## [1.44.0] — 2026-08-12
 
 ### Changed
@@ -65,6 +74,15 @@ follows [Semantic Versioning](https://semver.org).
   clean blocks unless an angle was clearly intended.
 - **The guide has room to breathe** — more padding throughout, wider steps
   with clearer numbering, and noticeably more space between sections.
+
+## [1.45.0] — 2026-08-12
+
+### Added
+- **The out-of-scope colour is now yours to choose** — a swatch row (plus a
+  full colour picker) beside the plan sliders, under **OUT**. Changing it
+  restyles every out-of-scope room across all floors at once, leaves in-scope
+  rooms alone, and keeps each room''s original colour remembered for when it
+  comes back into scope. Saved with the project; red remains the default.
 
 ## [1.44.0] — 2026-08-12
 
@@ -567,6 +585,15 @@ follows [Semantic Versioning](https://semver.org).
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
 
+## [1.45.0] — 2026-08-12
+
+### Added
+- **The out-of-scope colour is now yours to choose** — a swatch row (plus a
+  full colour picker) beside the plan sliders, under **OUT**. Changing it
+  restyles every out-of-scope room across all floors at once, leaves in-scope
+  rooms alone, and keeps each room''s original colour remembered for when it
+  comes back into scope. Saved with the project; red remains the default.
+
 ## [1.44.0] — 2026-08-12
 
 ### Changed
@@ -628,6 +655,15 @@ follows [Semantic Versioning](https://semver.org).
   clean blocks unless an angle was clearly intended.
 - **The guide has room to breathe** — more padding throughout, wider steps
   with clearer numbering, and noticeably more space between sections.
+
+## [1.45.0] — 2026-08-12
+
+### Added
+- **The out-of-scope colour is now yours to choose** — a swatch row (plus a
+  full colour picker) beside the plan sliders, under **OUT**. Changing it
+  restyles every out-of-scope room across all floors at once, leaves in-scope
+  rooms alone, and keeps each room''s original colour remembered for when it
+  comes back into scope. Saved with the project; red remains the default.
 
 ## [1.44.0] — 2026-08-12
 
@@ -1565,6 +1601,15 @@ follows [Semantic Versioning](https://semver.org).
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
 
+## [1.45.0] — 2026-08-12
+
+### Added
+- **The out-of-scope colour is now yours to choose** — a swatch row (plus a
+  full colour picker) beside the plan sliders, under **OUT**. Changing it
+  restyles every out-of-scope room across all floors at once, leaves in-scope
+  rooms alone, and keeps each room''s original colour remembered for when it
+  comes back into scope. Saved with the project; red remains the default.
+
 ## [1.44.0] — 2026-08-12
 
 ### Changed
@@ -1626,6 +1671,15 @@ follows [Semantic Versioning](https://semver.org).
   clean blocks unless an angle was clearly intended.
 - **The guide has room to breathe** — more padding throughout, wider steps
   with clearer numbering, and noticeably more space between sections.
+
+## [1.45.0] — 2026-08-12
+
+### Added
+- **The out-of-scope colour is now yours to choose** — a swatch row (plus a
+  full colour picker) beside the plan sliders, under **OUT**. Changing it
+  restyles every out-of-scope room across all floors at once, leaves in-scope
+  rooms alone, and keeps each room''s original colour remembered for when it
+  comes back into scope. Saved with the project; red remains the default.
 
 ## [1.44.0] — 2026-08-12
 
@@ -2128,6 +2182,15 @@ follows [Semantic Versioning](https://semver.org).
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
 
+## [1.45.0] — 2026-08-12
+
+### Added
+- **The out-of-scope colour is now yours to choose** — a swatch row (plus a
+  full colour picker) beside the plan sliders, under **OUT**. Changing it
+  restyles every out-of-scope room across all floors at once, leaves in-scope
+  rooms alone, and keeps each room''s original colour remembered for when it
+  comes back into scope. Saved with the project; red remains the default.
+
 ## [1.44.0] — 2026-08-12
 
 ### Changed
@@ -2189,6 +2252,15 @@ follows [Semantic Versioning](https://semver.org).
   clean blocks unless an angle was clearly intended.
 - **The guide has room to breathe** — more padding throughout, wider steps
   with clearer numbering, and noticeably more space between sections.
+
+## [1.45.0] — 2026-08-12
+
+### Added
+- **The out-of-scope colour is now yours to choose** — a swatch row (plus a
+  full colour picker) beside the plan sliders, under **OUT**. Changing it
+  restyles every out-of-scope room across all floors at once, leaves in-scope
+  rooms alone, and keeps each room''s original colour remembered for when it
+  comes back into scope. Saved with the project; red remains the default.
 
 ## [1.44.0] — 2026-08-12
 

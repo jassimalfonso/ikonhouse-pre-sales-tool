@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.44.0';
+const APP_VERSION='1.45.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -86,7 +86,7 @@ let state = {
   project:'Untitled Project', client:'', location:'', reference:'', preparedBy:'',
   theme:SYS_THEME(), brandLogo:null, libDock:'left', lastDock:'left', libHidden:false, libFloat:null,
   libSize:{w:324,h:60,fw:288,fh:520}, catOrder:[],
-  items:[], floors:[], activeFloor:null, pinScale:1, pinOpacity:1, planGray:false, brushSize:46, roomOpacity:1, seqScale:1, skribbleColor:null
+  items:[], floors:[], activeFloor:null, pinScale:1, pinOpacity:1, planGray:false, brushSize:46, roomOpacity:1, seqScale:1, skribbleColor:null, outScopeColor:'#E5484D'
 };
 let armedItem=null, selMarker=null, selSet=new Set(), multiSelect=false, zoom=1, undoStack=[], redoStack=[], ctxTarget=null, draggingCat=null;
 
@@ -703,7 +703,8 @@ let roomMode=false, selRoom=null, hlRoom=null;
 /* rooms link only when nodes truly coincide (snapping produces exact equality) */
 const NODE_LINK_EPS=0.0009;
 const ROOM_COLORS=['#AE8B5C','#2E5CFF','#16B364','#F59E0B','#E5484D','#7C4DFF','#0FA3A3','#64748B'];
-const OUT_SCOPE_COLOR='#E5484D';   /* out-of-scope rooms read red — unmistakable on the plan */
+const OUT_SCOPE_DEFAULT='#E5484D';   /* red by default — unmistakable on the plan */
+const outScopeColor=()=>state.outScopeColor||OUT_SCOPE_DEFAULT;
 /* migrate legacy {x,y,w,h} rectangles to point lists; ensure color/scope */
 function migrateRoom(r){
   if(!r.pts){ r.pts=[{x:r.x,y:r.y},{x:r.x+r.w,y:r.y},{x:r.x+r.w,y:r.y+r.h},{x:r.x,y:r.y+r.h}]; delete r.x;delete r.y;delete r.w;delete r.h; }
@@ -1882,7 +1883,7 @@ function openRoomPop(r,anchor){
     changed=true;
     const wasOut=r.scope==='out';
     r.scope=e.target.checked?'out':'in';
-    if(r.scope==='out'){ if(!wasOut){ r.colorIn=r.color; r.color=OUT_SCOPE_COLOR; } }
+    if(r.scope==='out'){ if(!wasOut){ r.colorIn=r.color; r.color=outScopeColor(); } }
     else if(wasOut){ r.color=r.colorIn||ROOM_COLORS[0]; delete r.colorIn; }
     renderRooms();renderBoq();openRoomPop(r,anchor);
   });
@@ -2295,6 +2296,25 @@ stage.addEventListener('drop',e=>{[...(e.dataTransfer?.files||[])].forEach(route
    window (left, right, wherever). A soft clamp keeps ≥60px visible so the
    plan can never be lost off-screen. */
 let panX=0, panY=0, panMoved=false, spaceHeld=false;
+function setOutScopeColor(c){
+  state.outScopeColor=c;
+  state.floors.forEach(f=>(f.rooms||[]).forEach(r=>{ if(r.scope==='out')r.color=c; }));
+  renderOutScopeSwatches();renderRooms();renderBoq();
+}
+function renderOutScopeSwatches(){
+  const box=$('#outScopeRow');if(!box)return;
+  const cur=outScopeColor();
+  box.innerHTML='';
+  ['#E5484D','#F59E0B','#8A8F98','#7C4DFF','#0FA3A3'].forEach(c=>{
+    const b=el('button','os-c'+(c.toLowerCase()===cur.toLowerCase()?' on':''));
+    b.style.background=c;b.title='Out-of-scope colour';
+    b.addEventListener('click',()=>setOutScopeColor(c));
+    box.appendChild(b);
+  });
+  const cust=el('input');cust.type='color';cust.className='os-custom';cust.value=cur;cust.title='Custom colour';
+  cust.addEventListener('input',e=>setOutScopeColor(e.target.value));   /* never re-render mid-pick */
+  box.appendChild(cust);
+}
 function applyRoomLook(){
   const h=$('#planHolder');
   if(h){
@@ -2302,6 +2322,7 @@ function applyRoomLook(){
     h.style.setProperty('--seq-k',state.seqScale??1);
   }
   const r=$('#roomOpacity'); if(r)r.value=Math.round((state.roomOpacity??1)*100);
+  renderOutScopeSwatches();
   const q=$('#seqSize');     if(q)q.value=Math.round((state.seqScale??1)*100);
 }
 function applyPlanGray(){
@@ -3577,7 +3598,7 @@ function loadProjectText(txt){
     const s=JSON.parse(txt);
     if(!s.items||!s.floors)throw 0;
     s.floors&&s.floors.forEach(f=>{f.rooms=f.rooms||[];});
-    state=Object.assign({version:APP_VERSION,theme:SYS_THEME(),brandLogo:null,pinScale:1,pinOpacity:1,planGray:false,brushSize:46,roomOpacity:1,seqScale:1,cropRatio:null,skribbleColor:null,client:'',location:'',reference:'',preparedBy:'',libDock:'left',lastDock:'left',libHidden:false,libFloat:null,libSize:{w:324,h:60,fw:288,fh:520},catOrder:[]},s);
+    state=Object.assign({version:APP_VERSION,theme:SYS_THEME(),brandLogo:null,pinScale:1,pinOpacity:1,planGray:false,brushSize:46,roomOpacity:1,seqScale:1,cropRatio:null,skribbleColor:null,outScopeColor:OUT_SCOPE_DEFAULT,client:'',location:'',reference:'',preparedBy:'',libDock:'left',lastDock:'left',libHidden:false,libFloat:null,libSize:{w:324,h:60,fw:288,fh:520},catOrder:[]},s);
     projHandle=null;                            /* re-linked by the picker path */
     armedItem=null;setSelMarker(null);undoStack=[];redoStack=[];
     if(cropMode)cancelCrop();

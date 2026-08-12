@@ -1132,3 +1132,21 @@ body.skribbling .room-layer *{pointer-events:none !important}
 }
 .tool-exit.show{transform:translate(-50%,0);opacity:1;pointer-events:auto}
 @media (pointer:fine){ .tool-exit{font-size:12px;padding:8px 15px} }
+
+/* out-of-scope colour chooser */
+.os-row{display:flex;align-items:center;gap:5px}
+.os-c{width:17px;height:17px;border-radius:50%;border:2px solid transparent;flex:none;transition:transform .1s ease}
+.os-c:hover{transform:scale(1.14)}
+.os-c.on{border-color:var(--txt)}
+.os-custom{
+  width:19px;height:19px;padding:0;border:1px solid var(--line-2);border-radius:50%;
+  background:none;cursor:pointer;flex:none;overflow:hidden;
+}
+.os-custom::-webkit-color-swatch-wrapper{padding:0}
+.os-custom::-webkit-color-swatch{border:none;border-radius:50%}
+.outscope-grp{gap:8px}
+@media (max-width:1160px), (orientation:portrait) and (max-width:1280px){
+  .display-pop .outscope-grp{justify-content:space-between}
+  .os-c{width:21px;height:21px}
+  .os-custom{width:23px;height:23px}
+}

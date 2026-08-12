@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.43.0';
+const APP_VERSION='1.44.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -1938,6 +1938,7 @@ $('#planClick').addEventListener('contextmenu',e=>{ if(armedItem){e.preventDefau
 $('#planClick').addEventListener('click',e=>{
   if(panMoved||roomMode)return;
   const f=activeFloor(); if(!f||cropMode)return;
+  if(!armedItem&&hlRoom){ highlightRoom(null); closeRoomPop(); return; }   /* tap the plan to let a room go */
   if(!armedItem&&selSet.size){ multiSelect=false; setSelSet([]); renderMarkers(); return; }
   if(!armedItem){setSelMarker(null);renderMarkers();return;}
   const r=planRect();
@@ -3551,8 +3552,8 @@ document.addEventListener('keydown',e=>{
   if(!e.ctrlKey&&!e.metaKey&&!e.altKey&&!e.target.matches('input,select,textarea')){
     const k=e.key.toLowerCase();
     if(k==='r'){e.preventDefault();setRoomMode(!roomMode);return;}
-    if(k==='b'){e.preventDefault();setSkribbleMode(!skribbleMode);return;}
-    if(k==='c'&&!cropMode){e.preventDefault();enterCrop();return;}
+    if(k==='k'){e.preventDefault();setSkribbleMode(!skribbleMode);return;}
+    if(k==='c'){e.preventDefault();cropMode?cancelCrop():enterCrop();return;}
     if(k==='g'){e.preventDefault();setPlanGray(!state.planGray);return;}
     if(k==='n'){e.preventDefault();setAutoNum(!state.autoNumber);return;}
     if(k==='l'){e.preventDefault();$('#btnLib').click();return;}

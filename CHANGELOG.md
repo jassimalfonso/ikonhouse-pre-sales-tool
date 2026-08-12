@@ -4,6 +4,19 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.44.0] — 2026-08-12
+
+### Changed
+- **Skribble''s shortcut is now <kbd>K</kbd>**, and every tool key toggles —
+  press it again to leave the tool. <kbd>C</kbd> now closes the crop frame as
+  well as opening it.
+
+### Added
+- **Tap the plan to let a room go.** After resizing or highlighting a room, a
+  plain tap anywhere on the plan clears the highlight and closes its editor —
+  previously only a tap outside the plan did. Panning and dragging are
+  unaffected, since only a tap that did not move counts.
+
 ## [1.43.0] — 2026-08-12
 
 ### Fixed
@@ -52,6 +65,19 @@ follows [Semantic Versioning](https://semver.org).
   clean blocks unless an angle was clearly intended.
 - **The guide has room to breathe** — more padding throughout, wider steps
   with clearer numbering, and noticeably more space between sections.
+
+## [1.44.0] — 2026-08-12
+
+### Changed
+- **Skribble''s shortcut is now <kbd>K</kbd>**, and every tool key toggles —
+  press it again to leave the tool. <kbd>C</kbd> now closes the crop frame as
+  well as opening it.
+
+### Added
+- **Tap the plan to let a room go.** After resizing or highlighting a room, a
+  plain tap anywhere on the plan clears the highlight and closes its editor —
+  previously only a tap outside the plan did. Panning and dragging are
+  unaffected, since only a tap that did not move counts.
 
 ## [1.43.0] — 2026-08-12
 
@@ -541,6 +567,19 @@ follows [Semantic Versioning](https://semver.org).
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
 
+## [1.44.0] — 2026-08-12
+
+### Changed
+- **Skribble''s shortcut is now <kbd>K</kbd>**, and every tool key toggles —
+  press it again to leave the tool. <kbd>C</kbd> now closes the crop frame as
+  well as opening it.
+
+### Added
+- **Tap the plan to let a room go.** After resizing or highlighting a room, a
+  plain tap anywhere on the plan clears the highlight and closes its editor —
+  previously only a tap outside the plan did. Panning and dragging are
+  unaffected, since only a tap that did not move counts.
+
 ## [1.43.0] — 2026-08-12
 
 ### Fixed
@@ -589,6 +628,19 @@ follows [Semantic Versioning](https://semver.org).
   clean blocks unless an angle was clearly intended.
 - **The guide has room to breathe** — more padding throughout, wider steps
   with clearer numbering, and noticeably more space between sections.
+
+## [1.44.0] — 2026-08-12
+
+### Changed
+- **Skribble''s shortcut is now <kbd>K</kbd>**, and every tool key toggles —
+  press it again to leave the tool. <kbd>C</kbd> now closes the crop frame as
+  well as opening it.
+
+### Added
+- **Tap the plan to let a room go.** After resizing or highlighting a room, a
+  plain tap anywhere on the plan clears the highlight and closes its editor —
+  previously only a tap outside the plan did. Panning and dragging are
+  unaffected, since only a tap that did not move counts.
 
 ## [1.43.0] — 2026-08-12
 
@@ -1513,6 +1565,19 @@ follows [Semantic Versioning](https://semver.org).
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
 
+## [1.44.0] — 2026-08-12
+
+### Changed
+- **Skribble''s shortcut is now <kbd>K</kbd>**, and every tool key toggles —
+  press it again to leave the tool. <kbd>C</kbd> now closes the crop frame as
+  well as opening it.
+
+### Added
+- **Tap the plan to let a room go.** After resizing or highlighting a room, a
+  plain tap anywhere on the plan clears the highlight and closes its editor —
+  previously only a tap outside the plan did. Panning and dragging are
+  unaffected, since only a tap that did not move counts.
+
 ## [1.43.0] — 2026-08-12
 
 ### Fixed
@@ -1561,6 +1626,19 @@ follows [Semantic Versioning](https://semver.org).
   clean blocks unless an angle was clearly intended.
 - **The guide has room to breathe** — more padding throughout, wider steps
   with clearer numbering, and noticeably more space between sections.
+
+## [1.44.0] — 2026-08-12
+
+### Changed
+- **Skribble''s shortcut is now <kbd>K</kbd>**, and every tool key toggles —
+  press it again to leave the tool. <kbd>C</kbd> now closes the crop frame as
+  well as opening it.
+
+### Added
+- **Tap the plan to let a room go.** After resizing or highlighting a room, a
+  plain tap anywhere on the plan clears the highlight and closes its editor —
+  previously only a tap outside the plan did. Panning and dragging are
+  unaffected, since only a tap that did not move counts.
 
 ## [1.43.0] — 2026-08-12
 
@@ -2050,6 +2128,19 @@ follows [Semantic Versioning](https://semver.org).
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
 
+## [1.44.0] — 2026-08-12
+
+### Changed
+- **Skribble''s shortcut is now <kbd>K</kbd>**, and every tool key toggles —
+  press it again to leave the tool. <kbd>C</kbd> now closes the crop frame as
+  well as opening it.
+
+### Added
+- **Tap the plan to let a room go.** After resizing or highlighting a room, a
+  plain tap anywhere on the plan clears the highlight and closes its editor —
+  previously only a tap outside the plan did. Panning and dragging are
+  unaffected, since only a tap that did not move counts.
+
 ## [1.43.0] — 2026-08-12
 
 ### Fixed
@@ -2098,6 +2189,19 @@ follows [Semantic Versioning](https://semver.org).
   clean blocks unless an angle was clearly intended.
 - **The guide has room to breathe** — more padding throughout, wider steps
   with clearer numbering, and noticeably more space between sections.
+
+## [1.44.0] — 2026-08-12
+
+### Changed
+- **Skribble''s shortcut is now <kbd>K</kbd>**, and every tool key toggles —
+  press it again to leave the tool. <kbd>C</kbd> now closes the crop frame as
+  well as opening it.
+
+### Added
+- **Tap the plan to let a room go.** After resizing or highlighting a room, a
+  plain tap anywhere on the plan clears the highlight and closes its editor —
+  previously only a tap outside the plan did. Panning and dragging are
+  unaffected, since only a tap that did not move counts.
 
 ## [1.43.0] — 2026-08-12
 

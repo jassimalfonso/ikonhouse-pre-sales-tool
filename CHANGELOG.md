@@ -4,6 +4,26 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.40.0] — 2026-08-11
+
+### Fixed
+- **A selection box no longer appears while panning on touch.** Gating it
+  behind a hold was not enough — a slow pan could out-wait the timer. Marquee
+  select is now mouse-only. On touch, **hold an ikon** to start selecting and
+  then tap others to add or remove; tap the plan when done.
+
+### Changed
+- **Skribble strongly prefers straight walls.** Each edge is now judged by
+  length as well as angle: short edges are treated as hand-wobble and squared
+  up readily, while a long edge is only straightened if it was close to
+  square already. Small diagonal chamfers left at corners are absorbed into
+  the walls either side.
+  - Wobbly rectangles come out as clean four-corner boxes, L-shapes keep
+    exactly their notch, and gentle drift (under about 20°) is treated as an
+    unsteady hand rather than intent.
+  - A room genuinely brushed at an angle — roughly 35° or steeper — keeps its
+    diagonal.
+
 ## [1.39.0] — 2026-08-11
 
 ### Added
@@ -418,6 +438,26 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.40.0] — 2026-08-11
+
+### Fixed
+- **A selection box no longer appears while panning on touch.** Gating it
+  behind a hold was not enough — a slow pan could out-wait the timer. Marquee
+  select is now mouse-only. On touch, **hold an ikon** to start selecting and
+  then tap others to add or remove; tap the plan when done.
+
+### Changed
+- **Skribble strongly prefers straight walls.** Each edge is now judged by
+  length as well as angle: short edges are treated as hand-wobble and squared
+  up readily, while a long edge is only straightened if it was close to
+  square already. Small diagonal chamfers left at corners are absorbed into
+  the walls either side.
+  - Wobbly rectangles come out as clean four-corner boxes, L-shapes keep
+    exactly their notch, and gentle drift (under about 20°) is treated as an
+    unsteady hand rather than intent.
+  - A room genuinely brushed at an angle — roughly 35° or steeper — keeps its
+    diagonal.
 
 ## [1.39.0] — 2026-08-11
 
@@ -1269,6 +1309,26 @@ follows [Semantic Versioning](https://semver.org).
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
 
+## [1.40.0] — 2026-08-11
+
+### Fixed
+- **A selection box no longer appears while panning on touch.** Gating it
+  behind a hold was not enough — a slow pan could out-wait the timer. Marquee
+  select is now mouse-only. On touch, **hold an ikon** to start selecting and
+  then tap others to add or remove; tap the plan when done.
+
+### Changed
+- **Skribble strongly prefers straight walls.** Each edge is now judged by
+  length as well as angle: short edges are treated as hand-wobble and squared
+  up readily, while a long edge is only straightened if it was close to
+  square already. Small diagonal chamfers left at corners are absorbed into
+  the walls either side.
+  - Wobbly rectangles come out as clean four-corner boxes, L-shapes keep
+    exactly their notch, and gentle drift (under about 20°) is treated as an
+    unsteady hand rather than intent.
+  - A room genuinely brushed at an angle — roughly 35° or steeper — keeps its
+    diagonal.
+
 ## [1.39.0] — 2026-08-11
 
 ### Added
@@ -1683,6 +1743,26 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.40.0] — 2026-08-11
+
+### Fixed
+- **A selection box no longer appears while panning on touch.** Gating it
+  behind a hold was not enough — a slow pan could out-wait the timer. Marquee
+  select is now mouse-only. On touch, **hold an ikon** to start selecting and
+  then tap others to add or remove; tap the plan when done.
+
+### Changed
+- **Skribble strongly prefers straight walls.** Each edge is now judged by
+  length as well as angle: short edges are treated as hand-wobble and squared
+  up readily, while a long edge is only straightened if it was close to
+  square already. Small diagonal chamfers left at corners are absorbed into
+  the walls either side.
+  - Wobbly rectangles come out as clean four-corner boxes, L-shapes keep
+    exactly their notch, and gentle drift (under about 20°) is treated as an
+    unsteady hand rather than intent.
+  - A room genuinely brushed at an angle — roughly 35° or steeper — keeps its
+    diagonal.
 
 ## [1.39.0] — 2026-08-11
 

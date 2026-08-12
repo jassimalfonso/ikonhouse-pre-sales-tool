@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.39.0';
+const APP_VERSION='1.40.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -88,7 +88,7 @@ let state = {
   libSize:{w:324,h:60,fw:288,fh:520}, catOrder:[],
   items:[], floors:[], activeFloor:null, pinScale:1, pinOpacity:1, planGray:false, brushSize:46, roomOpacity:1, seqScale:1, skribbleColor:null
 };
-let armedItem=null, selMarker=null, selSet=new Set(), zoom=1, undoStack=[], redoStack=[], ctxTarget=null, draggingCat=null;
+let armedItem=null, selMarker=null, selSet=new Set(), multiSelect=false, zoom=1, undoStack=[], redoStack=[], ctxTarget=null, draggingCat=null;
 
 const SEED = [
  ['Ceiling Speaker','Audio','ceiling-speaker','#2E5CFF'],['Invisible Speaker','Audio','speaker','#0E7490'],
@@ -1348,23 +1348,30 @@ function rdp(pts,eps){
   return pts.filter((_,i)=>keep[i]);
 }
 
-/* square up: segments close to horizontal / vertical become exactly so */
-function orthogonalize(pts,tolDeg=26){
+/* Square up, judging each edge by length as well as angle:
+   a short edge is hand-wobble and gets straightened readily, while a long
+   edge is only straightened if it was nearly axis-aligned to begin with —
+   so a room genuinely drawn at an angle keeps its angle. */
+function orthogonalize(pts,shortTolDeg=45,longTolDeg=20){
   const n=pts.length;if(n<3)return pts;
   const p=pts.map(q=>({...q}));
-  const tol=Math.tan(tolDeg*Math.PI/180);
+  let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+  p.forEach(q=>{minX=Math.min(minX,q.x);maxX=Math.max(maxX,q.x);minY=Math.min(minY,q.y);maxY=Math.max(maxY,q.y);});
+  const diag=Math.hypot(maxX-minX,maxY-minY)||1;
+  const major=diag*0.18;                    /* an edge this long is a deliberate wall */
+  const tShort=Math.tan(shortTolDeg*Math.PI/180), tLong=Math.tan(longTolDeg*Math.PI/180);
   for(let pass=0;pass<2;pass++){
     for(let i=0;i<n;i++){
       const a=p[i], b=p[(i+1)%n];
       const dx=Math.abs(b.x-a.x), dy=Math.abs(b.y-a.y);
       if(dx===0&&dy===0)continue;
+      const tol=Math.hypot(dx,dy)>=major?tLong:tShort;
       if(dy<=dx*tol){ const m=(a.y+b.y)/2; a.y=m;b.y=m; }        /* horizontal */
       else if(dx<=dy*tol){ const m=(a.x+b.x)/2; a.x=m;b.x=m; }   /* vertical */
     }
   }
   return p;
 }
-
 /* drop points that collapsed onto each other or sit on a straight run */
 function tidy(pts,minGap){
   const out=[];
@@ -1388,6 +1395,39 @@ function tidy(pts,minGap){
   return res.length>=3?res:out;
 }
 
+/* Collapse short leftover edges. After squaring up, a wobbly stroke leaves
+   little diagonal chamfers at the corners; those are hand movement, not
+   intent, so they are absorbed into the walls either side. A long diagonal
+   is left alone — that is a room someone meant to draw at an angle. */
+function despeckle(pts,minLen){
+  if(pts.length<5)return pts;
+  const AX=0.6;                          /* px tolerance for "already straight" */
+  let out=pts.map(p=>({...p}));
+  for(let guard=0;guard<6;guard++){
+    const n=out.length;
+    if(n<5)break;
+    let worst=-1,worstLen=minLen;
+    for(let i=0;i<n;i++){
+      const a=out[i], b=out[(i+1)%n];
+      const dx=Math.abs(b.x-a.x), dy=Math.abs(b.y-a.y);
+      if(dx<AX||dy<AX)continue;          /* straight edges stay */
+      const L=Math.hypot(dx,dy);
+      if(L<worstLen){worstLen=L;worst=i;}
+    }
+    if(worst<0)break;
+    const i=worst, j=(worst+1)%out.length;
+    const a=out[i], b=out[j];
+    /* merge the two ends onto whichever axis the neighbouring walls prefer */
+    const prev=out[(i-1+out.length)%out.length], next=out[(j+1)%out.length];
+    const prevVertical=Math.abs(prev.x-a.x)<Math.abs(prev.y-a.y);
+    if(prevVertical){ const x=(a.x+b.x)/2; a.x=x;b.x=x; }
+    else            { const y=(a.y+b.y)/2; a.y=y;b.y=y; }
+    const mid={x:(a.x+b.x)/2,y:(a.y+b.y)/2};
+    if(Math.hypot(a.x-b.x,a.y-b.y)<minLen*0.5){ out.splice(j,1); out[i]=mid; }
+    else break;
+  }
+  return out;
+}
 function polyAreaAbs(pts){
   return Math.abs(pts.reduce((a,p,i)=>{const q=pts[(i+1)%pts.length];return a+(p.x*q.y-q.x*p.y);},0))/2;
 }
@@ -1488,7 +1528,11 @@ function skribbleToPolygon(bin,w,h,opts={}){
   /* keep the corner count sane on wobbly strokes */
   let guard=0;
   while(pts.length>28&&guard++<6){ eps*=1.5; pts=rdp(contour,eps); }
-  if(!opts.noOrtho)pts=orthogonalize(pts,opts.tolDeg??26);
+  if(!opts.noOrtho){
+    pts=orthogonalize(pts);
+    pts=despeckle(pts,diag*0.05);          /* absorb chamfers left by a wobbly hand */
+    pts=orthogonalize(pts);
+  }
   pts=tidy(pts,Math.max(2,diag*0.008));
   if(pts.length<3)return null;
   const frac=pts.map(q=>({x:Math.min(1,Math.max(0,q.x/w)),y:Math.min(1,Math.max(0,q.y/h))}));
@@ -1855,7 +1899,7 @@ $('#planClick').addEventListener('contextmenu',e=>{ if(armedItem){e.preventDefau
 $('#planClick').addEventListener('click',e=>{
   if(panMoved||roomMode)return;
   const f=activeFloor(); if(!f||cropMode)return;
-  if(!armedItem&&selSet.size){ setSelSet([]); renderMarkers(); return; }
+  if(!armedItem&&selSet.size){ multiSelect=false; setSelSet([]); renderMarkers(); return; }
   if(!armedItem){setSelMarker(null);renderMarkers();return;}
   const r=planRect();
   const x=(e.clientX-r.left)/r.width, y=(e.clientY-r.top)/r.height;
@@ -1926,9 +1970,24 @@ function renderMarkers(){
     m.addEventListener('pointerdown',ev=>{
       if(armedItem||cropMode||(ev.pointerType==='mouse'&&ev.button!==0))return;
       ev.stopPropagation();ev.preventDefault();
-      if(ev.shiftKey||ev.ctrlKey||ev.metaKey){       /* toggle into the selection */
+      if(ev.shiftKey||ev.ctrlKey||ev.metaKey||multiSelect){   /* toggle into the selection */
         const ids=new Set(selSet); ids.has(p.id)?ids.delete(p.id):ids.add(p.id);
         setSelSet([...ids]); renderMarkers(); return;
+      }
+      if(ev.pointerType==='touch'){          /* hold an ikon to start picking several */
+        const sx=ev.clientX, sy=ev.clientY, pid=ev.pointerId;
+        const t=setTimeout(()=>{
+          multiSelect=true;
+          const ids=new Set(selSet); ids.add(p.id); setSelSet([...ids]);
+          if(navigator.vibrate)navigator.vibrate(12);
+          renderMarkers();
+          toast('Selecting — tap ikons to add or remove, tap the plan when done.');
+        },420);
+        const clear=e2=>{ if(e2.pointerId!==pid)return;
+          if(e2.type==='pointermove'&&Math.hypot(e2.clientX-sx,e2.clientY-sy)<7)return;
+          clearTimeout(t);
+          document.removeEventListener('pointermove',clear);document.removeEventListener('pointerup',clear);document.removeEventListener('pointercancel',clear); };
+        document.addEventListener('pointermove',clear);document.addEventListener('pointerup',clear);document.addEventListener('pointercancel',clear);
       }
       if(!selSet.has(p.id)) setSelMarker(p.id);       /* fresh single selection */
       startDrag(p,m,ev);
@@ -2287,14 +2346,10 @@ stage.addEventListener('pointerdown',e=>{
     const sx=e.clientX, sy=e.clientY, id=e.pointerId; let box=null;
     /* On touch a drag means pan, so selecting has to be asked for: hold still
        for a moment first, then drag to box-select. With a mouse it is immediate. */
-    let armed=e.pointerType!=='touch', holdT=null;
-    if(!armed){
-      holdT=setTimeout(()=>{
-        armed=true; marqueeActive=true;
-        if(navigator.vibrate)navigator.vibrate(10);
-        toast('Select ikons — drag a box around them.');
-      },420);
-    }
+    if(e.pointerType==='touch')return;      /* touch: dragging is always a pan.
+                                              Multi-select there = hold an ikon,
+                                              then tap others to add or remove. */
+    let armed=true, holdT=null;
     const mv=ev=>{
       if(ev.pointerId!==id)return;
       if(pinchActive){ if(box)box.remove(); box=null; clearTimeout(holdT); marqueeActive=false;

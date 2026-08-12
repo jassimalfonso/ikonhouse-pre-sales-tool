@@ -4,6 +4,40 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.41.0] — 2026-08-11
+
+### Fixed
+- **The How-to-use guide stopped appearing at startup.** It was marked as seen
+  permanently after the first dismissal; it now shows once **per release**, so
+  each update surfaces it again. The **?** button opens it any time.
+
+### Changed
+- **Skribble prefers straight walls more strongly again.** Only a decisively
+  diagonal wall — roughly 32° to 58° off square — keeps its angle; everything
+  gentler, and everything close to vertical, is squared up. Rooms come out as
+  clean blocks unless an angle was clearly intended.
+- **The guide has room to breathe** — more padding throughout, wider steps
+  with clearer numbering, and noticeably more space between sections.
+
+## [1.41.0] — 2026-08-11
+
+### Fixed
+- **The "How to use" guide appears on startup again**, and now keeps doing so
+  until you tick **"Don't show this on startup"** in its footer — previously
+  it silenced itself after being closed once, so it vanished for good.
+- **Exports no longer freeze the window.** Each sheet was encoded with a
+  blocking call, so a multi-floor A3 set locked the interface for the whole
+  render with nothing on screen. Encoding is now asynchronous, the window
+  stays responsive, and progress is reported page by page.
+
+### Changed
+- **The guide has proper margins** — more padding, roomier steps and wider
+  spacing between sections.
+- **Skribble is boxier still.** Only a dominant edge at roughly 40° or more
+  keeps its angle; anything gentler is treated as an unsteady hand and
+  squared up, so rooms come out like building blocks unless an angle was
+  clearly intended.
+
 ## [1.40.0] — 2026-08-11
 
 ### Fixed
@@ -438,6 +472,40 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.41.0] — 2026-08-11
+
+### Fixed
+- **The How-to-use guide stopped appearing at startup.** It was marked as seen
+  permanently after the first dismissal; it now shows once **per release**, so
+  each update surfaces it again. The **?** button opens it any time.
+
+### Changed
+- **Skribble prefers straight walls more strongly again.** Only a decisively
+  diagonal wall — roughly 32° to 58° off square — keeps its angle; everything
+  gentler, and everything close to vertical, is squared up. Rooms come out as
+  clean blocks unless an angle was clearly intended.
+- **The guide has room to breathe** — more padding throughout, wider steps
+  with clearer numbering, and noticeably more space between sections.
+
+## [1.41.0] — 2026-08-11
+
+### Fixed
+- **The "How to use" guide appears on startup again**, and now keeps doing so
+  until you tick **"Don't show this on startup"** in its footer — previously
+  it silenced itself after being closed once, so it vanished for good.
+- **Exports no longer freeze the window.** Each sheet was encoded with a
+  blocking call, so a multi-floor A3 set locked the interface for the whole
+  render with nothing on screen. Encoding is now asynchronous, the window
+  stays responsive, and progress is reported page by page.
+
+### Changed
+- **The guide has proper margins** — more padding, roomier steps and wider
+  spacing between sections.
+- **Skribble is boxier still.** Only a dominant edge at roughly 40° or more
+  keeps its angle; anything gentler is treated as an unsteady hand and
+  squared up, so rooms come out like building blocks unless an angle was
+  clearly intended.
 
 ## [1.40.0] — 2026-08-11
 
@@ -1309,6 +1377,40 @@ follows [Semantic Versioning](https://semver.org).
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
 
+## [1.41.0] — 2026-08-11
+
+### Fixed
+- **The How-to-use guide stopped appearing at startup.** It was marked as seen
+  permanently after the first dismissal; it now shows once **per release**, so
+  each update surfaces it again. The **?** button opens it any time.
+
+### Changed
+- **Skribble prefers straight walls more strongly again.** Only a decisively
+  diagonal wall — roughly 32° to 58° off square — keeps its angle; everything
+  gentler, and everything close to vertical, is squared up. Rooms come out as
+  clean blocks unless an angle was clearly intended.
+- **The guide has room to breathe** — more padding throughout, wider steps
+  with clearer numbering, and noticeably more space between sections.
+
+## [1.41.0] — 2026-08-11
+
+### Fixed
+- **The "How to use" guide appears on startup again**, and now keeps doing so
+  until you tick **"Don't show this on startup"** in its footer — previously
+  it silenced itself after being closed once, so it vanished for good.
+- **Exports no longer freeze the window.** Each sheet was encoded with a
+  blocking call, so a multi-floor A3 set locked the interface for the whole
+  render with nothing on screen. Encoding is now asynchronous, the window
+  stays responsive, and progress is reported page by page.
+
+### Changed
+- **The guide has proper margins** — more padding, roomier steps and wider
+  spacing between sections.
+- **Skribble is boxier still.** Only a dominant edge at roughly 40° or more
+  keeps its angle; anything gentler is treated as an unsteady hand and
+  squared up, so rooms come out like building blocks unless an angle was
+  clearly intended.
+
 ## [1.40.0] — 2026-08-11
 
 ### Fixed
@@ -1743,6 +1845,40 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.41.0] — 2026-08-11
+
+### Fixed
+- **The How-to-use guide stopped appearing at startup.** It was marked as seen
+  permanently after the first dismissal; it now shows once **per release**, so
+  each update surfaces it again. The **?** button opens it any time.
+
+### Changed
+- **Skribble prefers straight walls more strongly again.** Only a decisively
+  diagonal wall — roughly 32° to 58° off square — keeps its angle; everything
+  gentler, and everything close to vertical, is squared up. Rooms come out as
+  clean blocks unless an angle was clearly intended.
+- **The guide has room to breathe** — more padding throughout, wider steps
+  with clearer numbering, and noticeably more space between sections.
+
+## [1.41.0] — 2026-08-11
+
+### Fixed
+- **The "How to use" guide appears on startup again**, and now keeps doing so
+  until you tick **"Don't show this on startup"** in its footer — previously
+  it silenced itself after being closed once, so it vanished for good.
+- **Exports no longer freeze the window.** Each sheet was encoded with a
+  blocking call, so a multi-floor A3 set locked the interface for the whole
+  render with nothing on screen. Encoding is now asynchronous, the window
+  stays responsive, and progress is reported page by page.
+
+### Changed
+- **The guide has proper margins** — more padding, roomier steps and wider
+  spacing between sections.
+- **Skribble is boxier still.** Only a dominant edge at roughly 40° or more
+  keeps its angle; anything gentler is treated as an unsteady hand and
+  squared up, so rooms come out like building blocks unless an angle was
+  clearly intended.
 
 ## [1.40.0] — 2026-08-11
 

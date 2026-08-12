@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.40.0';
+const APP_VERSION='1.41.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -307,10 +307,16 @@ $('#libSearch').addEventListener('input',renderLibrary);
 $('#libList').addEventListener('contextmenu',e=>{ if(e.target.closest('.cat-head'))e.preventDefault(); });
 function openGuide(tab){
   if(tab)showGuideTab(tab);
+  const cb=$('#guideOff');
+  if(cb){ let off=false; try{off=localStorage.getItem('ikon.guideOff')==='1';}catch(_){} cb.checked=off; }
   $('#viewMenu').classList.remove('open');
   $('#helpVeil').style.display='grid';
 }
-function closeGuide(){ $('#helpVeil').style.display='none'; try{localStorage.setItem('ikon.guideSeen','1');}catch(_){} }
+function closeGuide(){
+  $('#helpVeil').style.display='none';
+  const cb=$('#guideOff');
+  try{ localStorage.setItem('ikon.guideOff', cb&&cb.checked?'1':'0'); }catch(_){}
+}
 function showGuideTab(name){
   document.querySelectorAll('.guide-tabs .gt').forEach(b=>b.classList.toggle('on',b.dataset.tab===name));
   document.querySelectorAll('.guide-pane').forEach(p=>p.classList.toggle('on',p.dataset.pane===name));
@@ -342,8 +348,8 @@ $('#helpDone').addEventListener('click',closeGuide);
 $('#helpVeil').addEventListener('click',e=>{ if(e.target.id==='helpVeil')closeGuide(); });
 /* first time in: show the quick start once, after the welcome screen clears */
 function maybeFirstRunGuide(){
-  let seen=false; try{seen=localStorage.getItem('ikon.guideSeen')==='1';}catch(_){seen=true;}
-  if(seen)return;
+  let off=false; try{off=localStorage.getItem('ikon.guideOff')==='1';}catch(_){off=false;}
+  if(off)return;                       /* only silenced by ticking the box */
   setTimeout(()=>openGuide('start'),700);
 }
 $('#hintbar').addEventListener('click',e=>{ if(e.target.classList.contains('hint-done'))setRoomMode(false); });
@@ -1352,13 +1358,13 @@ function rdp(pts,eps){
    a short edge is hand-wobble and gets straightened readily, while a long
    edge is only straightened if it was nearly axis-aligned to begin with —
    so a room genuinely drawn at an angle keeps its angle. */
-function orthogonalize(pts,shortTolDeg=45,longTolDeg=20){
+function orthogonalize(pts,shortTolDeg=52,longTolDeg=40){
   const n=pts.length;if(n<3)return pts;
   const p=pts.map(q=>({...q}));
   let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
   p.forEach(q=>{minX=Math.min(minX,q.x);maxX=Math.max(maxX,q.x);minY=Math.min(minY,q.y);maxY=Math.max(maxY,q.y);});
   const diag=Math.hypot(maxX-minX,maxY-minY)||1;
-  const major=diag*0.18;                    /* an edge this long is a deliberate wall */
+  const major=diag*0.34;                    /* only a dominant edge earns the benefit of the doubt */
   const tShort=Math.tan(shortTolDeg*Math.PI/180), tLong=Math.tan(longTolDeg*Math.PI/180);
   for(let pass=0;pass<2;pass++){
     for(let i=0;i<n;i++){
@@ -2963,18 +2969,37 @@ function downloadBlob(blob,name){
 }
 
 /* ──────────── PDF assembly (jsPDF) ──────────── */
+/* toBlob encodes off the main thread, so the window stays responsive and
+   progress can actually be shown — toDataURL froze everything until done */
+function canvasPngUrl(cv){
+  return new Promise(res=>{
+    if(cv.toBlob){
+      cv.toBlob(b=>{
+        if(!b)return res(cv.toDataURL('image/png'));
+        const fr=new FileReader();
+        fr.onload=()=>res(fr.result);
+        fr.onerror=()=>res(cv.toDataURL('image/png'));
+        fr.readAsDataURL(b);
+      },'image/png');
+    } else res(cv.toDataURL('image/png'));
+  });
+}
 async function pagesToPdf(pages,paper){
   await ensureLib('jspdf');
   const {jsPDF}=window.jspdf;
   const [L,S]=paper.mm;
   let doc=null;
-  pages.forEach((p,i)=>{
+  for(let i=0;i<pages.length;i++){
+    const p=pages[i];
     const w=p.landscape?L:S, h=p.landscape?S:L;
     const o=w>h?'landscape':'portrait';
     if(i===0) doc=new jsPDF({orientation:o,unit:'mm',format:[w,h]});
     else doc.addPage([w,h],o);
-    doc.addImage(p.cv.toDataURL('image/png'),'PNG',0,0,w,h,undefined,'FAST');   /* lossless — crisp lines at any zoom */
-  });
+    if(pages.length>1)toast(`Preparing page ${i+1} of ${pages.length}…`);
+    const url=await canvasPngUrl(p.cv);                 /* lossless, and non-blocking */
+    doc.addImage(url,'PNG',0,0,w,h,undefined,'FAST');
+    await new Promise(r=>setTimeout(r,0));             /* let the UI repaint */
+  }
   return doc;
 }
 

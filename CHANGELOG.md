@@ -4,6 +4,24 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.42.0] — 2026-08-12
+
+### Fixed
+- **Skribbling over an existing room selected it instead of painting.** The
+  room layer sits above the plan and was intercepting the brush, so a stroke
+  crossing a room grabbed and resized it. In Skribble mode the rooms no longer
+  take pointer input at all — the brush always wins, and boundaries are still
+  respected as before.
+- **Floor names were hard to read on small screens** — higher contrast, larger
+  type and roomier tabs on compact layouts.
+- **Room names sat in a corner** — labels are now placed at each room''s area
+  centroid, and stay inside awkward shapes such as L-rooms rather than
+  drifting outside them.
+
+### Changed
+- **Skribble is boxier again.** Only a dominant edge at roughly 45° keeps its
+  angle; slopes up to about 40° are squared up.
+
 ## [1.41.0] — 2026-08-11
 
 ### Fixed
@@ -18,6 +36,24 @@ follows [Semantic Versioning](https://semver.org).
   clean blocks unless an angle was clearly intended.
 - **The guide has room to breathe** — more padding throughout, wider steps
   with clearer numbering, and noticeably more space between sections.
+
+## [1.42.0] — 2026-08-12
+
+### Fixed
+- **Skribbling over an existing room selected it instead of painting.** The
+  room layer sits above the plan and was intercepting the brush, so a stroke
+  crossing a room grabbed and resized it. In Skribble mode the rooms no longer
+  take pointer input at all — the brush always wins, and boundaries are still
+  respected as before.
+- **Floor names were hard to read on small screens** — higher contrast, larger
+  type and roomier tabs on compact layouts.
+- **Room names sat in a corner** — labels are now placed at each room''s area
+  centroid, and stay inside awkward shapes such as L-rooms rather than
+  drifting outside them.
+
+### Changed
+- **Skribble is boxier again.** Only a dominant edge at roughly 45° keeps its
+  angle; slopes up to about 40° are squared up.
 
 ## [1.41.0] — 2026-08-11
 
@@ -473,6 +509,24 @@ follows [Semantic Versioning](https://semver.org).
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
 
+## [1.42.0] — 2026-08-12
+
+### Fixed
+- **Skribbling over an existing room selected it instead of painting.** The
+  room layer sits above the plan and was intercepting the brush, so a stroke
+  crossing a room grabbed and resized it. In Skribble mode the rooms no longer
+  take pointer input at all — the brush always wins, and boundaries are still
+  respected as before.
+- **Floor names were hard to read on small screens** — higher contrast, larger
+  type and roomier tabs on compact layouts.
+- **Room names sat in a corner** — labels are now placed at each room''s area
+  centroid, and stay inside awkward shapes such as L-rooms rather than
+  drifting outside them.
+
+### Changed
+- **Skribble is boxier again.** Only a dominant edge at roughly 45° keeps its
+  angle; slopes up to about 40° are squared up.
+
 ## [1.41.0] — 2026-08-11
 
 ### Fixed
@@ -487,6 +541,24 @@ follows [Semantic Versioning](https://semver.org).
   clean blocks unless an angle was clearly intended.
 - **The guide has room to breathe** — more padding throughout, wider steps
   with clearer numbering, and noticeably more space between sections.
+
+## [1.42.0] — 2026-08-12
+
+### Fixed
+- **Skribbling over an existing room selected it instead of painting.** The
+  room layer sits above the plan and was intercepting the brush, so a stroke
+  crossing a room grabbed and resized it. In Skribble mode the rooms no longer
+  take pointer input at all — the brush always wins, and boundaries are still
+  respected as before.
+- **Floor names were hard to read on small screens** — higher contrast, larger
+  type and roomier tabs on compact layouts.
+- **Room names sat in a corner** — labels are now placed at each room''s area
+  centroid, and stay inside awkward shapes such as L-rooms rather than
+  drifting outside them.
+
+### Changed
+- **Skribble is boxier again.** Only a dominant edge at roughly 45° keeps its
+  angle; slopes up to about 40° are squared up.
 
 ## [1.41.0] — 2026-08-11
 
@@ -1377,6 +1449,24 @@ follows [Semantic Versioning](https://semver.org).
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
 
+## [1.42.0] — 2026-08-12
+
+### Fixed
+- **Skribbling over an existing room selected it instead of painting.** The
+  room layer sits above the plan and was intercepting the brush, so a stroke
+  crossing a room grabbed and resized it. In Skribble mode the rooms no longer
+  take pointer input at all — the brush always wins, and boundaries are still
+  respected as before.
+- **Floor names were hard to read on small screens** — higher contrast, larger
+  type and roomier tabs on compact layouts.
+- **Room names sat in a corner** — labels are now placed at each room''s area
+  centroid, and stay inside awkward shapes such as L-rooms rather than
+  drifting outside them.
+
+### Changed
+- **Skribble is boxier again.** Only a dominant edge at roughly 45° keeps its
+  angle; slopes up to about 40° are squared up.
+
 ## [1.41.0] — 2026-08-11
 
 ### Fixed
@@ -1391,6 +1481,24 @@ follows [Semantic Versioning](https://semver.org).
   clean blocks unless an angle was clearly intended.
 - **The guide has room to breathe** — more padding throughout, wider steps
   with clearer numbering, and noticeably more space between sections.
+
+## [1.42.0] — 2026-08-12
+
+### Fixed
+- **Skribbling over an existing room selected it instead of painting.** The
+  room layer sits above the plan and was intercepting the brush, so a stroke
+  crossing a room grabbed and resized it. In Skribble mode the rooms no longer
+  take pointer input at all — the brush always wins, and boundaries are still
+  respected as before.
+- **Floor names were hard to read on small screens** — higher contrast, larger
+  type and roomier tabs on compact layouts.
+- **Room names sat in a corner** — labels are now placed at each room''s area
+  centroid, and stay inside awkward shapes such as L-rooms rather than
+  drifting outside them.
+
+### Changed
+- **Skribble is boxier again.** Only a dominant edge at roughly 45° keeps its
+  angle; slopes up to about 40° are squared up.
 
 ## [1.41.0] — 2026-08-11
 
@@ -1846,6 +1954,24 @@ follows [Semantic Versioning](https://semver.org).
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
 
+## [1.42.0] — 2026-08-12
+
+### Fixed
+- **Skribbling over an existing room selected it instead of painting.** The
+  room layer sits above the plan and was intercepting the brush, so a stroke
+  crossing a room grabbed and resized it. In Skribble mode the rooms no longer
+  take pointer input at all — the brush always wins, and boundaries are still
+  respected as before.
+- **Floor names were hard to read on small screens** — higher contrast, larger
+  type and roomier tabs on compact layouts.
+- **Room names sat in a corner** — labels are now placed at each room''s area
+  centroid, and stay inside awkward shapes such as L-rooms rather than
+  drifting outside them.
+
+### Changed
+- **Skribble is boxier again.** Only a dominant edge at roughly 45° keeps its
+  angle; slopes up to about 40° are squared up.
+
 ## [1.41.0] — 2026-08-11
 
 ### Fixed
@@ -1860,6 +1986,24 @@ follows [Semantic Versioning](https://semver.org).
   clean blocks unless an angle was clearly intended.
 - **The guide has room to breathe** — more padding throughout, wider steps
   with clearer numbering, and noticeably more space between sections.
+
+## [1.42.0] — 2026-08-12
+
+### Fixed
+- **Skribbling over an existing room selected it instead of painting.** The
+  room layer sits above the plan and was intercepting the brush, so a stroke
+  crossing a room grabbed and resized it. In Skribble mode the rooms no longer
+  take pointer input at all — the brush always wins, and boundaries are still
+  respected as before.
+- **Floor names were hard to read on small screens** — higher contrast, larger
+  type and roomier tabs on compact layouts.
+- **Room names sat in a corner** — labels are now placed at each room''s area
+  centroid, and stay inside awkward shapes such as L-rooms rather than
+  drifting outside them.
+
+### Changed
+- **Skribble is boxier again.** Only a dominant edge at roughly 45° keeps its
+  angle; slopes up to about 40° are squared up.
 
 ## [1.41.0] — 2026-08-11
 

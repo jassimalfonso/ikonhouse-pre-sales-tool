@@ -1088,3 +1088,22 @@ body.skribbling .plan-click{cursor:none}
   .steps li{padding-left:38px}
   .guide-foot{gap:12px}
 }
+
+/* room label centred on the room, and still pixel-crisp at any zoom */
+.room-layer .rlabel{
+  transform:translate(-50%,-50%) scale(var(--zi,1));
+  transform-origin:center center;
+}
+/* Skribble owns the plan: existing rooms must not intercept the brush */
+body.skribbling .room-layer,
+body.skribbling .room-layer *{pointer-events:none !important}
+/* floor names: readable on small screens */
+.floor-tab{color:var(--txt);opacity:.72}
+.floor-tab:hover{opacity:1}
+.floor-tab.on{opacity:1}
+@media (max-width:1160px), (orientation:portrait) and (max-width:1280px){
+  .floors{max-width:none;flex:1;gap:6px}
+  .floor-tab{font-size:13.5px;padding:8px 13px;opacity:.85}
+  .floor-tab.on{box-shadow:0 1px 6px rgba(0,0,0,.18)}
+  .floor-tab .x{width:19px;height:19px;font-size:13px;opacity:.7}
+}

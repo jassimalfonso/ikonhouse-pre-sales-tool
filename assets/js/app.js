@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.41.0';
+const APP_VERSION='1.42.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -841,7 +841,8 @@ function renderRooms(){
   layer.innerHTML=svg;
   /* labels (HTML, clickable both modes) */
   f.rooms.forEach(r=>{
-    const lx=Math.min(...r.pts.map(p=>p.x)), ly=Math.min(...r.pts.map(p=>p.y));
+    const c=roomCentroid(r);
+    const lx=c.x, ly=c.y;
     const lab=el('div','rlabel'+(r.id===hlRoom?' hl':''),
       `<span class="rname">${r.name}</span>${r.scope==='out'?'<span class="rtag">OUT</span>':''}${roomMode?'<span class="rx" title="Delete room">✕</span>':''}`);
     lab.dataset.room=r.id;
@@ -1358,13 +1359,13 @@ function rdp(pts,eps){
    a short edge is hand-wobble and gets straightened readily, while a long
    edge is only straightened if it was nearly axis-aligned to begin with —
    so a room genuinely drawn at an angle keeps its angle. */
-function orthogonalize(pts,shortTolDeg=52,longTolDeg=40){
+function orthogonalize(pts,shortTolDeg=54,longTolDeg=42){
   const n=pts.length;if(n<3)return pts;
   const p=pts.map(q=>({...q}));
   let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
   p.forEach(q=>{minX=Math.min(minX,q.x);maxX=Math.max(maxX,q.x);minY=Math.min(minY,q.y);maxY=Math.max(maxY,q.y);});
   const diag=Math.hypot(maxX-minX,maxY-minY)||1;
-  const major=diag*0.34;                    /* only a dominant edge earns the benefit of the doubt */
+  const major=diag*0.38;                    /* only a dominant edge earns the benefit of the doubt */
   const tShort=Math.tan(shortTolDeg*Math.PI/180), tLong=Math.tan(longTolDeg*Math.PI/180);
   for(let pass=0;pass<2;pass++){
     for(let i=0;i<n;i++){
@@ -1799,6 +1800,25 @@ function sortRoomsByPosition(){
   });
   renderRoomOrder();renderBoq();
   toast('Rooms ordered by position on the plan.');
+}
+/* area centroid, so the label sits in the middle of the room rather than in a
+   corner; falls back to the bounding-box centre for awkward shapes */
+function roomCentroid(r){
+  const p=r.pts; let a=0,cx=0,cy=0;
+  for(let i=0;i<p.length;i++){
+    const q=p[(i+1)%p.length];
+    const f=p[i].x*q.y-q.x*p[i].y;
+    a+=f; cx+=(p[i].x+q.x)*f; cy+=(p[i].y+q.y)*f;
+  }
+  a*=0.5;
+  if(Math.abs(a)<1e-9){
+    return {x:(Math.min(...p.map(z=>z.x))+Math.max(...p.map(z=>z.x)))/2,
+            y:(Math.min(...p.map(z=>z.y))+Math.max(...p.map(z=>z.y)))/2};
+  }
+  const q={x:cx/(6*a),y:cy/(6*a)};
+  /* keep it inside oddly shaped rooms */
+  return pointInPoly(q,p)?q:{x:(Math.min(...p.map(z=>z.x))+Math.max(...p.map(z=>z.x)))/2,
+                             y:(Math.min(...p.map(z=>z.y))+Math.max(...p.map(z=>z.y)))/2};
 }
 function roomCentre(r){
   const n=r.pts.length;

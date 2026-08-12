@@ -594,7 +594,8 @@ body.lib-hidden .lib-resizer{display:none}
 .rpoly.out .rfill{fill-opacity:calc(.06 * var(--room-a,1));stroke-dasharray:none;stroke-width:2.5;stroke-opacity:1}
 .rpoly.hl .rfill{fill-opacity:calc(.26 * var(--room-a,1));stroke-opacity:1;stroke-width:2.5;stroke-dasharray:none}
 .rpoly.sel .rfill{stroke-dasharray:none;stroke-width:2;stroke-opacity:1}
-.rvtx{fill:var(--panel);stroke:currentColor;stroke-width:2;vector-effect:non-scaling-stroke;cursor:grab}
+.rvtx{fill:transparent;stroke:none;cursor:grab}
+.rvtx-dot{fill:var(--panel);stroke:currentColor;stroke-width:2;vector-effect:non-scaling-stroke;pointer-events:none}
 .rmid{fill:currentColor;opacity:.45;cursor:copy}
 .rmid:hover{opacity:.9}
 .plan-holder.rooming .rpoly .rfill,.plan-holder.rooming .rpoly .hatchfill{cursor:move;pointer-events:fill}
@@ -663,7 +664,7 @@ table.rb .rb-sum{font-size:11px;color:var(--dim);max-width:220px}
 /* draggable popover header; handles hidden while a gesture edits the shape */
 .rp-head{cursor:grab;margin:-4px -6px 0;padding:4px 6px 0;border-radius:8px}
 .rp-head:active{cursor:grabbing}
-.rpoly.editing .rvtx,.rpoly.editing .rmid{display:none}
+.rpoly.editing .rvtx,.rpoly.editing .rvtx-dot,.rpoly.editing .rmid{display:none}
 /* highlighted room is editable without Rooms mode */
 .plan-holder.room-hl .rpoly.hl .rfill{pointer-events:fill;cursor:move}
 .plan-holder.room-hl .rvtx,.plan-holder.room-hl .rmid{pointer-events:auto}
@@ -747,6 +748,7 @@ body.compact #dockRow,body.compact .vm-dock-label{display:none}
 .rseg{stroke:transparent;stroke-width:14;vector-effect:non-scaling-stroke;pointer-events:stroke;cursor:move}
 @media (pointer:coarse){ .rseg{stroke-width:20} }
 .rvtx{cursor:pointer}
+.rvtx-dot{pointer-events:none}
 /* device drag-between-categories */
 body.dev-dragging{cursor:grabbing}
 body.dev-dragging .item-row:not(.lifted){opacity:.42;filter:saturate(.6)}
@@ -759,7 +761,7 @@ body.dev-dragging .item-row:not(.lifted){opacity:.42;filter:saturate(.6)}
 /* marquee selection box */
 .marquee{position:absolute;z-index:60;border:1.5px solid var(--hl);background:color-mix(in srgb, var(--hl) 12%, transparent);border-radius:2px;pointer-events:none}
 /* a shared (linked) room node gets a bronze ring */
-.rvtx.linked{fill:var(--hl);stroke:#fff;stroke-width:2.5}
+.rvtx-dot.linked{fill:var(--hl);stroke:#fff;stroke-width:2.5}
 
 /* sequence badge on markers */
 .marker{position:absolute}
@@ -813,12 +815,12 @@ body.dev-dragging .item-row:not(.lifted){opacity:.42;filter:saturate(.6)}
 .vm-wide:hover{background:var(--hl-soft);color:var(--hl)}
 .vm-wide svg{width:15px;height:15px}
 /* softer node styling: thinner rings, gentler shadow */
-.rvtx{stroke-width:1.6}
-.rvtx.linked{stroke-width:2}
+.rvtx-dot{stroke-width:1.6}
+.rvtx-dot.linked{stroke-width:2}
 .rmid{stroke-width:1.4;opacity:.85}
 /* a node pulses while a hold-to-create is arming */
 @keyframes nodeArm{0%{r:var(--nr,7)}100%{stroke-width:4;opacity:.75}}
-.rvtx.arming{stroke:var(--hl);stroke-width:3.5;animation:nodeArm .5s ease-out forwards}
+.rvtx.arming{stroke:var(--hl);stroke-width:3.5;fill:color-mix(in srgb, var(--hl) 22%, transparent);animation:nodeArm .5s ease-out forwards}
 
 /* ── How-to-use guide ── */
 .guide-modal{max-width:640px;width:min(640px,94vw);max-height:88vh;display:flex;flex-direction:column}
@@ -1044,3 +1046,23 @@ body.skribbling .marker{pointer-events:none}
 body.skribbling .plan-click{cursor:none}
 @media (pointer:coarse){ body.skribbling .plan-click{cursor:crosshair} }
 @media (max-width:640px){ .sk-colors{display:none} }
+
+/* ── Display popover: keeps the toolbar calm on small screens ── */
+.display-pop{display:contents}
+#btnDisplay{display:none}
+@media (max-width:1160px), (orientation:portrait) and (max-width:1280px){
+  #btnDisplay{display:inline-grid}
+  .display-pop{
+    display:none;position:fixed;right:10px;top:104px;z-index:150;
+    flex-direction:column;gap:12px;align-items:stretch;
+    padding:14px 16px;border-radius:14px;
+    background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow);
+    min-width:212px;
+  }
+  .display-pop.open{display:flex}
+  .display-pop .sizegrp{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%}
+  .display-pop .sizegrp label{font-size:9px;letter-spacing:.12em;color:var(--dim);flex:none;min-width:52px}
+  .display-pop .sizegrp input[type=range]{flex:1;max-width:none !important}
+  .display-pop .tb-btn{width:100%;justify-content:flex-start;gap:9px;padding:8px 10px}
+  .display-pop .tb-btn::after{content:attr(data-lbl);font-size:12px}
+}

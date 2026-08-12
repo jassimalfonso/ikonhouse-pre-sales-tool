@@ -4,6 +4,25 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.38.0] — 2026-08-11
+
+### Fixed
+- **Panning the plan no longer draws rooms on touch.** The previous fix tried
+  to tell a swipe from a deliberate drag by speed, which misfired on larger
+  screens. On touch, dragging now simply pans — rooms are made by tapping
+  corners or with Skribble, both of which are better suited to a finger.
+  Mouse drag still draws a box.
+- **Room corners are much easier to grab.** Each handle now has a generous
+  invisible target (about 2.4× its visible size on touch) with the small dot
+  drawn on top, so a near-miss no longer moves the whole room instead of
+  resizing it.
+
+### Changed
+- **The toolbar is calmer on small screens.** The four display sliders and the
+  greyscale / auto-number toggles now live behind a single **Display** button
+  on compact screens, laid out as a labelled panel. On desktop they stay
+  inline as before.
+
 ## [1.37.1] — 2026-08-11
 
 ### Fixed
@@ -376,6 +395,25 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.38.0] — 2026-08-11
+
+### Fixed
+- **Panning the plan no longer draws rooms on touch.** The previous fix tried
+  to tell a swipe from a deliberate drag by speed, which misfired on larger
+  screens. On touch, dragging now simply pans — rooms are made by tapping
+  corners or with Skribble, both of which are better suited to a finger.
+  Mouse drag still draws a box.
+- **Room corners are much easier to grab.** Each handle now has a generous
+  invisible target (about 2.4× its visible size on touch) with the small dot
+  drawn on top, so a near-miss no longer moves the whole room instead of
+  resizing it.
+
+### Changed
+- **The toolbar is calmer on small screens.** The four display sliders and the
+  greyscale / auto-number toggles now live behind a single **Display** button
+  on compact screens, laid out as a labelled panel. On desktop they stay
+  inline as before.
 
 ## [1.37.1] — 2026-08-11
 
@@ -1185,6 +1223,25 @@ follows [Semantic Versioning](https://semver.org).
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
 
+## [1.38.0] — 2026-08-11
+
+### Fixed
+- **Panning the plan no longer draws rooms on touch.** The previous fix tried
+  to tell a swipe from a deliberate drag by speed, which misfired on larger
+  screens. On touch, dragging now simply pans — rooms are made by tapping
+  corners or with Skribble, both of which are better suited to a finger.
+  Mouse drag still draws a box.
+- **Room corners are much easier to grab.** Each handle now has a generous
+  invisible target (about 2.4× its visible size on touch) with the small dot
+  drawn on top, so a near-miss no longer moves the whole room instead of
+  resizing it.
+
+### Changed
+- **The toolbar is calmer on small screens.** The four display sliders and the
+  greyscale / auto-number toggles now live behind a single **Display** button
+  on compact screens, laid out as a labelled panel. On desktop they stay
+  inline as before.
+
 ## [1.37.1] — 2026-08-11
 
 ### Fixed
@@ -1557,6 +1614,25 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.38.0] — 2026-08-11
+
+### Fixed
+- **Panning the plan no longer draws rooms on touch.** The previous fix tried
+  to tell a swipe from a deliberate drag by speed, which misfired on larger
+  screens. On touch, dragging now simply pans — rooms are made by tapping
+  corners or with Skribble, both of which are better suited to a finger.
+  Mouse drag still draws a box.
+- **Room corners are much easier to grab.** Each handle now has a generous
+  invisible target (about 2.4× its visible size on touch) with the small dot
+  drawn on top, so a near-miss no longer moves the whole room instead of
+  resizing it.
+
+### Changed
+- **The toolbar is calmer on small screens.** The four display sliders and the
+  greyscale / auto-number toggles now live behind a single **Display** button
+  on compact screens, laid out as a labelled panel. On desktop they stay
+  inline as before.
 
 ## [1.37.1] — 2026-08-11
 

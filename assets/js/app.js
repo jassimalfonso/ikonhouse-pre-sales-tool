@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.37.1';
+const APP_VERSION='1.38.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -317,6 +317,14 @@ function showGuideTab(name){
 }
 document.querySelectorAll('.guide-tabs .gt').forEach(b=>b.addEventListener('click',()=>showGuideTab(b.dataset.tab)));
 $('#btnHelp').addEventListener('click',()=>openGuide('start'));
+$('#btnDisplay').addEventListener('click',e=>{
+  e.stopPropagation();
+  $('#displayPop').classList.toggle('open');
+});
+document.addEventListener('click',e=>{
+  const p=$('#displayPop');
+  if(p&&p.classList.contains('open')&&!e.target.closest('#displayPop,#btnDisplay'))p.classList.remove('open');
+});
 $('#btnSkribble').addEventListener('click',()=>setSkribbleMode(!skribbleMode));
 $('#skribbleDone').addEventListener('click',()=>setSkribbleMode(false));
 $('#brushSize').addEventListener('input',e=>{ state.brushSize=+e.target.value; updateBrushDot(); });
@@ -772,7 +780,10 @@ function setRoomMode(on){
   $('#planHolder').classList.toggle('rooming',on);
   $('#hintbar').style.display=on?'block':'none';
   if(on){
-    $('#hintbar').innerHTML='Drag a box · <b>tap corners</b> for a shape · drag walls &amp; corners to adjust · <b>hold</b> (or Ctrl-drag) a corner for a linked room <button class="hint-done">Done</button>';
+    $('#hintbar').innerHTML=(matchMedia('(pointer:coarse)').matches
+    ? '<b>Tap corners</b> to outline a room (tap the first to close) · drag to pan · drag walls &amp; corners to adjust'
+    : 'Drag a box · <b>tap corners</b> for a shape · drag walls &amp; corners to adjust · <b>hold</b> (or Ctrl-drag) a corner for a linked room')
+    +' <button class="hint-done">Done</button>';
     toast('Rooms — drag on the plan to draw an area.');
   } else { closeRoomPop(); cancelPoly(); }
   renderRooms();renderMarkers();
@@ -809,10 +820,13 @@ function renderRooms(){
         const q=r.pts[(i+1)%r.pts.length];
         svg+=`<rect class="rmid" data-room="${r.id}" data-after="${i}" x="${(p.x+q.x)/2*f.w-handleR*0.6}" y="${(p.y+q.y)/2*f.h-handleR*0.6}" width="${handleR*1.2}" height="${handleR*1.2}"/>`;
       });
+      const grabR=handleR*(matchMedia('(pointer:coarse)').matches?2.4:1.7);
       r.pts.forEach((p,i)=>{
         let shared=false;
         (f.rooms||[]).forEach(o=>{ if(o.id===r.id)return; o.pts.forEach(q=>{ if(Math.abs(q.x-p.x)<NODE_LINK_EPS&&Math.abs(q.y-p.y)<NODE_LINK_EPS)shared=true; }); });
-        svg+=`<circle class="rvtx${shared?' linked':''}" data-room="${r.id}" data-i="${i}" cx="${p.x*f.w}" cy="${p.y*f.h}" r="${handleR}"/>`;
+        /* a generous invisible target, with a small visible dot on top */
+        svg+=`<circle class="rvtx" data-room="${r.id}" data-i="${i}" cx="${p.x*f.w}" cy="${p.y*f.h}" r="${grabR}" fill="transparent" stroke="none"/>`;
+        svg+=`<circle class="rvtx-dot${shared?' linked':''}" cx="${p.x*f.w}" cy="${p.y*f.h}" r="${handleR}"/>`;
       });
     }
     svg+=`</g>`;
@@ -1031,6 +1045,7 @@ function wireRoomPointer(layer,f){
       document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
       return;
     }
+    if(t.classList.contains('rvtx-dot')){ return; }   /* the dot is decorative; its target sits beneath */
     if(t.classList.contains('rfill')||t.classList.contains('hatchfill')||t.classList.contains('redge')){
       e.preventDefault();e.stopPropagation();
       selRoom=room.id;closeRoomPop();
@@ -1181,7 +1196,7 @@ function startRoomDraw(e,f){
   };
   const id=e.pointerId;
   const stop=()=>{document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);};
-  const isTouch=e.pointerType==='touch', t0=performance.now();
+  const isTouch=e.pointerType==='touch';
   let panning=false, lastX=e.clientX, lastY=e.clientY;
   const mv=ev=>{
     if(ev.pointerId!==id)return;
@@ -1193,7 +1208,8 @@ function startRoomDraw(e,f){
       clampPan();applyView();
       return;
     }
-    if(isTouch&&movedPx>=10&&performance.now()-t0<140){
+    if(isTouch&&movedPx>=8){        /* touch: dragging always pans — tap corners
+                                       or use Skribble to create a room */
       panning=true;prev.remove();
       lastX=ev.clientX;lastY=ev.clientY;
       return;

@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.42.0';
+const APP_VERSION='1.43.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -332,6 +332,11 @@ document.addEventListener('click',e=>{
   if(p&&p.classList.contains('open')&&!e.target.closest('#displayPop,#btnDisplay'))p.classList.remove('open');
 });
 $('#btnSkribble').addEventListener('click',()=>setSkribbleMode(!skribbleMode));
+$('#toolExit').addEventListener('click',()=>{
+  if(skribbleMode)setSkribbleMode(false);
+  else if(roomMode)setRoomMode(false);
+  updateToolExit();
+});
 $('#skribbleDone').addEventListener('click',()=>setSkribbleMode(false));
 $('#brushSize').addEventListener('input',e=>{ state.brushSize=+e.target.value; updateBrushDot(); });
 $('#roomOpacity').addEventListener('input',e=>{ state.roomOpacity=+e.target.value/100; applyRoomLook(); });
@@ -779,6 +784,7 @@ function roomSnapPoint(p,f,exceptRoom,selfPts,tol){
 function setRoomMode(on){
   if(on&&skribbleMode)setSkribbleMode(false);
   roomMode=on;
+  updateToolExit();
   if(on){ armItem(null); if(cropMode)cancelCrop(); setSelMarker(null); if(hlRoom)highlightRoom(null); }
   selRoom=null;
   $('#btnRooms').classList.toggle('on',on);
@@ -1556,11 +1562,18 @@ function skribbleToPolygon(bin,w,h,opts={}){
 let skribbleMode=false, skCv=null, skCtx=null, skPainting=false, skDrew=false, skClipped=false, skIgnoreRooms=false;
 const SK_MAX=520;                       /* mask resolution (long side) */
 
+function updateToolExit(){
+  const b=$('#toolExit');if(!b)return;
+  const active=roomMode||skribbleMode;
+  b.classList.toggle('show',!!active);
+  b.textContent=skribbleMode?'✕ Done skribbling':'✕ Done with rooms';
+}
 function setSkribbleMode(on){
   skribbleMode=on;
   document.body.classList.toggle('skribbling',on);
   $('#btnSkribble').classList.toggle('on',on);
   $('#skribbleBar').classList.toggle('open',on);
+  updateToolExit();
   if(on){
     if(roomMode)setRoomMode(false);
     if(cropMode)cancelCrop();
@@ -3534,6 +3547,17 @@ async function saveProject(){
 $('#mSave').addEventListener('click',()=>{closeMenu();saveProject();});
 $('#mSaveAs').addEventListener('click',()=>{closeMenu();saveProjectAs();});
 document.addEventListener('keydown',e=>{
+  /* single-key tool shortcuts (never while typing) */
+  if(!e.ctrlKey&&!e.metaKey&&!e.altKey&&!e.target.matches('input,select,textarea')){
+    const k=e.key.toLowerCase();
+    if(k==='r'){e.preventDefault();setRoomMode(!roomMode);return;}
+    if(k==='b'){e.preventDefault();setSkribbleMode(!skribbleMode);return;}
+    if(k==='c'&&!cropMode){e.preventDefault();enterCrop();return;}
+    if(k==='g'){e.preventDefault();setPlanGray(!state.planGray);return;}
+    if(k==='n'){e.preventDefault();setAutoNum(!state.autoNumber);return;}
+    if(k==='l'){e.preventDefault();$('#btnLib').click();return;}
+    if(e.key==='?'){e.preventDefault();openGuide('gest');return;}
+  }
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();saveProject();}
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='c'&&selSet.size&&!e.target.matches('input,select,textarea')){e.preventDefault();copySelection();}
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='v'&&clipboard&&!e.target.matches('input,select,textarea')){e.preventDefault();pasteClipboard();}

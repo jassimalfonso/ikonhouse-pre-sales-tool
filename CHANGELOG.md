@@ -4,6 +4,22 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.43.0] — 2026-08-12
+
+### Fixed
+- **Floor tabs are properly visible on tablets and folds.** They were sharing
+  one row with ten toolbar buttons and got squeezed to nothing. On compact
+  screens they now sit on their own full-width row beneath the toolbar, with
+  larger, higher-contrast tabs.
+
+### Added
+- **Keyboard shortcuts:** <kbd>R</kbd> rooms, <kbd>B</kbd> skribble,
+  <kbd>C</kbd> crop, <kbd>G</kbd> greyscale, <kbd>N</kbd> numbering,
+  <kbd>L</kbd> library, <kbd>?</kbd> the guide. They are ignored while typing.
+- **A single, consistent way out of any tool on touch:** a floating **Done**
+  button appears whenever Rooms or Skribble is active, naming the tool it will
+  close. Esc and tapping the tool button again still work.
+
 ## [1.42.0] — 2026-08-12
 
 ### Fixed
@@ -36,6 +52,22 @@ follows [Semantic Versioning](https://semver.org).
   clean blocks unless an angle was clearly intended.
 - **The guide has room to breathe** — more padding throughout, wider steps
   with clearer numbering, and noticeably more space between sections.
+
+## [1.43.0] — 2026-08-12
+
+### Fixed
+- **Floor tabs are properly visible on tablets and folds.** They were sharing
+  one row with ten toolbar buttons and got squeezed to nothing. On compact
+  screens they now sit on their own full-width row beneath the toolbar, with
+  larger, higher-contrast tabs.
+
+### Added
+- **Keyboard shortcuts:** <kbd>R</kbd> rooms, <kbd>B</kbd> skribble,
+  <kbd>C</kbd> crop, <kbd>G</kbd> greyscale, <kbd>N</kbd> numbering,
+  <kbd>L</kbd> library, <kbd>?</kbd> the guide. They are ignored while typing.
+- **A single, consistent way out of any tool on touch:** a floating **Done**
+  button appears whenever Rooms or Skribble is active, naming the tool it will
+  close. Esc and tapping the tool button again still work.
 
 ## [1.42.0] — 2026-08-12
 
@@ -509,6 +541,22 @@ follows [Semantic Versioning](https://semver.org).
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
 
+## [1.43.0] — 2026-08-12
+
+### Fixed
+- **Floor tabs are properly visible on tablets and folds.** They were sharing
+  one row with ten toolbar buttons and got squeezed to nothing. On compact
+  screens they now sit on their own full-width row beneath the toolbar, with
+  larger, higher-contrast tabs.
+
+### Added
+- **Keyboard shortcuts:** <kbd>R</kbd> rooms, <kbd>B</kbd> skribble,
+  <kbd>C</kbd> crop, <kbd>G</kbd> greyscale, <kbd>N</kbd> numbering,
+  <kbd>L</kbd> library, <kbd>?</kbd> the guide. They are ignored while typing.
+- **A single, consistent way out of any tool on touch:** a floating **Done**
+  button appears whenever Rooms or Skribble is active, naming the tool it will
+  close. Esc and tapping the tool button again still work.
+
 ## [1.42.0] — 2026-08-12
 
 ### Fixed
@@ -541,6 +589,22 @@ follows [Semantic Versioning](https://semver.org).
   clean blocks unless an angle was clearly intended.
 - **The guide has room to breathe** — more padding throughout, wider steps
   with clearer numbering, and noticeably more space between sections.
+
+## [1.43.0] — 2026-08-12
+
+### Fixed
+- **Floor tabs are properly visible on tablets and folds.** They were sharing
+  one row with ten toolbar buttons and got squeezed to nothing. On compact
+  screens they now sit on their own full-width row beneath the toolbar, with
+  larger, higher-contrast tabs.
+
+### Added
+- **Keyboard shortcuts:** <kbd>R</kbd> rooms, <kbd>B</kbd> skribble,
+  <kbd>C</kbd> crop, <kbd>G</kbd> greyscale, <kbd>N</kbd> numbering,
+  <kbd>L</kbd> library, <kbd>?</kbd> the guide. They are ignored while typing.
+- **A single, consistent way out of any tool on touch:** a floating **Done**
+  button appears whenever Rooms or Skribble is active, naming the tool it will
+  close. Esc and tapping the tool button again still work.
 
 ## [1.42.0] — 2026-08-12
 
@@ -1449,6 +1513,22 @@ follows [Semantic Versioning](https://semver.org).
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
 
+## [1.43.0] — 2026-08-12
+
+### Fixed
+- **Floor tabs are properly visible on tablets and folds.** They were sharing
+  one row with ten toolbar buttons and got squeezed to nothing. On compact
+  screens they now sit on their own full-width row beneath the toolbar, with
+  larger, higher-contrast tabs.
+
+### Added
+- **Keyboard shortcuts:** <kbd>R</kbd> rooms, <kbd>B</kbd> skribble,
+  <kbd>C</kbd> crop, <kbd>G</kbd> greyscale, <kbd>N</kbd> numbering,
+  <kbd>L</kbd> library, <kbd>?</kbd> the guide. They are ignored while typing.
+- **A single, consistent way out of any tool on touch:** a floating **Done**
+  button appears whenever Rooms or Skribble is active, naming the tool it will
+  close. Esc and tapping the tool button again still work.
+
 ## [1.42.0] — 2026-08-12
 
 ### Fixed
@@ -1481,6 +1561,22 @@ follows [Semantic Versioning](https://semver.org).
   clean blocks unless an angle was clearly intended.
 - **The guide has room to breathe** — more padding throughout, wider steps
   with clearer numbering, and noticeably more space between sections.
+
+## [1.43.0] — 2026-08-12
+
+### Fixed
+- **Floor tabs are properly visible on tablets and folds.** They were sharing
+  one row with ten toolbar buttons and got squeezed to nothing. On compact
+  screens they now sit on their own full-width row beneath the toolbar, with
+  larger, higher-contrast tabs.
+
+### Added
+- **Keyboard shortcuts:** <kbd>R</kbd> rooms, <kbd>B</kbd> skribble,
+  <kbd>C</kbd> crop, <kbd>G</kbd> greyscale, <kbd>N</kbd> numbering,
+  <kbd>L</kbd> library, <kbd>?</kbd> the guide. They are ignored while typing.
+- **A single, consistent way out of any tool on touch:** a floating **Done**
+  button appears whenever Rooms or Skribble is active, naming the tool it will
+  close. Esc and tapping the tool button again still work.
 
 ## [1.42.0] — 2026-08-12
 
@@ -1954,6 +2050,22 @@ follows [Semantic Versioning](https://semver.org).
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
 
+## [1.43.0] — 2026-08-12
+
+### Fixed
+- **Floor tabs are properly visible on tablets and folds.** They were sharing
+  one row with ten toolbar buttons and got squeezed to nothing. On compact
+  screens they now sit on their own full-width row beneath the toolbar, with
+  larger, higher-contrast tabs.
+
+### Added
+- **Keyboard shortcuts:** <kbd>R</kbd> rooms, <kbd>B</kbd> skribble,
+  <kbd>C</kbd> crop, <kbd>G</kbd> greyscale, <kbd>N</kbd> numbering,
+  <kbd>L</kbd> library, <kbd>?</kbd> the guide. They are ignored while typing.
+- **A single, consistent way out of any tool on touch:** a floating **Done**
+  button appears whenever Rooms or Skribble is active, naming the tool it will
+  close. Esc and tapping the tool button again still work.
+
 ## [1.42.0] — 2026-08-12
 
 ### Fixed
@@ -1986,6 +2098,22 @@ follows [Semantic Versioning](https://semver.org).
   clean blocks unless an angle was clearly intended.
 - **The guide has room to breathe** — more padding throughout, wider steps
   with clearer numbering, and noticeably more space between sections.
+
+## [1.43.0] — 2026-08-12
+
+### Fixed
+- **Floor tabs are properly visible on tablets and folds.** They were sharing
+  one row with ten toolbar buttons and got squeezed to nothing. On compact
+  screens they now sit on their own full-width row beneath the toolbar, with
+  larger, higher-contrast tabs.
+
+### Added
+- **Keyboard shortcuts:** <kbd>R</kbd> rooms, <kbd>B</kbd> skribble,
+  <kbd>C</kbd> crop, <kbd>G</kbd> greyscale, <kbd>N</kbd> numbering,
+  <kbd>L</kbd> library, <kbd>?</kbd> the guide. They are ignored while typing.
+- **A single, consistent way out of any tool on touch:** a floating **Done**
+  button appears whenever Rooms or Skribble is active, naming the tool it will
+  close. Esc and tapping the tool button again still work.
 
 ## [1.42.0] — 2026-08-12
 

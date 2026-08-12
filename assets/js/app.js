@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.38.0';
+const APP_VERSION='1.39.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -1427,6 +1427,54 @@ function subtractRooms(pts,rooms,w,h){
   const out=skribbleToPolygon(g,w,h,{noOrtho:true,eps:Math.hypot(w,h)*0.006});
   return out||null;
 }
+/* Align a freshly skribbled outline to the rooms around it, so pieces sit
+   together like blocks instead of leaving hairline gaps.
+   Only edges that came out straight are considered: a deliberately angled
+   edge is left exactly as drawn. */
+function alignToNeighbours(pts,rooms,tol=0.02){
+  const AX=0.004;                       /* "straight enough" to be a wall */
+  const vWalls=[], hWalls=[];
+  rooms.forEach(r=>{
+    const q=r.pts||[];
+    for(let i=0;i<q.length;i++){
+      const a=q[i], b=q[(i+1)%q.length];
+      if(Math.abs(a.x-b.x)<AX) vWalls.push({v:(a.x+b.x)/2, lo:Math.min(a.y,b.y), hi:Math.max(a.y,b.y)});
+      if(Math.abs(a.y-b.y)<AX) hWalls.push({v:(a.y+b.y)/2, lo:Math.min(a.x,b.x), hi:Math.max(a.x,b.x)});
+    }
+  });
+  const bestWall=(walls,coord,lo,hi)=>{
+    let best=null,bd=tol;
+    walls.forEach(w=>{
+      if(Math.min(hi,w.hi)-Math.max(lo,w.lo) <= 0)return;    /* must actually face each other */
+      const d=Math.abs(w.v-coord);
+      if(d<bd){bd=d;best=w.v;}
+    });
+    return best;
+  };
+  const out=pts.map(p=>({...p}));
+  const n=out.length;
+  for(let i=0;i<n;i++){
+    const a=out[i], b=out[(i+1)%n];
+    const dx=Math.abs(b.x-a.x), dy=Math.abs(b.y-a.y);
+    if(dy<AX && dx>0.01){                                    /* horizontal edge */
+      const v=bestWall(hWalls,(a.y+b.y)/2,Math.min(a.x,b.x),Math.max(a.x,b.x));
+      if(v!==null){a.y=v;b.y=v;}
+    }else if(dx<AX && dy>0.01){                              /* vertical edge */
+      const v=bestWall(vWalls,(a.x+b.x)/2,Math.min(a.y,b.y),Math.max(a.y,b.y));
+      if(v!==null){a.x=v;b.x=v;}
+    }
+    /* anything clearly angled is intentional — leave it */
+  }
+  /* then close any remaining corner-sized gaps onto real corners */
+  const corners=[];
+  rooms.forEach(r=>(r.pts||[]).forEach(p=>corners.push(p)));
+  out.forEach(p=>{
+    let best=null,bd=tol;
+    corners.forEach(c=>{const d=Math.hypot(c.x-p.x,c.y-p.y);if(d<bd){bd=d;best=c;}});
+    if(best){p.x=best.x;p.y=best.y;}
+  });
+  return out;
+}
 /* full pipeline: binary mask → polygon in 0..1 plan coordinates */
 function skribbleToPolygon(bin,w,h,opts={}){
   const blob=largestBlob(bin,w,h);
@@ -1563,9 +1611,11 @@ function commitSkribble(f){
     if(!trimmed){ toast('Nothing to add there — that area already belongs to another room. Hold Alt to overlap.'); return; }
     pts=trimmed;
   }
-  /* let it click onto neighbouring rooms, exactly like a drawn room */
+  /* sit flush against the neighbours — whole walls align, angles stay angled */
+  let snapped=pts;
+  if((f.rooms||[]).length) snapped=alignToNeighbours(pts,f.rooms);
   const tol=5/Math.max(1,planRect().width);
-  const snapped=pts.map(q=>{const sp=roomSnapPoint(q,f,null,null,tol);return {x:sp.x,y:sp.y};});
+  snapped=snapped.map(q=>{const sp=roomSnapPoint(q,f,null,null,tol);return {x:sp.x,y:sp.y};});
   const name=prompt('Room / area name',`Room ${(f.rooms||[]).length+1}`);
   if(name===null)return;
   const room=migrateRoom({id:uid(),name:(name.trim()||`Room ${(f.rooms||[]).length+1}`),pts:snapped,color:skColor()});
@@ -2235,11 +2285,28 @@ stage.addEventListener('pointerdown',e=>{
     const onPlan=e.target.closest('#planClick')||e.target.closest('#planHolder');
     if(!onPlan)return;
     const sx=e.clientX, sy=e.clientY, id=e.pointerId; let box=null;
+    /* On touch a drag means pan, so selecting has to be asked for: hold still
+       for a moment first, then drag to box-select. With a mouse it is immediate. */
+    let armed=e.pointerType!=='touch', holdT=null;
+    if(!armed){
+      holdT=setTimeout(()=>{
+        armed=true; marqueeActive=true;
+        if(navigator.vibrate)navigator.vibrate(10);
+        toast('Select ikons — drag a box around them.');
+      },420);
+    }
     const mv=ev=>{
       if(ev.pointerId!==id)return;
-      if(pinchActive){ if(box)box.remove(); box=null;
+      if(pinchActive){ if(box)box.remove(); box=null; clearTimeout(holdT); marqueeActive=false;
         document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);
         return; }
+      if(!armed){                                   /* moved before the hold → it is a pan */
+        if(Math.hypot(ev.clientX-sx,ev.clientY-sy)>8){
+          clearTimeout(holdT);
+          document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);
+        }
+        return;
+      }
       if(!box&&Math.hypot(ev.clientX-sx,ev.clientY-sy)<5)return;
       if(!box){box=el('div','marquee');$('#stage').appendChild(box);}
       const sr=$('#stage').getBoundingClientRect();
@@ -2249,6 +2316,7 @@ stage.addEventListener('pointerdown',e=>{
     };
     const up=ev=>{
       if(ev.pointerId!==id)return;
+      clearTimeout(holdT); marqueeActive=false;
       document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);
       if(box){
         const r=planRect();
@@ -2276,6 +2344,7 @@ stage.addEventListener('pointerdown',e=>{
   const mouse=e.pointerType==='mouse';
   const onPlan=!!e.target.closest('#planClick');
   if(skribbleMode&&!spaceHeld&&e.button!==1)return;   /* brushing owns the plan */
+  if(marqueeActive)return;                           /* selecting, not panning */
   const onRoomLayer=!!(e.target.closest&&e.target.closest('#roomLayer'));
   if(roomMode&&(onPlan||onRoomLayer)&&e.button!==1&&!spaceHeld)return;   /* the room layer drives its own pan/draw */
   const allow = e.button===1 || spaceHeld || !mouse || (e.button===0 && (!onPlan || !armedItem));
@@ -2288,7 +2357,7 @@ stage.addEventListener('pointerdown',e=>{
   };
   const mv=ev=>{
     if(ev.pointerId!==id)return;
-    if(pinchActive){ endPan(); setTimeout(()=>panMoved=false,0); return; }  /* pinch wins outright */
+    if(pinchActive||marqueeActive){ endPan(); setTimeout(()=>panMoved=false,0); return; }
     if(!moved&&Math.hypot(ev.clientX-sx,ev.clientY-sy)<4)return;
     moved=true;panMoved=true;stage.style.cursor='grabbing';
     panX=px0+(ev.clientX-sx); panY=py0+(ev.clientY-sy);
@@ -2303,7 +2372,7 @@ stage.addEventListener('pointerdown',e=>{
 });
 
 /* two-finger pinch: zooms around and follows the midpoint */
-let pinch=null,pinchActive=false;
+let pinch=null,pinchActive=false,marqueeActive=false;
 stage.addEventListener('touchstart',e=>{
   if(e.touches.length>=2){
     pinchActive=true;

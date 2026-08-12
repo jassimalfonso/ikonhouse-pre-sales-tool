@@ -4,6 +4,29 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.39.0] — 2026-08-11
+
+### Added
+- **Skribbled rooms click into place against their neighbours.** Once an
+  outline is traced, any edge that came out straight is compared with the
+  walls facing it and snapped flush — so rooms sit together like blocks
+  rather than leaving hairline gaps, and rarely need tidying afterwards.
+  - Only edges that are already straight are aligned; an edge you clearly
+    brushed at an angle keeps its angle.
+  - Walls only align to walls that actually face them, so unrelated rooms
+    elsewhere on the plan never pull a shape out of position.
+  - Remaining corner-sized gaps close onto real corners, which also links the
+    rooms so they stay joined when either is edited.
+
+## [1.38.1] — 2026-08-11
+
+### Fixed
+- **A selection box appeared while panning the plan on touch.** Marquee
+  select fired on any drag, competing with panning. On touch it now needs a
+  brief hold on empty plan first (a short buzz confirms) before dragging
+  boxes a selection; moving straight away simply pans. Mouse drag-to-select
+  is unchanged.
+
 ## [1.38.0] — 2026-08-11
 
 ### Fixed
@@ -395,6 +418,29 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.39.0] — 2026-08-11
+
+### Added
+- **Skribbled rooms click into place against their neighbours.** Once an
+  outline is traced, any edge that came out straight is compared with the
+  walls facing it and snapped flush — so rooms sit together like blocks
+  rather than leaving hairline gaps, and rarely need tidying afterwards.
+  - Only edges that are already straight are aligned; an edge you clearly
+    brushed at an angle keeps its angle.
+  - Walls only align to walls that actually face them, so unrelated rooms
+    elsewhere on the plan never pull a shape out of position.
+  - Remaining corner-sized gaps close onto real corners, which also links the
+    rooms so they stay joined when either is edited.
+
+## [1.38.1] — 2026-08-11
+
+### Fixed
+- **A selection box appeared while panning the plan on touch.** Marquee
+  select fired on any drag, competing with panning. On touch it now needs a
+  brief hold on empty plan first (a short buzz confirms) before dragging
+  boxes a selection; moving straight away simply pans. Mouse drag-to-select
+  is unchanged.
 
 ## [1.38.0] — 2026-08-11
 
@@ -1223,6 +1269,29 @@ follows [Semantic Versioning](https://semver.org).
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
 
+## [1.39.0] — 2026-08-11
+
+### Added
+- **Skribbled rooms click into place against their neighbours.** Once an
+  outline is traced, any edge that came out straight is compared with the
+  walls facing it and snapped flush — so rooms sit together like blocks
+  rather than leaving hairline gaps, and rarely need tidying afterwards.
+  - Only edges that are already straight are aligned; an edge you clearly
+    brushed at an angle keeps its angle.
+  - Walls only align to walls that actually face them, so unrelated rooms
+    elsewhere on the plan never pull a shape out of position.
+  - Remaining corner-sized gaps close onto real corners, which also links the
+    rooms so they stay joined when either is edited.
+
+## [1.38.1] — 2026-08-11
+
+### Fixed
+- **A selection box appeared while panning the plan on touch.** Marquee
+  select fired on any drag, competing with panning. On touch it now needs a
+  brief hold on empty plan first (a short buzz confirms) before dragging
+  boxes a selection; moving straight away simply pans. Mouse drag-to-select
+  is unchanged.
+
 ## [1.38.0] — 2026-08-11
 
 ### Fixed
@@ -1614,6 +1683,29 @@ follows [Semantic Versioning](https://semver.org).
   key) instead of a "(OUT OF SCOPE)" text tag, and other rows are plain
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
+
+## [1.39.0] — 2026-08-11
+
+### Added
+- **Skribbled rooms click into place against their neighbours.** Once an
+  outline is traced, any edge that came out straight is compared with the
+  walls facing it and snapped flush — so rooms sit together like blocks
+  rather than leaving hairline gaps, and rarely need tidying afterwards.
+  - Only edges that are already straight are aligned; an edge you clearly
+    brushed at an angle keeps its angle.
+  - Walls only align to walls that actually face them, so unrelated rooms
+    elsewhere on the plan never pull a shape out of position.
+  - Remaining corner-sized gaps close onto real corners, which also links the
+    rooms so they stay joined when either is edited.
+
+## [1.38.1] — 2026-08-11
+
+### Fixed
+- **A selection box appeared while panning the plan on touch.** Marquee
+  select fired on any drag, competing with panning. On touch it now needs a
+  brief hold on empty plan first (a short buzz confirms) before dragging
+  boxes a selection; moving straight away simply pans. Mouse drag-to-select
+  is unchanged.
 
 ## [1.38.0] — 2026-08-11
 

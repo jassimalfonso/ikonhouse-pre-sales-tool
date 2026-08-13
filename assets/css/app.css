@@ -1174,3 +1174,51 @@ body.skribbling .room-layer *{pointer-events:none !important}
 .rbk-act.ghost{background:transparent;color:var(--dim);border:1px solid var(--line-2);font-weight:500}
 .rbk-act.ghost:hover{color:var(--txt)}
 @media (max-width:620px){ .rbk-count{display:none} .room-bulk{gap:10px;padding:10px 13px} }
+
+/* ══════════ Toolbar reflows instead of crushing ══════════
+   Fixed height with overflow-x meant that on a narrow window everything —
+   including the floor tabs — got squeezed or scrolled out of sight. The bar
+   now wraps: when the floors cannot keep a sensible width they move to their
+   own full-width row, at any screen size, desktop included. */
+.toolbar{
+  height:auto;min-height:46px;flex-wrap:wrap;overflow-x:visible;
+  padding:5px 14px;row-gap:5px;align-content:center;
+}
+.floors{
+  order:99;flex:1 1 300px;min-width:200px;max-width:none;
+  gap:5px;scrollbar-width:none;
+}
+.floors::-webkit-scrollbar{display:none}
+.floors:empty{display:none}
+/* once it has wrapped onto its own line, mark it off from the tools above */
+.toolbar > .floors{
+  border-top:1px solid transparent;
+  padding-top:0;
+}
+@supports (selector(:has(*))){
+  .floors{position:relative}
+}
+.floor-tab{flex:none}
+/* narrow desktop windows get the grouped display controls too */
+@media (max-width:1400px){
+  #btnDisplay{display:inline-grid}
+  .display-pop{
+    display:none;position:fixed;right:12px;top:96px;z-index:150;
+    flex-direction:column;gap:12px;align-items:stretch;
+    padding:14px 16px;border-radius:14px;
+    background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow);
+    min-width:216px;
+  }
+  .display-pop.open{display:flex}
+  .display-pop .sizegrp{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%}
+  .display-pop .sizegrp label{min-width:52px;flex:none}
+  .display-pop .sizegrp input[type=range]{flex:1;max-width:none !important}
+  .display-pop .tb-btn{width:100%;justify-content:flex-start;gap:9px;padding:8px 10px}
+  .display-pop .tb-btn::after{content:attr(data-lbl);font-size:12px}
+}
+/* when the floors have wrapped to their own line, give them room */
+.toolbar.floors-wrapped .floors{
+  border-top:1px solid var(--line);
+  margin-top:3px;padding-top:7px;padding-bottom:2px;width:100%;
+}
+.toolbar.floors-wrapped .floor-tab{padding:7px 13px;font-size:13px}

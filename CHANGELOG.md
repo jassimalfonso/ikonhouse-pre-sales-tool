@@ -4,6 +4,19 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.47.0] — 2026-08-12
+
+### Fixed
+- **Floor tabs disappearing in a narrow window — at any screen size.** The
+  toolbar was a fixed-height row that simply scrolled its contents out of
+  sight, so on a smaller desktop window the floors were pushed off the end.
+  The toolbar now **wraps**: when the floor tabs can no longer hold a sensible
+  width they move to their own full-width row, separated by a rule, with
+  larger tabs. This happens automatically at every width, so no manual
+  resizing is needed.
+- **Narrow desktop windows now get the grouped Display panel too** (below
+  1400 px), instead of squeezing four sliders into the tool row.
+
 ## [1.46.0] — 2026-08-12
 
 ### Added
@@ -88,6 +101,19 @@ follows [Semantic Versioning](https://semver.org).
   clean blocks unless an angle was clearly intended.
 - **The guide has room to breathe** — more padding throughout, wider steps
   with clearer numbering, and noticeably more space between sections.
+
+## [1.47.0] — 2026-08-12
+
+### Fixed
+- **Floor tabs disappearing in a narrow window — at any screen size.** The
+  toolbar was a fixed-height row that simply scrolled its contents out of
+  sight, so on a smaller desktop window the floors were pushed off the end.
+  The toolbar now **wraps**: when the floor tabs can no longer hold a sensible
+  width they move to their own full-width row, separated by a rule, with
+  larger tabs. This happens automatically at every width, so no manual
+  resizing is needed.
+- **Narrow desktop windows now get the grouped Display panel too** (below
+  1400 px), instead of squeezing four sliders into the tool row.
 
 ## [1.46.0] — 2026-08-12
 
@@ -613,6 +639,19 @@ follows [Semantic Versioning](https://semver.org).
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
 
+## [1.47.0] — 2026-08-12
+
+### Fixed
+- **Floor tabs disappearing in a narrow window — at any screen size.** The
+  toolbar was a fixed-height row that simply scrolled its contents out of
+  sight, so on a smaller desktop window the floors were pushed off the end.
+  The toolbar now **wraps**: when the floor tabs can no longer hold a sensible
+  width they move to their own full-width row, separated by a rule, with
+  larger tabs. This happens automatically at every width, so no manual
+  resizing is needed.
+- **Narrow desktop windows now get the grouped Display panel too** (below
+  1400 px), instead of squeezing four sliders into the tool row.
+
 ## [1.46.0] — 2026-08-12
 
 ### Added
@@ -697,6 +736,19 @@ follows [Semantic Versioning](https://semver.org).
   clean blocks unless an angle was clearly intended.
 - **The guide has room to breathe** — more padding throughout, wider steps
   with clearer numbering, and noticeably more space between sections.
+
+## [1.47.0] — 2026-08-12
+
+### Fixed
+- **Floor tabs disappearing in a narrow window — at any screen size.** The
+  toolbar was a fixed-height row that simply scrolled its contents out of
+  sight, so on a smaller desktop window the floors were pushed off the end.
+  The toolbar now **wraps**: when the floor tabs can no longer hold a sensible
+  width they move to their own full-width row, separated by a rule, with
+  larger tabs. This happens automatically at every width, so no manual
+  resizing is needed.
+- **Narrow desktop windows now get the grouped Display panel too** (below
+  1400 px), instead of squeezing four sliders into the tool row.
 
 ## [1.46.0] — 2026-08-12
 
@@ -1657,6 +1709,19 @@ follows [Semantic Versioning](https://semver.org).
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
 
+## [1.47.0] — 2026-08-12
+
+### Fixed
+- **Floor tabs disappearing in a narrow window — at any screen size.** The
+  toolbar was a fixed-height row that simply scrolled its contents out of
+  sight, so on a smaller desktop window the floors were pushed off the end.
+  The toolbar now **wraps**: when the floor tabs can no longer hold a sensible
+  width they move to their own full-width row, separated by a rule, with
+  larger tabs. This happens automatically at every width, so no manual
+  resizing is needed.
+- **Narrow desktop windows now get the grouped Display panel too** (below
+  1400 px), instead of squeezing four sliders into the tool row.
+
 ## [1.46.0] — 2026-08-12
 
 ### Added
@@ -1741,6 +1806,19 @@ follows [Semantic Versioning](https://semver.org).
   clean blocks unless an angle was clearly intended.
 - **The guide has room to breathe** — more padding throughout, wider steps
   with clearer numbering, and noticeably more space between sections.
+
+## [1.47.0] — 2026-08-12
+
+### Fixed
+- **Floor tabs disappearing in a narrow window — at any screen size.** The
+  toolbar was a fixed-height row that simply scrolled its contents out of
+  sight, so on a smaller desktop window the floors were pushed off the end.
+  The toolbar now **wraps**: when the floor tabs can no longer hold a sensible
+  width they move to their own full-width row, separated by a rule, with
+  larger tabs. This happens automatically at every width, so no manual
+  resizing is needed.
+- **Narrow desktop windows now get the grouped Display panel too** (below
+  1400 px), instead of squeezing four sliders into the tool row.
 
 ## [1.46.0] — 2026-08-12
 
@@ -2266,6 +2344,19 @@ follows [Semantic Versioning](https://semver.org).
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
 
+## [1.47.0] — 2026-08-12
+
+### Fixed
+- **Floor tabs disappearing in a narrow window — at any screen size.** The
+  toolbar was a fixed-height row that simply scrolled its contents out of
+  sight, so on a smaller desktop window the floors were pushed off the end.
+  The toolbar now **wraps**: when the floor tabs can no longer hold a sensible
+  width they move to their own full-width row, separated by a rule, with
+  larger tabs. This happens automatically at every width, so no manual
+  resizing is needed.
+- **Narrow desktop windows now get the grouped Display panel too** (below
+  1400 px), instead of squeezing four sliders into the tool row.
+
 ## [1.46.0] — 2026-08-12
 
 ### Added
@@ -2350,6 +2441,19 @@ follows [Semantic Versioning](https://semver.org).
   clean blocks unless an angle was clearly intended.
 - **The guide has room to breathe** — more padding throughout, wider steps
   with clearer numbering, and noticeably more space between sections.
+
+## [1.47.0] — 2026-08-12
+
+### Fixed
+- **Floor tabs disappearing in a narrow window — at any screen size.** The
+  toolbar was a fixed-height row that simply scrolled its contents out of
+  sight, so on a smaller desktop window the floors were pushed off the end.
+  The toolbar now **wraps**: when the floor tabs can no longer hold a sensible
+  width they move to their own full-width row, separated by a rule, with
+  larger tabs. This happens automatically at every width, so no manual
+  resizing is needed.
+- **Narrow desktop windows now get the grouped Display panel too** (below
+  1400 px), instead of squeezing four sliders into the tool row.
 
 ## [1.46.0] — 2026-08-12
 

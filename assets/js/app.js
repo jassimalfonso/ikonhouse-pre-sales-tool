@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.46.0';
+const APP_VERSION='1.47.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -2262,6 +2262,7 @@ document.addEventListener('keydown',e=>{
 
 /* ──────────── Floors ──────────── */
 function renderFloors(){
+  setTimeout(checkToolbarWrap,0);
   const tabs=$('#floorTabs');tabs.innerHTML='';
   state.floors.forEach(f=>{
     const t=el('button','floor-tab'+(f.id===state.activeFloor?' on':''));
@@ -3691,7 +3692,21 @@ $('#fileProject').addEventListener('change',e=>{
 window.addEventListener('beforeunload',e=>{
   if(state.floors.some(f=>f.placements.length)){e.preventDefault();e.returnValue='';}
 });
-window.addEventListener('resize',()=>{ applyDock(); if(activeFloor()&&!cropMode) fitZoom(); });
+/* the toolbar wraps on its own; this just tells us when the floors have
+   moved to their own line so they can be separated properly */
+function checkToolbarWrap(){
+  const tb=document.querySelector('.toolbar'), fl=$('#floorTabs');
+  if(!tb||!fl)return;
+  const first=tb.querySelector('.tb-btn');
+  const wrapped=!!first && fl.offsetTop > first.offsetTop + 4;
+  tb.classList.toggle('floors-wrapped',wrapped);
+}
+if(window.ResizeObserver){
+  const ro=new ResizeObserver(()=>checkToolbarWrap());
+  const tbEl=document.querySelector('.toolbar');
+  if(tbEl)ro.observe(tbEl);
+}
+window.addEventListener('resize',()=>{ applyDock(); checkToolbarWrap(); if(activeFloor()&&!cropMode) fitZoom(); });
 
 /* ──────────── Onboarding ──────────── */
 function dismissOnboard(){ $('#welcome').style.display='none'; $('#setup').style.display='none'; obStopFx(); maybeFirstRunGuide(); }

@@ -4,6 +4,20 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.55.1] — 2026-08-21
+
+### Changed
+- **Look sets removed; colour themes kept.** Changing corner shape, typeface
+  and density altered the app''s character without making it better to use, so
+  the choice is now simply a colour theme — Bronze, Indigo, Sage, Slate or
+  Clay — each working in day or night.
+
+### Fixed
+- **The appearance button did nothing on the welcome screen.** The panel was
+  opening behind it; it now sits above.
+- **Dialogs have room to breathe** — more padding throughout, a proper rule
+  under each title, and clearer spacing between fields and actions.
+
 ## [1.55.0] — 2026-08-21
 
 ### Added
@@ -299,6 +313,20 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.55.1] — 2026-08-21
+
+### Changed
+- **Look sets removed; colour themes kept.** Changing corner shape, typeface
+  and density altered the app''s character without making it better to use, so
+  the choice is now simply a colour theme — Bronze, Indigo, Sage, Slate or
+  Clay — each working in day or night.
+
+### Fixed
+- **The appearance button did nothing on the welcome screen.** The panel was
+  opening behind it; it now sits above.
+- **Dialogs have room to breathe** — more padding throughout, a proper rule
+  under each title, and clearer spacing between fields and actions.
 
 ## [1.55.0] — 2026-08-21
 
@@ -1035,6 +1063,20 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.55.1] — 2026-08-21
+
+### Changed
+- **Look sets removed; colour themes kept.** Changing corner shape, typeface
+  and density altered the app''s character without making it better to use, so
+  the choice is now simply a colour theme — Bronze, Indigo, Sage, Slate or
+  Clay — each working in day or night.
+
+### Fixed
+- **The appearance button did nothing on the welcome screen.** The panel was
+  opening behind it; it now sits above.
+- **Dialogs have room to breathe** — more padding throughout, a proper rule
+  under each title, and clearer spacing between fields and actions.
+
 ## [1.55.0] — 2026-08-21
 
 ### Added
@@ -1330,6 +1372,20 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.55.1] — 2026-08-21
+
+### Changed
+- **Look sets removed; colour themes kept.** Changing corner shape, typeface
+  and density altered the app''s character without making it better to use, so
+  the choice is now simply a colour theme — Bronze, Indigo, Sage, Slate or
+  Clay — each working in day or night.
+
+### Fixed
+- **The appearance button did nothing on the welcome screen.** The panel was
+  opening behind it; it now sits above.
+- **Dialogs have room to breathe** — more padding throughout, a proper rule
+  under each title, and clearer spacing between fields and actions.
 
 ## [1.55.0] — 2026-08-21
 
@@ -2501,6 +2557,20 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.55.1] — 2026-08-21
+
+### Changed
+- **Look sets removed; colour themes kept.** Changing corner shape, typeface
+  and density altered the app''s character without making it better to use, so
+  the choice is now simply a colour theme — Bronze, Indigo, Sage, Slate or
+  Clay — each working in day or night.
+
+### Fixed
+- **The appearance button did nothing on the welcome screen.** The panel was
+  opening behind it; it now sits above.
+- **Dialogs have room to breathe** — more padding throughout, a proper rule
+  under each title, and clearer spacing between fields and actions.
+
 ## [1.55.0] — 2026-08-21
 
 ### Added
@@ -2796,6 +2866,20 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.55.1] — 2026-08-21
+
+### Changed
+- **Look sets removed; colour themes kept.** Changing corner shape, typeface
+  and density altered the app''s character without making it better to use, so
+  the choice is now simply a colour theme — Bronze, Indigo, Sage, Slate or
+  Clay — each working in day or night.
+
+### Fixed
+- **The appearance button did nothing on the welcome screen.** The panel was
+  opening behind it; it now sits above.
+- **Dialogs have room to breathe** — more padding throughout, a proper rule
+  under each title, and clearer spacing between fields and actions.
 
 ## [1.55.0] — 2026-08-21
 
@@ -3532,6 +3616,20 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.55.1] — 2026-08-21
+
+### Changed
+- **Look sets removed; colour themes kept.** Changing corner shape, typeface
+  and density altered the app''s character without making it better to use, so
+  the choice is now simply a colour theme — Bronze, Indigo, Sage, Slate or
+  Clay — each working in day or night.
+
+### Fixed
+- **The appearance button did nothing on the welcome screen.** The panel was
+  opening behind it; it now sits above.
+- **Dialogs have room to breathe** — more padding throughout, a proper rule
+  under each title, and clearer spacing between fields and actions.
+
 ## [1.55.0] — 2026-08-21
 
 ### Added
@@ -3827,6 +3925,20 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.55.1] — 2026-08-21
+
+### Changed
+- **Look sets removed; colour themes kept.** Changing corner shape, typeface
+  and density altered the app''s character without making it better to use, so
+  the choice is now simply a colour theme — Bronze, Indigo, Sage, Slate or
+  Clay — each working in day or night.
+
+### Fixed
+- **The appearance button did nothing on the welcome screen.** The panel was
+  opening behind it; it now sits above.
+- **Dialogs have room to breathe** — more padding throughout, a proper rule
+  under each title, and clearer spacing between fields and actions.
 
 ## [1.55.0] — 2026-08-21
 

@@ -1529,47 +1529,7 @@ body.arming .room-layer .rlabel{opacity:.45}
    app to exactly how it shipped.
    ══════════════════════════════════════════════════════════════ */
 
-/* ── LOOKS (character only — no colour here) ── */
-[data-look="atelier"]{
-  --r:5px; --r-lg:7px;
-  --font-d:'Zen Kaku Gothic New',system-ui,sans-serif;
-  --font-s:'Zen Kaku Gothic New',system-ui,sans-serif;
-  --shadow:0 1px 0 rgba(0,0,0,.05), 0 10px 30px rgba(0,0,0,.09);
-}
-[data-look="atelier"] .tb-btn,[data-look="atelier"] .btn,[data-look="atelier"] .item-row{border-radius:5px}
-[data-look="atelier"] .cat-head .cat-nm{letter-spacing:.14em}
-[data-look="atelier"] .wordmark{letter-spacing:.01em}
-
-[data-look="kinari"]{
-  --r:15px; --r-lg:20px;
-  --shadow:0 2px 34px rgba(0,0,0,.07);
-}
-[data-look="kinari"] .tb-btn,[data-look="kinari"] .btn{border-radius:12px}
-[data-look="kinari"] .item-row{border-radius:12px}
-[data-look="kinari"] .lib-panel,[data-look="kinari"] .modal{letter-spacing:.012em}
-[data-look="kinari"] .cat-head{padding-top:22px;opacity:.62}
-[data-look="kinari"] .item-row{padding-top:10px;padding-bottom:10px}
-
-/* Retro — the look of the rack gear this tool specifies: squared
-   corners, engraved labels, hard edges instead of soft shadows */
-[data-look="retro"]{
-  --r:2px; --r-lg:3px;
-  --font-d:'JetBrains Mono',ui-monospace,monospace;
-  --shadow:0 2px 0 rgba(0,0,0,.16);
-}
-[data-look="retro"] .tb-btn,[data-look="retro"] .btn,[data-look="retro"] .item-row,
-[data-look="retro"] .modal,[data-look="retro"] .lib-panel{border-radius:2px}
-[data-look="retro"] .wordmark{font-family:var(--font-m);letter-spacing:-.04em;font-weight:700}
-[data-look="retro"] .cat-head .cat-nm,[data-look="retro"] .vm-label,[data-look="retro"] .sizegrp label{
-  font-family:var(--font-m);letter-spacing:.2em;
-}
-[data-look="retro"] .tb-btn .lbl{font-family:var(--font-m);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
-[data-look="retro"] .btn{border-width:1.5px;font-weight:700;letter-spacing:.04em}
-[data-look="retro"] .item-row{border:1px solid transparent}
-[data-look="retro"] .item-row:hover{border-color:var(--line-2)}
-[data-look="retro"] .marker{border-radius:3px}
-
-/* ── PALETTES (colour only — no shape here) ── */
+/* ── COLOUR THEMES ── */
 [data-palette="indigo"][data-theme="light"]{
   --bg:#F1F1EC; --panel:#FAFAF6; --panel-2:#E8E9E2; --txt:#1D2024; --dim:#5D646B;
   --line:#DCDDD5; --line-2:#C6C8BE;
@@ -1667,3 +1627,18 @@ body.arming .room-layer .rlabel{opacity:.45}
 .rc-x:hover{color:var(--hl);background:var(--panel-2)}
 @media (pointer:coarse){ .rc-x{opacity:1} }
 .ob-appear{right:64px}
+
+/* the appearance panel opens above the welcome screen */
+#appearVeil{z-index:260}
+/* ── Dialogs breathe ── */
+.modal{padding:22px 24px 20px}
+.m-head{margin:-4px -4px 16px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.f-row{margin-bottom:15px}
+.f-row label{display:block;margin-bottom:6px}
+.m-actions{margin-top:20px;padding-top:16px;border-top:1px solid var(--line);gap:10px}
+.ap-sec{padding:2px 0 20px}
+.ap-sec>.vm-label{margin-bottom:10px}
+.ap-grid{gap:10px}
+.ap-opt{padding:11px 12px}
+.ap-foot{padding-top:16px;margin-top:2px}
+@media (max-width:560px){ .modal{padding:18px 18px 16px} }

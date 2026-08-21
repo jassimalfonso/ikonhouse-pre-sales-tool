@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.55.0';
+const APP_VERSION='1.55.1';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -160,21 +160,15 @@ const today=()=>new Date().toLocaleDateString(undefined,{day:'2-digit',month:'sh
    Preferences live in the browser, so the app looks the way you like
    it whichever project you open. Clearing both returns it exactly to
    how it shipped. */
-const LOOKS=[
-  {id:'',        name:'Original', note:'Rounded, warm',      pv:['#FAF8F5','#AE8B5C']},
-  {id:'atelier', name:'Atelier',  note:'Drawing office',     pv:['#F1F1EC','#3B4A9E']},
-  {id:'kinari',  name:'Kinari',   note:'Soft and airy',      pv:['#F7F5EF','#6E7F63']},
-  {id:'retro',   name:'Retro',    note:'Squared, rack-gear', pv:['#E9E6DF','#141414']}
-];
 const PALETTES=[
-  {id:'',       name:'Bronze', pv:['#FAF8F5','#AE8B5C']},
-  {id:'indigo', name:'Indigo', pv:['#F1F1EC','#3B4A9E']},
-  {id:'sage',   name:'Sage',   pv:['#F7F5EF','#6E7F63']},
-  {id:'slate',  name:'Slate',  pv:['#F2F4F6','#2E6F8E']},
-  {id:'clay',   name:'Clay',   pv:['#F8F4F1','#A8503A']}
+  {id:'',       name:'Bronze', note:'The original',  pv:['#FAF8F5','#AE8B5C']},
+  {id:'indigo', name:'Indigo', note:'Cool and calm', pv:['#F1F1EC','#3B4A9E']},
+  {id:'sage',   name:'Sage',   note:'Soft green',    pv:['#F7F5EF','#6E7F63']},
+  {id:'slate',  name:'Slate',  note:'Neutral grey',  pv:['#F2F4F6','#2E6F8E']},
+  {id:'clay',   name:'Clay',   note:'Warm terracotta',pv:['#F8F4F1','#A8503A']}
 ];
 const PREF_KEY='ikon.appearance';
-let prefs={look:'',palette:'',theme:''};
+let prefs={palette:'',theme:''};
 function loadPrefs(){
   try{ Object.assign(prefs,JSON.parse(localStorage.getItem(PREF_KEY)||'{}')); }catch(_){}
   if(prefs.theme==='light'||prefs.theme==='dark')state.theme=prefs.theme;
@@ -183,26 +177,18 @@ function savePrefs(){ try{ localStorage.setItem(PREF_KEY,JSON.stringify(prefs));
 function applyTheme(){
   const d=document.documentElement;
   d.dataset.theme=state.theme;
-  if(prefs.look)d.dataset.look=prefs.look; else delete d.dataset.look;
+  delete d.dataset.look;
   if(prefs.palette)d.dataset.palette=prefs.palette; else delete d.dataset.palette;
   document.querySelectorAll('#themeRow [data-theme-opt]').forEach(b=>b.classList.toggle('on',b.dataset.themeOpt===state.theme));
-  document.querySelectorAll('#apLooks .ap-opt').forEach(b=>b.classList.toggle('on',(b.dataset.look||'')===prefs.look));
   document.querySelectorAll('#apPalettes button').forEach(b=>b.classList.toggle('on',(b.dataset.pal||'')===prefs.palette));
   document.querySelectorAll('#apTheme button').forEach(b=>b.classList.toggle('on',b.dataset.t===(prefs.theme||'auto')));
 }
 function buildAppearance(){
-  const lg=$('#apLooks');
-  if(lg&&!lg.children.length)LOOKS.forEach(L=>{
-    const b=el('button','ap-opt');b.dataset.look=L.id;
-    b.innerHTML=`<span class="pv"><i style="background:${L.pv[0]}"></i><i style="background:${L.pv[1]}"></i></span>
-                 <span><b>${L.name}</b><span>${L.note}</span></span>`;
-    b.addEventListener('click',()=>{ prefs.look=L.id; savePrefs(); applyTheme(); });
-    lg.appendChild(b);
-  });
   const pg=$('#apPalettes');
   if(pg&&!pg.children.length)PALETTES.forEach(P=>{
-    const b=el('button');b.dataset.pal=P.id;b.title=P.name;
-    b.innerHTML=`<i style="background:${P.pv[0]}"></i><i style="background:${P.pv[1]}"></i>`;
+    const b=el('button','ap-opt');b.dataset.pal=P.id;
+    b.innerHTML=`<span class="pv"><i style="background:${P.pv[0]}"></i><i style="background:${P.pv[1]}"></i></span>
+                 <span><b>${P.name}</b><span>${P.note}</span></span>`;
     b.addEventListener('click',()=>{ prefs.palette=P.id; savePrefs(); applyTheme(); });
     pg.appendChild(b);
   });
@@ -277,7 +263,7 @@ $('#appearClose').addEventListener('click',closeAppearance);
 $('#apDone').addEventListener('click',closeAppearance);
 $('#appearVeil').addEventListener('click',e=>{ if(e.target.id==='appearVeil')closeAppearance(); });
 $('#apReset').addEventListener('click',()=>{
-  prefs={look:'',palette:'',theme:''};
+  prefs={palette:'',theme:''};
   state.theme=SYS_THEME();
   savePrefs();applyTheme();
   toast('Back to the original look.');

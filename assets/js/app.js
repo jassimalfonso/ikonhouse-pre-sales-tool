@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.52.0';
+const APP_VERSION='1.53.2';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -86,7 +86,7 @@ let state = {
   project:'Untitled Project', client:'', location:'', reference:'', preparedBy:'',
   theme:SYS_THEME(), brandLogo:null, libDock:'left', lastDock:'left', libHidden:false, libFloat:null,
   libSize:{w:324,h:60,fw:288,fh:520}, catOrder:['Control','Climate','Lighting','Shading','Audio','Network','Security','Video'],
-  items:[], floors:[], activeFloor:null, pinScale:1, pinOpacity:1, planGray:false, brushSize:46, roomOpacity:1, seqScale:1, skribbleColor:null, outScopeColor:'#E5484D', linkNodes:true
+  items:[], floors:[], activeFloor:null, pinScale:1, pinOpacity:1, planGray:false, brushSize:46, roomOpacity:1, seqScale:1, wallWeight:1, skribbleColor:null, outScopeColor:'#E5484D', linkNodes:true
 };
 let armedItem=null, selMarker=null, selSet=new Set(), multiSelect=false, zoom=1, undoStack=[], redoStack=[], ctxTarget=null, draggingCat=null;
 
@@ -383,7 +383,14 @@ $('#toolExit').addEventListener('click',()=>{
 });
 $('#skribbleDone').addEventListener('click',()=>setSkribbleMode(false));
 $('#brushSize').addEventListener('input',e=>{ state.brushSize=+e.target.value; updateBrushDot(); });
+$('#skAreaOpt').addEventListener('change',e=>{
+  skAreaMode=e.target.checked;
+  toast(skAreaMode
+    ? 'Outdoor area — brush over rooms freely; they stay on top.'
+    : 'Back to normal rooms — the brush stops at existing walls.');
+});
 $('#roomOpacity').addEventListener('input',e=>{ state.roomOpacity=+e.target.value/100; applyRoomLook(); });
+$('#wallWeight').addEventListener('input',e=>{ state.wallWeight=+e.target.value/100; applyRoomLook(); });
 $('#linkNodesOpt').addEventListener('change',e=>{
   state.linkNodes=e.target.checked;
   toast(state.linkNodes?'Joined rooms move together.':'Rooms move independently — corners stay where you leave them.');
@@ -761,7 +768,7 @@ const outScopeColor=()=>state.outScopeColor||OUT_SCOPE_DEFAULT;
 /* migrate legacy {x,y,w,h} rectangles to point lists; ensure color/scope */
 function migrateRoom(r){
   if(!r.pts){ r.pts=[{x:r.x,y:r.y},{x:r.x+r.w,y:r.y},{x:r.x+r.w,y:r.y+r.h},{x:r.x,y:r.y+r.h}]; delete r.x;delete r.y;delete r.w;delete r.h; }
-  r.color=r.color||ROOM_COLORS[0]; r.scope=r.scope||'in';
+  r.color=r.color||ROOM_COLORS[0]; r.scope=r.scope||'in'; r.kind=r.kind||'room';
   return r;
 }
 const migrateRooms=f=>{(f.rooms=f.rooms||[]).forEach(migrateRoom);};
@@ -872,7 +879,7 @@ function renderRooms(){
   if(roomMode)svg+=`<rect class="rbg" x="0" y="0" width="${f.w}" height="${f.h}"/>`;
   f.rooms.forEach(r=>{
     const d=r.pts.map(p=>`${p.x*f.w},${p.y*f.h}`).join(' ');
-    const cls=['rpoly',r.id===selRoom?'sel':'',r.id===hlRoom?'hl':'',selRooms.has(r.id)?'multi':'',r.scope==='out'?'out':''].join(' ');
+    const cls=['rpoly',r.id===selRoom?'sel':'',r.id===hlRoom?'hl':'',selRooms.has(r.id)?'multi':'',r.scope==='out'?'out':'',r.kind==='area'?'area':''].join(' ');
     svg+=`<g class="${cls}" data-room="${r.id}" style="color:${r.color}">`;
     if(r.scope==='out')svg+=`<polygon class="hatchfill" points="${d}"/>`;
     svg+=`<polygon class="rfill" points="${d}"/>`;
@@ -901,7 +908,7 @@ function renderRooms(){
   layer.innerHTML=svg;
   /* labels (HTML, clickable both modes) */
   f.rooms.forEach(r=>{
-    const c=roomCentroid(r);
+    const c=labelSpot(r,f);
     const lx=c.x, ly=c.y;
     const lab=el('div','rlabel'+(r.id===hlRoom?' hl':''),
       `<span class="rname">${r.name}</span>${r.scope==='out'?'<span class="rtag">OUT</span>':''}${roomMode?'<span class="rx" title="Delete room">✕</span>':''}`);
@@ -955,6 +962,18 @@ function renderRooms(){
         toggleRoomSel(room.id);
         return;
       }
+      /* a wall usually belongs to two rooms — clicking again steps to the next */
+      const here=roomsAlongEdge(f,e);
+      if(here.length>1){
+        clearTimeout(edgeTimer);
+        const cur=hlRoom||selRoom;
+        const at=here.findIndex(r=>r.id===cur);
+        const next=here[(at+1)%here.length];
+        if(roomMode){selRoom=next.id;renderRooms();}
+        else highlightRoom(next.id);
+        toast(`${next.name} — ${here.length} rooms share this wall, tap again for the next.`);
+        return;
+      }
       if(e.detail>=2){
         clearTimeout(edgeTimer);
         if(roomMode){selRoom=room.id;renderRooms();}
@@ -969,6 +988,24 @@ function renderRooms(){
       },240);
     });
   }
+}
+/* rooms whose outline passes within a few pixels of a click */
+function roomsAlongEdge(f,ev){
+  const r=planRect();
+  const p={x:(ev.clientX-r.left)/r.width, y:(ev.clientY-r.top)/r.height};
+  const tol=14/Math.max(1,r.width);
+  const near=[];
+  (f.rooms||[]).forEach(rm=>{
+    const q=rm.pts||[];
+    for(let i=0;i<q.length;i++){
+      const a=q[i], b=q[(i+1)%q.length];
+      const dx=b.x-a.x, dy=b.y-a.y, L=dx*dx+dy*dy;
+      let t=L?((p.x-a.x)*dx+(p.y-a.y)*dy)/L:0; t=Math.max(0,Math.min(1,t));
+      const d=Math.hypot(p.x-(a.x+t*dx), p.y-(a.y+t*dy));
+      if(d<tol){ near.push(rm); break; }
+    }
+  });
+  return near;
 }
 /* ── working on several rooms at once ── */
 function toggleRoomSel(id){
@@ -1713,7 +1750,7 @@ function addNote(x,y){
   const f=activeFloor();if(!f)return;
   const text=prompt('Note');
   if(text===null||!text.trim())return;
-  const n={id:uid(),x,y,text:text.trim()};
+  const n={id:uid(),x,y,text:text.trim(),lx:Math.min(0.96,x+0.06),ly:Math.max(0.03,y-0.06)};
   (f.notes=f.notes||[]).push(n);
   pushUndo({type:'note-add',floorId:f.id,note:JSON.parse(JSON.stringify(n))});
   renderNotes();
@@ -1722,7 +1759,7 @@ function editNote(n){
   const f=activeFloor();if(!f)return;
   const text=prompt('Note  (leave empty to delete)',n.text);
   if(text===null)return;
-  pushUndo({type:'note-edit',floorId:f.id,noteId:n.id,prev:{text:n.text,x:n.x,y:n.y}});
+  pushUndo({type:'note-edit',floorId:f.id,noteId:n.id,prev:{text:n.text,x:n.x,y:n.y,lx:n.lx,ly:n.ly}});
   if(!text.trim()){
     f.notes=(f.notes||[]).filter(z=>z.id!==n.id);
     toast('Note removed.');
@@ -1731,34 +1768,68 @@ function editNote(n){
 }
 function renderNotes(){
   const holder=$('#planHolder');if(!holder)return;
-  holder.querySelectorAll('.note-pin').forEach(el2=>el2.remove());
+  holder.querySelectorAll('.note-pin,.note-label,.note-leaders').forEach(el2=>el2.remove());
   const f=activeFloor();if(!f)return;
-  (f.notes||[]).forEach((n,i)=>{
-    const d=el('div','note-pin');
+  const notes=f.notes||[];
+  if(!notes.length)return;
+  /* leader lines, drawn beneath both ends */
+  const svg=el('div','note-leaders');
+  svg.innerHTML=`<svg viewBox="0 0 ${f.w} ${f.h}" preserveAspectRatio="none">`+
+    notes.map(n=>{
+      const lx=(n.lx??n.x), ly=(n.ly??n.y);
+      return `<line x1="${n.x*f.w}" y1="${n.y*f.h}" x2="${lx*f.w}" y2="${ly*f.h}"/>`;
+    }).join('')+`</svg>`;
+  holder.appendChild(svg);
+  notes.forEach((n,i)=>{
+    /* the target: a small ring on the thing being described */
+    const t=el('div','note-pin');
+    t.dataset.note=n.id;
+    t.style.cssText=`left:${n.x*100}%;top:${n.y*100}%`;
+    t.innerHTML=`<span class="np-dot">${i+1}</span>`;
+    t.title='Drag to point at something else';
+    t.addEventListener('pointerdown',ev=>{
+      if(cropMode)return;
+      ev.stopPropagation();ev.preventDefault();
+      startNoteDrag(n,t,ev,'target');
+    });
+    holder.appendChild(t);
+    /* the label: drag it clear of the drawing */
+    const d=el('div','note-label');
     d.dataset.note=n.id;
-    d.style.cssText=`left:${n.x*100}%;top:${n.y*100}%`;
-    d.innerHTML=`<span class="np-dot">${i+1}</span><span class="np-text">${escapeHtml(n.text)}</span>`;
+    d.style.cssText=`left:${(n.lx??n.x)*100}%;top:${(n.ly??n.y)*100}%`;
+    d.innerHTML=`<span class="nl-n">${i+1}</span><span class="nl-t">${escapeHtml(n.text)}</span>`;
     d.addEventListener('pointerdown',ev=>{
       if(cropMode)return;
       ev.stopPropagation();ev.preventDefault();
-      startNoteDrag(n,d,ev);
+      startNoteDrag(n,d,ev,'label');
     });
     holder.appendChild(d);
   });
 }
+function renderNoteLeaders(){
+  const f=activeFloor();const box=document.querySelector('.note-leaders svg');
+  if(!f||!box)return;
+  box.innerHTML=(f.notes||[]).map(n=>{
+    const lx=(n.lx??n.x), ly=(n.ly??n.y);
+    return `<line x1="${n.x*f.w}" y1="${n.y*f.h}" x2="${lx*f.w}" y2="${ly*f.h}"/>`;
+  }).join('');
+}
 function escapeHtml(t){return String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function startNoteDrag(n,d,ev){
+function startNoteDrag(n,d,ev,which='label'){
   const f=activeFloor();
   const id=ev.pointerId, sx=ev.clientX, sy=ev.clientY;
   let moved=false, pushed=false;
   const r=planRect();
+  const snap={text:n.text,x:n.x,y:n.y,lx:n.lx,ly:n.ly};
   const mv=e2=>{
     if(e2.pointerId!==id)return;
     if(!moved&&Math.hypot(e2.clientX-sx,e2.clientY-sy)<5)return;
-    if(!moved){ moved=true; if(!pushed){pushed=true;pushUndo({type:'note-edit',floorId:f.id,noteId:n.id,prev:{text:n.text,x:n.x,y:n.y}});} }
-    n.x=Math.min(1,Math.max(0,(e2.clientX-r.left)/r.width));
-    n.y=Math.min(1,Math.max(0,(e2.clientY-r.top)/r.height));
-    d.style.left=(n.x*100)+'%'; d.style.top=(n.y*100)+'%';
+    if(!moved){ moved=true; if(!pushed){pushed=true;pushUndo({type:'note-edit',floorId:f.id,noteId:n.id,prev:snap});} }
+    const nx=Math.min(1,Math.max(0,(e2.clientX-r.left)/r.width));
+    const ny=Math.min(1,Math.max(0,(e2.clientY-r.top)/r.height));
+    if(which==='target'){ n.x=nx;n.y=ny; } else { n.lx=nx;n.ly=ny; }
+    d.style.left=(nx*100)+'%'; d.style.top=(ny*100)+'%';
+    renderNoteLeaders();
   };
   const up=e2=>{
     if(e2.pointerId!==id)return;
@@ -1772,7 +1843,7 @@ function startNoteDrag(n,d,ev){
    A stroke is painted into an off-screen mask, then traced, simplified and
    squared up into an ordinary editable polygon. No wall detection — the
    shape comes purely from what was brushed, so it works on any drawing. */
-let skribbleMode=false, skCv=null, skCtx=null, skPainting=false, skDrew=false, skClipped=false, skIgnoreRooms=false;
+let skribbleMode=false, skCv=null, skCtx=null, skPainting=false, skDrew=false, skClipped=false, skIgnoreRooms=false, skAreaMode=false;
 const SK_MAX=520;                       /* mask resolution (long side) */
 
 function updateToolExit(){
@@ -1832,8 +1903,8 @@ function startSkribble(e){
   skPainting=true;skDrew=false;
   /* respect existing rooms: clip the brush so it cannot paint inside them.
      The stroke simply stops at their walls — hold Alt to ignore and overlap. */
-  skClipped=false;skIgnoreRooms=!!e.altKey;
-  if(!e.altKey && typeof Path2D!=='undefined' && skCtx.clip){
+  skClipped=false;skIgnoreRooms=(!!e.altKey)||skAreaMode;
+  if(!skIgnoreRooms && typeof Path2D!=='undefined' && skCtx.clip){
     const rooms=(f.rooms||[]).filter(r=>(r.pts||[]).length>2);
     if(rooms.length){
       const path=new Path2D();
@@ -1883,7 +1954,7 @@ function commitSkribble(f){
     return;
   }
   /* trim away anything that squaring-up pushed over a neighbour's wall */
-  if(!skIgnoreRooms&&(f.rooms||[]).length){
+  if(!skIgnoreRooms&&!skAreaMode&&(f.rooms||[]).length){
     const trimmed=subtractRooms(pts,f.rooms,w,h);
     if(!trimmed){ toast('Nothing to add there — that area already belongs to another room. Hold Alt to overlap.'); return; }
     pts=trimmed;
@@ -1895,7 +1966,7 @@ function commitSkribble(f){
   snapped=snapped.map(q=>{const sp=roomSnapPoint(q,f,null,null,tol);return {x:sp.x,y:sp.y};});
   const name=prompt('Room / area name',`Room ${(f.rooms||[]).length+1}`);
   if(name===null)return;
-  const room=migrateRoom({id:uid(),name:(name.trim()||`Room ${(f.rooms||[]).length+1}`),pts:snapped,color:skColor()});
+  const room=migrateRoom({id:uid(),name:(name.trim()||`${skAreaMode?'Area':'Room'} ${(f.rooms||[]).length+1}`),pts:snapped,color:skColor(),kind:skAreaMode?'area':'room'});
   (f.rooms=f.rooms||[]).push(room);
   pushUndo({type:'room-add',floorId:f.id,room:JSON.parse(JSON.stringify(room))});
   selRoom=room.id;
@@ -2041,6 +2112,54 @@ function sortRoomsByPosition(){
 }
 /* area centroid, so the label sits in the middle of the room rather than in a
    corner; falls back to the bounding-box centre for awkward shapes */
+/* Where a room's name can sit without covering anything.
+   Samples points inside the room and picks the one furthest from both the
+   ikons in it and its own walls — so labels drift into empty floor rather
+   than landing on a device cluster. Falls back to the centroid. */
+const labelSpotCache=new Map();
+function labelSpotKey(r,f){
+  const pts=r.pts.map(p=>p.x.toFixed(3)+','+p.y.toFixed(3)).join(';');
+  const ik=(f.placements||[]).filter(p=>roomOf(p,f)===r).map(p=>p.x.toFixed(2)+','+p.y.toFixed(2)).join(';');
+  return r.id+'|'+pts+'|'+ik;
+}
+function labelSpot(r,f){
+  const key=labelSpotKey(r,f);
+  const hit=labelSpotCache.get(key);
+  if(hit)return hit;
+  const xs=r.pts.map(p=>p.x), ys=r.pts.map(p=>p.y);
+  const x0=Math.min(...xs), x1=Math.max(...xs), y0=Math.min(...ys), y1=Math.max(...ys);
+  const ik=(f.placements||[]).filter(p=>roomOf(p,f)===r);
+  const wallDist=q=>{
+    let m=Infinity;
+    for(let i=0;i<r.pts.length;i++){
+      const a=r.pts[i], b=r.pts[(i+1)%r.pts.length];
+      const dx=b.x-a.x, dy=b.y-a.y, L=dx*dx+dy*dy;
+      let t=L?((q.x-a.x)*dx+(q.y-a.y)*dy)/L:0; t=Math.max(0,Math.min(1,t));
+      m=Math.min(m,Math.hypot(q.x-(a.x+t*dx), q.y-(a.y+t*dy)));
+    }
+    return m;
+  };
+  const cen=roomCentroid(r);
+  let best=null,bestScore=-Infinity;
+  const N=13;
+  for(let i=1;i<N;i++)for(let j=1;j<N;j++){
+    const q={x:x0+(x1-x0)*i/N, y:y0+(y1-y0)*j/N};
+    if(!pointInPoly(q,r.pts))continue;
+    const w=wallDist(q);
+    if(w<0.008)continue;                       /* keep clear of the walls */
+    let d=Infinity;
+    ik.forEach(p=>{ d=Math.min(d,Math.hypot(q.x-p.x,q.y-p.y)); });
+    if(d===Infinity)d=0.25;                    /* empty room: only walls matter */
+    /* prefer clear floor, keep off the walls, and settle ties near the middle */
+    const score=Math.min(d,0.25)*3 + Math.min(w,0.10)
+              - 0.5*Math.hypot(q.x-cen.x,q.y-cen.y);
+    if(score>bestScore){bestScore=score;best=q;}
+  }
+  const out=best||roomCentroid(r);
+  if(labelSpotCache.size>400)labelSpotCache.clear();
+  labelSpotCache.set(key,out);
+  return out;
+}
 function roomCentroid(r){
   const p=r.pts; let a=0,cx=0,cy=0;
   for(let i=0;i<p.length;i++){
@@ -2085,6 +2204,8 @@ function openRoomPop(r,anchor){
       <input class="rp-name" value="${r.name.replace(/"/g,'&quot;')}"></div>
     <div class="rp-sec"><label class="rp-lab">Color</label>
       <div class="rp-colors">${ROOM_COLORS.map(c=>`<button class="rp-c ${c===r.color?'on':''}" data-c="${c}" style="background:${c}"></button>`).join('')}</div></div>
+    <div class="rp-sec"><label class="rp-lab">Type</label>
+      <label class="rp-scope"><input type="checkbox" class="rp-area" ${r.kind==='area'?'checked':''}> Outdoor area — surrounds other rooms rather than dividing them</label></div>
     <div class="rp-sec"><label class="rp-lab">Status</label>
       <label class="rp-scope"><input type="checkbox" class="rp-out" ${r.scope==='out'?'checked':''}> Out of scope — hatched on the plan, tagged in the Excel FD sheet</label></div>
     <div class="rp-sec"><label class="rp-lab">Order in schedule</label>
@@ -2104,6 +2225,14 @@ function openRoomPop(r,anchor){
   pop.querySelectorAll('.rp-mv').forEach(b=>b.addEventListener('click',()=>{
     if(moveRoomOrder(f,r,+b.dataset.dir)){ renderBoq(); openRoomPop(r,anchor); }
   }));
+  pop.querySelector('.rp-area').addEventListener('change',e=>{
+    changed=true;
+    r.kind=e.target.checked?'area':'room';
+    renderRooms();renderBoq();
+    toast(r.kind==='area'
+      ? 'Outdoor area — rooms drawn inside it keep their own ikons.'
+      : 'Back to a normal room.');
+  });
   pop.querySelector('.rp-out').addEventListener('change',e=>{
     changed=true;
     const wasOut=r.scope==='out';
@@ -2149,6 +2278,7 @@ function openRoomPop(r,anchor){
 
 /* ──────────── Arm / place ──────────── */
 function armItem(id){
+  document.body.classList.toggle('arming',!!id);
   const it=id?itemById(id):null;
   if(it&&it.hidden){ it.hidden=false; renderLibrary(); updateHiddenChip(); toast(`“${it.name}” shown again.`); }
   if(cropMode) cancelCrop();
@@ -2586,11 +2716,13 @@ function applyRoomLook(){
   if(h){
     h.style.setProperty('--room-a',state.roomOpacity??1);
     h.style.setProperty('--seq-k',state.seqScale??1);
+    h.style.setProperty('--wall-w',state.wallWeight??1);
   }
   const r=$('#roomOpacity'); if(r)r.value=Math.round((state.roomOpacity??1)*100);
   renderOutScopeSwatches();
   const q=$('#seqSize');     if(q)q.value=Math.round((state.seqScale??1)*100);
   const lk=$('#linkNodesOpt'); if(lk)lk.checked=state.linkNodes!==false;
+  const ww=$('#wallWeight'); if(ww)ww.value=Math.round((state.wallWeight??1)*100);
 }
 function applyPlanGray(){
   const img=$('#planImg');
@@ -3188,7 +3320,8 @@ function renderBoqRooms(){
       return `<tr><td class="rb-room">${label}${extra}</td>${cells}<td class="num rb-tot">${tot||'—'}</td></tr>`;
     };
     let rowsH='';
-    (f.rooms||[]).forEach(r=>{
+    const ordered=[...(f.rooms||[])].sort((a,b)=>(a.kind==='area'?0:1)-(b.kind==='area'?0:1));
+  ordered.forEach(r=>{
       rowsH+=rowFor(`<span class="rb-dot" style="background:${r.color}"></span>${r.name}`,r,
                     r.scope==='out'?' <span class="rb-out">OUT</span>':'');
     });
@@ -3449,7 +3582,7 @@ function buildFdSheet(rows){
   ws['!cols']=[{wch:3.1},{wch:44},...devs.map(()=>({wch:5.4}))];   /* matches the quotation workbook */
 
   /* ── styling (xlsx-js-style) ── */
-  const WHITE={patternType:'solid',fgColor:{rgb:'FFFFFFFF'}};
+  const BAND={patternType:'solid',fgColor:{rgb:'FFF2F2F2'}};      /* faint tint for section rows */
   const DARK25={patternType:'solid',fgColor:{rgb:'FFBFBFBF'}};   /* "darker 25%" grey */
   const thin={style:'thin',color:{rgb:'FF000000'}};   /* hairline grid, as in the reference */
   const border={top:thin,bottom:thin,left:thin,right:thin};
@@ -3461,7 +3594,7 @@ function buildFdSheet(rows){
   /* header row 1: device names rotated 90° up, darker-25% fill */
   for(let c=0;c<ncol;c++){
     const cell=ensure(0,c);
-    cell.s={fill:WHITE, border,
+    cell.s={border,
       alignment:{textRotation:c>=2?90:0,horizontal:'center',vertical:c>=2?'bottom':'center',wrapText:true},
       font:{bold:true,sz:10}};
   }
@@ -3474,19 +3607,19 @@ function buildFdSheet(rows){
   /* body: white fill + borders on every data cell; floor titles + totals darker */
   floorRowIdx.forEach(ri=>{
     for(let c=0;c<ncol;c++){ const cell=ensure(ri,c);
-      cell.s={fill:WHITE,border:{bottom:thin},font:{bold:true,sz:10},
+      cell.s={fill:BAND,border:{bottom:thin},font:{bold:true,sz:10},
         alignment:{horizontal:'left',vertical:'center'}}; }
   });
   roomRowIdx.forEach(ri=>{
     const dark=outRowIdx.includes(ri);
     for(let c=0;c<ncol;c++){ const cell=ensure(ri,c);
-      cell.s={fill:dark?DARK25:WHITE,border,
+      cell.s={...(dark?{fill:DARK25}:{}),border,
         alignment:{horizontal:c>=2?'center':(c===0?'center':'left'),vertical:'center'},
         font:{sz:10}}; }
   });
   /* totals row */
   for(let c=0;c<ncol;c++){ const cell=ensure(totalRow-1,c);
-    cell.s={fill:WHITE,border,font:{bold:true,sz:10},
+    cell.s={fill:BAND,border,font:{bold:true,sz:10},
       alignment:{horizontal:c>=2?'center':'left',vertical:'center'}}; }
 
   return ws;
@@ -3647,19 +3780,34 @@ async function renderSheet(f,paper,idx,total){
 
   ctx.globalAlpha=1;
 
-  /* notes */
+  /* notes: leader line, target ring and label */
   (f.notes||[]).forEach((n,i)=>{
     const x0=dx+n.x*dw, y0=dy+n.y*dh;
-    const rr=Math.max(9,pin*0.42);
-    ctx.beginPath();ctx.arc(x0,y0,rr,0,Math.PI*2);
-    ctx.fillStyle='#FFFFFF';ctx.fill();
-    ctx.lineWidth=Math.max(1.4,rr*0.16);ctx.strokeStyle=PAPER_HL;ctx.stroke();
-    ctx.fillStyle=PAPER_HL;
-    ctx.font=`700 ${Math.round(rr*1.05)}px 'JetBrains Mono',monospace`;
-    ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText(String(i+1),x0,y0+1);
+    const lx=dx+(n.lx??n.x)*dw, ly=dy+(n.ly??n.y)*dh;
+    const rr=Math.max(9,pin*0.40);
+    if(Math.hypot(lx-x0,ly-y0)>rr*1.4){
+      ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(lx,ly);
+      ctx.lineWidth=Math.max(1,rr*0.13);ctx.strokeStyle=PAPER_HL;ctx.setLineDash([rr*0.5,rr*0.4]);ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    ctx.beginPath();ctx.arc(x0,y0,rr*0.42,0,Math.PI*2);ctx.fillStyle=PAPER_HL;ctx.fill();
+    ctx.font=`600 ${Math.round(rr*0.95)}px 'Inter',sans-serif`;
+    ctx.textAlign='left';ctx.textBaseline='middle';
+    const label=`${i+1}. ${n.text}`;
+    const words=label.split(/\s+/); const lines=[]; let cur='';
+    const maxW=dw*0.26;
+    words.forEach(w=>{ const t=cur?cur+' '+w:w; if(ctx.measureText(t).width>maxW&&cur){lines.push(cur);cur=w;} else cur=t; });
+    if(cur)lines.push(cur);
+    const lh=rr*1.25, bw=Math.min(maxW,Math.max(...lines.map(l=>ctx.measureText(l).width)))+rr*0.9;
+    const bh=lines.length*lh+rr*0.6;
+    const bx=Math.min(lx+rr*0.5, dx+dw-bw-2), by=Math.max(dy+2,Math.min(ly-bh/2, dy+dh-bh-2));
+    ctx.fillStyle='rgba(255,255,255,.92)';
+    roundRect(ctx,bx,by,bw,bh,rr*0.3);ctx.fill();
+    ctx.strokeStyle=PAPER_LINE;ctx.lineWidth=1;ctx.stroke();
+    ctx.fillStyle=PAPER_INK;
+    lines.forEach((l,k)=>ctx.fillText(l,bx+rr*0.45,by+rr*0.3+lh*(k+0.5)));
   });
-  ctx.textBaseline='alphabetic';
+  ctx.textBaseline='alphabetic';ctx.textAlign='left';
 
   /* legend table */
   if(used.length){
@@ -3886,7 +4034,7 @@ function loadProjectText(txt){
     const s=JSON.parse(txt);
     if(!s.items||!s.floors)throw 0;
     s.floors&&s.floors.forEach(f=>{f.rooms=f.rooms||[];});
-    state=Object.assign({version:APP_VERSION,theme:SYS_THEME(),brandLogo:null,pinScale:1,pinOpacity:1,planGray:false,brushSize:46,roomOpacity:1,seqScale:1,cropRatio:null,skribbleColor:null,outScopeColor:OUT_SCOPE_DEFAULT,linkNodes:true,client:'',location:'',reference:'',preparedBy:'',libDock:'left',lastDock:'left',libHidden:false,libFloat:null,libSize:{w:324,h:60,fw:288,fh:520},catOrder:['Control','Climate','Lighting','Shading','Audio','Network','Security','Video']},s);
+    state=Object.assign({version:APP_VERSION,theme:SYS_THEME(),brandLogo:null,pinScale:1,pinOpacity:1,planGray:false,brushSize:46,roomOpacity:1,seqScale:1,wallWeight:1,cropRatio:null,skribbleColor:null,outScopeColor:OUT_SCOPE_DEFAULT,linkNodes:true,client:'',location:'',reference:'',preparedBy:'',libDock:'left',lastDock:'left',libHidden:false,libFloat:null,libSize:{w:324,h:60,fw:288,fh:520},catOrder:['Control','Climate','Lighting','Shading','Audio','Network','Security','Video']},s);
     projHandle=null;                            /* re-linked by the picker path */
     armedItem=null;setSelMarker(null);undoStack=[];redoStack=[];
     if(cropMode)cancelCrop();

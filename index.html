@@ -7,7 +7,7 @@
 <title>ikonhouse — AV Pre-Sales Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/app.css?v=1.52.0">
+<link rel="stylesheet" href="assets/css/app.css?v=1.53.2">
 </head>
 <body>
 
@@ -111,9 +111,11 @@
   <button class="tb-btn icon-only" id="btnGray" data-lbl="Greyscale plan" data-key="G" title="Greyscale the floor plan — ikons keep their colour">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor" stroke="none"/></svg>
   </button>
-  <label class="disp-toggle"><input type="checkbox" id="linkNodesOpt" checked> Linked walls</label>
+  <label class="disp-toggle" title="When two rooms share a corner, dragging it moves both so they stay joined. Turn off to move each room on its own."><input type="checkbox" id="linkNodesOpt" checked> Joined rooms move together</label>
   <div class="sizegrp"><label>IKON</label><input type="range" id="pinSize" min="20" max="220" value="100" title="Ikon size"></div>
   <div class="sizegrp"><label>OPACITY</label><input type="range" id="pinOpacity" min="25" max="100" value="100" title="Ikon opacity — lower it to read the plan underneath"></div>
+  <div class="sizegrp"><label>ROOM</label><input type="range" id="roomOpacity" min="20" max="200" value="100" title="Room fill strength"></div>
+  <div class="sizegrp"><label>WALLS</label><input type="range" id="wallWeight" min="100" max="320" value="100" title="Room wall thickness"></div>
 </div>
 <div class="display-pop" id="displayPop">  <button class="tb-btn icon-only" id="btnAutoNum" data-lbl="Auto-number ikons" title="Auto-number ikons (SP-01, KP-02…)">
     <svg viewBox="0 0 24 24"><path d="M5 8h2v8M15.5 8.5a2 2 0 1 1 3 2.6L15 16h4"/><path d="M10.5 5.5L9 18.5"/></svg>
@@ -122,7 +124,7 @@
   
   
   
-  <div class="sizegrp"><label>ROOM</label><input type="range" id="roomOpacity" min="20" max="200" value="100" title="Room fill strength"></div>
+  
   <div class="sizegrp"><label>No.</label><input type="range" id="seqSize" min="70" max="220" value="100" title="Auto-number size"></div>
   <div class="sizegrp outscope-grp"><label>OUT OF SCOPE</label><div class="os-row" id="outScopeRow" title="Colour used for out-of-scope rooms"></div></div>
 </div>
@@ -220,9 +222,9 @@
         <div><h4>Ikons</h4>
           <p>Tap a device then tap the plan to place · drag to move — they snap into rows and columns · drag a box on empty plan to select several (on touch, hold an ikon then tap others) · <kbd>Shift</kbd>-click to add one to the selection · <kbd>Ctrl</kbd>+<kbd>C</kbd> / <kbd>Ctrl</kbd>+<kbd>V</kbd> to copy a cluster · <kbd>Delete</kbd> to remove</p></div>
         <div><h4>Rooms &amp; walls</h4>
-          <p><b>Skribble</b> — brush over an area and release, and it becomes a room, ready to fine-tune · skribbled rooms come out with square walls (adjust the corners afterwards for an odd shape) · the brush stops at existing rooms and the new room snaps flush against their walls, so rooms fit together without gaps (<kbd>Alt</kbd> to ignore) · drag for a quick box · tap corner to corner for any shape, then tap the first corner to close · drag a wall to move it — straight by default, <kbd>Shift</kbd> frees it · drag a corner to reshape, <kbd>Shift</kbd> squares it, <kbd>Alt</kbd> turns snapping off · where two rooms share a corner both move together — hold <kbd>Ctrl</kbd> to move just one, or switch off <b>Linked walls</b> in Display · double-tap a wall to split it · <b>hold a corner</b> (or <kbd>Ctrl</kbd>-drag) to grow a new room that stays joined · double-tap a corner to remove it</p></div>
+          <p><b>Skribble</b> — brush over an area and release, and it becomes a room, ready to fine-tune · skribbled rooms come out with square walls (adjust the corners afterwards for an odd shape) · the brush stops at existing rooms and the new room snaps flush against their walls, so rooms fit together without gaps (<kbd>Alt</kbd> to ignore) · drag for a quick box · tap corner to corner for any shape, then tap the first corner to close · drag a wall to move it — straight by default, <kbd>Shift</kbd> frees it · drag a corner to reshape, <kbd>Shift</kbd> squares it, <kbd>Alt</kbd> turns snapping off · where two rooms share a corner both move together — hold <kbd>Ctrl</kbd> to move just one, or switch off <b>Joined rooms move together</b> · double-tap a wall to split it · <b>hold a corner</b> (or <kbd>Ctrl</kbd>-drag) to grow a new room that stays joined · double-tap a corner to remove it · tap a wall to highlight its room, tap again to step to the room on the other side · mark a room as an <b>outdoor area</b> to have it surround other rooms instead of dividing them</p></div>
         <div><h4>Notes</h4>
-          <p>Press <kbd>A</kbd> or tap <b>Notes</b>, then tap the plan to leave a comment — site conditions, client requests, anything worth remembering. Drag a note to move it, tap it to edit, clear the text to delete. Notes are numbered on the exported sheets.</p></div>
+          <p>Press <kbd>A</kbd> or tap <b>Notes</b>, then tap the plan to leave a comment — site conditions, client requests, anything worth remembering. Each note is a <b>target ring</b> on the thing it describes, joined by a leader line to a <b>label</b> — drag either end, so one note can call out a single device, several items at one point, or a whole area. Tap a note to edit it, clear the text to delete. Notes print with their leaders on the exported sheets.</p></div>
         <div><h4>Layers</h4>
           <p>Each device and each category has an <b>eye</b> in the library — switch one off to take it off the plan and off the exported sheets, for showing a client just the lighting, or just the audio. Quantities in the BoQ are unaffected: hiding is about presentation, not scope.</p></div>
         <div><h4>Library</h4>
@@ -261,6 +263,7 @@
     <span class="sk-dot" id="brushDot"></span>
   </div>
   <div class="sk-colors" id="skColors"></div>
+  <label class="sk-area"><input type="checkbox" id="skAreaOpt"> Outdoor area</label>
   <div class="sk-hint">Brush over an area — release to turn it into a room</div>
   <div class="crop-actions">
     <button class="btn ghost" id="skribbleDone">Done</button>
@@ -431,6 +434,6 @@
   </div>
 </div>
 
-<script src="assets/js/app.js?v=1.52.0"></script>
+<script src="assets/js/app.js?v=1.53.2"></script>
 </body>
 </html>

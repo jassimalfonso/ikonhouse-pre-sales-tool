@@ -4,6 +4,51 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.53.2] — 2026-08-21
+
+### Fixed
+- **FD sheet colouring.** Every cell was being given a solid white fill, which
+  flattened the sheet and painted over Excel''s own gridlines. Ordinary cells
+  now carry no fill at all, exactly as the reference workbook does.
+- **Floor rows stand out again.** Matching the reference removed their tint
+  in 1.52, leaving floor sections hard to pick out in a long sheet. Floor
+  titles and the totals row now sit on a faint grey band — enough to scan by,
+  far lighter than the old heavy grey. Out-of-scope rooms keep their darker
+  grey, so the two never read as the same thing.
+
+## [1.53.1] — 2026-08-21
+
+### Changed
+- **Room names find a clear spot instead of sitting on the devices.** A label
+  is now placed where the room is emptiest — furthest from the ikons inside it
+  and from its own walls — rather than at the geometric centre, which is
+  exactly where devices tend to cluster. Empty rooms still read centrally, and
+  labels stay inside awkward shapes such as L-rooms.
+- Labels are visually lighter, brighten on hover or when their room is
+  highlighted, and fade further back while a device is armed for placement.
+
+## [1.53.0] — 2026-08-21
+
+### Added
+- **Leader notes.** A note is now a target ring on the thing it describes,
+  joined by a leader line to a label you can drag clear of the drawing — so
+  one note can call out a single device, several items sharing one point, or a
+  whole area. Both ends drag independently; leaders and wrapped label text
+  print on the exported sheets.
+- **Outdoor areas.** A room can be marked as an *outdoor area*: it surrounds
+  other rooms instead of dividing them, draws beneath them with a dashed
+  outline, and devices inside an inner room still belong to that room — only
+  what falls outside them counts as the area''s. Skribble has an **Outdoor
+  area** switch that lets the brush pass over existing rooms.
+- **Wall thickness slider** (WALLS) for clearer boundaries, and **room fill
+  strength** joins the always-visible toolbar group.
+
+### Changed
+- **Tapping a shared wall cycles through the rooms that meet along it** —
+  tap once for one side, again for the other, with the room named each time.
+- **"Linked walls" is now "Joined rooms move together"**, with a tooltip
+  explaining that it keeps rooms attached when you drag a shared corner.
+
 ## [1.52.0] — 2026-08-21
 
 ### Changed
@@ -210,6 +255,51 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.53.2] — 2026-08-21
+
+### Fixed
+- **FD sheet colouring.** Every cell was being given a solid white fill, which
+  flattened the sheet and painted over Excel''s own gridlines. Ordinary cells
+  now carry no fill at all, exactly as the reference workbook does.
+- **Floor rows stand out again.** Matching the reference removed their tint
+  in 1.52, leaving floor sections hard to pick out in a long sheet. Floor
+  titles and the totals row now sit on a faint grey band — enough to scan by,
+  far lighter than the old heavy grey. Out-of-scope rooms keep their darker
+  grey, so the two never read as the same thing.
+
+## [1.53.1] — 2026-08-21
+
+### Changed
+- **Room names find a clear spot instead of sitting on the devices.** A label
+  is now placed where the room is emptiest — furthest from the ikons inside it
+  and from its own walls — rather than at the geometric centre, which is
+  exactly where devices tend to cluster. Empty rooms still read centrally, and
+  labels stay inside awkward shapes such as L-rooms.
+- Labels are visually lighter, brighten on hover or when their room is
+  highlighted, and fade further back while a device is armed for placement.
+
+## [1.53.0] — 2026-08-21
+
+### Added
+- **Leader notes.** A note is now a target ring on the thing it describes,
+  joined by a leader line to a label you can drag clear of the drawing — so
+  one note can call out a single device, several items sharing one point, or a
+  whole area. Both ends drag independently; leaders and wrapped label text
+  print on the exported sheets.
+- **Outdoor areas.** A room can be marked as an *outdoor area*: it surrounds
+  other rooms instead of dividing them, draws beneath them with a dashed
+  outline, and devices inside an inner room still belong to that room — only
+  what falls outside them counts as the area''s. Skribble has an **Outdoor
+  area** switch that lets the brush pass over existing rooms.
+- **Wall thickness slider** (WALLS) for clearer boundaries, and **room fill
+  strength** joins the always-visible toolbar group.
+
+### Changed
+- **Tapping a shared wall cycles through the rooms that meet along it** —
+  tap once for one side, again for the other, with the room named each time.
+- **"Linked walls" is now "Joined rooms move together"**, with a tooltip
+  explaining that it keeps rooms attached when you drag a shared corner.
 
 ## [1.52.0] — 2026-08-21
 
@@ -857,6 +947,51 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.53.2] — 2026-08-21
+
+### Fixed
+- **FD sheet colouring.** Every cell was being given a solid white fill, which
+  flattened the sheet and painted over Excel''s own gridlines. Ordinary cells
+  now carry no fill at all, exactly as the reference workbook does.
+- **Floor rows stand out again.** Matching the reference removed their tint
+  in 1.52, leaving floor sections hard to pick out in a long sheet. Floor
+  titles and the totals row now sit on a faint grey band — enough to scan by,
+  far lighter than the old heavy grey. Out-of-scope rooms keep their darker
+  grey, so the two never read as the same thing.
+
+## [1.53.1] — 2026-08-21
+
+### Changed
+- **Room names find a clear spot instead of sitting on the devices.** A label
+  is now placed where the room is emptiest — furthest from the ikons inside it
+  and from its own walls — rather than at the geometric centre, which is
+  exactly where devices tend to cluster. Empty rooms still read centrally, and
+  labels stay inside awkward shapes such as L-rooms.
+- Labels are visually lighter, brighten on hover or when their room is
+  highlighted, and fade further back while a device is armed for placement.
+
+## [1.53.0] — 2026-08-21
+
+### Added
+- **Leader notes.** A note is now a target ring on the thing it describes,
+  joined by a leader line to a label you can drag clear of the drawing — so
+  one note can call out a single device, several items sharing one point, or a
+  whole area. Both ends drag independently; leaders and wrapped label text
+  print on the exported sheets.
+- **Outdoor areas.** A room can be marked as an *outdoor area*: it surrounds
+  other rooms instead of dividing them, draws beneath them with a dashed
+  outline, and devices inside an inner room still belong to that room — only
+  what falls outside them counts as the area''s. Skribble has an **Outdoor
+  area** switch that lets the brush pass over existing rooms.
+- **Wall thickness slider** (WALLS) for clearer boundaries, and **room fill
+  strength** joins the always-visible toolbar group.
+
+### Changed
+- **Tapping a shared wall cycles through the rooms that meet along it** —
+  tap once for one side, again for the other, with the room named each time.
+- **"Linked walls" is now "Joined rooms move together"**, with a tooltip
+  explaining that it keeps rooms attached when you drag a shared corner.
+
 ## [1.52.0] — 2026-08-21
 
 ### Changed
@@ -1063,6 +1198,51 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.53.2] — 2026-08-21
+
+### Fixed
+- **FD sheet colouring.** Every cell was being given a solid white fill, which
+  flattened the sheet and painted over Excel''s own gridlines. Ordinary cells
+  now carry no fill at all, exactly as the reference workbook does.
+- **Floor rows stand out again.** Matching the reference removed their tint
+  in 1.52, leaving floor sections hard to pick out in a long sheet. Floor
+  titles and the totals row now sit on a faint grey band — enough to scan by,
+  far lighter than the old heavy grey. Out-of-scope rooms keep their darker
+  grey, so the two never read as the same thing.
+
+## [1.53.1] — 2026-08-21
+
+### Changed
+- **Room names find a clear spot instead of sitting on the devices.** A label
+  is now placed where the room is emptiest — furthest from the ikons inside it
+  and from its own walls — rather than at the geometric centre, which is
+  exactly where devices tend to cluster. Empty rooms still read centrally, and
+  labels stay inside awkward shapes such as L-rooms.
+- Labels are visually lighter, brighten on hover or when their room is
+  highlighted, and fade further back while a device is armed for placement.
+
+## [1.53.0] — 2026-08-21
+
+### Added
+- **Leader notes.** A note is now a target ring on the thing it describes,
+  joined by a leader line to a label you can drag clear of the drawing — so
+  one note can call out a single device, several items sharing one point, or a
+  whole area. Both ends drag independently; leaders and wrapped label text
+  print on the exported sheets.
+- **Outdoor areas.** A room can be marked as an *outdoor area*: it surrounds
+  other rooms instead of dividing them, draws beneath them with a dashed
+  outline, and devices inside an inner room still belong to that room — only
+  what falls outside them counts as the area''s. Skribble has an **Outdoor
+  area** switch that lets the brush pass over existing rooms.
+- **Wall thickness slider** (WALLS) for clearer boundaries, and **room fill
+  strength** joins the always-visible toolbar group.
+
+### Changed
+- **Tapping a shared wall cycles through the rooms that meet along it** —
+  tap once for one side, again for the other, with the room named each time.
+- **"Linked walls" is now "Joined rooms move together"**, with a tooltip
+  explaining that it keeps rooms attached when you drag a shared corner.
 
 ## [1.52.0] — 2026-08-21
 
@@ -2145,6 +2325,51 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.53.2] — 2026-08-21
+
+### Fixed
+- **FD sheet colouring.** Every cell was being given a solid white fill, which
+  flattened the sheet and painted over Excel''s own gridlines. Ordinary cells
+  now carry no fill at all, exactly as the reference workbook does.
+- **Floor rows stand out again.** Matching the reference removed their tint
+  in 1.52, leaving floor sections hard to pick out in a long sheet. Floor
+  titles and the totals row now sit on a faint grey band — enough to scan by,
+  far lighter than the old heavy grey. Out-of-scope rooms keep their darker
+  grey, so the two never read as the same thing.
+
+## [1.53.1] — 2026-08-21
+
+### Changed
+- **Room names find a clear spot instead of sitting on the devices.** A label
+  is now placed where the room is emptiest — furthest from the ikons inside it
+  and from its own walls — rather than at the geometric centre, which is
+  exactly where devices tend to cluster. Empty rooms still read centrally, and
+  labels stay inside awkward shapes such as L-rooms.
+- Labels are visually lighter, brighten on hover or when their room is
+  highlighted, and fade further back while a device is armed for placement.
+
+## [1.53.0] — 2026-08-21
+
+### Added
+- **Leader notes.** A note is now a target ring on the thing it describes,
+  joined by a leader line to a label you can drag clear of the drawing — so
+  one note can call out a single device, several items sharing one point, or a
+  whole area. Both ends drag independently; leaders and wrapped label text
+  print on the exported sheets.
+- **Outdoor areas.** A room can be marked as an *outdoor area*: it surrounds
+  other rooms instead of dividing them, draws beneath them with a dashed
+  outline, and devices inside an inner room still belong to that room — only
+  what falls outside them counts as the area''s. Skribble has an **Outdoor
+  area** switch that lets the brush pass over existing rooms.
+- **Wall thickness slider** (WALLS) for clearer boundaries, and **room fill
+  strength** joins the always-visible toolbar group.
+
+### Changed
+- **Tapping a shared wall cycles through the rooms that meet along it** —
+  tap once for one side, again for the other, with the room named each time.
+- **"Linked walls" is now "Joined rooms move together"**, with a tooltip
+  explaining that it keeps rooms attached when you drag a shared corner.
+
 ## [1.52.0] — 2026-08-21
 
 ### Changed
@@ -2351,6 +2576,51 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.53.2] — 2026-08-21
+
+### Fixed
+- **FD sheet colouring.** Every cell was being given a solid white fill, which
+  flattened the sheet and painted over Excel''s own gridlines. Ordinary cells
+  now carry no fill at all, exactly as the reference workbook does.
+- **Floor rows stand out again.** Matching the reference removed their tint
+  in 1.52, leaving floor sections hard to pick out in a long sheet. Floor
+  titles and the totals row now sit on a faint grey band — enough to scan by,
+  far lighter than the old heavy grey. Out-of-scope rooms keep their darker
+  grey, so the two never read as the same thing.
+
+## [1.53.1] — 2026-08-21
+
+### Changed
+- **Room names find a clear spot instead of sitting on the devices.** A label
+  is now placed where the room is emptiest — furthest from the ikons inside it
+  and from its own walls — rather than at the geometric centre, which is
+  exactly where devices tend to cluster. Empty rooms still read centrally, and
+  labels stay inside awkward shapes such as L-rooms.
+- Labels are visually lighter, brighten on hover or when their room is
+  highlighted, and fade further back while a device is armed for placement.
+
+## [1.53.0] — 2026-08-21
+
+### Added
+- **Leader notes.** A note is now a target ring on the thing it describes,
+  joined by a leader line to a label you can drag clear of the drawing — so
+  one note can call out a single device, several items sharing one point, or a
+  whole area. Both ends drag independently; leaders and wrapped label text
+  print on the exported sheets.
+- **Outdoor areas.** A room can be marked as an *outdoor area*: it surrounds
+  other rooms instead of dividing them, draws beneath them with a dashed
+  outline, and devices inside an inner room still belong to that room — only
+  what falls outside them counts as the area''s. Skribble has an **Outdoor
+  area** switch that lets the brush pass over existing rooms.
+- **Wall thickness slider** (WALLS) for clearer boundaries, and **room fill
+  strength** joins the always-visible toolbar group.
+
+### Changed
+- **Tapping a shared wall cycles through the rooms that meet along it** —
+  tap once for one side, again for the other, with the room named each time.
+- **"Linked walls" is now "Joined rooms move together"**, with a tooltip
+  explaining that it keeps rooms attached when you drag a shared corner.
 
 ## [1.52.0] — 2026-08-21
 
@@ -2998,6 +3268,51 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.53.2] — 2026-08-21
+
+### Fixed
+- **FD sheet colouring.** Every cell was being given a solid white fill, which
+  flattened the sheet and painted over Excel''s own gridlines. Ordinary cells
+  now carry no fill at all, exactly as the reference workbook does.
+- **Floor rows stand out again.** Matching the reference removed their tint
+  in 1.52, leaving floor sections hard to pick out in a long sheet. Floor
+  titles and the totals row now sit on a faint grey band — enough to scan by,
+  far lighter than the old heavy grey. Out-of-scope rooms keep their darker
+  grey, so the two never read as the same thing.
+
+## [1.53.1] — 2026-08-21
+
+### Changed
+- **Room names find a clear spot instead of sitting on the devices.** A label
+  is now placed where the room is emptiest — furthest from the ikons inside it
+  and from its own walls — rather than at the geometric centre, which is
+  exactly where devices tend to cluster. Empty rooms still read centrally, and
+  labels stay inside awkward shapes such as L-rooms.
+- Labels are visually lighter, brighten on hover or when their room is
+  highlighted, and fade further back while a device is armed for placement.
+
+## [1.53.0] — 2026-08-21
+
+### Added
+- **Leader notes.** A note is now a target ring on the thing it describes,
+  joined by a leader line to a label you can drag clear of the drawing — so
+  one note can call out a single device, several items sharing one point, or a
+  whole area. Both ends drag independently; leaders and wrapped label text
+  print on the exported sheets.
+- **Outdoor areas.** A room can be marked as an *outdoor area*: it surrounds
+  other rooms instead of dividing them, draws beneath them with a dashed
+  outline, and devices inside an inner room still belong to that room — only
+  what falls outside them counts as the area''s. Skribble has an **Outdoor
+  area** switch that lets the brush pass over existing rooms.
+- **Wall thickness slider** (WALLS) for clearer boundaries, and **room fill
+  strength** joins the always-visible toolbar group.
+
+### Changed
+- **Tapping a shared wall cycles through the rooms that meet along it** —
+  tap once for one side, again for the other, with the room named each time.
+- **"Linked walls" is now "Joined rooms move together"**, with a tooltip
+  explaining that it keeps rooms attached when you drag a shared corner.
+
 ## [1.52.0] — 2026-08-21
 
 ### Changed
@@ -3204,6 +3519,51 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.53.2] — 2026-08-21
+
+### Fixed
+- **FD sheet colouring.** Every cell was being given a solid white fill, which
+  flattened the sheet and painted over Excel''s own gridlines. Ordinary cells
+  now carry no fill at all, exactly as the reference workbook does.
+- **Floor rows stand out again.** Matching the reference removed their tint
+  in 1.52, leaving floor sections hard to pick out in a long sheet. Floor
+  titles and the totals row now sit on a faint grey band — enough to scan by,
+  far lighter than the old heavy grey. Out-of-scope rooms keep their darker
+  grey, so the two never read as the same thing.
+
+## [1.53.1] — 2026-08-21
+
+### Changed
+- **Room names find a clear spot instead of sitting on the devices.** A label
+  is now placed where the room is emptiest — furthest from the ikons inside it
+  and from its own walls — rather than at the geometric centre, which is
+  exactly where devices tend to cluster. Empty rooms still read centrally, and
+  labels stay inside awkward shapes such as L-rooms.
+- Labels are visually lighter, brighten on hover or when their room is
+  highlighted, and fade further back while a device is armed for placement.
+
+## [1.53.0] — 2026-08-21
+
+### Added
+- **Leader notes.** A note is now a target ring on the thing it describes,
+  joined by a leader line to a label you can drag clear of the drawing — so
+  one note can call out a single device, several items sharing one point, or a
+  whole area. Both ends drag independently; leaders and wrapped label text
+  print on the exported sheets.
+- **Outdoor areas.** A room can be marked as an *outdoor area*: it surrounds
+  other rooms instead of dividing them, draws beneath them with a dashed
+  outline, and devices inside an inner room still belong to that room — only
+  what falls outside them counts as the area''s. Skribble has an **Outdoor
+  area** switch that lets the brush pass over existing rooms.
+- **Wall thickness slider** (WALLS) for clearer boundaries, and **room fill
+  strength** joins the always-visible toolbar group.
+
+### Changed
+- **Tapping a shared wall cycles through the rooms that meet along it** —
+  tap once for one side, again for the other, with the room named each time.
+- **"Linked walls" is now "Joined rooms move together"**, with a tooltip
+  explaining that it keeps rooms attached when you drag a shared corner.
 
 ## [1.52.0] — 2026-08-21
 

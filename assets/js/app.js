@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.47.0';
+const APP_VERSION='1.50.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -86,7 +86,7 @@ let state = {
   project:'Untitled Project', client:'', location:'', reference:'', preparedBy:'',
   theme:SYS_THEME(), brandLogo:null, libDock:'left', lastDock:'left', libHidden:false, libFloat:null,
   libSize:{w:324,h:60,fw:288,fh:520}, catOrder:[],
-  items:[], floors:[], activeFloor:null, pinScale:1, pinOpacity:1, planGray:false, brushSize:46, roomOpacity:1, seqScale:1, skribbleColor:null, outScopeColor:'#E5484D'
+  items:[], floors:[], activeFloor:null, pinScale:1, pinOpacity:1, planGray:false, brushSize:46, roomOpacity:1, seqScale:1, skribbleColor:null, outScopeColor:'#E5484D', linkNodes:true
 };
 let armedItem=null, selMarker=null, selSet=new Set(), multiSelect=false, zoom=1, undoStack=[], redoStack=[], ctxTarget=null, draggingCat=null;
 
@@ -207,7 +207,7 @@ function renderLibrary(){
   cats.forEach(cat=>{
     const head=el('div','cat-head'+(draggingCat===cat?' dragging':''),
       `<span class="grip">⋮⋮</span><span class="cat-nm">${cat}</span>
-       <span class="cat-tools"><button class="ct-btn" data-act="up" title="Move category up">▲</button><button class="ct-btn" data-act="down" title="Move category down">▼</button><button class="ct-btn" data-act="add" title="Add a device to this category">＋</button><button class="ct-btn" data-act="ren" title="Rename category">✎</button><button class="ct-btn" data-act="del" title="Delete category">✕</button></span>`);
+       <span class="cat-tools"><button class="ct-btn" data-act="eye" title="Show / hide this category on the plan">👁</button><button class="ct-btn" data-act="up" title="Move category up">▲</button><button class="ct-btn" data-act="down" title="Move category down">▼</button><button class="ct-btn" data-act="add" title="Add a device to this category">＋</button><button class="ct-btn" data-act="ren" title="Rename category">✎</button><button class="ct-btn" data-act="del" title="Delete category">✕</button></span>`);
     head.dataset.cat=cat; head.title='Drag to reorder categories';
     head.addEventListener('pointerdown',e=>{
       if(e.target.closest('.ct-btn'))return;               /* buttons, not a drag */
@@ -222,6 +222,13 @@ function renderLibrary(){
     };
     head.querySelector('[data-act="up"]').addEventListener('click',e=>{e.stopPropagation();moveCat(-1);});
     head.querySelector('[data-act="down"]').addEventListener('click',e=>{e.stopPropagation();moveCat(1);});
+    head.querySelector('[data-act="eye"]').addEventListener('click',e=>{
+      e.stopPropagation();
+      const mine=state.items.filter(i=>(i.cat||'Other')===cat);
+      const anyVisible=mine.some(i=>!i.hidden);
+      mine.forEach(i=>i.hidden=anyVisible);            /* all off, or all back on */
+      renderLibrary();renderMarkers();updateHiddenChip();
+    });
     head.querySelector('[data-act="add"]').addEventListener('click',e=>{
       e.stopPropagation();
       openItemModal();
@@ -268,22 +275,28 @@ function renderLibrary(){
       row.innerHTML=`<span class="item-chip" style="background:${item.color}">${iconHtml(item)}</span>
         <span class="item-meta"><span class="nm">${item.name}</span>${item.model?`<span class="md">${item.model}</span>`:''}</span>
         <span class="item-qty ${qty?'on':''}">${qty||'—'}</span>
+        <button class="item-eye${item.hidden?' off':''}" title="${item.hidden?'Show on the plan':'Hide from the plan'}">${item.hidden?`<svg viewBox="0 0 24 24"><path d="M3 3l18 18"/><path d="M10.6 6.2A9.9 9.9 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.3 4.1M6.5 7.6C3.8 9.3 2 12 2 12s3.6 7 10 7a10 10 0 0 0 4-.8"/><path d="M9.9 10.1a3 3 0 0 0 4.2 4.2"/></svg>`:`<svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>`}</button>
         <button class="item-mv" data-dir="-1" title="Move up">▲</button>
         <button class="item-mv" data-dir="1" title="Move down">▼</button>
         <button class="item-edit" title="Edit"><svg viewBox="0 0 24 24"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg></button>
         <button class="item-del" title="Delete device"><svg viewBox="0 0 24 24"><path d="M5 7h14M9 7V5h6v2m-8 0l1 13h8l1-13"/></svg></button>`;
       row.dataset.item=item.id;
       row.addEventListener('pointerdown',e=>{
-        if(e.target.closest('.item-edit,.item-del,.item-mv'))return;
+        if(e.target.closest('.item-edit,.item-del,.item-mv,.item-eye'))return;
         if(e.pointerType==='mouse'&&e.button!==0)return;
         startDeviceDrag(item,row,e);
+      });
+      row.querySelector('.item-eye').addEventListener('click',e=>{
+        e.stopPropagation();
+        item.hidden=!item.hidden;
+        renderLibrary();renderMarkers();updateHiddenChip();
       });
       row.querySelectorAll('.item-mv').forEach(b=>b.addEventListener('click',e=>{
         e.stopPropagation(); moveDeviceInCat(item,+b.dataset.dir);
       }));
       row.addEventListener('click',e=>{
         if(dragDevSuppressClick)return;
-        if(e.target.closest('.item-mv'))return;
+        if(e.target.closest('.item-mv,.item-eye'))return;
         if(e.target.closest('.item-del')){
           if(!confirm(`Delete “${item.name}”${qty?` and its ${qty} placed ikon${qty>1?'s':''}`:''}?`))return;
           state.items=state.items.filter(i=>i.id!==item.id);
@@ -323,6 +336,15 @@ function showGuideTab(name){
 }
 document.querySelectorAll('.guide-tabs .gt').forEach(b=>b.addEventListener('click',()=>showGuideTab(b.dataset.tab)));
 $('#btnHelp').addEventListener('click',()=>openGuide('start'));
+$('#btnMore').addEventListener('click',e=>{
+  e.stopPropagation();
+  $('#moreMenu').classList.toggle('open');
+  $('#displayPop').classList.remove('open');
+});
+document.addEventListener('click',e=>{
+  const m=$('#moreMenu');
+  if(m&&m.classList.contains('open')&&!e.target.closest('#moreMenu,#btnMore'))m.classList.remove('open');
+});
 $('#btnDisplay').addEventListener('click',e=>{
   e.stopPropagation();
   $('#displayPop').classList.toggle('open');
@@ -332,17 +354,28 @@ document.addEventListener('click',e=>{
   if(p&&p.classList.contains('open')&&!e.target.closest('#displayPop,#btnDisplay'))p.classList.remove('open');
 });
 $('#btnSkribble').addEventListener('click',()=>setSkribbleMode(!skribbleMode));
+$('#btnNote').addEventListener('click',()=>setNoteMode(!noteMode));
 $('#toolExit').addEventListener('click',()=>{
   if(skribbleMode)setSkribbleMode(false);
+  else if(noteMode)setNoteMode(false);
   else if(roomMode)setRoomMode(false);
   updateToolExit();
 });
 $('#skribbleDone').addEventListener('click',()=>setSkribbleMode(false));
 $('#brushSize').addEventListener('input',e=>{ state.brushSize=+e.target.value; updateBrushDot(); });
 $('#roomOpacity').addEventListener('input',e=>{ state.roomOpacity=+e.target.value/100; applyRoomLook(); });
+$('#linkNodesOpt').addEventListener('change',e=>{
+  state.linkNodes=e.target.checked;
+  toast(state.linkNodes?'Joined rooms move together.':'Rooms move independently — corners stay where you leave them.');
+});
 $('#seqSize').addEventListener('input',e=>{ state.seqScale=+e.target.value/100; applyRoomLook(); renderMarkers(); });
 $('#planClick').addEventListener('pointerdown',e=>{ if(skribbleMode)startSkribble(e); });
-$('#btnRoomOrder').addEventListener('click',()=>{ renderRoomOrder(); $('#roomOrderVeil').style.display='grid'; });
+$('#planClick').addEventListener('click',e=>{
+  if(!noteMode||panMoved)return;
+  const r=planRect();
+  addNote((e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height);
+});
+$('#btnRoomOrder').addEventListener('click',()=>{ $('#moreMenu').classList.remove('open'); renderRoomOrder(); $('#roomOrderVeil').style.display='grid'; });
 $('#roomOrderClose').addEventListener('click',()=>$('#roomOrderVeil').style.display='none');
 $('#roomOrderDone').addEventListener('click',()=>$('#roomOrderVeil').style.display='none');
 $('#roomOrderSort').addEventListener('click',sortRoomsByPosition);
@@ -357,7 +390,7 @@ function maybeFirstRunGuide(){
   if(off)return;                       /* only silenced by ticking the box */
   setTimeout(()=>openGuide('start'),700);
 }
-$('#hintbar').addEventListener('click',e=>{ if(e.target.classList.contains('hint-done'))setRoomMode(false); });
+$('#hintbar').addEventListener('click',e=>{ if(!e.target.classList.contains('hint-done'))return; if(noteMode)setNoteMode(false); else if(skribbleMode)setSkribbleMode(false); else setRoomMode(false); });
 $('#btnNewCat').addEventListener('click',()=>{
   const n=prompt('New category name');
   if(!n||!n.trim())return;
@@ -699,7 +732,7 @@ $('#floatGrip').addEventListener('pointerdown',e=>{
 });
 
 /* ──────────── Rooms / areas (polygon engine) ──────────── */
-let roomMode=false, selRoom=null, hlRoom=null, selRooms=new Set();
+let roomMode=false, selRoom=null, hlRoom=null, selRooms=new Set(), sharedHintShown=false;
 /* rooms link only when nodes truly coincide (snapping produces exact equality) */
 const NODE_LINK_EPS=0.0009;
 const ROOM_COLORS=['#AE8B5C','#2E5CFF','#16B364','#F59E0B','#E5484D','#7C4DFF','#0FA3A3','#64748B'];
@@ -1094,6 +1127,12 @@ function wireRoomPointer(layer,f){
         t.classList.add('arming');         /* the node pulses while the hold arms */
         holdT=setTimeout(spawnRoom,holdMs);
       }
+      if(linked.length&&!sharedHintShown){
+        sharedHintShown=true;
+        toast(matchMedia('(pointer:coarse)').matches
+          ? 'Shared corner — both rooms move. Turn off “Linked walls” in Display to move one alone.'
+          : 'Shared corner — both rooms move. Hold Ctrl to move just this one.');
+      }
       const ensurePushed=()=>{ if(pushed)return; pushed=true;
         pushUndo(roomSnapshot(f,room));
         linked.forEach(l=>pushUndo(roomSnapshot(f,l.room)));
@@ -1115,7 +1154,8 @@ function wireRoomPointer(layer,f){
         }
         showGuides(sp.sx?nx:null, sp.sy?ny:null);
         room.pts[vi]={x:nx,y:ny};
-        linked.forEach(l=>{ l.room.pts[l.idx]={x:nx,y:ny}; updateRoomInPlace(layer,f,l.room); });
+        const joinNow=(state.linkNodes!==false)&&!ev.ctrlKey&&!ev.metaKey;
+        if(joinNow)linked.forEach(l=>{ l.room.pts[l.idx]={x:nx,y:ny}; updateRoomInPlace(layer,f,l.room); });
         updateRoomInPlace(layer,f,room);
       };
       const up=ev=>{ if(ev.pointerId!==id||spawned)return; t.classList.remove('arming'); stop(); clearGuides(); renderRooms(); };
@@ -1429,13 +1469,13 @@ function rdp(pts,eps){
    a short edge is hand-wobble and gets straightened readily, while a long
    edge is only straightened if it was nearly axis-aligned to begin with —
    so a room genuinely drawn at an angle keeps its angle. */
-function orthogonalize(pts,shortTolDeg=54,longTolDeg=42){
+function orthogonalize(pts,shortTolDeg=58,longTolDeg=43){
   const n=pts.length;if(n<3)return pts;
   const p=pts.map(q=>({...q}));
   let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
   p.forEach(q=>{minX=Math.min(minX,q.x);maxX=Math.max(maxX,q.x);minY=Math.min(minY,q.y);maxY=Math.max(maxY,q.y);});
   const diag=Math.hypot(maxX-minX,maxY-minY)||1;
-  const major=diag*0.38;                    /* only a dominant edge earns the benefit of the doubt */
+  const major=diag*0.42;                    /* only a dominant edge earns the benefit of the doubt */
   const tShort=Math.tan(shortTolDeg*Math.PI/180), tLong=Math.tan(longTolDeg*Math.PI/180);
   for(let pass=0;pass<2;pass++){
     for(let i=0;i<n;i++){
@@ -1607,7 +1647,7 @@ function skribbleToPolygon(bin,w,h,opts={}){
   while(pts.length>28&&guard++<6){ eps*=1.5; pts=rdp(contour,eps); }
   if(!opts.noOrtho){
     pts=orthogonalize(pts);
-    pts=despeckle(pts,diag*0.05);          /* absorb chamfers left by a wobbly hand */
+    pts=despeckle(pts,diag*0.075);         /* absorb chamfers left by a wobbly hand */
     pts=orthogonalize(pts);
   }
   pts=tidy(pts,Math.max(2,diag*0.008));
@@ -1619,6 +1659,83 @@ function skribbleToPolygon(bin,w,h,opts={}){
 
 
 
+/* ══════════════ Notes: mark up the plan ══════════════
+   A note is a small numbered pin with text, anchored to the plan in
+   fractional coordinates so it survives crop, rotate and zoom. */
+let noteMode=false;
+function setNoteMode(on){
+  noteMode=on;
+  document.body.classList.toggle('noting',on);
+  $('#btnNote').classList.toggle('on',on);
+  if(on){
+    if(roomMode)setRoomMode(false);
+    if(skribbleMode)setSkribbleMode(false);
+    if(cropMode)cancelCrop();
+    armItem(null);setSelSet([]);renderMarkers();
+    $('#hintbar').innerHTML='<b>Notes</b> — tap the plan to leave a note · tap a note to edit it <button class="hint-done">Done</button>';
+    $('#hintbar').classList.add('show');
+  }else $('#hintbar').classList.remove('show');
+  updateToolExit();
+}
+function addNote(x,y){
+  const f=activeFloor();if(!f)return;
+  const text=prompt('Note');
+  if(text===null||!text.trim())return;
+  const n={id:uid(),x,y,text:text.trim()};
+  (f.notes=f.notes||[]).push(n);
+  pushUndo({type:'note-add',floorId:f.id,note:JSON.parse(JSON.stringify(n))});
+  renderNotes();
+}
+function editNote(n){
+  const f=activeFloor();if(!f)return;
+  const text=prompt('Note  (leave empty to delete)',n.text);
+  if(text===null)return;
+  pushUndo({type:'note-edit',floorId:f.id,noteId:n.id,prev:{text:n.text,x:n.x,y:n.y}});
+  if(!text.trim()){
+    f.notes=(f.notes||[]).filter(z=>z.id!==n.id);
+    toast('Note removed.');
+  } else n.text=text.trim();
+  renderNotes();
+}
+function renderNotes(){
+  const holder=$('#planHolder');if(!holder)return;
+  holder.querySelectorAll('.note-pin').forEach(el2=>el2.remove());
+  const f=activeFloor();if(!f)return;
+  (f.notes||[]).forEach((n,i)=>{
+    const d=el('div','note-pin');
+    d.dataset.note=n.id;
+    d.style.cssText=`left:${n.x*100}%;top:${n.y*100}%`;
+    d.innerHTML=`<span class="np-dot">${i+1}</span><span class="np-text">${escapeHtml(n.text)}</span>`;
+    d.addEventListener('pointerdown',ev=>{
+      if(cropMode)return;
+      ev.stopPropagation();ev.preventDefault();
+      startNoteDrag(n,d,ev);
+    });
+    holder.appendChild(d);
+  });
+}
+function escapeHtml(t){return String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function startNoteDrag(n,d,ev){
+  const f=activeFloor();
+  const id=ev.pointerId, sx=ev.clientX, sy=ev.clientY;
+  let moved=false, pushed=false;
+  const r=planRect();
+  const mv=e2=>{
+    if(e2.pointerId!==id)return;
+    if(!moved&&Math.hypot(e2.clientX-sx,e2.clientY-sy)<5)return;
+    if(!moved){ moved=true; if(!pushed){pushed=true;pushUndo({type:'note-edit',floorId:f.id,noteId:n.id,prev:{text:n.text,x:n.x,y:n.y}});} }
+    n.x=Math.min(1,Math.max(0,(e2.clientX-r.left)/r.width));
+    n.y=Math.min(1,Math.max(0,(e2.clientY-r.top)/r.height));
+    d.style.left=(n.x*100)+'%'; d.style.top=(n.y*100)+'%';
+  };
+  const up=e2=>{
+    if(e2.pointerId!==id)return;
+    document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);
+    if(!moved)editNote(n); else renderNotes();
+  };
+  document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
+}
+
 /* ══════════════ Skribble: brush an area, get a room ══════════════
    A stroke is painted into an off-screen mask, then traced, simplified and
    squared up into an ordinary editable polygon. No wall detection — the
@@ -1628,9 +1745,9 @@ const SK_MAX=520;                       /* mask resolution (long side) */
 
 function updateToolExit(){
   const b=$('#toolExit');if(!b)return;
-  const active=roomMode||skribbleMode;
+  const active=roomMode||skribbleMode||noteMode;
   b.classList.toggle('show',!!active);
-  b.textContent=skribbleMode?'✕ Done skribbling':'✕ Done with rooms';
+  b.textContent=skribbleMode?'✕ Done skribbling':(noteMode?'✕ Done with notes':'✕ Done with rooms');
 }
 function setSkribbleMode(on){
   skribbleMode=on;
@@ -1757,6 +1874,18 @@ function commitSkribble(f){
   toast('Room created — drag its corners or walls to fine-tune.');
 }
 function skColor(){ return state.skribbleColor||ROOM_COLORS[0]; }
+function updateHiddenChip(){
+  const chip=$('#hiddenChip');if(!chip)return;
+  const n=state.items.filter(i=>i.hidden).length;
+  chip.classList.toggle('show',n>0);
+  if(n)chip.innerHTML=`${n} device type${n>1?'s':''} hidden <button id="showAllDev">Show all</button>`;
+  const b=$('#showAllDev');
+  if(b)b.addEventListener('click',()=>{
+    state.items.forEach(i=>delete i.hidden);
+    renderLibrary();renderMarkers();updateHiddenChip();
+    toast('All devices visible again.');
+  });
+}
 function updateBrushDot(){
   const d=$('#brushDot');
   if(d){
@@ -1977,6 +2106,8 @@ function openRoomPop(r,anchor){
 
 /* ──────────── Arm / place ──────────── */
 function armItem(id){
+  const it=id?itemById(id):null;
+  if(it&&it.hidden){ it.hidden=false; renderLibrary(); updateHiddenChip(); toast(`“${it.name}” shown again.`); }
   if(cropMode) cancelCrop();
   if(id&&roomMode) setRoomMode(false);
   armedItem=id; setSelMarker(null);
@@ -2064,7 +2195,7 @@ function renderMarkers(){
   const f=activeFloor();if(!f)return;
   const s=pinPx();
   f.placements.forEach(p=>{
-    const it=itemById(p.itemId);if(!it)return;
+    const it=itemById(p.itemId);if(!it||it.hidden)return;     /* hidden layer */
     let hlCls='';
     if(hlRoom){const rr=(f.rooms||[]).find(x=>x.id===hlRoom);hlCls=rr&&roomOf(p,f)===rr?' lit':' dim';}
     const seqBadge=(state.autoNumber&&p.seq)?`<span class="seq">${p.seq}</span>`:'';
@@ -2214,31 +2345,58 @@ function applyHistory(a,stackFrom,stackTo){
     a.items.forEach(it=>{
       const ff=state.floors.find(x=>x.id===it.floorId);if(!ff)return;
       ff.img=it.prev.img;ff.w=it.prev.w;ff.h=it.prev.h;
-      ff.placements=it.prev.placements;ff.rooms=it.prev.rooms||[];
+      ff.placements=it.prev.placements;ff.rooms=it.prev.rooms||[];ff.notes=it.prev.notes||[];
     });
     stackTo.push(cur);
     if(cropMode)cancelCrop();
     showFloor();renderMarkers();renderLibrary();renderBoq();updateChipCount();
     return;
   }
+  if(a.type==='note-add'){
+    const cur={type:'note-del',floorId:f.id,note:JSON.parse(JSON.stringify(a.note))};
+    f.notes=(f.notes||[]).filter(n=>n.id!==a.note.id);
+    stackTo.push(cur);renderNotes();return;
+  }
+  if(a.type==='note-del'){
+    (f.notes=f.notes||[]).push(a.note);
+    stackTo.push({type:'note-add',floorId:f.id,note:JSON.parse(JSON.stringify(a.note))});
+    renderNotes();return;
+  }
+  if(a.type==='note-edit'){
+    const n=(f.notes||[]).find(z=>z.id===a.noteId);
+    if(n){
+      const cur={type:'note-edit',floorId:f.id,noteId:n.id,prev:{text:n.text,x:n.x,y:n.y}};
+      Object.assign(n,a.prev);
+      stackTo.push(cur);
+    }else{                                   /* it had been deleted — bring it back */
+      (f.notes=f.notes||[]).push({id:a.noteId,...a.prev});
+      stackTo.push({type:'note-del',floorId:f.id,note:{id:a.noteId,...a.prev}});
+    }
+    renderNotes();return;
+  }
   if(a.type==='floor'){                        /* crop / rotate snapshot — swap states */
     const cur=floorSnapshot(f);
-    f.img=a.prev.img;f.w=a.prev.w;f.h=a.prev.h;f.placements=a.prev.placements;f.rooms=a.prev.rooms||[];
+    f.img=a.prev.img;f.w=a.prev.w;f.h=a.prev.h;f.placements=a.prev.placements;f.rooms=a.prev.rooms||[];f.notes=a.prev.notes||[];
     stackTo.push(cur);
     if(state.activeFloor===f.id){ if(cropMode)cancelCrop(); showFloor(); }
   }
-  renderMarkers();renderLibrary();renderBoq();updateChipCount();
+  renderMarkers();renderNotes();renderLibrary();renderBoq();updateChipCount();
 }
 function doUndo(){ const a=undoStack.pop(); if(a) applyHistory(a,undoStack,redoStack); }
 function doRedo(){ const a=redoStack.pop(); if(a) applyHistory(a,redoStack,undoStack); }
-const floorSnapshot=f=>({type:'floor',floorId:f.id,prev:{img:f.img,w:f.w,h:f.h,placements:f.placements.map(p=>({...p})),rooms:(f.rooms||[]).map(r=>({...r}))}});
+const floorSnapshot=f=>({type:'floor',floorId:f.id,prev:{img:f.img,w:f.w,h:f.h,placements:f.placements.map(p=>({...p})),rooms:(f.rooms||[]).map(r=>({...r})),notes:(f.notes||[]).map(n=>({...n}))}});
 const floorsSnapshot=()=>({type:'floors',items:state.floors.map(f=>floorSnapshot(f))});
-const pushUndo=a=>{ undoStack.push(a); redoStack=[]; };   /* a fresh action invalidates redo */
+const pushUndo=a=>{
+  undoStack.push(a); redoStack=[];
+  /* crop/rotate snapshots hold a whole plan image, so keep the history bounded */
+  if(undoStack.length>80)undoStack.splice(0,undoStack.length-80);
+};
 $('#btnUndo').addEventListener('click',doUndo);
 $('#btnRedo').addEventListener('click',doRedo);
 
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'&&skribbleMode){ setSkribbleMode(false); return; }
+  if(e.key==='Escape'&&noteMode){ setNoteMode(false); return; }
   if(e.key==='Escape'&&$('#roomOrderVeil').style.display==='grid'){ $('#roomOrderVeil').style.display='none'; return; }
   if(e.key==='Escape'&&$('#helpVeil').style.display==='grid'){ closeGuide(); return; }
   if(e.key==='Escape'){
@@ -2292,7 +2450,7 @@ function showFloor(){
   $('#emptyState').style.display=f?'none':'block';
   $('#planHolder').style.display=f?'block':'none';
   setSelMarker(null);
-  if(f){$('#planImg').src=f.img;applyPlanGray();if(skribbleMode)ensureSkCanvas();requestAnimationFrame(()=>{fitZoom();renderMarkers();renderRooms();});}
+  if(f){$('#planImg').src=f.img;applyPlanGray();if(skribbleMode)ensureSkCanvas();renderNotes();requestAnimationFrame(()=>{fitZoom();renderMarkers();renderRooms();});}
 }
 function addFloor(name,dataUrl,w,h){
   const f={id:uid(),name,img:dataUrl,w,h,placements:[],rooms:[]};
@@ -2389,6 +2547,7 @@ function applyRoomLook(){
   const r=$('#roomOpacity'); if(r)r.value=Math.round((state.roomOpacity??1)*100);
   renderOutScopeSwatches();
   const q=$('#seqSize');     if(q)q.value=Math.round((state.seqScale??1)*100);
+  const lk=$('#linkNodesOpt'); if(lk)lk.checked=state.linkNodes!==false;
 }
 function applyPlanGray(){
   const img=$('#planImg');
@@ -2818,6 +2977,7 @@ $('#cropAll').addEventListener('click',async()=>{
   }
   state.cropRatio=cropRatio;
   cancelCrop();showFloor();renderLibrary();renderBoq();
+  toast('Plan cropped — Undo (Ctrl+Z) brings the full plan back.');
   toast(`All ${state.floors.length} plans framed alike — Undo restores them.`);
 });
 $('#cropApply').addEventListener('click',async()=>{
@@ -3379,7 +3539,7 @@ async function renderSheet(f,paper,idx,total){
   ctx.fillText(`${paper.label}  ·  SHEET ${idx} / ${total}`,pw-M,ph-footH/2+Math.round(ph*0.0035));
 
   /* ── legend: devices grouped by category, laid out as columns of rows ── */
-  const used=state.items.map(it=>({it,q:qtyOf(it.id,f.id)})).filter(r=>r.q>0);
+  const used=state.items.map(it=>({it,q:qtyOf(it.id,f.id)})).filter(r=>r.q>0&&!r.it.hidden);   /* hidden layers stay off the sheet */
   const catOrder=(state.catOrder&&state.catOrder.length)?state.catOrder:[...new Set(used.map(r=>r.it.cat||'Other'))];
   const groups=[];
   catOrder.forEach(cat=>{
@@ -3417,7 +3577,7 @@ async function renderSheet(f,paper,idx,total){
   const iconCache={};
   ctx.globalAlpha=state.pinOpacity??1;          /* sheets match what's on screen */
   for(const p of f.placements){
-    const it=itemById(p.itemId);if(!it)continue;
+    const it=itemById(p.itemId);if(!it||it.hidden)continue;
     const x0=dx+p.x*dw, y0=dy+p.y*dh;
     ctx.beginPath();ctx.arc(x0,y0,pin/2,0,Math.PI*2);
     ctx.fillStyle=it.color;ctx.fill();
@@ -3439,6 +3599,20 @@ async function renderSheet(f,paper,idx,total){
   }
 
   ctx.globalAlpha=1;
+
+  /* notes */
+  (f.notes||[]).forEach((n,i)=>{
+    const x0=dx+n.x*dw, y0=dy+n.y*dh;
+    const rr=Math.max(9,pin*0.42);
+    ctx.beginPath();ctx.arc(x0,y0,rr,0,Math.PI*2);
+    ctx.fillStyle='#FFFFFF';ctx.fill();
+    ctx.lineWidth=Math.max(1.4,rr*0.16);ctx.strokeStyle=PAPER_HL;ctx.stroke();
+    ctx.fillStyle=PAPER_HL;
+    ctx.font=`700 ${Math.round(rr*1.05)}px 'JetBrains Mono',monospace`;
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(String(i+1),x0,y0+1);
+  });
+  ctx.textBaseline='alphabetic';
 
   /* legend table */
   if(used.length){
@@ -3639,6 +3813,7 @@ document.addEventListener('keydown',e=>{
     const k=e.key.toLowerCase();
     if(k==='r'){e.preventDefault();setRoomMode(!roomMode);return;}
     if(k==='k'){e.preventDefault();setSkribbleMode(!skribbleMode);return;}
+    if(k==='a'){e.preventDefault();setNoteMode(!noteMode);return;}
     if(k==='o'){e.preventDefault();bulkScope();return;}
     if(k==='c'){e.preventDefault();cropMode?cancelCrop():enterCrop();return;}
     if(k==='g'){e.preventDefault();setPlanGray(!state.planGray);return;}
@@ -3664,7 +3839,7 @@ function loadProjectText(txt){
     const s=JSON.parse(txt);
     if(!s.items||!s.floors)throw 0;
     s.floors&&s.floors.forEach(f=>{f.rooms=f.rooms||[];});
-    state=Object.assign({version:APP_VERSION,theme:SYS_THEME(),brandLogo:null,pinScale:1,pinOpacity:1,planGray:false,brushSize:46,roomOpacity:1,seqScale:1,cropRatio:null,skribbleColor:null,outScopeColor:OUT_SCOPE_DEFAULT,client:'',location:'',reference:'',preparedBy:'',libDock:'left',lastDock:'left',libHidden:false,libFloat:null,libSize:{w:324,h:60,fw:288,fh:520},catOrder:[]},s);
+    state=Object.assign({version:APP_VERSION,theme:SYS_THEME(),brandLogo:null,pinScale:1,pinOpacity:1,planGray:false,brushSize:46,roomOpacity:1,seqScale:1,cropRatio:null,skribbleColor:null,outScopeColor:OUT_SCOPE_DEFAULT,linkNodes:true,client:'',location:'',reference:'',preparedBy:'',libDock:'left',lastDock:'left',libHidden:false,libFloat:null,libSize:{w:324,h:60,fw:288,fh:520},catOrder:[]},s);
     projHandle=null;                            /* re-linked by the picker path */
     armedItem=null;setSelMarker(null);undoStack=[];redoStack=[];
     if(cropMode)cancelCrop();
@@ -3674,9 +3849,10 @@ function loadProjectText(txt){
     $('#pinOpacity').value=(state.pinOpacity??1)*100;
     applyPlanGray();
     $('#brushSize').value=state.brushSize||46;updateBrushDot();
+    updateHiddenChip();
     applyRoomLook();applyRoomLook();
     $('#obFoot').textContent=`IKONHOUSE · PRE-SALES TOOL · V${APP_VERSION}`;   /* single source of truth */
-applyTheme();renderBrand();applyDock();applyAutoNum();applyPlanGray();$('#brushSize').value=state.brushSize||46;updateBrushDot();applyRoomLook();renderLibrary();renderFloors();showFloor();renderBoq();
+applyTheme();renderBrand();applyDock();applyAutoNum();applyPlanGray();$('#brushSize').value=state.brushSize||46;updateBrushDot();applyRoomLook();updateHiddenChip();renderLibrary();renderFloors();showFloor();renderBoq();
     dismissOnboard();
     toast('Project loaded.');
     return true;
@@ -3822,5 +3998,5 @@ $('#welcome').addEventListener('pointerleave',()=>{ obFx.mx=-9999; obFx.my=-9999
 
 /* ──────────── Init ──────────── */
 $('#obFoot').textContent=`IKONHOUSE · PRE-SALES TOOL · V${APP_VERSION}`;   /* single source of truth */
-applyTheme();renderBrand();applyDock();applyAutoNum();applyPlanGray();$('#brushSize').value=state.brushSize||46;updateBrushDot();applyRoomLook();closeLib();renderLibrary();renderFloors();showFloor();obStartFx();
+applyTheme();renderBrand();applyDock();applyAutoNum();applyPlanGray();$('#brushSize').value=state.brushSize||46;updateBrushDot();applyRoomLook();updateHiddenChip();closeLib();renderLibrary();renderFloors();showFloor();obStartFx();
 if(!isCompact())setTimeout(()=>toast('Tip: drag the ⠿ grip on the device library to dock it left, right, top or bottom.'),1600);

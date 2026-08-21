@@ -4,6 +4,68 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.50.0] — 2026-08-13
+
+### Added
+- **Notes.** Press <kbd>A</kbd> or tap **Notes**, then tap the plan to leave a
+  comment — site conditions, client requests, anything worth remembering.
+  Notes are numbered pins with their text beside them: drag to move, tap to
+  edit, clear the text to delete. Fully undoable, they survive crop and
+  rotate, save with the project, and print on the exported sheets.
+
+### Fixed
+- **Cropping is undoable — and now says so.** It always was, but nothing told
+  you, so a bad crop felt permanent. Applying a crop now says that Undo brings
+  the full plan back. (History is capped at 80 steps, since crop snapshots
+  hold a whole plan image.)
+- **Device names are no longer buried by their tools.** Names take the space
+  they need and truncate cleanly; with a mouse the row tools stay hidden until
+  you hover, and on touch they are compact and sit clear of the name.
+- **The out-of-scope colour control** is properly round and has moved out of
+  the tool row.
+
+### Changed
+- **Display settings are always a panel**, on every device, instead of
+  sliders inline on desktop and a panel on tablets — one consistent layout
+  and a much calmer toolbar at every width.
+- **Skribble is straighter again** — wobble is absorbed more aggressively,
+  and only a dominant edge near 45° keeps its angle.
+
+## [1.49.0] — 2026-08-13
+
+### Fixed
+- **Adjusting one room of a joined pair.** Shared corners always moved both
+  rooms, which made fine-tuning a boundary awkward. Hold **Ctrl/⌘** while
+  dragging to move just the room you grabbed, or switch off **Linked walls**
+  in Display to make that the default. A one-time note explains it the first
+  time you take hold of a shared corner.
+- **Floor tabs stay put.** They previously sat at the right of the tool row
+  on wide screens and jumped to their own row on narrow ones. They now always
+  occupy their own full-width row beneath the tools, in the same place at
+  every size.
+
+### Changed
+- **A calmer toolbar.** Rotate left, rotate right and the room schedule order
+  have moved into a **More** menu, leaving the row to the tools actually used
+  while planning. Nothing was removed — and the keyboard shortcuts are
+  unchanged.
+
+## [1.48.0] — 2026-08-13
+
+### Added
+- **Show / hide devices and categories, like layers.** Every device row and
+  every category header now has an eye: switch one off and those ikons leave
+  the plan — and the exported sheets and their legend — so a plan can be
+  presented one discipline at a time (lighting only, audio only, and so on).
+  - Hiding is **presentation, not scope**: quantities in the BoQ, the Excel FD
+    sheet and the room matrix are unaffected. Out-of-scope remains the way to
+    exclude something from the numbers.
+  - A category''s eye switches all of its devices together.
+  - A standing reminder appears while anything is hidden, with **Show all** to
+    restore everything in one click — so a hidden layer is never forgotten
+    before an export.
+  - Choosing a hidden device to place brings it back automatically.
+
 ## [1.47.0] — 2026-08-12
 
 ### Fixed
@@ -101,6 +163,68 @@ follows [Semantic Versioning](https://semver.org).
   clean blocks unless an angle was clearly intended.
 - **The guide has room to breathe** — more padding throughout, wider steps
   with clearer numbering, and noticeably more space between sections.
+
+## [1.50.0] — 2026-08-13
+
+### Added
+- **Notes.** Press <kbd>A</kbd> or tap **Notes**, then tap the plan to leave a
+  comment — site conditions, client requests, anything worth remembering.
+  Notes are numbered pins with their text beside them: drag to move, tap to
+  edit, clear the text to delete. Fully undoable, they survive crop and
+  rotate, save with the project, and print on the exported sheets.
+
+### Fixed
+- **Cropping is undoable — and now says so.** It always was, but nothing told
+  you, so a bad crop felt permanent. Applying a crop now says that Undo brings
+  the full plan back. (History is capped at 80 steps, since crop snapshots
+  hold a whole plan image.)
+- **Device names are no longer buried by their tools.** Names take the space
+  they need and truncate cleanly; with a mouse the row tools stay hidden until
+  you hover, and on touch they are compact and sit clear of the name.
+- **The out-of-scope colour control** is properly round and has moved out of
+  the tool row.
+
+### Changed
+- **Display settings are always a panel**, on every device, instead of
+  sliders inline on desktop and a panel on tablets — one consistent layout
+  and a much calmer toolbar at every width.
+- **Skribble is straighter again** — wobble is absorbed more aggressively,
+  and only a dominant edge near 45° keeps its angle.
+
+## [1.49.0] — 2026-08-13
+
+### Fixed
+- **Adjusting one room of a joined pair.** Shared corners always moved both
+  rooms, which made fine-tuning a boundary awkward. Hold **Ctrl/⌘** while
+  dragging to move just the room you grabbed, or switch off **Linked walls**
+  in Display to make that the default. A one-time note explains it the first
+  time you take hold of a shared corner.
+- **Floor tabs stay put.** They previously sat at the right of the tool row
+  on wide screens and jumped to their own row on narrow ones. They now always
+  occupy their own full-width row beneath the tools, in the same place at
+  every size.
+
+### Changed
+- **A calmer toolbar.** Rotate left, rotate right and the room schedule order
+  have moved into a **More** menu, leaving the row to the tools actually used
+  while planning. Nothing was removed — and the keyboard shortcuts are
+  unchanged.
+
+## [1.48.0] — 2026-08-13
+
+### Added
+- **Show / hide devices and categories, like layers.** Every device row and
+  every category header now has an eye: switch one off and those ikons leave
+  the plan — and the exported sheets and their legend — so a plan can be
+  presented one discipline at a time (lighting only, audio only, and so on).
+  - Hiding is **presentation, not scope**: quantities in the BoQ, the Excel FD
+    sheet and the room matrix are unaffected. Out-of-scope remains the way to
+    exclude something from the numbers.
+  - A category''s eye switches all of its devices together.
+  - A standing reminder appears while anything is hidden, with **Show all** to
+    restore everything in one click — so a hidden layer is never forgotten
+    before an export.
+  - Choosing a hidden device to place brings it back automatically.
 
 ## [1.47.0] — 2026-08-12
 
@@ -639,6 +763,68 @@ follows [Semantic Versioning](https://semver.org).
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
 
+## [1.50.0] — 2026-08-13
+
+### Added
+- **Notes.** Press <kbd>A</kbd> or tap **Notes**, then tap the plan to leave a
+  comment — site conditions, client requests, anything worth remembering.
+  Notes are numbered pins with their text beside them: drag to move, tap to
+  edit, clear the text to delete. Fully undoable, they survive crop and
+  rotate, save with the project, and print on the exported sheets.
+
+### Fixed
+- **Cropping is undoable — and now says so.** It always was, but nothing told
+  you, so a bad crop felt permanent. Applying a crop now says that Undo brings
+  the full plan back. (History is capped at 80 steps, since crop snapshots
+  hold a whole plan image.)
+- **Device names are no longer buried by their tools.** Names take the space
+  they need and truncate cleanly; with a mouse the row tools stay hidden until
+  you hover, and on touch they are compact and sit clear of the name.
+- **The out-of-scope colour control** is properly round and has moved out of
+  the tool row.
+
+### Changed
+- **Display settings are always a panel**, on every device, instead of
+  sliders inline on desktop and a panel on tablets — one consistent layout
+  and a much calmer toolbar at every width.
+- **Skribble is straighter again** — wobble is absorbed more aggressively,
+  and only a dominant edge near 45° keeps its angle.
+
+## [1.49.0] — 2026-08-13
+
+### Fixed
+- **Adjusting one room of a joined pair.** Shared corners always moved both
+  rooms, which made fine-tuning a boundary awkward. Hold **Ctrl/⌘** while
+  dragging to move just the room you grabbed, or switch off **Linked walls**
+  in Display to make that the default. A one-time note explains it the first
+  time you take hold of a shared corner.
+- **Floor tabs stay put.** They previously sat at the right of the tool row
+  on wide screens and jumped to their own row on narrow ones. They now always
+  occupy their own full-width row beneath the tools, in the same place at
+  every size.
+
+### Changed
+- **A calmer toolbar.** Rotate left, rotate right and the room schedule order
+  have moved into a **More** menu, leaving the row to the tools actually used
+  while planning. Nothing was removed — and the keyboard shortcuts are
+  unchanged.
+
+## [1.48.0] — 2026-08-13
+
+### Added
+- **Show / hide devices and categories, like layers.** Every device row and
+  every category header now has an eye: switch one off and those ikons leave
+  the plan — and the exported sheets and their legend — so a plan can be
+  presented one discipline at a time (lighting only, audio only, and so on).
+  - Hiding is **presentation, not scope**: quantities in the BoQ, the Excel FD
+    sheet and the room matrix are unaffected. Out-of-scope remains the way to
+    exclude something from the numbers.
+  - A category''s eye switches all of its devices together.
+  - A standing reminder appears while anything is hidden, with **Show all** to
+    restore everything in one click — so a hidden layer is never forgotten
+    before an export.
+  - Choosing a hidden device to place brings it back automatically.
+
 ## [1.47.0] — 2026-08-12
 
 ### Fixed
@@ -736,6 +922,68 @@ follows [Semantic Versioning](https://semver.org).
   clean blocks unless an angle was clearly intended.
 - **The guide has room to breathe** — more padding throughout, wider steps
   with clearer numbering, and noticeably more space between sections.
+
+## [1.50.0] — 2026-08-13
+
+### Added
+- **Notes.** Press <kbd>A</kbd> or tap **Notes**, then tap the plan to leave a
+  comment — site conditions, client requests, anything worth remembering.
+  Notes are numbered pins with their text beside them: drag to move, tap to
+  edit, clear the text to delete. Fully undoable, they survive crop and
+  rotate, save with the project, and print on the exported sheets.
+
+### Fixed
+- **Cropping is undoable — and now says so.** It always was, but nothing told
+  you, so a bad crop felt permanent. Applying a crop now says that Undo brings
+  the full plan back. (History is capped at 80 steps, since crop snapshots
+  hold a whole plan image.)
+- **Device names are no longer buried by their tools.** Names take the space
+  they need and truncate cleanly; with a mouse the row tools stay hidden until
+  you hover, and on touch they are compact and sit clear of the name.
+- **The out-of-scope colour control** is properly round and has moved out of
+  the tool row.
+
+### Changed
+- **Display settings are always a panel**, on every device, instead of
+  sliders inline on desktop and a panel on tablets — one consistent layout
+  and a much calmer toolbar at every width.
+- **Skribble is straighter again** — wobble is absorbed more aggressively,
+  and only a dominant edge near 45° keeps its angle.
+
+## [1.49.0] — 2026-08-13
+
+### Fixed
+- **Adjusting one room of a joined pair.** Shared corners always moved both
+  rooms, which made fine-tuning a boundary awkward. Hold **Ctrl/⌘** while
+  dragging to move just the room you grabbed, or switch off **Linked walls**
+  in Display to make that the default. A one-time note explains it the first
+  time you take hold of a shared corner.
+- **Floor tabs stay put.** They previously sat at the right of the tool row
+  on wide screens and jumped to their own row on narrow ones. They now always
+  occupy their own full-width row beneath the tools, in the same place at
+  every size.
+
+### Changed
+- **A calmer toolbar.** Rotate left, rotate right and the room schedule order
+  have moved into a **More** menu, leaving the row to the tools actually used
+  while planning. Nothing was removed — and the keyboard shortcuts are
+  unchanged.
+
+## [1.48.0] — 2026-08-13
+
+### Added
+- **Show / hide devices and categories, like layers.** Every device row and
+  every category header now has an eye: switch one off and those ikons leave
+  the plan — and the exported sheets and their legend — so a plan can be
+  presented one discipline at a time (lighting only, audio only, and so on).
+  - Hiding is **presentation, not scope**: quantities in the BoQ, the Excel FD
+    sheet and the room matrix are unaffected. Out-of-scope remains the way to
+    exclude something from the numbers.
+  - A category''s eye switches all of its devices together.
+  - A standing reminder appears while anything is hidden, with **Show all** to
+    restore everything in one click — so a hidden layer is never forgotten
+    before an export.
+  - Choosing a hidden device to place brings it back automatically.
 
 ## [1.47.0] — 2026-08-12
 
@@ -1709,6 +1957,68 @@ follows [Semantic Versioning](https://semver.org).
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
 
+## [1.50.0] — 2026-08-13
+
+### Added
+- **Notes.** Press <kbd>A</kbd> or tap **Notes**, then tap the plan to leave a
+  comment — site conditions, client requests, anything worth remembering.
+  Notes are numbered pins with their text beside them: drag to move, tap to
+  edit, clear the text to delete. Fully undoable, they survive crop and
+  rotate, save with the project, and print on the exported sheets.
+
+### Fixed
+- **Cropping is undoable — and now says so.** It always was, but nothing told
+  you, so a bad crop felt permanent. Applying a crop now says that Undo brings
+  the full plan back. (History is capped at 80 steps, since crop snapshots
+  hold a whole plan image.)
+- **Device names are no longer buried by their tools.** Names take the space
+  they need and truncate cleanly; with a mouse the row tools stay hidden until
+  you hover, and on touch they are compact and sit clear of the name.
+- **The out-of-scope colour control** is properly round and has moved out of
+  the tool row.
+
+### Changed
+- **Display settings are always a panel**, on every device, instead of
+  sliders inline on desktop and a panel on tablets — one consistent layout
+  and a much calmer toolbar at every width.
+- **Skribble is straighter again** — wobble is absorbed more aggressively,
+  and only a dominant edge near 45° keeps its angle.
+
+## [1.49.0] — 2026-08-13
+
+### Fixed
+- **Adjusting one room of a joined pair.** Shared corners always moved both
+  rooms, which made fine-tuning a boundary awkward. Hold **Ctrl/⌘** while
+  dragging to move just the room you grabbed, or switch off **Linked walls**
+  in Display to make that the default. A one-time note explains it the first
+  time you take hold of a shared corner.
+- **Floor tabs stay put.** They previously sat at the right of the tool row
+  on wide screens and jumped to their own row on narrow ones. They now always
+  occupy their own full-width row beneath the tools, in the same place at
+  every size.
+
+### Changed
+- **A calmer toolbar.** Rotate left, rotate right and the room schedule order
+  have moved into a **More** menu, leaving the row to the tools actually used
+  while planning. Nothing was removed — and the keyboard shortcuts are
+  unchanged.
+
+## [1.48.0] — 2026-08-13
+
+### Added
+- **Show / hide devices and categories, like layers.** Every device row and
+  every category header now has an eye: switch one off and those ikons leave
+  the plan — and the exported sheets and their legend — so a plan can be
+  presented one discipline at a time (lighting only, audio only, and so on).
+  - Hiding is **presentation, not scope**: quantities in the BoQ, the Excel FD
+    sheet and the room matrix are unaffected. Out-of-scope remains the way to
+    exclude something from the numbers.
+  - A category''s eye switches all of its devices together.
+  - A standing reminder appears while anything is hidden, with **Show all** to
+    restore everything in one click — so a hidden layer is never forgotten
+    before an export.
+  - Choosing a hidden device to place brings it back automatically.
+
 ## [1.47.0] — 2026-08-12
 
 ### Fixed
@@ -1806,6 +2116,68 @@ follows [Semantic Versioning](https://semver.org).
   clean blocks unless an angle was clearly intended.
 - **The guide has room to breathe** — more padding throughout, wider steps
   with clearer numbering, and noticeably more space between sections.
+
+## [1.50.0] — 2026-08-13
+
+### Added
+- **Notes.** Press <kbd>A</kbd> or tap **Notes**, then tap the plan to leave a
+  comment — site conditions, client requests, anything worth remembering.
+  Notes are numbered pins with their text beside them: drag to move, tap to
+  edit, clear the text to delete. Fully undoable, they survive crop and
+  rotate, save with the project, and print on the exported sheets.
+
+### Fixed
+- **Cropping is undoable — and now says so.** It always was, but nothing told
+  you, so a bad crop felt permanent. Applying a crop now says that Undo brings
+  the full plan back. (History is capped at 80 steps, since crop snapshots
+  hold a whole plan image.)
+- **Device names are no longer buried by their tools.** Names take the space
+  they need and truncate cleanly; with a mouse the row tools stay hidden until
+  you hover, and on touch they are compact and sit clear of the name.
+- **The out-of-scope colour control** is properly round and has moved out of
+  the tool row.
+
+### Changed
+- **Display settings are always a panel**, on every device, instead of
+  sliders inline on desktop and a panel on tablets — one consistent layout
+  and a much calmer toolbar at every width.
+- **Skribble is straighter again** — wobble is absorbed more aggressively,
+  and only a dominant edge near 45° keeps its angle.
+
+## [1.49.0] — 2026-08-13
+
+### Fixed
+- **Adjusting one room of a joined pair.** Shared corners always moved both
+  rooms, which made fine-tuning a boundary awkward. Hold **Ctrl/⌘** while
+  dragging to move just the room you grabbed, or switch off **Linked walls**
+  in Display to make that the default. A one-time note explains it the first
+  time you take hold of a shared corner.
+- **Floor tabs stay put.** They previously sat at the right of the tool row
+  on wide screens and jumped to their own row on narrow ones. They now always
+  occupy their own full-width row beneath the tools, in the same place at
+  every size.
+
+### Changed
+- **A calmer toolbar.** Rotate left, rotate right and the room schedule order
+  have moved into a **More** menu, leaving the row to the tools actually used
+  while planning. Nothing was removed — and the keyboard shortcuts are
+  unchanged.
+
+## [1.48.0] — 2026-08-13
+
+### Added
+- **Show / hide devices and categories, like layers.** Every device row and
+  every category header now has an eye: switch one off and those ikons leave
+  the plan — and the exported sheets and their legend — so a plan can be
+  presented one discipline at a time (lighting only, audio only, and so on).
+  - Hiding is **presentation, not scope**: quantities in the BoQ, the Excel FD
+    sheet and the room matrix are unaffected. Out-of-scope remains the way to
+    exclude something from the numbers.
+  - A category''s eye switches all of its devices together.
+  - A standing reminder appears while anything is hidden, with **Show all** to
+    restore everything in one click — so a hidden layer is never forgotten
+    before an export.
+  - Choosing a hidden device to place brings it back automatically.
 
 ## [1.47.0] — 2026-08-12
 
@@ -2344,6 +2716,68 @@ follows [Semantic Versioning](https://semver.org).
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
 
+## [1.50.0] — 2026-08-13
+
+### Added
+- **Notes.** Press <kbd>A</kbd> or tap **Notes**, then tap the plan to leave a
+  comment — site conditions, client requests, anything worth remembering.
+  Notes are numbered pins with their text beside them: drag to move, tap to
+  edit, clear the text to delete. Fully undoable, they survive crop and
+  rotate, save with the project, and print on the exported sheets.
+
+### Fixed
+- **Cropping is undoable — and now says so.** It always was, but nothing told
+  you, so a bad crop felt permanent. Applying a crop now says that Undo brings
+  the full plan back. (History is capped at 80 steps, since crop snapshots
+  hold a whole plan image.)
+- **Device names are no longer buried by their tools.** Names take the space
+  they need and truncate cleanly; with a mouse the row tools stay hidden until
+  you hover, and on touch they are compact and sit clear of the name.
+- **The out-of-scope colour control** is properly round and has moved out of
+  the tool row.
+
+### Changed
+- **Display settings are always a panel**, on every device, instead of
+  sliders inline on desktop and a panel on tablets — one consistent layout
+  and a much calmer toolbar at every width.
+- **Skribble is straighter again** — wobble is absorbed more aggressively,
+  and only a dominant edge near 45° keeps its angle.
+
+## [1.49.0] — 2026-08-13
+
+### Fixed
+- **Adjusting one room of a joined pair.** Shared corners always moved both
+  rooms, which made fine-tuning a boundary awkward. Hold **Ctrl/⌘** while
+  dragging to move just the room you grabbed, or switch off **Linked walls**
+  in Display to make that the default. A one-time note explains it the first
+  time you take hold of a shared corner.
+- **Floor tabs stay put.** They previously sat at the right of the tool row
+  on wide screens and jumped to their own row on narrow ones. They now always
+  occupy their own full-width row beneath the tools, in the same place at
+  every size.
+
+### Changed
+- **A calmer toolbar.** Rotate left, rotate right and the room schedule order
+  have moved into a **More** menu, leaving the row to the tools actually used
+  while planning. Nothing was removed — and the keyboard shortcuts are
+  unchanged.
+
+## [1.48.0] — 2026-08-13
+
+### Added
+- **Show / hide devices and categories, like layers.** Every device row and
+  every category header now has an eye: switch one off and those ikons leave
+  the plan — and the exported sheets and their legend — so a plan can be
+  presented one discipline at a time (lighting only, audio only, and so on).
+  - Hiding is **presentation, not scope**: quantities in the BoQ, the Excel FD
+    sheet and the room matrix are unaffected. Out-of-scope remains the way to
+    exclude something from the numbers.
+  - A category''s eye switches all of its devices together.
+  - A standing reminder appears while anything is hidden, with **Show all** to
+    restore everything in one click — so a hidden layer is never forgotten
+    before an export.
+  - Choosing a hidden device to place brings it back automatically.
+
 ## [1.47.0] — 2026-08-12
 
 ### Fixed
@@ -2441,6 +2875,68 @@ follows [Semantic Versioning](https://semver.org).
   clean blocks unless an angle was clearly intended.
 - **The guide has room to breathe** — more padding throughout, wider steps
   with clearer numbering, and noticeably more space between sections.
+
+## [1.50.0] — 2026-08-13
+
+### Added
+- **Notes.** Press <kbd>A</kbd> or tap **Notes**, then tap the plan to leave a
+  comment — site conditions, client requests, anything worth remembering.
+  Notes are numbered pins with their text beside them: drag to move, tap to
+  edit, clear the text to delete. Fully undoable, they survive crop and
+  rotate, save with the project, and print on the exported sheets.
+
+### Fixed
+- **Cropping is undoable — and now says so.** It always was, but nothing told
+  you, so a bad crop felt permanent. Applying a crop now says that Undo brings
+  the full plan back. (History is capped at 80 steps, since crop snapshots
+  hold a whole plan image.)
+- **Device names are no longer buried by their tools.** Names take the space
+  they need and truncate cleanly; with a mouse the row tools stay hidden until
+  you hover, and on touch they are compact and sit clear of the name.
+- **The out-of-scope colour control** is properly round and has moved out of
+  the tool row.
+
+### Changed
+- **Display settings are always a panel**, on every device, instead of
+  sliders inline on desktop and a panel on tablets — one consistent layout
+  and a much calmer toolbar at every width.
+- **Skribble is straighter again** — wobble is absorbed more aggressively,
+  and only a dominant edge near 45° keeps its angle.
+
+## [1.49.0] — 2026-08-13
+
+### Fixed
+- **Adjusting one room of a joined pair.** Shared corners always moved both
+  rooms, which made fine-tuning a boundary awkward. Hold **Ctrl/⌘** while
+  dragging to move just the room you grabbed, or switch off **Linked walls**
+  in Display to make that the default. A one-time note explains it the first
+  time you take hold of a shared corner.
+- **Floor tabs stay put.** They previously sat at the right of the tool row
+  on wide screens and jumped to their own row on narrow ones. They now always
+  occupy their own full-width row beneath the tools, in the same place at
+  every size.
+
+### Changed
+- **A calmer toolbar.** Rotate left, rotate right and the room schedule order
+  have moved into a **More** menu, leaving the row to the tools actually used
+  while planning. Nothing was removed — and the keyboard shortcuts are
+  unchanged.
+
+## [1.48.0] — 2026-08-13
+
+### Added
+- **Show / hide devices and categories, like layers.** Every device row and
+  every category header now has an eye: switch one off and those ikons leave
+  the plan — and the exported sheets and their legend — so a plan can be
+  presented one discipline at a time (lighting only, audio only, and so on).
+  - Hiding is **presentation, not scope**: quantities in the BoQ, the Excel FD
+    sheet and the room matrix are unaffected. Out-of-scope remains the way to
+    exclude something from the numbers.
+  - A category''s eye switches all of its devices together.
+  - A standing reminder appears while anything is hidden, with **Show all** to
+    restore everything in one click — so a hidden layer is never forgotten
+    before an export.
+  - Choosing a hidden device to place brings it back automatically.
 
 ## [1.47.0] — 2026-08-12
 

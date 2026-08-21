@@ -1048,7 +1048,7 @@ body.skribbling .plan-click{cursor:none}
 @media (max-width:640px){ .sk-colors{display:none} }
 
 /* ── Display popover: keeps the toolbar calm on small screens ── */
-.display-pop{display:contents}
+
 #btnDisplay{display:none}
 @media (max-width:1160px), (orientation:portrait) and (max-width:1280px){
   #btnDisplay{display:inline-grid}
@@ -1222,3 +1222,129 @@ body.skribbling .room-layer *{pointer-events:none !important}
   margin-top:3px;padding-top:7px;padding-bottom:2px;width:100%;
 }
 .toolbar.floors-wrapped .floor-tab{padding:7px 13px;font-size:13px}
+
+/* ── Layer visibility ── */
+.item-eye{
+  width:22px;flex:none;color:var(--dim);opacity:0;transition:opacity .12s,color .12s;
+  display:grid;place-items:center;
+}
+.item-row:hover .item-eye,.item-eye.off{opacity:1}
+.item-eye svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
+.item-eye:hover{color:var(--hl)}
+.item-eye.off{color:var(--hl)}
+@media (pointer:coarse){ .item-eye{opacity:1;width:26px} }
+.item-row:has(.item-eye.off) .item-chip,
+.item-row:has(.item-eye.off) .item-meta{opacity:.42}
+.ct-btn[data-act="eye"]{font-size:11px;line-height:1}
+/* standing reminder that something is hidden */
+.hidden-chip{
+  position:fixed;right:14px;bottom:16px;z-index:118;
+  display:none;align-items:center;gap:10px;
+  padding:9px 14px;border-radius:99px;
+  background:var(--panel);border:1px solid var(--hl-line);box-shadow:var(--shadow);
+  font-size:11.5px;color:var(--txt);
+}
+.hidden-chip.show{display:flex}
+.hidden-chip button{
+  font-size:11px;font-weight:600;color:var(--hl);
+  border:1px solid var(--hl-line);border-radius:7px;padding:3px 9px;
+}
+.hidden-chip button:hover{background:var(--hl-soft)}
+
+/* ══════════ Calmer toolbar ══════════ */
+/* floor tabs always live on their own row — same place at every width */
+.toolbar{align-items:center}
+.floors{order:99;flex:0 0 100%;width:100%;min-width:0;max-width:none;
+  border-top:1px solid var(--line);margin-top:3px;padding-top:7px;padding-bottom:2px;
+  overflow-x:auto;gap:6px;}
+.toolbar.floors-wrapped .floors{margin-top:3px}
+.floor-tab{padding:7px 13px;font-size:13px;flex:none}
+/* occasional tools tuck into a menu */
+.more-wrap{position:relative;display:inline-flex}
+.more-menu{
+  display:none;position:absolute;left:0;top:calc(100% + 8px);z-index:150;
+  flex-direction:column;gap:2px;min-width:206px;padding:6px;
+  background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);
+}
+.more-menu.open{display:flex}
+.more-menu button{
+  display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:8px;
+  font-size:12.5px;color:var(--txt);text-align:left;width:100%;
+}
+.more-menu button:hover{background:var(--hl-soft);color:var(--hl)}
+.more-menu button svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.mm-sep{height:1px;background:var(--line);margin:4px 6px}
+/* linked-walls switch inside the Display panel */
+.disp-toggle{display:none;align-items:center;gap:9px;font-size:12px;color:var(--txt);cursor:pointer;white-space:nowrap}
+.disp-toggle input{accent-color:var(--hl);width:15px;height:15px}
+.display-pop .disp-toggle{display:flex}
+@media (min-width:1401px){ .disp-toggle{display:flex} }
+
+/* ══════════ Notes ══════════ */
+.note-pin{position:absolute;transform:translate(-50%,-50%) scale(var(--zi,1));transform-origin:center;
+  display:flex;align-items:center;gap:7px;cursor:pointer;z-index:9}
+.np-dot{
+  width:22px;height:22px;border-radius:50%;flex:none;display:grid;place-items:center;
+  background:var(--panel);border:2px solid var(--hl);color:var(--hl);
+  font-family:var(--font-m);font-size:11px;font-weight:700;
+  box-shadow:0 2px 8px rgba(0,0,0,.28);
+}
+.np-text{
+  max-width:190px;padding:5px 9px;border-radius:8px;
+  background:var(--panel);border:1px solid var(--line);color:var(--txt);
+  font-size:11.5px;line-height:1.45;box-shadow:0 2px 10px rgba(0,0,0,.2);
+  overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+}
+body.noting .plan-click{cursor:crosshair}
+body.noting .note-pin{z-index:20}
+#btnNote.on{color:var(--hl);background:var(--hl-soft);border-color:var(--hl-line)}
+
+/* ══════════ Library rows: names first, tools second ══════════ */
+.item-row{gap:8px}
+.item-meta{flex:1 1 auto;min-width:0;overflow:hidden}
+.item-meta .nm{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item-row .item-eye,.item-row .item-mv,.item-row .item-edit,.item-row .item-del{flex:0 0 auto}
+/* on a mouse the tools stay out of the way until you hover the row */
+@media (pointer:fine){
+  .item-row .item-mv,.item-row .item-edit,.item-row .item-del{
+    width:0;opacity:0;overflow:hidden;padding:0;margin:0;transition:width .12s,opacity .12s;
+  }
+  .item-row:hover .item-mv{width:16px;opacity:1}
+  .item-row:hover .item-edit,.item-row:hover .item-del{width:22px;opacity:1}
+}
+/* on touch they are always there, but compact and never over the name */
+@media (pointer:coarse){
+  .item-row{gap:6px;padding:9px 8px}
+  .item-mv{width:20px}
+  .item-edit,.item-del{width:24px}
+  .item-qty{min-width:20px}
+}
+/* out-of-scope swatches: round, even, and out of the tool row */
+.outscope-grp label{white-space:nowrap}
+.os-custom{width:20px;height:20px;border-radius:50%;padding:0;border:2px solid var(--line-2);overflow:hidden;appearance:none;-webkit-appearance:none}
+.os-custom::-webkit-color-swatch-wrapper{padding:0;border-radius:50%}
+.os-custom::-webkit-color-swatch{border:none;border-radius:50%}
+.os-custom::-moz-color-swatch{border:none;border-radius:50%}
+
+
+/* ══════════ Display settings are always a panel ══════════
+   Sliders and switches inline in the tool row crowded it at every width and
+   behaved differently on desktop vs tablet. They now always live behind the
+   Display button, laid out the same way on every device. */
+.display-pop{
+  display:none;position:fixed;right:12px;top:104px;z-index:150;
+  flex-direction:column;gap:13px;align-items:stretch;
+  padding:16px 18px;border-radius:14px;
+  background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow);
+  min-width:238px;max-width:min(300px,92vw);
+}
+.display-pop.open{display:flex}
+#btnDisplay{display:inline-grid}
+.display-pop .sizegrp{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%}
+.display-pop .sizegrp label{min-width:66px;flex:none;font-size:9px;letter-spacing:.12em;color:var(--dim)}
+.display-pop .sizegrp input[type=range]{flex:1;max-width:none !important;width:auto}
+.display-pop .tb-btn{width:100%;justify-content:flex-start;gap:10px;padding:9px 10px}
+.display-pop .tb-btn::after{content:attr(data-lbl);font-size:12.5px}
+.display-pop .disp-toggle{display:flex;padding:2px 0}
+.display-pop .outscope-grp{display:flex;align-items:center;justify-content:space-between}
+.display-pop .os-row{gap:6px}

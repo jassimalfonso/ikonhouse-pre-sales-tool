@@ -7,7 +7,7 @@
 <title>ikonhouse — AV Pre-Sales Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/app.css?v=1.47.0">
+<link rel="stylesheet" href="assets/css/app.css?v=1.50.0">
 </head>
 <body>
 
@@ -89,13 +89,18 @@
   <div class="floors" id="floorTabs"></div>
   <button class="tb-btn" id="btnAddFloor"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span class="lbl">Plan</span></button>
   <button class="tb-btn" id="btnCrop" title="Crop the plan  (C)"><svg viewBox="0 0 24 24"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/></svg><span class="lbl">Crop</span></button>
-  <button class="tb-btn icon-only" id="btnRotateCCW" title="Rotate plan 90° counter-clockwise"><svg viewBox="0 0 24 24"><path d="M3 3v6h6"/><path d="M3 9a8.5 8.5 0 1 1 2.5 6.1"/></svg></button>
-  <button class="tb-btn" id="btnRotate" title="Rotate plan 90° clockwise"><svg viewBox="0 0 24 24"><path d="M21 3v6h-6"/><path d="M21 9a8.5 8.5 0 1 0-2.5 6.1"/></svg><span class="lbl">Rotate</span></button>
-  <button class="tb-btn icon-only" id="btnRoomOrder" title="Room schedule order — sets the row order in the FD sheet & BoQ">
-    <svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M4 5.5l-1 1M3 11l1 1 1-1M3.5 17.5h1.5l-1.5 2h1.5"/></svg>
-  </button>
   <button class="tb-btn" id="btnSkribble" title="Skribble — brush over an area to create a room from it  (K)"><svg viewBox="0 0 24 24"><path d="M3 21c2.5.4 4.2-.6 5.2-2.2"/><path d="M8.2 18.8a3 3 0 0 0-3-3l9.2-9.2 3 3z"/><path d="M17.4 9.6l2.4-2.4a2.1 2.1 0 0 0-3-3l-2.4 2.4z"/></svg><span class="lbl">Skribble</span></button>
+  <button class="tb-btn" id="btnNote" title="Add notes to the plan  (A)"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="lbl">Notes</span></button>
   <button class="tb-btn" id="btnRooms" title="Define rooms / areas on the plan  (R)"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 3v10M12 13h9M3 13h4"/></svg><span class="lbl">Rooms</span></button>
+  <div class="more-wrap">
+    <button class="tb-btn icon-only" id="btnMore" title="More tools"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></button>
+    <div class="more-menu" id="moreMenu">
+      <button id="btnRotateCCW"><svg viewBox="0 0 24 24"><path d="M3 3v6h6"/><path d="M3 9a8.5 8.5 0 1 1 2.5 6.1"/></svg>Rotate left</button>
+      <button id="btnRotate"><svg viewBox="0 0 24 24"><path d="M21 3v6h-6"/><path d="M21 9a8.5 8.5 0 1 0-2.5 6.1"/></svg>Rotate right</button>
+      <div class="mm-sep"></div>
+      <button id="btnRoomOrder"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M4 5.5l-1 1M3 11l1 1 1-1M3.5 17.5h1.5l-1.5 2h1.5"/></svg>Room schedule order</button>
+    </div>
+  </div>
   <button class="tb-btn icon-only" id="btnUndo" title="Undo (Ctrl+Z)"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button>
   <button class="tb-btn icon-only" id="btnRedo" title="Redo (Ctrl+Y)"><svg viewBox="0 0 24 24"><path d="M15 14l5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg></button>
   <div class="spacer"></div>
@@ -105,6 +110,7 @@
   <div class="display-pop" id="displayPop">  <button class="tb-btn icon-only" id="btnAutoNum" data-lbl="Auto-number ikons" title="Auto-number ikons (SP-01, KP-02…)">
     <svg viewBox="0 0 24 24"><path d="M5 8h2v8M15.5 8.5a2 2 0 1 1 3 2.6L15 16h4"/><path d="M10.5 5.5L9 18.5"/></svg>
   </button>
+  <label class="disp-toggle"><input type="checkbox" id="linkNodesOpt" checked> Linked walls</label>
   <button class="tb-btn icon-only" id="btnGray" data-lbl="Greyscale plan" data-key="G" title="Greyscale the floor plan — ikons keep their colour">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor" stroke="none"/></svg>
   </button>
@@ -112,7 +118,7 @@
   <div class="sizegrp"><label>OPACITY</label><input type="range" id="pinOpacity" min="25" max="100" value="100" title="Ikon opacity — lower it to read the plan underneath"></div>
   <div class="sizegrp"><label>ROOM</label><input type="range" id="roomOpacity" min="20" max="200" value="100" title="Room fill strength"></div>
   <div class="sizegrp"><label>No.</label><input type="range" id="seqSize" min="70" max="220" value="100" title="Auto-number size"></div>
-  <div class="sizegrp outscope-grp"><label>OUT</label><div class="os-row" id="outScopeRow" title="Colour used for out-of-scope rooms"></div></div>
+  <div class="sizegrp outscope-grp"><label>OUT OF SCOPE</label><div class="os-row" id="outScopeRow" title="Colour used for out-of-scope rooms"></div></div>
 </div>
   <div class="zoomgrp">
     <button id="zoomOut">−</button><span class="zl" id="zoomLbl">100%</span><button id="zoomIn">+</button><button id="zoomFit">FIT</button>
@@ -202,13 +208,17 @@
       <p class="guide-lead">Everything responds to the same few gestures. Tap to select, double-tap to edit, hold to create.</p>
       <div class="help-cols">
         <div><h4>Shortcuts</h4>
-          <p><kbd>R</kbd> rooms · <kbd>K</kbd> skribble · <kbd>O</kbd> out of scope · <kbd>C</kbd> crop · <kbd>G</kbd> greyscale · <kbd>N</kbd> numbering · <kbd>L</kbd> library · <kbd>?</kbd> this guide · pressing the same key again, <kbd>Esc</kbd>, or the <b>Done</b> button leaves a tool</p></div>
+          <p><kbd>R</kbd> rooms · <kbd>K</kbd> skribble · <kbd>A</kbd> notes · <kbd>O</kbd> out of scope · <kbd>C</kbd> crop · <kbd>G</kbd> greyscale · <kbd>N</kbd> numbering · <kbd>L</kbd> library · <kbd>?</kbd> this guide · pressing the same key again, <kbd>Esc</kbd>, or the <b>Done</b> button leaves a tool</p></div>
         <div><h4>Getting around</h4>
           <p>Pinch or <kbd>Ctrl</kbd>+scroll to zoom · swipe, two fingers, or <kbd>Space</kbd>+drag to pan · tap outside the plan to cancel whatever you are doing</p></div>
         <div><h4>Ikons</h4>
           <p>Tap a device then tap the plan to place · drag to move — they snap into rows and columns · drag a box on empty plan to select several (on touch, hold an ikon then tap others) · <kbd>Shift</kbd>-click to add one to the selection · <kbd>Ctrl</kbd>+<kbd>C</kbd> / <kbd>Ctrl</kbd>+<kbd>V</kbd> to copy a cluster · <kbd>Delete</kbd> to remove</p></div>
         <div><h4>Rooms &amp; walls</h4>
-          <p><b>Skribble</b> — brush over an area and release, and it becomes a room, ready to fine-tune · the brush stops at existing rooms and the new room snaps flush against their walls, so rooms fit together without gaps (<kbd>Alt</kbd> to ignore) · drag for a quick box · tap corner to corner for any shape, then tap the first corner to close · drag a wall to move it — straight by default, <kbd>Shift</kbd> frees it · drag a corner to reshape, <kbd>Shift</kbd> squares it, <kbd>Alt</kbd> turns snapping off · double-tap a wall to split it · <b>hold a corner</b> (or <kbd>Ctrl</kbd>-drag) to grow a new room that stays joined · double-tap a corner to remove it</p></div>
+          <p><b>Skribble</b> — brush over an area and release, and it becomes a room, ready to fine-tune · the brush stops at existing rooms and the new room snaps flush against their walls, so rooms fit together without gaps (<kbd>Alt</kbd> to ignore) · drag for a quick box · tap corner to corner for any shape, then tap the first corner to close · drag a wall to move it — straight by default, <kbd>Shift</kbd> frees it · drag a corner to reshape, <kbd>Shift</kbd> squares it, <kbd>Alt</kbd> turns snapping off · where two rooms share a corner both move together — hold <kbd>Ctrl</kbd> to move just one, or switch off <b>Linked walls</b> in Display · double-tap a wall to split it · <b>hold a corner</b> (or <kbd>Ctrl</kbd>-drag) to grow a new room that stays joined · double-tap a corner to remove it</p></div>
+        <div><h4>Notes</h4>
+          <p>Press <kbd>A</kbd> or tap <b>Notes</b>, then tap the plan to leave a comment — site conditions, client requests, anything worth remembering. Drag a note to move it, tap it to edit, clear the text to delete. Notes are numbered on the exported sheets.</p></div>
+        <div><h4>Layers</h4>
+          <p>Each device and each category has an <b>eye</b> in the library — switch one off to take it off the plan and off the exported sheets, for showing a client just the lighting, or just the audio. Quantities in the BoQ are unaffected: hiding is about presentation, not scope.</p></div>
         <div><h4>Library</h4>
           <p>Drag the ⠿ grip to dock it left, right, top, bottom or floating · ▲▼ or hold to reorder categories · <b>▲▼ on a device</b> reorders it in its category · drag a device onto another to drop it into that spot, or onto a category header to move it there</p></div>
       </div>
@@ -237,6 +247,7 @@
 </div>
 <button class="tool-exit" id="toolExit">✕ Done</button>
 <div class="room-bulk" id="roomBulk"></div>
+<div class="hidden-chip" id="hiddenChip"></div>
 <div class="skribble-bar" id="skribbleBar">
   <div class="sk-brush">
     <span class="sk-lab">BRUSH</span>
@@ -414,6 +425,6 @@
   </div>
 </div>
 
-<script src="assets/js/app.js?v=1.47.0"></script>
+<script src="assets/js/app.js?v=1.50.0"></script>
 </body>
 </html>

@@ -1429,3 +1429,91 @@ body.noting .note-pin{z-index:20}
 /* while placing ikons the names step further back */
 body.arming .room-layer .rlabel{opacity:.45}
 .plan-holder.rooming .rlabel{opacity:1}
+
+/* ══════════════════════════════════════════════════════════════
+   LOOK & FEEL SETS
+   Each set re-states the same tokens the app already uses, so a
+   look is purely a palette swap — nothing structural changes and
+   "Original" simply removes the attribute.
+   ══════════════════════════════════════════════════════════════ */
+
+/* ATELIER — drawing office: limestone and aizome indigo */
+[data-look="atelier"][data-theme="light"]{
+  --bg:#F1F1EC; --panel:#FAFAF6; --panel-2:#E8E9E2;
+  --txt:#1D2024; --dim:#5D646B;
+  --line:#DCDDD5; --line-2:#C6C8BE;
+  --hl:#3B4A9E; --hl-soft:rgba(59,74,158,.10); --hl-line:rgba(59,74,158,.30);
+}
+[data-look="atelier"][data-theme="dark"]{
+  --bg:#14171C; --panel:#1B1F26; --panel-2:#232833;
+  --txt:#E9ECF2; --dim:#98A2B0;
+  --line:#2A303A; --line-2:#3A4250;
+  --hl:#8FA3FF; --hl-soft:rgba(143,163,255,.13); --hl-line:rgba(143,163,255,.34);
+}
+
+/* KINARI — unbleached paper, sage accent, the quietest set */
+[data-look="kinari"][data-theme="light"]{
+  --bg:#F7F5EF; --panel:#FFFDF8; --panel-2:#EFEBE1;
+  --txt:#2A2A26; --dim:#6E6C63;
+  --line:#E5E0D4; --line-2:#D2CCBC;
+  --hl:#6E7F63; --hl-soft:rgba(110,127,99,.13); --hl-line:rgba(110,127,99,.32);
+}
+[data-look="kinari"][data-theme="dark"]{
+  --bg:#191A17; --panel:#20221E; --panel-2:#2A2D27;
+  --txt:#ECEAE2; --dim:#9C9C90;
+  --line:#2F322B; --line-2:#3E423A;
+  --hl:#9DB08E; --hl-soft:rgba(157,176,142,.14); --hl-line:rgba(157,176,142,.34);
+}
+
+/* SLATE — cool and neutral, for long sessions on a bright screen */
+[data-look="slate"][data-theme="light"]{
+  --bg:#F2F4F6; --panel:#FFFFFF; --panel-2:#E8ECEF;
+  --txt:#1A1F24; --dim:#5C666F;
+  --line:#DDE3E8; --line-2:#C6CED5;
+  --hl:#2E6F8E; --hl-soft:rgba(46,111,142,.11); --hl-line:rgba(46,111,142,.30);
+}
+[data-look="slate"][data-theme="dark"]{
+  --bg:#12161A; --panel:#191E24; --panel-2:#222932;
+  --txt:#E8EDF2; --dim:#94A1AC;
+  --line:#252D36; --line-2:#354049;
+  --hl:#6FB3D2; --hl-soft:rgba(111,179,210,.13); --hl-line:rgba(111,179,210,.33);
+}
+
+/* an accent chosen on its own overrides whichever set is active */
+[style*="--accent-pick"]{}
+
+/* ── Look & feel picker ── */
+.look-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:2px 0 4px}
+.look{
+  display:flex;align-items:center;gap:9px;padding:9px 10px;
+  border:1px solid var(--line-2);border-radius:9px;background:var(--panel);
+  transition:border-color .14s,background .14s;text-align:left;
+}
+.look:hover{border-color:var(--hl-line);background:var(--hl-soft)}
+.look.on{border-color:var(--hl);box-shadow:inset 0 0 0 1px var(--hl)}
+.look .prev{width:26px;height:26px;border-radius:7px;flex:none;position:relative;overflow:hidden;border:1px solid var(--line-2)}
+.look .prev i{position:absolute;inset:0}
+.look .prev i+i{left:58%}
+.look b{font-size:12px;font-weight:600;display:block;line-height:1.3}
+.look span{font-size:10px;color:var(--dim)}
+.accent-row{display:flex;gap:7px;align-items:center;flex-wrap:wrap;padding:2px 0 4px}
+.acc{width:22px;height:22px;border-radius:50%;border:2px solid transparent;flex:none;transition:transform .12s}
+.acc:hover{transform:scale(1.12)}
+.acc.on{border-color:var(--txt)}
+.reset-look{
+  display:flex;align-items:center;gap:8px;width:100%;padding:8px 10px;border-radius:8px;
+  font-size:12px;color:var(--dim);border:1px dashed var(--line-2);
+}
+.reset-look:hover{color:var(--hl);border-color:var(--hl-line);background:var(--hl-soft)}
+/* multiline note editor */
+.note-modal{max-width:440px;width:min(440px,94vw)}
+.note-area{
+  width:100%;padding:12px 13px;border:1px solid var(--line-2);border-radius:9px;
+  background:var(--panel-2);color:var(--txt);font-family:var(--font-s);font-size:13.5px;
+  line-height:1.65;resize:vertical;min-height:110px;
+}
+.note-area:focus{outline:none;border-color:var(--hl)}
+.note-foot{display:flex;align-items:center;gap:12px;margin-top:12px}
+.note-foot .note-hint{flex:1;font-size:10.5px;color:var(--dim);text-align:center}
+/* note labels honour line breaks */
+.nl-t{white-space:pre-line;-webkit-line-clamp:6}

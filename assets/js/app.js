@@ -77,14 +77,14 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.53.2';
+const APP_VERSION='1.54.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
 let state = {
   version:APP_VERSION,
   project:'Untitled Project', client:'', location:'', reference:'', preparedBy:'',
-  theme:SYS_THEME(), brandLogo:null, libDock:'left', lastDock:'left', libHidden:false, libFloat:null,
+  theme:SYS_THEME(), look:'', accent:'', brandLogo:null, libDock:'left', lastDock:'left', libHidden:false, libFloat:null,
   libSize:{w:324,h:60,fw:288,fh:520}, catOrder:['Control','Climate','Lighting','Shading','Audio','Network','Security','Video'],
   items:[], floors:[], activeFloor:null, pinScale:1, pinOpacity:1, planGray:false, brushSize:46, roomOpacity:1, seqScale:1, wallWeight:1, skribbleColor:null, outScopeColor:'#E5484D', linkNodes:true
 };
@@ -154,14 +154,71 @@ async function loadBrandImg(){
 const today=()=>new Date().toLocaleDateString(undefined,{day:'2-digit',month:'short',year:'numeric'});
 
 /* ──────────── Theme ──────────── */
+/* ── Look & feel ──────────────────────────────────────────────
+   A "look" is a palette only: it re-states the same tokens, so
+   nothing structural changes and Original is simply no attribute. */
+const LOOKS=[
+  {id:'',        name:'Original', note:'Warm bronze',    sw:['#FAF8F5','#AE8B5C']},
+  {id:'atelier', name:'Atelier',  note:'Drawing office', sw:['#F1F1EC','#3B4A9E']},
+  {id:'kinari',  name:'Kinari',   note:'Paper & sage',   sw:['#F7F5EF','#6E7F63']},
+  {id:'slate',   name:'Slate',    note:'Cool neutral',   sw:['#F2F4F6','#2E6F8E']}
+];
+const ACCENTS=['','#AE8B5C','#3B4A9E','#6E7F63','#2E6F8E','#B4553F','#7C4DFF','#0E7490'];
 function applyTheme(){
-  document.documentElement.dataset.theme = state.theme;
+  const d=document.documentElement;
+  d.dataset.theme = state.theme;
+  if(state.look) d.dataset.look = state.look; else delete d.dataset.look;
+  /* a hand-picked accent wins over the set's own */
+  if(state.accent){
+    d.style.setProperty('--hl',state.accent);
+    d.style.setProperty('--hl-soft',hexA(state.accent,.12));
+    d.style.setProperty('--hl-line',hexA(state.accent,.32));
+  }else{
+    d.style.removeProperty('--hl');d.style.removeProperty('--hl-soft');d.style.removeProperty('--hl-line');
+  }
   document.querySelectorAll('#themeRow [data-theme-opt]').forEach(b=>b.classList.toggle('on',b.dataset.themeOpt===state.theme));
+  document.querySelectorAll('#lookGrid .look').forEach(b=>b.classList.toggle('on',(b.dataset.look||'')===(state.look||'')));
+  document.querySelectorAll('#accentRow .acc').forEach(b=>b.classList.toggle('on',(b.dataset.acc||'')===(state.accent||'')));
+}
+function hexA(hex,a){
+  const h=hex.replace('#','');
+  const n=parseInt(h.length===3?h.split('').map(c=>c+c).join(''):h,16);
+  return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`;
+}
+function renderLookPicker(){
+  const g=$('#lookGrid');
+  if(g&&!g.children.length){
+    LOOKS.forEach(L=>{
+      const b=el('button','look');
+      b.dataset.look=L.id;
+      b.innerHTML=`<span class="prev"><i style="background:${L.sw[0]}"></i><i style="background:${L.sw[1]}"></i></span>
+                   <span><b>${L.name}</b><span>${L.note}</span></span>`;
+      b.addEventListener('click',()=>{ state.look=L.id; applyTheme(); toast(L.id?`${L.name} look applied.`:'Back to the original look.'); });
+      g.appendChild(b);
+    });
+  }
+  const a=$('#accentRow');
+  if(a&&!a.children.length){
+    ACCENTS.forEach(c=>{
+      const b=el('button','acc');
+      b.dataset.acc=c;
+      b.title=c?'Accent colour':'Use the look\u2019s own accent';
+      b.style.background=c||'transparent';
+      if(!c)b.style.cssText+=';border:2px dashed var(--line-2)';
+      b.addEventListener('click',()=>{ state.accent=c; applyTheme(); });
+      a.appendChild(b);
+    });
+  }
 }
 document.querySelectorAll('#themeRow [data-theme-opt]').forEach(b=>{
   b.addEventListener('click',()=>{ state.theme=b.dataset.themeOpt; applyTheme(); });
 });
 $('#themeToggle').addEventListener('click',()=>{ state.theme=state.theme==='dark'?'light':'dark'; applyTheme(); });
+$('#resetLook').addEventListener('click',()=>{
+  state.look=''; state.accent='';
+  applyTheme();
+  toast('Back to the original look.');
+});
 function applyAutoNum(){
   const c=$('#autoNumOpt'); if(c)c.checked=!!state.autoNumber;
   const b=$('#btnAutoNum'); if(b)b.classList.toggle('on',!!state.autoNumber);
@@ -375,6 +432,14 @@ document.addEventListener('click',e=>{
 });
 $('#btnSkribble').addEventListener('click',()=>setSkribbleMode(!skribbleMode));
 $('#btnNote').addEventListener('click',()=>setNoteMode(!noteMode));
+$('#noteClose').addEventListener('click',closeNoteEditor);
+$('#noteSave').addEventListener('click',saveNoteEditor);
+$('#noteDelete').addEventListener('click',deleteNoteEditor);
+$('#noteVeil').addEventListener('click',e=>{ if(e.target.id==='noteVeil')closeNoteEditor(); });
+$('#noteText').addEventListener('keydown',e=>{
+  if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();saveNoteEditor();}
+  if(e.key==='Escape'){e.preventDefault();closeNoteEditor();}
+});
 $('#toolExit').addEventListener('click',()=>{
   if(skribbleMode)setSkribbleMode(false);
   else if(noteMode)setNoteMode(false);
@@ -893,7 +958,10 @@ function renderRooms(){
         const q=r.pts[(i+1)%r.pts.length];
         svg+=`<rect class="rmid" data-room="${r.id}" data-after="${i}" x="${(p.x+q.x)/2*f.w-handleR*0.6}" y="${(p.y+q.y)/2*f.h-handleR*0.6}" width="${handleR*1.2}" height="${handleR*1.2}"/>`;
       });
-      const grabR=handleR*(matchMedia('(pointer:coarse)').matches?2.4:1.7);
+      const coarse=matchMedia('(pointer:coarse)').matches;
+      /* outside Rooms mode a near-miss used to land on the plan and pan it,
+         so handles get a wider catch there */
+      const grabR=handleR*(coarse?(roomMode?2.4:3.1):(roomMode?1.7:2.3));
       r.pts.forEach((p,i)=>{
         let shared=false;
         (f.rooms||[]).forEach(o=>{ if(o.id===r.id)return; o.pts.forEach(q=>{ if(Math.abs(q.x-p.x)<NODE_LINK_EPS&&Math.abs(q.y-p.y)<NODE_LINK_EPS)shared=true; }); });
@@ -1066,6 +1134,24 @@ function renderRoomBulk(){
   bar.querySelector('[data-act="clear"]').addEventListener('click',clearRoomSel);
 }
 /* highlight a room: emphasize its ikons, dim the rest, summarize contents */
+/* is the pointer close enough to a highlighted room's handle that a drag was
+   almost certainly meant for it? */
+function nearRoomHandle(e){
+  const f=activeFloor();if(!f)return false;
+  const r=(f.rooms||[]).find(x=>x.id===hlRoom);if(!r)return false;
+  const rc=planRect();
+  const tol=matchMedia('(pointer:coarse)').matches?30:20;
+  const n=r.pts.length;
+  for(let i=0;i<n;i++){
+    const p=r.pts[i], q=r.pts[(i+1)%n];
+    const pts=[p,{x:(p.x+q.x)/2,y:(p.y+q.y)/2}];
+    for(const z of pts){
+      const zx=rc.left+z.x*rc.width, zy=rc.top+z.y*rc.height;
+      if(Math.hypot(e.clientX-zx,e.clientY-zy)<tol)return true;
+    }
+  }
+  return false;
+}
 function highlightRoom(id){
   hlRoom=id;
   $('#planHolder').classList.toggle('room-hl',!!id);
@@ -1746,25 +1832,50 @@ function setNoteMode(on){
   }else $('#hintbar').classList.remove('show');
   updateToolExit();
 }
+let noteEditing=null, noteIsNew=false;
 function addNote(x,y){
   const f=activeFloor();if(!f)return;
-  const text=prompt('Note');
-  if(text===null||!text.trim())return;
-  const n={id:uid(),x,y,text:text.trim(),lx:Math.min(0.96,x+0.06),ly:Math.max(0.03,y-0.06)};
-  (f.notes=f.notes||[]).push(n);
-  pushUndo({type:'note-add',floorId:f.id,note:JSON.parse(JSON.stringify(n))});
-  renderNotes();
+  noteEditing={id:uid(),x,y,text:'',lx:Math.min(0.96,x+0.06),ly:Math.max(0.03,y-0.06)};
+  noteIsNew=true;
+  openNoteEditor('New note');
+}
+function openNoteEditor(title){
+  $('#noteTitle').textContent=title;
+  $('#noteText').value=noteEditing?noteEditing.text:'';
+  $('#noteDelete').style.display=noteIsNew?'none':'';
+  $('#noteVeil').style.display='grid';
+  setTimeout(()=>{const t=$('#noteText');t.focus();t.setSelectionRange(t.value.length,t.value.length);},40);
+}
+function closeNoteEditor(){ $('#noteVeil').style.display='none'; noteEditing=null; noteIsNew=false; }
+function saveNoteEditor(){
+  const f=activeFloor();if(!f||!noteEditing)return closeNoteEditor();
+  const text=$('#noteText').value.replace(/\s+$/,'');
+  if(!text.trim()){ deleteNoteEditor(); return; }
+  if(noteIsNew){
+    const n={...noteEditing,text};
+    (f.notes=f.notes||[]).push(n);
+    pushUndo({type:'note-add',floorId:f.id,note:JSON.parse(JSON.stringify(n))});
+  }else{
+    const n=(f.notes||[]).find(z=>z.id===noteEditing.id);
+    if(n){ pushUndo({type:'note-edit',floorId:f.id,noteId:n.id,prev:{text:n.text,x:n.x,y:n.y,lx:n.lx,ly:n.ly}}); n.text=text; }
+  }
+  closeNoteEditor();renderNotes();
+}
+function deleteNoteEditor(){
+  const f=activeFloor();
+  if(f&&noteEditing&&!noteIsNew){
+    const n=(f.notes||[]).find(z=>z.id===noteEditing.id);
+    if(n){
+      pushUndo({type:'note-del',floorId:f.id,note:JSON.parse(JSON.stringify(n))});
+      f.notes=f.notes.filter(z=>z.id!==n.id);
+      toast('Note deleted — Ctrl+Z brings it back.');
+    }
+  }
+  closeNoteEditor();renderNotes();
 }
 function editNote(n){
-  const f=activeFloor();if(!f)return;
-  const text=prompt('Note  (leave empty to delete)',n.text);
-  if(text===null)return;
-  pushUndo({type:'note-edit',floorId:f.id,noteId:n.id,prev:{text:n.text,x:n.x,y:n.y,lx:n.lx,ly:n.ly}});
-  if(!text.trim()){
-    f.notes=(f.notes||[]).filter(z=>z.id!==n.id);
-    toast('Note removed.');
-  } else n.text=text.trim();
-  renderNotes();
+  noteEditing=n; noteIsNew=false;
+  openNoteEditor('Note');
 }
 function renderNotes(){
   const holder=$('#planHolder');if(!holder)return;
@@ -2861,6 +2972,7 @@ stage.addEventListener('pointerdown',e=>{
   if(skribbleMode&&!spaceHeld&&e.button!==1)return;   /* brushing owns the plan */
   if(marqueeActive)return;                           /* selecting, not panning */
   const onRoomLayer=!!(e.target.closest&&e.target.closest('#roomLayer'));
+  if(!roomMode&&hlRoom&&nearRoomHandle(e))return;   /* aiming at a handle, not the plan */
   if(roomMode&&(onPlan||onRoomLayer)&&e.button!==1&&!spaceHeld)return;   /* the room layer drives its own pan/draw */
   const allow = e.button===1 || spaceHeld || !mouse || (e.button===0 && (!onPlan || !armedItem));
   if(!allow || pinchActive) return;
@@ -4034,7 +4146,7 @@ function loadProjectText(txt){
     const s=JSON.parse(txt);
     if(!s.items||!s.floors)throw 0;
     s.floors&&s.floors.forEach(f=>{f.rooms=f.rooms||[];});
-    state=Object.assign({version:APP_VERSION,theme:SYS_THEME(),brandLogo:null,pinScale:1,pinOpacity:1,planGray:false,brushSize:46,roomOpacity:1,seqScale:1,wallWeight:1,cropRatio:null,skribbleColor:null,outScopeColor:OUT_SCOPE_DEFAULT,linkNodes:true,client:'',location:'',reference:'',preparedBy:'',libDock:'left',lastDock:'left',libHidden:false,libFloat:null,libSize:{w:324,h:60,fw:288,fh:520},catOrder:['Control','Climate','Lighting','Shading','Audio','Network','Security','Video']},s);
+    state=Object.assign({version:APP_VERSION,theme:SYS_THEME(),look:'',accent:'',brandLogo:null,pinScale:1,pinOpacity:1,planGray:false,brushSize:46,roomOpacity:1,seqScale:1,wallWeight:1,cropRatio:null,skribbleColor:null,outScopeColor:OUT_SCOPE_DEFAULT,linkNodes:true,client:'',location:'',reference:'',preparedBy:'',libDock:'left',lastDock:'left',libHidden:false,libFloat:null,libSize:{w:324,h:60,fw:288,fh:520},catOrder:['Control','Climate','Lighting','Shading','Audio','Network','Security','Video']},s);
     projHandle=null;                            /* re-linked by the picker path */
     armedItem=null;setSelMarker(null);undoStack=[];redoStack=[];
     if(cropMode)cancelCrop();
@@ -4047,7 +4159,7 @@ function loadProjectText(txt){
     updateHiddenChip();
     applyRoomLook();applyRoomLook();
     $('#obFoot').textContent=`IKONHOUSE · PRE-SALES TOOL · V${APP_VERSION}`;   /* single source of truth */
-applyTheme();renderBrand();applyDock();applyAutoNum();applyPlanGray();$('#brushSize').value=state.brushSize||46;updateBrushDot();applyRoomLook();updateHiddenChip();renderLibrary();renderFloors();showFloor();renderBoq();
+renderLookPicker();applyTheme();renderBrand();applyDock();applyAutoNum();applyPlanGray();$('#brushSize').value=state.brushSize||46;updateBrushDot();applyRoomLook();updateHiddenChip();renderLibrary();renderFloors();showFloor();renderBoq();
     dismissOnboard();
     toast('Project loaded.');
     return true;
@@ -4193,5 +4305,5 @@ $('#welcome').addEventListener('pointerleave',()=>{ obFx.mx=-9999; obFx.my=-9999
 
 /* ──────────── Init ──────────── */
 $('#obFoot').textContent=`IKONHOUSE · PRE-SALES TOOL · V${APP_VERSION}`;   /* single source of truth */
-applyTheme();renderBrand();applyDock();applyAutoNum();applyPlanGray();$('#brushSize').value=state.brushSize||46;updateBrushDot();applyRoomLook();updateHiddenChip();closeLib();renderLibrary();renderFloors();showFloor();obStartFx();
+renderLookPicker();applyTheme();renderBrand();applyDock();applyAutoNum();applyPlanGray();$('#brushSize').value=state.brushSize||46;updateBrushDot();applyRoomLook();updateHiddenChip();closeLib();renderLibrary();renderFloors();showFloor();obStartFx();
 if(!isCompact())setTimeout(()=>toast('Tip: drag the ⠿ grip on the device library to dock it left, right, top or bottom.'),1600);

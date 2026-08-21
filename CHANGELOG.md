@@ -4,6 +4,28 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.54.0] — 2026-08-21
+
+### Added
+- **Look &amp; feel sets** (View menu): **Atelier** (limestone and indigo,
+  drawing-office), **Kinari** (unbleached paper and sage) and **Slate** (cool
+  neutral), alongside the **Original** warm bronze. A look is a palette only —
+  nothing structural changes — and each works in both day and night.
+- **Accent colour** can be set on its own, overriding whichever look is
+  active, so the tool can carry a project or client colour.
+- **"Back to the original look"** clears both in one click. Both settings save
+  with the project.
+
+### Fixed
+- **Notes are properly multi-line.** They opened in a single-line browser
+  prompt; there is now a real editor with a resizable text area, Ctrl/⌘+Enter
+  to save, and a Delete button. Line breaks are kept on the plan and on the
+  exported sheets.
+- **Resizing a highlighted room no longer pans the plan.** Outside Rooms mode
+  a near-miss on a handle landed on the plan and started a pan. Handles now
+  have a wider catch there, and a press that lands close to one no longer
+  pans at all.
+
 ## [1.53.2] — 2026-08-21
 
 ### Fixed
@@ -255,6 +277,28 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.54.0] — 2026-08-21
+
+### Added
+- **Look &amp; feel sets** (View menu): **Atelier** (limestone and indigo,
+  drawing-office), **Kinari** (unbleached paper and sage) and **Slate** (cool
+  neutral), alongside the **Original** warm bronze. A look is a palette only —
+  nothing structural changes — and each works in both day and night.
+- **Accent colour** can be set on its own, overriding whichever look is
+  active, so the tool can carry a project or client colour.
+- **"Back to the original look"** clears both in one click. Both settings save
+  with the project.
+
+### Fixed
+- **Notes are properly multi-line.** They opened in a single-line browser
+  prompt; there is now a real editor with a resizable text area, Ctrl/⌘+Enter
+  to save, and a Delete button. Line breaks are kept on the plan and on the
+  exported sheets.
+- **Resizing a highlighted room no longer pans the plan.** Outside Rooms mode
+  a near-miss on a handle landed on the plan and started a pan. Handles now
+  have a wider catch there, and a press that lands close to one no longer
+  pans at all.
 
 ## [1.53.2] — 2026-08-21
 
@@ -947,6 +991,28 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.54.0] — 2026-08-21
+
+### Added
+- **Look &amp; feel sets** (View menu): **Atelier** (limestone and indigo,
+  drawing-office), **Kinari** (unbleached paper and sage) and **Slate** (cool
+  neutral), alongside the **Original** warm bronze. A look is a palette only —
+  nothing structural changes — and each works in both day and night.
+- **Accent colour** can be set on its own, overriding whichever look is
+  active, so the tool can carry a project or client colour.
+- **"Back to the original look"** clears both in one click. Both settings save
+  with the project.
+
+### Fixed
+- **Notes are properly multi-line.** They opened in a single-line browser
+  prompt; there is now a real editor with a resizable text area, Ctrl/⌘+Enter
+  to save, and a Delete button. Line breaks are kept on the plan and on the
+  exported sheets.
+- **Resizing a highlighted room no longer pans the plan.** Outside Rooms mode
+  a near-miss on a handle landed on the plan and started a pan. Handles now
+  have a wider catch there, and a press that lands close to one no longer
+  pans at all.
+
 ## [1.53.2] — 2026-08-21
 
 ### Fixed
@@ -1198,6 +1264,28 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.54.0] — 2026-08-21
+
+### Added
+- **Look &amp; feel sets** (View menu): **Atelier** (limestone and indigo,
+  drawing-office), **Kinari** (unbleached paper and sage) and **Slate** (cool
+  neutral), alongside the **Original** warm bronze. A look is a palette only —
+  nothing structural changes — and each works in both day and night.
+- **Accent colour** can be set on its own, overriding whichever look is
+  active, so the tool can carry a project or client colour.
+- **"Back to the original look"** clears both in one click. Both settings save
+  with the project.
+
+### Fixed
+- **Notes are properly multi-line.** They opened in a single-line browser
+  prompt; there is now a real editor with a resizable text area, Ctrl/⌘+Enter
+  to save, and a Delete button. Line breaks are kept on the plan and on the
+  exported sheets.
+- **Resizing a highlighted room no longer pans the plan.** Outside Rooms mode
+  a near-miss on a handle landed on the plan and started a pan. Handles now
+  have a wider catch there, and a press that lands close to one no longer
+  pans at all.
 
 ## [1.53.2] — 2026-08-21
 
@@ -2325,6 +2413,28 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.54.0] — 2026-08-21
+
+### Added
+- **Look &amp; feel sets** (View menu): **Atelier** (limestone and indigo,
+  drawing-office), **Kinari** (unbleached paper and sage) and **Slate** (cool
+  neutral), alongside the **Original** warm bronze. A look is a palette only —
+  nothing structural changes — and each works in both day and night.
+- **Accent colour** can be set on its own, overriding whichever look is
+  active, so the tool can carry a project or client colour.
+- **"Back to the original look"** clears both in one click. Both settings save
+  with the project.
+
+### Fixed
+- **Notes are properly multi-line.** They opened in a single-line browser
+  prompt; there is now a real editor with a resizable text area, Ctrl/⌘+Enter
+  to save, and a Delete button. Line breaks are kept on the plan and on the
+  exported sheets.
+- **Resizing a highlighted room no longer pans the plan.** Outside Rooms mode
+  a near-miss on a handle landed on the plan and started a pan. Handles now
+  have a wider catch there, and a press that lands close to one no longer
+  pans at all.
+
 ## [1.53.2] — 2026-08-21
 
 ### Fixed
@@ -2576,6 +2686,28 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.54.0] — 2026-08-21
+
+### Added
+- **Look &amp; feel sets** (View menu): **Atelier** (limestone and indigo,
+  drawing-office), **Kinari** (unbleached paper and sage) and **Slate** (cool
+  neutral), alongside the **Original** warm bronze. A look is a palette only —
+  nothing structural changes — and each works in both day and night.
+- **Accent colour** can be set on its own, overriding whichever look is
+  active, so the tool can carry a project or client colour.
+- **"Back to the original look"** clears both in one click. Both settings save
+  with the project.
+
+### Fixed
+- **Notes are properly multi-line.** They opened in a single-line browser
+  prompt; there is now a real editor with a resizable text area, Ctrl/⌘+Enter
+  to save, and a Delete button. Line breaks are kept on the plan and on the
+  exported sheets.
+- **Resizing a highlighted room no longer pans the plan.** Outside Rooms mode
+  a near-miss on a handle landed on the plan and started a pan. Handles now
+  have a wider catch there, and a press that lands close to one no longer
+  pans at all.
 
 ## [1.53.2] — 2026-08-21
 
@@ -3268,6 +3400,28 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.54.0] — 2026-08-21
+
+### Added
+- **Look &amp; feel sets** (View menu): **Atelier** (limestone and indigo,
+  drawing-office), **Kinari** (unbleached paper and sage) and **Slate** (cool
+  neutral), alongside the **Original** warm bronze. A look is a palette only —
+  nothing structural changes — and each works in both day and night.
+- **Accent colour** can be set on its own, overriding whichever look is
+  active, so the tool can carry a project or client colour.
+- **"Back to the original look"** clears both in one click. Both settings save
+  with the project.
+
+### Fixed
+- **Notes are properly multi-line.** They opened in a single-line browser
+  prompt; there is now a real editor with a resizable text area, Ctrl/⌘+Enter
+  to save, and a Delete button. Line breaks are kept on the plan and on the
+  exported sheets.
+- **Resizing a highlighted room no longer pans the plan.** Outside Rooms mode
+  a near-miss on a handle landed on the plan and started a pan. Handles now
+  have a wider catch there, and a press that lands close to one no longer
+  pans at all.
+
 ## [1.53.2] — 2026-08-21
 
 ### Fixed
@@ -3519,6 +3673,28 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.54.0] — 2026-08-21
+
+### Added
+- **Look &amp; feel sets** (View menu): **Atelier** (limestone and indigo,
+  drawing-office), **Kinari** (unbleached paper and sage) and **Slate** (cool
+  neutral), alongside the **Original** warm bronze. A look is a palette only —
+  nothing structural changes — and each works in both day and night.
+- **Accent colour** can be set on its own, overriding whichever look is
+  active, so the tool can carry a project or client colour.
+- **"Back to the original look"** clears both in one click. Both settings save
+  with the project.
+
+### Fixed
+- **Notes are properly multi-line.** They opened in a single-line browser
+  prompt; there is now a real editor with a resizable text area, Ctrl/⌘+Enter
+  to save, and a Delete button. Line breaks are kept on the plan and on the
+  exported sheets.
+- **Resizing a highlighted room no longer pans the plan.** Outside Rooms mode
+  a near-miss on a handle landed on the plan and started a pan. Handles now
+  have a wider catch there, and a press that lands close to one no longer
+  pans at all.
 
 ## [1.53.2] — 2026-08-21
 

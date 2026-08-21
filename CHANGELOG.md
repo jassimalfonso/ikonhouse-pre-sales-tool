@@ -4,6 +4,43 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.52.0] — 2026-08-21
+
+### Changed
+- **The Excel FD sheet now matches the ikonhouse quotation format:** header
+  row 140pt deep with device names
+  rotated 90°, bold, 10pt; the top row frozen; hairline borders on every cell;
+  column widths 3.1 / 44 / 5.4; plain bold floor titles with a single rule
+  beneath; a blank row between floors; and a **Total units** row of SUM
+  formulas. Out-of-scope rooms keep their grey fill.
+- **The device library is seeded in the workbook''s order** — 4 Button Keypad,
+  8 Button Keypad, Touch Panel, Thermostat, HVAC Zones, lighting modules,
+  curtain control, speakers and streaming, Wi-Fi, intercom and CCTV, then
+  client-supplied items — with categories ordered to match. Rearranging the
+  library still drives the FD column order, so the sequence stays yours.
+
+## [1.51.0] — 2026-08-13
+
+### Fixed
+- **The room editor no longer jumps to the middle of the room.** Since labels
+  moved to each room''s centre, every re-open — after a colour or scope change
+  — re-anchored the panel there. It now stays where you put it while you keep
+  working on the same room.
+- **The custom out-of-scope colour is round again**, sized properly, and
+  ringed with a colour wheel so it reads as a picker rather than a swatch.
+  The device dialog''s custom colour matches.
+
+### Changed
+- **Skribbled rooms are now always square-walled.** Every wall comes out
+  horizontal or vertical, which makes results predictable — an odd-shaped
+  room is a couple of corner drags away afterwards. A genuinely triangular
+  scribble still returns a shape rather than nothing.
+- **Linked walls, greyscale, ikon size and opacity are back on the toolbar**
+  as an always-visible group, since they are used constantly. Room fill
+  strength, numbering size, auto-numbering and the out-of-scope colour stay in
+  the Display panel. The group shrinks gracefully on narrow screens rather
+  than disappearing.
+
 ## [1.50.0] — 2026-08-13
 
 ### Added
@@ -163,6 +200,53 @@ follows [Semantic Versioning](https://semver.org).
   clean blocks unless an angle was clearly intended.
 - **The guide has room to breathe** — more padding throughout, wider steps
   with clearer numbering, and noticeably more space between sections.
+
+## [1.52.1] — 2026-08-21
+
+### Removed
+- **The reference quotation workbook is no longer included in the project.**
+  It held commercially sensitive client and pricing information and should
+  never have been copied in. It has been deleted, all identifying references
+  scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
+  files from being committed. Keep such files outside the repository and
+  consult them locally.
+
+## [1.52.0] — 2026-08-21
+
+### Changed
+- **The Excel FD sheet now matches the ikonhouse quotation format:** header
+  row 140pt deep with device names
+  rotated 90°, bold, 10pt; the top row frozen; hairline borders on every cell;
+  column widths 3.1 / 44 / 5.4; plain bold floor titles with a single rule
+  beneath; a blank row between floors; and a **Total units** row of SUM
+  formulas. Out-of-scope rooms keep their grey fill.
+- **The device library is seeded in the workbook''s order** — 4 Button Keypad,
+  8 Button Keypad, Touch Panel, Thermostat, HVAC Zones, lighting modules,
+  curtain control, speakers and streaming, Wi-Fi, intercom and CCTV, then
+  client-supplied items — with categories ordered to match. Rearranging the
+  library still drives the FD column order, so the sequence stays yours.
+
+## [1.51.0] — 2026-08-13
+
+### Fixed
+- **The room editor no longer jumps to the middle of the room.** Since labels
+  moved to each room''s centre, every re-open — after a colour or scope change
+  — re-anchored the panel there. It now stays where you put it while you keep
+  working on the same room.
+- **The custom out-of-scope colour is round again**, sized properly, and
+  ringed with a colour wheel so it reads as a picker rather than a swatch.
+  The device dialog''s custom colour matches.
+
+### Changed
+- **Skribbled rooms are now always square-walled.** Every wall comes out
+  horizontal or vertical, which makes results predictable — an odd-shaped
+  room is a couple of corner drags away afterwards. A genuinely triangular
+  scribble still returns a shape rather than nothing.
+- **Linked walls, greyscale, ikon size and opacity are back on the toolbar**
+  as an always-visible group, since they are used constantly. Room fill
+  strength, numbering size, auto-numbering and the out-of-scope colour stay in
+  the Display panel. The group shrinks gracefully on narrow screens rather
+  than disappearing.
 
 ## [1.50.0] — 2026-08-13
 
@@ -763,6 +847,53 @@ follows [Semantic Versioning](https://semver.org).
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
 
+## [1.52.1] — 2026-08-21
+
+### Removed
+- **The reference quotation workbook is no longer included in the project.**
+  It held commercially sensitive client and pricing information and should
+  never have been copied in. It has been deleted, all identifying references
+  scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
+  files from being committed. Keep such files outside the repository and
+  consult them locally.
+
+## [1.52.0] — 2026-08-21
+
+### Changed
+- **The Excel FD sheet now matches the ikonhouse quotation format:** header
+  row 140pt deep with device names
+  rotated 90°, bold, 10pt; the top row frozen; hairline borders on every cell;
+  column widths 3.1 / 44 / 5.4; plain bold floor titles with a single rule
+  beneath; a blank row between floors; and a **Total units** row of SUM
+  formulas. Out-of-scope rooms keep their grey fill.
+- **The device library is seeded in the workbook''s order** — 4 Button Keypad,
+  8 Button Keypad, Touch Panel, Thermostat, HVAC Zones, lighting modules,
+  curtain control, speakers and streaming, Wi-Fi, intercom and CCTV, then
+  client-supplied items — with categories ordered to match. Rearranging the
+  library still drives the FD column order, so the sequence stays yours.
+
+## [1.51.0] — 2026-08-13
+
+### Fixed
+- **The room editor no longer jumps to the middle of the room.** Since labels
+  moved to each room''s centre, every re-open — after a colour or scope change
+  — re-anchored the panel there. It now stays where you put it while you keep
+  working on the same room.
+- **The custom out-of-scope colour is round again**, sized properly, and
+  ringed with a colour wheel so it reads as a picker rather than a swatch.
+  The device dialog''s custom colour matches.
+
+### Changed
+- **Skribbled rooms are now always square-walled.** Every wall comes out
+  horizontal or vertical, which makes results predictable — an odd-shaped
+  room is a couple of corner drags away afterwards. A genuinely triangular
+  scribble still returns a shape rather than nothing.
+- **Linked walls, greyscale, ikon size and opacity are back on the toolbar**
+  as an always-visible group, since they are used constantly. Room fill
+  strength, numbering size, auto-numbering and the out-of-scope colour stay in
+  the Display panel. The group shrinks gracefully on narrow screens rather
+  than disappearing.
+
 ## [1.50.0] — 2026-08-13
 
 ### Added
@@ -922,6 +1053,53 @@ follows [Semantic Versioning](https://semver.org).
   clean blocks unless an angle was clearly intended.
 - **The guide has room to breathe** — more padding throughout, wider steps
   with clearer numbering, and noticeably more space between sections.
+
+## [1.52.1] — 2026-08-21
+
+### Removed
+- **The reference quotation workbook is no longer included in the project.**
+  It held commercially sensitive client and pricing information and should
+  never have been copied in. It has been deleted, all identifying references
+  scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
+  files from being committed. Keep such files outside the repository and
+  consult them locally.
+
+## [1.52.0] — 2026-08-21
+
+### Changed
+- **The Excel FD sheet now matches the ikonhouse quotation format:** header
+  row 140pt deep with device names
+  rotated 90°, bold, 10pt; the top row frozen; hairline borders on every cell;
+  column widths 3.1 / 44 / 5.4; plain bold floor titles with a single rule
+  beneath; a blank row between floors; and a **Total units** row of SUM
+  formulas. Out-of-scope rooms keep their grey fill.
+- **The device library is seeded in the workbook''s order** — 4 Button Keypad,
+  8 Button Keypad, Touch Panel, Thermostat, HVAC Zones, lighting modules,
+  curtain control, speakers and streaming, Wi-Fi, intercom and CCTV, then
+  client-supplied items — with categories ordered to match. Rearranging the
+  library still drives the FD column order, so the sequence stays yours.
+
+## [1.51.0] — 2026-08-13
+
+### Fixed
+- **The room editor no longer jumps to the middle of the room.** Since labels
+  moved to each room''s centre, every re-open — after a colour or scope change
+  — re-anchored the panel there. It now stays where you put it while you keep
+  working on the same room.
+- **The custom out-of-scope colour is round again**, sized properly, and
+  ringed with a colour wheel so it reads as a picker rather than a swatch.
+  The device dialog''s custom colour matches.
+
+### Changed
+- **Skribbled rooms are now always square-walled.** Every wall comes out
+  horizontal or vertical, which makes results predictable — an odd-shaped
+  room is a couple of corner drags away afterwards. A genuinely triangular
+  scribble still returns a shape rather than nothing.
+- **Linked walls, greyscale, ikon size and opacity are back on the toolbar**
+  as an always-visible group, since they are used constantly. Room fill
+  strength, numbering size, auto-numbering and the out-of-scope colour stay in
+  the Display panel. The group shrinks gracefully on narrow screens rather
+  than disappearing.
 
 ## [1.50.0] — 2026-08-13
 
@@ -1957,6 +2135,53 @@ follows [Semantic Versioning](https://semver.org).
 ### Compatibility
 - `.ikonplan` files from 1.0.0–1.2.0 open unchanged.
 
+## [1.52.1] — 2026-08-21
+
+### Removed
+- **The reference quotation workbook is no longer included in the project.**
+  It held commercially sensitive client and pricing information and should
+  never have been copied in. It has been deleted, all identifying references
+  scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
+  files from being committed. Keep such files outside the repository and
+  consult them locally.
+
+## [1.52.0] — 2026-08-21
+
+### Changed
+- **The Excel FD sheet now matches the ikonhouse quotation format:** header
+  row 140pt deep with device names
+  rotated 90°, bold, 10pt; the top row frozen; hairline borders on every cell;
+  column widths 3.1 / 44 / 5.4; plain bold floor titles with a single rule
+  beneath; a blank row between floors; and a **Total units** row of SUM
+  formulas. Out-of-scope rooms keep their grey fill.
+- **The device library is seeded in the workbook''s order** — 4 Button Keypad,
+  8 Button Keypad, Touch Panel, Thermostat, HVAC Zones, lighting modules,
+  curtain control, speakers and streaming, Wi-Fi, intercom and CCTV, then
+  client-supplied items — with categories ordered to match. Rearranging the
+  library still drives the FD column order, so the sequence stays yours.
+
+## [1.51.0] — 2026-08-13
+
+### Fixed
+- **The room editor no longer jumps to the middle of the room.** Since labels
+  moved to each room''s centre, every re-open — after a colour or scope change
+  — re-anchored the panel there. It now stays where you put it while you keep
+  working on the same room.
+- **The custom out-of-scope colour is round again**, sized properly, and
+  ringed with a colour wheel so it reads as a picker rather than a swatch.
+  The device dialog''s custom colour matches.
+
+### Changed
+- **Skribbled rooms are now always square-walled.** Every wall comes out
+  horizontal or vertical, which makes results predictable — an odd-shaped
+  room is a couple of corner drags away afterwards. A genuinely triangular
+  scribble still returns a shape rather than nothing.
+- **Linked walls, greyscale, ikon size and opacity are back on the toolbar**
+  as an always-visible group, since they are used constantly. Room fill
+  strength, numbering size, auto-numbering and the out-of-scope colour stay in
+  the Display panel. The group shrinks gracefully on narrow screens rather
+  than disappearing.
+
 ## [1.50.0] — 2026-08-13
 
 ### Added
@@ -2116,6 +2341,53 @@ follows [Semantic Versioning](https://semver.org).
   clean blocks unless an angle was clearly intended.
 - **The guide has room to breathe** — more padding throughout, wider steps
   with clearer numbering, and noticeably more space between sections.
+
+## [1.52.1] — 2026-08-21
+
+### Removed
+- **The reference quotation workbook is no longer included in the project.**
+  It held commercially sensitive client and pricing information and should
+  never have been copied in. It has been deleted, all identifying references
+  scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
+  files from being committed. Keep such files outside the repository and
+  consult them locally.
+
+## [1.52.0] — 2026-08-21
+
+### Changed
+- **The Excel FD sheet now matches the ikonhouse quotation format:** header
+  row 140pt deep with device names
+  rotated 90°, bold, 10pt; the top row frozen; hairline borders on every cell;
+  column widths 3.1 / 44 / 5.4; plain bold floor titles with a single rule
+  beneath; a blank row between floors; and a **Total units** row of SUM
+  formulas. Out-of-scope rooms keep their grey fill.
+- **The device library is seeded in the workbook''s order** — 4 Button Keypad,
+  8 Button Keypad, Touch Panel, Thermostat, HVAC Zones, lighting modules,
+  curtain control, speakers and streaming, Wi-Fi, intercom and CCTV, then
+  client-supplied items — with categories ordered to match. Rearranging the
+  library still drives the FD column order, so the sequence stays yours.
+
+## [1.51.0] — 2026-08-13
+
+### Fixed
+- **The room editor no longer jumps to the middle of the room.** Since labels
+  moved to each room''s centre, every re-open — after a colour or scope change
+  — re-anchored the panel there. It now stays where you put it while you keep
+  working on the same room.
+- **The custom out-of-scope colour is round again**, sized properly, and
+  ringed with a colour wheel so it reads as a picker rather than a swatch.
+  The device dialog''s custom colour matches.
+
+### Changed
+- **Skribbled rooms are now always square-walled.** Every wall comes out
+  horizontal or vertical, which makes results predictable — an odd-shaped
+  room is a couple of corner drags away afterwards. A genuinely triangular
+  scribble still returns a shape rather than nothing.
+- **Linked walls, greyscale, ikon size and opacity are back on the toolbar**
+  as an always-visible group, since they are used constantly. Room fill
+  strength, numbering size, auto-numbering and the out-of-scope colour stay in
+  the Display panel. The group shrinks gracefully on narrow screens rather
+  than disappearing.
 
 ## [1.50.0] — 2026-08-13
 
@@ -2716,6 +2988,53 @@ follows [Semantic Versioning](https://semver.org).
   white (no zebra striping). The Excel FD sheet matches: out-of-scope room
   rows are filled darker-25%, and the text tag is gone from the room name.
 
+## [1.52.1] — 2026-08-21
+
+### Removed
+- **The reference quotation workbook is no longer included in the project.**
+  It held commercially sensitive client and pricing information and should
+  never have been copied in. It has been deleted, all identifying references
+  scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
+  files from being committed. Keep such files outside the repository and
+  consult them locally.
+
+## [1.52.0] — 2026-08-21
+
+### Changed
+- **The Excel FD sheet now matches the ikonhouse quotation format:** header
+  row 140pt deep with device names
+  rotated 90°, bold, 10pt; the top row frozen; hairline borders on every cell;
+  column widths 3.1 / 44 / 5.4; plain bold floor titles with a single rule
+  beneath; a blank row between floors; and a **Total units** row of SUM
+  formulas. Out-of-scope rooms keep their grey fill.
+- **The device library is seeded in the workbook''s order** — 4 Button Keypad,
+  8 Button Keypad, Touch Panel, Thermostat, HVAC Zones, lighting modules,
+  curtain control, speakers and streaming, Wi-Fi, intercom and CCTV, then
+  client-supplied items — with categories ordered to match. Rearranging the
+  library still drives the FD column order, so the sequence stays yours.
+
+## [1.51.0] — 2026-08-13
+
+### Fixed
+- **The room editor no longer jumps to the middle of the room.** Since labels
+  moved to each room''s centre, every re-open — after a colour or scope change
+  — re-anchored the panel there. It now stays where you put it while you keep
+  working on the same room.
+- **The custom out-of-scope colour is round again**, sized properly, and
+  ringed with a colour wheel so it reads as a picker rather than a swatch.
+  The device dialog''s custom colour matches.
+
+### Changed
+- **Skribbled rooms are now always square-walled.** Every wall comes out
+  horizontal or vertical, which makes results predictable — an odd-shaped
+  room is a couple of corner drags away afterwards. A genuinely triangular
+  scribble still returns a shape rather than nothing.
+- **Linked walls, greyscale, ikon size and opacity are back on the toolbar**
+  as an always-visible group, since they are used constantly. Room fill
+  strength, numbering size, auto-numbering and the out-of-scope colour stay in
+  the Display panel. The group shrinks gracefully on narrow screens rather
+  than disappearing.
+
 ## [1.50.0] — 2026-08-13
 
 ### Added
@@ -2875,6 +3194,53 @@ follows [Semantic Versioning](https://semver.org).
   clean blocks unless an angle was clearly intended.
 - **The guide has room to breathe** — more padding throughout, wider steps
   with clearer numbering, and noticeably more space between sections.
+
+## [1.52.1] — 2026-08-21
+
+### Removed
+- **The reference quotation workbook is no longer included in the project.**
+  It held commercially sensitive client and pricing information and should
+  never have been copied in. It has been deleted, all identifying references
+  scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
+  files from being committed. Keep such files outside the repository and
+  consult them locally.
+
+## [1.52.0] — 2026-08-21
+
+### Changed
+- **The Excel FD sheet now matches the ikonhouse quotation format:** header
+  row 140pt deep with device names
+  rotated 90°, bold, 10pt; the top row frozen; hairline borders on every cell;
+  column widths 3.1 / 44 / 5.4; plain bold floor titles with a single rule
+  beneath; a blank row between floors; and a **Total units** row of SUM
+  formulas. Out-of-scope rooms keep their grey fill.
+- **The device library is seeded in the workbook''s order** — 4 Button Keypad,
+  8 Button Keypad, Touch Panel, Thermostat, HVAC Zones, lighting modules,
+  curtain control, speakers and streaming, Wi-Fi, intercom and CCTV, then
+  client-supplied items — with categories ordered to match. Rearranging the
+  library still drives the FD column order, so the sequence stays yours.
+
+## [1.51.0] — 2026-08-13
+
+### Fixed
+- **The room editor no longer jumps to the middle of the room.** Since labels
+  moved to each room''s centre, every re-open — after a colour or scope change
+  — re-anchored the panel there. It now stays where you put it while you keep
+  working on the same room.
+- **The custom out-of-scope colour is round again**, sized properly, and
+  ringed with a colour wheel so it reads as a picker rather than a swatch.
+  The device dialog''s custom colour matches.
+
+### Changed
+- **Skribbled rooms are now always square-walled.** Every wall comes out
+  horizontal or vertical, which makes results predictable — an odd-shaped
+  room is a couple of corner drags away afterwards. A genuinely triangular
+  scribble still returns a shape rather than nothing.
+- **Linked walls, greyscale, ikon size and opacity are back on the toolbar**
+  as an always-visible group, since they are used constantly. Room fill
+  strength, numbering size, auto-numbering and the out-of-scope colour stay in
+  the Display panel. The group shrinks gracefully on narrow screens rather
+  than disappearing.
 
 ## [1.50.0] — 2026-08-13
 

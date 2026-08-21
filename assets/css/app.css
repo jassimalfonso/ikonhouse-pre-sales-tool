@@ -1348,3 +1348,37 @@ body.noting .note-pin{z-index:20}
 .display-pop .disp-toggle{display:flex;padding:2px 0}
 .display-pop .outscope-grp{display:flex;align-items:center;justify-content:space-between}
 .display-pop .os-row{gap:6px}
+
+/* ══════════ Everyday controls stay on the bar ══════════ */
+.tb-quick{display:flex;align-items:center;gap:9px;flex:none}
+.tb-quick .sizegrp{display:flex;align-items:center;gap:7px}
+.tb-quick .sizegrp label{font-size:8.5px;letter-spacing:.12em;color:var(--dim);white-space:nowrap}
+.tb-quick input[type=range]{width:82px}
+.tb-quick .disp-toggle{display:flex;font-size:11.5px;white-space:nowrap}
+@media (max-width:1080px){
+  .tb-quick input[type=range]{width:62px}
+  .tb-quick .disp-toggle{font-size:0;gap:0}      /* the switch alone, still reachable */
+  .tb-quick .disp-toggle input{width:17px;height:17px}
+}
+@media (max-width:760px){
+  .tb-quick .sizegrp label{display:none}
+  .tb-quick input[type=range]{width:54px}
+}
+/* custom-colour buttons read as a picker, not a plain swatch */
+.os-custom,.color-custom{
+  width:22px;height:22px;min-width:22px;min-height:22px;flex:0 0 22px;
+  border-radius:50%;padding:0;border:none;cursor:pointer;
+  appearance:none;-webkit-appearance:none;background:none;position:relative;
+}
+.os-row{position:relative}
+.os-custom::before,.color-custom::before{
+  content:'';position:absolute;inset:-3px;border-radius:50%;
+  background:conic-gradient(#E5484D,#F59E0B,#16B364,#0FA3A3,#2E5CFF,#7C4DFF,#E5484D);
+  z-index:-1;
+}
+.os-custom::-webkit-color-swatch-wrapper{padding:2px;border-radius:50%}
+.os-custom::-webkit-color-swatch{border:2px solid var(--panel);border-radius:50%}
+.os-custom::-moz-color-swatch{border:2px solid var(--panel);border-radius:50%}
+.color-custom::-webkit-color-swatch-wrapper{padding:2px;border-radius:50%}
+.color-custom::-webkit-color-swatch{border:2px solid var(--panel);border-radius:50%}
+.os-custom{isolation:isolate}

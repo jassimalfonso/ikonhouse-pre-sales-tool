@@ -1,0 +1,10 @@
+# Client quotation workbooks and any commercially sensitive references
+reference/
+*.xlsx
+*.xls
+!assets/**/*.xlsx
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp

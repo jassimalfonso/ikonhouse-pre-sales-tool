@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.50.0';
+const APP_VERSION='1.52.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -85,21 +85,41 @@ let state = {
   version:APP_VERSION,
   project:'Untitled Project', client:'', location:'', reference:'', preparedBy:'',
   theme:SYS_THEME(), brandLogo:null, libDock:'left', lastDock:'left', libHidden:false, libFloat:null,
-  libSize:{w:324,h:60,fw:288,fh:520}, catOrder:[],
+  libSize:{w:324,h:60,fw:288,fh:520}, catOrder:['Control','Climate','Lighting','Shading','Audio','Network','Security','Video'],
   items:[], floors:[], activeFloor:null, pinScale:1, pinOpacity:1, planGray:false, brushSize:46, roomOpacity:1, seqScale:1, skribbleColor:null, outScopeColor:'#E5484D', linkNodes:true
 };
 let armedItem=null, selMarker=null, selSet=new Set(), multiSelect=false, zoom=1, undoStack=[], redoStack=[], ctxTarget=null, draggingCat=null;
 
+/* Seeded to match the column order of the ikonhouse quotation workbook, so the
+   FD sheet comes out in the sequence the commercial team already reads. */
 const SEED = [
- ['Ceiling Speaker','Audio','ceiling-speaker','#2E5CFF'],['Invisible Speaker','Audio','speaker','#0E7490'],
- ['Soundbar','Audio','soundbar','#2E5CFF'],['Subwoofer','Audio','subwoofer','#141414'],
- ['Outdoor Speaker','Audio','outdoor-speaker','#1F9D55'],
- ['TV Display','Video','tv','#7C4DFF'],['Projector','Video','projector','#D62FA0'],['Projection Screen','Video','screen','#D62FA0'],
- ['Wi-Fi Access Point','Network','wifi','#F4572E'],['Network Rack','Network','rack','#64748B'],
- ['Keypad','Control','keypad','#0FA3A3'],['Keypad (2-Column)','Control','keypad-2col','#0FA3A3'],['Touch Panel','Control','touch','#0FA3A3'],
- ['Thermostat','Climate','thermostat','#F59E0B'],['Motion Sensor','Control','sensor','#F59E0B'],
- ['Motorized Blinds','Shading','blinds','#64748B'],['Motorized Curtains','Shading','curtain','#64748B'],
- ['CCTV Camera','Security','cctv','#1F9D55'],['Access Control','Security','access','#1F9D55'],['Video Intercom','Security','intercom','#0E7490']
+ ['4 Button Keypad','Control','keypad','#0FA3A3'],
+ ['8 Button Keypad','Control','keypad-2col','#0FA3A3'],
+ ['Thermostat','Climate','thermostat','#F59E0B'],
+ ['HVAC Zones-VRV','Climate','thermostat','#F59E0B'],
+ ['Touch Panel','Control','touch','#0FA3A3'],
+ ['Motion Sensor','Lighting','sensor','#F59E0B'],
+ ['Switch control modules','Lighting','rack','#EAB308'],
+ ['Dali modules','Lighting','rack','#EAB308'],
+ ['Phase Dimming Modules','Lighting','rack','#EAB308'],
+ ['Curtain control','Shading','curtain','#64748B'],
+ ['Ceiling Speakers','Audio','ceiling-speaker','#2E5CFF'],
+ ['Outdoor Wall Mount Speakers','Audio','outdoor-speaker','#1F9D55'],
+ ['Landscape Speaker','Audio','outdoor-speaker','#1F9D55'],
+ ['Music Streamer','Audio','rack','#2E5CFF'],
+ ['Streaming Zone','Audio','speaker','#2E5CFF'],
+ ['Amplifier Zone','Audio','rack','#141414'],
+ ['Wi-Fi Indoor','Network','wifi','#F4572E'],
+ ['Wi-Fi Outdoor','Network','wifi','#F4572E'],
+ ['Video Doorstation','Security','intercom','#0E7490'],
+ ['Indoor Answering Unit','Security','intercom','#0E7490'],
+ ['Access Control','Security','access','#1F9D55'],
+ ['CCTV Outdoor','Security','cctv','#1F9D55'],
+ ['TV (By Client)','Video','tv','#7C4DFF'],
+ ['iPad (By Client)','Video','touch','#7C4DFF'],
+ ['iPad Docking Station','Video','touch','#7C4DFF'],
+ ['4.3" Video Phone','Security','intercom','#0E7490'],
+ ['Du/Etisalat Uplink','Network','rack','#64748B']
 ];
 state.items = SEED.map(([name,cat,icon,color])=>({id:uid(),name,cat,model:'',price:0,icon,color}));
 
@@ -1387,7 +1407,9 @@ document.addEventListener('pointermove',e=>{
 });
 
 /* room popover: name, color, scope, delete */
+let roomPopPos=null, roomPopFor=null;
 function closeRoomPop(){const p=$('#roomPop');if(p)p.remove();}
+function forgetRoomPopPos(){ roomPopPos=null; roomPopFor=null; }
 /* rooms are written to the FD sheet and BoQ in f.rooms order, so this is the
    schedule order the client sees */
 /* ── skribble geometry (unit-tested) ── */
@@ -1469,7 +1491,10 @@ function rdp(pts,eps){
    a short edge is hand-wobble and gets straightened readily, while a long
    edge is only straightened if it was nearly axis-aligned to begin with —
    so a room genuinely drawn at an angle keeps its angle. */
-function orthogonalize(pts,shortTolDeg=58,longTolDeg=43){
+/* Skribbled rooms come out rectilinear: every wall is horizontal or vertical.
+   It keeps results predictable, and an odd-shaped room is a couple of corner
+   drags away afterwards. */
+function orthogonalize(pts,shortTolDeg=46,longTolDeg=46){
   const n=pts.length;if(n<3)return pts;
   const p=pts.map(q=>({...q}));
   let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
@@ -1645,16 +1670,23 @@ function skribbleToPolygon(bin,w,h,opts={}){
   /* keep the corner count sane on wobbly strokes */
   let guard=0;
   while(pts.length>28&&guard++<6){ eps*=1.5; pts=rdp(contour,eps); }
-  if(!opts.noOrtho){
-    pts=orthogonalize(pts);
-    pts=despeckle(pts,diag*0.075);         /* absorb chamfers left by a wobbly hand */
-    pts=orthogonalize(pts);
-  }
-  pts=tidy(pts,Math.max(2,diag*0.008));
-  if(pts.length<3)return null;
-  const frac=pts.map(q=>({x:Math.min(1,Math.max(0,q.x/w)),y:Math.min(1,Math.max(0,q.y/h))}));
-  if(polyAreaAbs(frac)<(opts.minArea??0.0008))return null;
-  return frac;
+  const minArea=opts.minArea??0.0008;
+  const finish=list=>{
+    const t=tidy(list,Math.max(2,diag*0.008));
+    if(t.length<3)return null;
+    const frac=t.map(q=>({x:Math.min(1,Math.max(0,q.x/w)),y:Math.min(1,Math.max(0,q.y/h))}));
+    return polyAreaAbs(frac)<minArea?null:frac;
+  };
+  if(opts.noOrtho)return finish(pts);
+  /* Square everything up. A few passes are needed because straightening one
+     wall nudges its neighbours. If the result collapses — a genuinely
+     triangular scribble, say — fall back to gentler treatment rather than
+     giving nothing back. */
+  let sq=pts;
+  for(let i=0;i<4;i++)sq=orthogonalize(sq);
+  sq=despeckle(sq,diag*0.075);
+  for(let i=0;i<3;i++)sq=orthogonalize(sq);
+  return finish(sq) || finish(orthogonalize(pts,46,24)) || finish(pts);
 }
 
 
@@ -2037,6 +2069,7 @@ function moveRoomOrder(f,room,dir){
   return true;
 }
 function openRoomPop(r,anchor){
+  if(roomPopFor&&roomPopFor!==r.id)forgetRoomPopPos();
   closeRoomPop();
   const f=activeFloor();
   /* re-renders replace labels — always anchor to the live one */
@@ -2085,8 +2118,17 @@ function openRoomPop(r,anchor){
   });
   pop.querySelector('.rp-done').addEventListener('click',()=>{if(changed)pushUndo(snap);closeRoomPop();renderRooms();});
   const rc=anchor.getBoundingClientRect(), wr=$('#stage').getBoundingClientRect();
-  pop.style.left=Math.min(wr.width-276,Math.max(8,rc.left-wr.left))+'px';
-  pop.style.top=Math.min(wr.height-240,rc.bottom-wr.top+8)+'px';
+  /* Re-opening the editor for the same room (after a colour or scope change)
+     must not fling it back to the room's centre — keep where it was put. */
+  if(roomPopFor===r.id&&roomPopPos){
+    pop.style.left=roomPopPos.x+'px';
+    pop.style.top=roomPopPos.y+'px';
+  }else{
+    pop.style.left=Math.min(wr.width-276,Math.max(8,rc.left-wr.left))+'px';
+    pop.style.top=Math.min(wr.height-240,rc.bottom-wr.top+8)+'px';
+  }
+  roomPopFor=r.id;
+  roomPopPos={x:parseFloat(pop.style.left),y:parseFloat(pop.style.top)};
   $('#stage').appendChild(pop);
   /* drag the popover by its header to uncover the plan */
   pop.querySelector('.rp-head').addEventListener('pointerdown',e=>{
@@ -2097,6 +2139,7 @@ function openRoomPop(r,anchor){
       if(ev.pointerId!==id)return;
       pop.style.left=Math.min(wr.width-80,Math.max(8-200,x0+(ev.clientX-sx)))+'px';
       pop.style.top =Math.min(wr.height-46,Math.max(4,y0+(ev.clientY-sy)))+'px';
+      roomPopPos={x:parseFloat(pop.style.left),y:parseFloat(pop.style.top)};
     };
     const up=ev=>{if(ev.pointerId!==id)return;document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);};
     document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
@@ -3403,12 +3446,12 @@ function buildFdSheet(rows){
     const col=XLSX.utils.encode_col(2+i);
     ws[`${col}${totalRow}`]={t:'n',f:`SUM(${col}3:${col}${totalRow-1})`};
   });
-  ws['!cols']=[{wch:4.5},{wch:42},...devs.map(()=>({wch:5.5}))];
+  ws['!cols']=[{wch:3.1},{wch:44},...devs.map(()=>({wch:5.4}))];   /* matches the quotation workbook */
 
   /* ── styling (xlsx-js-style) ── */
   const WHITE={patternType:'solid',fgColor:{rgb:'FFFFFFFF'}};
   const DARK25={patternType:'solid',fgColor:{rgb:'FFBFBFBF'}};   /* "darker 25%" grey */
-  const thin={style:'thin',color:{rgb:'FFD9D9D9'}};
+  const thin={style:'thin',color:{rgb:'FF000000'}};   /* hairline grid, as in the reference */
   const border={top:thin,bottom:thin,left:thin,right:thin};
   const ncol=2+devs.length;
   const at=(r,c)=>XLSX.utils.encode_cell({r,c});
@@ -3418,17 +3461,21 @@ function buildFdSheet(rows){
   /* header row 1: device names rotated 90° up, darker-25% fill */
   for(let c=0;c<ncol;c++){
     const cell=ensure(0,c);
-    cell.s={fill:c>=2?DARK25:WHITE, border,
-      alignment:{textRotation:c>=2?90:0,horizontal:c>=2?'center':'left',vertical:'bottom',wrapText:true},
-      font:{bold:true,sz:c>=2?9:11}};
+    cell.s={fill:WHITE, border,
+      alignment:{textRotation:c>=2?90:0,horizontal:'center',vertical:c>=2?'bottom':'center',wrapText:true},
+      font:{bold:true,sz:10}};
   }
   if(!ws['!rows'])ws['!rows']=[];
-  ws['!rows'][0]={hpt:96};            /* tall header row for the rotated text */
+  ws['!rows'][0]={hpt:140};           /* the reference sheet's header depth */
+  ws['!rows'][1]={hpt:12.75};         /* thin spacer under the header */
+  ws['!freeze']={xSplit:0,ySplit:1};
+  ws['!panes']=[{ySplit:1,topLeftCell:'A2',activePane:'bottomLeft',state:'frozen'}];
 
   /* body: white fill + borders on every data cell; floor titles + totals darker */
   floorRowIdx.forEach(ri=>{
     for(let c=0;c<ncol;c++){ const cell=ensure(ri,c);
-      cell.s={fill:DARK25,border,font:{bold:true,sz:11},alignment:{vertical:'center'}}; }
+      cell.s={fill:WHITE,border:{bottom:thin},font:{bold:true,sz:10},
+        alignment:{horizontal:'left',vertical:'center'}}; }
   });
   roomRowIdx.forEach(ri=>{
     const dark=outRowIdx.includes(ri);
@@ -3439,7 +3486,7 @@ function buildFdSheet(rows){
   });
   /* totals row */
   for(let c=0;c<ncol;c++){ const cell=ensure(totalRow-1,c);
-    cell.s={fill:DARK25,border,font:{bold:true,sz:c>=2?10:11},
+    cell.s={fill:WHITE,border,font:{bold:true,sz:10},
       alignment:{horizontal:c>=2?'center':'left',vertical:'center'}}; }
 
   return ws;
@@ -3839,7 +3886,7 @@ function loadProjectText(txt){
     const s=JSON.parse(txt);
     if(!s.items||!s.floors)throw 0;
     s.floors&&s.floors.forEach(f=>{f.rooms=f.rooms||[];});
-    state=Object.assign({version:APP_VERSION,theme:SYS_THEME(),brandLogo:null,pinScale:1,pinOpacity:1,planGray:false,brushSize:46,roomOpacity:1,seqScale:1,cropRatio:null,skribbleColor:null,outScopeColor:OUT_SCOPE_DEFAULT,linkNodes:true,client:'',location:'',reference:'',preparedBy:'',libDock:'left',lastDock:'left',libHidden:false,libFloat:null,libSize:{w:324,h:60,fw:288,fh:520},catOrder:[]},s);
+    state=Object.assign({version:APP_VERSION,theme:SYS_THEME(),brandLogo:null,pinScale:1,pinOpacity:1,planGray:false,brushSize:46,roomOpacity:1,seqScale:1,cropRatio:null,skribbleColor:null,outScopeColor:OUT_SCOPE_DEFAULT,linkNodes:true,client:'',location:'',reference:'',preparedBy:'',libDock:'left',lastDock:'left',libHidden:false,libFloat:null,libSize:{w:324,h:60,fw:288,fh:520},catOrder:['Control','Climate','Lighting','Shading','Audio','Network','Security','Video']},s);
     projHandle=null;                            /* re-linked by the picker path */
     armedItem=null;setSelMarker(null);undoStack=[];redoStack=[];
     if(cropMode)cancelCrop();

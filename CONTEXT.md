@@ -45,10 +45,13 @@ rectangle rooms → polygons via `migrateRoom`). Never assume a field exists.
 
 ### Excel — the FD sheet
 
-The Field Device sheet deliberately mirrors the client's existing quotation
-workbook (`Villa_Leaz_Quote_08Jul26.xlsx`), which was inspected cell-by-cell to
-match its conventions. Keep a copy in `reference/` — future changes should be
-checked against it.
+The Field Device sheet deliberately mirrors ikonhouse's existing quotation
+workbook, which was inspected cell-by-cell to match its conventions.
+
+**Do not commit client quotation files to this repository** — they contain
+commercially sensitive pricing and client information. Keep them outside the
+repo (and in `.gitignore`) and consult them locally when working on the FD
+sheet.
 
 - **`xlsx-js-style` is the primary vendor library, not plain SheetJS.** This
   matters: the free SheetJS build silently ignores fills, rotation, and row

@@ -4,6 +4,28 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.55.0] — 2026-08-21
+
+### Added
+- **Appearance panel**, from a palette button in the toolbar and on the
+  welcome screen. Two independent choices:
+  - **Look** — the app''s character: **Original** (rounded, warm),
+    **Atelier** (drawing office), **Kinari** (soft and airy) or **Retro**
+    (squared, rack-gear). Corner shape, typeface and density all change.
+  - **Colour** — **Bronze**, **Indigo**, **Sage**, **Slate** or **Clay**.
+  Any look combines with any colour, in day or night, and **Back to the
+  original** clears everything in one click.
+- **Appearance is remembered in the browser**, not in the project file, so
+  the app looks the way you like it whichever project you open — while
+  project files stay portable between people with different preferences.
+- **Recent projects on the welcome screen** — name, client, floors, devices
+  and when it was last edited. Each has a **✕** that removes it from the list
+  only; the file itself is untouched.
+
+### Changed
+- The look and accent pickers added in 1.54 are superseded by the Appearance
+  panel, which separates character from colour rather than bundling them.
+
 ## [1.54.0] — 2026-08-21
 
 ### Added
@@ -277,6 +299,28 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.55.0] — 2026-08-21
+
+### Added
+- **Appearance panel**, from a palette button in the toolbar and on the
+  welcome screen. Two independent choices:
+  - **Look** — the app''s character: **Original** (rounded, warm),
+    **Atelier** (drawing office), **Kinari** (soft and airy) or **Retro**
+    (squared, rack-gear). Corner shape, typeface and density all change.
+  - **Colour** — **Bronze**, **Indigo**, **Sage**, **Slate** or **Clay**.
+  Any look combines with any colour, in day or night, and **Back to the
+  original** clears everything in one click.
+- **Appearance is remembered in the browser**, not in the project file, so
+  the app looks the way you like it whichever project you open — while
+  project files stay portable between people with different preferences.
+- **Recent projects on the welcome screen** — name, client, floors, devices
+  and when it was last edited. Each has a **✕** that removes it from the list
+  only; the file itself is untouched.
+
+### Changed
+- The look and accent pickers added in 1.54 are superseded by the Appearance
+  panel, which separates character from colour rather than bundling them.
 
 ## [1.54.0] — 2026-08-21
 
@@ -991,6 +1035,28 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.55.0] — 2026-08-21
+
+### Added
+- **Appearance panel**, from a palette button in the toolbar and on the
+  welcome screen. Two independent choices:
+  - **Look** — the app''s character: **Original** (rounded, warm),
+    **Atelier** (drawing office), **Kinari** (soft and airy) or **Retro**
+    (squared, rack-gear). Corner shape, typeface and density all change.
+  - **Colour** — **Bronze**, **Indigo**, **Sage**, **Slate** or **Clay**.
+  Any look combines with any colour, in day or night, and **Back to the
+  original** clears everything in one click.
+- **Appearance is remembered in the browser**, not in the project file, so
+  the app looks the way you like it whichever project you open — while
+  project files stay portable between people with different preferences.
+- **Recent projects on the welcome screen** — name, client, floors, devices
+  and when it was last edited. Each has a **✕** that removes it from the list
+  only; the file itself is untouched.
+
+### Changed
+- The look and accent pickers added in 1.54 are superseded by the Appearance
+  panel, which separates character from colour rather than bundling them.
+
 ## [1.54.0] — 2026-08-21
 
 ### Added
@@ -1264,6 +1330,28 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.55.0] — 2026-08-21
+
+### Added
+- **Appearance panel**, from a palette button in the toolbar and on the
+  welcome screen. Two independent choices:
+  - **Look** — the app''s character: **Original** (rounded, warm),
+    **Atelier** (drawing office), **Kinari** (soft and airy) or **Retro**
+    (squared, rack-gear). Corner shape, typeface and density all change.
+  - **Colour** — **Bronze**, **Indigo**, **Sage**, **Slate** or **Clay**.
+  Any look combines with any colour, in day or night, and **Back to the
+  original** clears everything in one click.
+- **Appearance is remembered in the browser**, not in the project file, so
+  the app looks the way you like it whichever project you open — while
+  project files stay portable between people with different preferences.
+- **Recent projects on the welcome screen** — name, client, floors, devices
+  and when it was last edited. Each has a **✕** that removes it from the list
+  only; the file itself is untouched.
+
+### Changed
+- The look and accent pickers added in 1.54 are superseded by the Appearance
+  panel, which separates character from colour rather than bundling them.
 
 ## [1.54.0] — 2026-08-21
 
@@ -2413,6 +2501,28 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.55.0] — 2026-08-21
+
+### Added
+- **Appearance panel**, from a palette button in the toolbar and on the
+  welcome screen. Two independent choices:
+  - **Look** — the app''s character: **Original** (rounded, warm),
+    **Atelier** (drawing office), **Kinari** (soft and airy) or **Retro**
+    (squared, rack-gear). Corner shape, typeface and density all change.
+  - **Colour** — **Bronze**, **Indigo**, **Sage**, **Slate** or **Clay**.
+  Any look combines with any colour, in day or night, and **Back to the
+  original** clears everything in one click.
+- **Appearance is remembered in the browser**, not in the project file, so
+  the app looks the way you like it whichever project you open — while
+  project files stay portable between people with different preferences.
+- **Recent projects on the welcome screen** — name, client, floors, devices
+  and when it was last edited. Each has a **✕** that removes it from the list
+  only; the file itself is untouched.
+
+### Changed
+- The look and accent pickers added in 1.54 are superseded by the Appearance
+  panel, which separates character from colour rather than bundling them.
+
 ## [1.54.0] — 2026-08-21
 
 ### Added
@@ -2686,6 +2796,28 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.55.0] — 2026-08-21
+
+### Added
+- **Appearance panel**, from a palette button in the toolbar and on the
+  welcome screen. Two independent choices:
+  - **Look** — the app''s character: **Original** (rounded, warm),
+    **Atelier** (drawing office), **Kinari** (soft and airy) or **Retro**
+    (squared, rack-gear). Corner shape, typeface and density all change.
+  - **Colour** — **Bronze**, **Indigo**, **Sage**, **Slate** or **Clay**.
+  Any look combines with any colour, in day or night, and **Back to the
+  original** clears everything in one click.
+- **Appearance is remembered in the browser**, not in the project file, so
+  the app looks the way you like it whichever project you open — while
+  project files stay portable between people with different preferences.
+- **Recent projects on the welcome screen** — name, client, floors, devices
+  and when it was last edited. Each has a **✕** that removes it from the list
+  only; the file itself is untouched.
+
+### Changed
+- The look and accent pickers added in 1.54 are superseded by the Appearance
+  panel, which separates character from colour rather than bundling them.
 
 ## [1.54.0] — 2026-08-21
 
@@ -3400,6 +3532,28 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.55.0] — 2026-08-21
+
+### Added
+- **Appearance panel**, from a palette button in the toolbar and on the
+  welcome screen. Two independent choices:
+  - **Look** — the app''s character: **Original** (rounded, warm),
+    **Atelier** (drawing office), **Kinari** (soft and airy) or **Retro**
+    (squared, rack-gear). Corner shape, typeface and density all change.
+  - **Colour** — **Bronze**, **Indigo**, **Sage**, **Slate** or **Clay**.
+  Any look combines with any colour, in day or night, and **Back to the
+  original** clears everything in one click.
+- **Appearance is remembered in the browser**, not in the project file, so
+  the app looks the way you like it whichever project you open — while
+  project files stay portable between people with different preferences.
+- **Recent projects on the welcome screen** — name, client, floors, devices
+  and when it was last edited. Each has a **✕** that removes it from the list
+  only; the file itself is untouched.
+
+### Changed
+- The look and accent pickers added in 1.54 are superseded by the Appearance
+  panel, which separates character from colour rather than bundling them.
+
 ## [1.54.0] — 2026-08-21
 
 ### Added
@@ -3673,6 +3827,28 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.55.0] — 2026-08-21
+
+### Added
+- **Appearance panel**, from a palette button in the toolbar and on the
+  welcome screen. Two independent choices:
+  - **Look** — the app''s character: **Original** (rounded, warm),
+    **Atelier** (drawing office), **Kinari** (soft and airy) or **Retro**
+    (squared, rack-gear). Corner shape, typeface and density all change.
+  - **Colour** — **Bronze**, **Indigo**, **Sage**, **Slate** or **Clay**.
+  Any look combines with any colour, in day or night, and **Back to the
+  original** clears everything in one click.
+- **Appearance is remembered in the browser**, not in the project file, so
+  the app looks the way you like it whichever project you open — while
+  project files stay portable between people with different preferences.
+- **Recent projects on the welcome screen** — name, client, floors, devices
+  and when it was last edited. Each has a **✕** that removes it from the list
+  only; the file itself is untouched.
+
+### Changed
+- The look and accent pickers added in 1.54 are superseded by the Appearance
+  panel, which separates character from colour rather than bundling them.
 
 ## [1.54.0] — 2026-08-21
 

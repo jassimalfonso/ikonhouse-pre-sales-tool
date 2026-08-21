@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.54.0';
+const APP_VERSION='1.55.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -154,69 +154,132 @@ async function loadBrandImg(){
 const today=()=>new Date().toLocaleDateString(undefined,{day:'2-digit',month:'short',year:'numeric'});
 
 /* ──────────── Theme ──────────── */
-/* ── Look & feel ──────────────────────────────────────────────
-   A "look" is a palette only: it re-states the same tokens, so
-   nothing structural changes and Original is simply no attribute. */
+/* ── Appearance: look (character) × palette (colour) × light ────
+   Two independent axes. A look changes shape, type and density; a
+   palette changes only colour; either combines with day or night.
+   Preferences live in the browser, so the app looks the way you like
+   it whichever project you open. Clearing both returns it exactly to
+   how it shipped. */
 const LOOKS=[
-  {id:'',        name:'Original', note:'Warm bronze',    sw:['#FAF8F5','#AE8B5C']},
-  {id:'atelier', name:'Atelier',  note:'Drawing office', sw:['#F1F1EC','#3B4A9E']},
-  {id:'kinari',  name:'Kinari',   note:'Paper & sage',   sw:['#F7F5EF','#6E7F63']},
-  {id:'slate',   name:'Slate',    note:'Cool neutral',   sw:['#F2F4F6','#2E6F8E']}
+  {id:'',        name:'Original', note:'Rounded, warm',      pv:['#FAF8F5','#AE8B5C']},
+  {id:'atelier', name:'Atelier',  note:'Drawing office',     pv:['#F1F1EC','#3B4A9E']},
+  {id:'kinari',  name:'Kinari',   note:'Soft and airy',      pv:['#F7F5EF','#6E7F63']},
+  {id:'retro',   name:'Retro',    note:'Squared, rack-gear', pv:['#E9E6DF','#141414']}
 ];
-const ACCENTS=['','#AE8B5C','#3B4A9E','#6E7F63','#2E6F8E','#B4553F','#7C4DFF','#0E7490'];
+const PALETTES=[
+  {id:'',       name:'Bronze', pv:['#FAF8F5','#AE8B5C']},
+  {id:'indigo', name:'Indigo', pv:['#F1F1EC','#3B4A9E']},
+  {id:'sage',   name:'Sage',   pv:['#F7F5EF','#6E7F63']},
+  {id:'slate',  name:'Slate',  pv:['#F2F4F6','#2E6F8E']},
+  {id:'clay',   name:'Clay',   pv:['#F8F4F1','#A8503A']}
+];
+const PREF_KEY='ikon.appearance';
+let prefs={look:'',palette:'',theme:''};
+function loadPrefs(){
+  try{ Object.assign(prefs,JSON.parse(localStorage.getItem(PREF_KEY)||'{}')); }catch(_){}
+  if(prefs.theme==='light'||prefs.theme==='dark')state.theme=prefs.theme;
+}
+function savePrefs(){ try{ localStorage.setItem(PREF_KEY,JSON.stringify(prefs)); }catch(_){} }
 function applyTheme(){
   const d=document.documentElement;
-  d.dataset.theme = state.theme;
-  if(state.look) d.dataset.look = state.look; else delete d.dataset.look;
-  /* a hand-picked accent wins over the set's own */
-  if(state.accent){
-    d.style.setProperty('--hl',state.accent);
-    d.style.setProperty('--hl-soft',hexA(state.accent,.12));
-    d.style.setProperty('--hl-line',hexA(state.accent,.32));
-  }else{
-    d.style.removeProperty('--hl');d.style.removeProperty('--hl-soft');d.style.removeProperty('--hl-line');
-  }
+  d.dataset.theme=state.theme;
+  if(prefs.look)d.dataset.look=prefs.look; else delete d.dataset.look;
+  if(prefs.palette)d.dataset.palette=prefs.palette; else delete d.dataset.palette;
   document.querySelectorAll('#themeRow [data-theme-opt]').forEach(b=>b.classList.toggle('on',b.dataset.themeOpt===state.theme));
-  document.querySelectorAll('#lookGrid .look').forEach(b=>b.classList.toggle('on',(b.dataset.look||'')===(state.look||'')));
-  document.querySelectorAll('#accentRow .acc').forEach(b=>b.classList.toggle('on',(b.dataset.acc||'')===(state.accent||'')));
+  document.querySelectorAll('#apLooks .ap-opt').forEach(b=>b.classList.toggle('on',(b.dataset.look||'')===prefs.look));
+  document.querySelectorAll('#apPalettes button').forEach(b=>b.classList.toggle('on',(b.dataset.pal||'')===prefs.palette));
+  document.querySelectorAll('#apTheme button').forEach(b=>b.classList.toggle('on',b.dataset.t===(prefs.theme||'auto')));
 }
-function hexA(hex,a){
-  const h=hex.replace('#','');
-  const n=parseInt(h.length===3?h.split('').map(c=>c+c).join(''):h,16);
-  return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`;
-}
-function renderLookPicker(){
-  const g=$('#lookGrid');
-  if(g&&!g.children.length){
-    LOOKS.forEach(L=>{
-      const b=el('button','look');
-      b.dataset.look=L.id;
-      b.innerHTML=`<span class="prev"><i style="background:${L.sw[0]}"></i><i style="background:${L.sw[1]}"></i></span>
-                   <span><b>${L.name}</b><span>${L.note}</span></span>`;
-      b.addEventListener('click',()=>{ state.look=L.id; applyTheme(); toast(L.id?`${L.name} look applied.`:'Back to the original look.'); });
-      g.appendChild(b);
-    });
-  }
-  const a=$('#accentRow');
-  if(a&&!a.children.length){
-    ACCENTS.forEach(c=>{
-      const b=el('button','acc');
-      b.dataset.acc=c;
-      b.title=c?'Accent colour':'Use the look\u2019s own accent';
-      b.style.background=c||'transparent';
-      if(!c)b.style.cssText+=';border:2px dashed var(--line-2)';
-      b.addEventListener('click',()=>{ state.accent=c; applyTheme(); });
-      a.appendChild(b);
-    });
+function buildAppearance(){
+  const lg=$('#apLooks');
+  if(lg&&!lg.children.length)LOOKS.forEach(L=>{
+    const b=el('button','ap-opt');b.dataset.look=L.id;
+    b.innerHTML=`<span class="pv"><i style="background:${L.pv[0]}"></i><i style="background:${L.pv[1]}"></i></span>
+                 <span><b>${L.name}</b><span>${L.note}</span></span>`;
+    b.addEventListener('click',()=>{ prefs.look=L.id; savePrefs(); applyTheme(); });
+    lg.appendChild(b);
+  });
+  const pg=$('#apPalettes');
+  if(pg&&!pg.children.length)PALETTES.forEach(P=>{
+    const b=el('button');b.dataset.pal=P.id;b.title=P.name;
+    b.innerHTML=`<i style="background:${P.pv[0]}"></i><i style="background:${P.pv[1]}"></i>`;
+    b.addEventListener('click',()=>{ prefs.palette=P.id; savePrefs(); applyTheme(); });
+    pg.appendChild(b);
+  });
+  const tr=$('#apTheme');
+  if(tr&&!tr.dataset.wired){
+    tr.dataset.wired='1';
+    tr.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+      if(b.dataset.t==='auto'){ prefs.theme=''; state.theme=SYS_THEME(); }
+      else { prefs.theme=b.dataset.t; state.theme=b.dataset.t; }
+      savePrefs(); applyTheme();
+    }));
   }
 }
+function openAppearance(){ buildAppearance(); applyTheme(); $('#appearVeil').style.display='grid'; }
+function closeAppearance(){ $('#appearVeil').style.display='none'; }
+
+/* ── Recent projects ──────────────────────────────────────────
+   Names and details are remembered here; the files stay wherever you
+   saved them, so opening one asks for the file again. Removing an
+   entry only clears the reminder. */
+const RECENT_KEY='ikon.recent';
+function readRecent(){ try{ return JSON.parse(localStorage.getItem(RECENT_KEY)||'[]'); }catch(_){ return []; } }
+function writeRecent(list){ try{ localStorage.setItem(RECENT_KEY,JSON.stringify(list.slice(0,6))); }catch(_){} }
+function rememberProject(name){
+  if(!name)return;
+  const list=readRecent().filter(r=>r.name!==name);
+  const floors=state.floors.length, dev=state.floors.reduce((a,f)=>a+f.placements.length,0);
+  list.unshift({name,client:state.client||'',floors,dev,at:Date.now()});
+  writeRecent(list);renderRecent();
+}
+function forgetProject(name){
+  writeRecent(readRecent().filter(r=>r.name!==name));
+  renderRecent();
+  toast('Removed from the list — the file itself is untouched.');
+}
+function whenText(t){
+  const d=Math.floor((Date.now()-t)/86400000);
+  if(d<=0)return 'today'; if(d===1)return 'yesterday';
+  if(d<7)return d+' days ago';
+  return new Date(t).toLocaleDateString(undefined,{day:'numeric',month:'short'});
+}
+function renderRecent(){
+  const host=$('#obRecent');if(!host)return;
+  const list=readRecent();
+  host.innerHTML='';
+  if(!list.length)return;
+  const h=el('span','rc-h');h.textContent='Recent projects';host.appendChild(h);
+  list.forEach(r=>{
+    const row=el('div','rc-item');
+    const bits=[r.client,`${r.floors} floor${r.floors===1?'':'s'}`,`${r.dev} device${r.dev===1?'':'s'}`,`edited ${whenText(r.at)}`].filter(Boolean);
+    row.innerHTML=`<span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 13h8V3"/></svg></span>
+      <span class="tx"><b></b><span></span></span>
+      <button class="rc-x" title="Remove from this list">✕</button>`;
+    row.querySelector('.tx b').textContent=r.name;
+    row.querySelector('.tx span').textContent=bits.join(' · ');
+    row.querySelector('.rc-x').addEventListener('click',e=>{ e.stopPropagation(); forgetProject(r.name); });
+    row.addEventListener('click',()=>openViaPicker());
+    host.appendChild(row);
+  });
+}
+
+/* ── wiring ── */
 document.querySelectorAll('#themeRow [data-theme-opt]').forEach(b=>{
-  b.addEventListener('click',()=>{ state.theme=b.dataset.themeOpt; applyTheme(); });
+  b.addEventListener('click',()=>{ state.theme=b.dataset.themeOpt; prefs.theme=state.theme; savePrefs(); applyTheme(); });
 });
-$('#themeToggle').addEventListener('click',()=>{ state.theme=state.theme==='dark'?'light':'dark'; applyTheme(); });
-$('#resetLook').addEventListener('click',()=>{
-  state.look=''; state.accent='';
-  applyTheme();
+$('#themeToggle').addEventListener('click',()=>{
+  state.theme=state.theme==='dark'?'light':'dark'; prefs.theme=state.theme; savePrefs(); applyTheme();
+});
+$('#btnAppear').addEventListener('click',openAppearance);
+$('#obAppear').addEventListener('click',openAppearance);
+$('#appearClose').addEventListener('click',closeAppearance);
+$('#apDone').addEventListener('click',closeAppearance);
+$('#appearVeil').addEventListener('click',e=>{ if(e.target.id==='appearVeil')closeAppearance(); });
+$('#apReset').addEventListener('click',()=>{
+  prefs={look:'',palette:'',theme:''};
+  state.theme=SYS_THEME();
+  savePrefs();applyTheme();
   toast('Back to the original look.');
 });
 function applyAutoNum(){
@@ -4102,7 +4165,7 @@ async function saveProjectAs(){
       types:[{description:'ikonhouse project',accept:{'application/json':['.ikonplan']}}]
     });
     toast('Saving…');await writeProject(projHandle);
-    toast('Saved ✓');
+    toast('Saved ✓');rememberProject(state.project);
   }catch(err){ if(err&&err.name!=='AbortError')downloadProject(); }
 }
 async function saveProject(){
@@ -4159,7 +4222,7 @@ function loadProjectText(txt){
     updateHiddenChip();
     applyRoomLook();applyRoomLook();
     $('#obFoot').textContent=`IKONHOUSE · PRE-SALES TOOL · V${APP_VERSION}`;   /* single source of truth */
-renderLookPicker();applyTheme();renderBrand();applyDock();applyAutoNum();applyPlanGray();$('#brushSize').value=state.brushSize||46;updateBrushDot();applyRoomLook();updateHiddenChip();renderLibrary();renderFloors();showFloor();renderBoq();
+loadPrefs();buildAppearance();applyTheme();renderRecent();renderBrand();applyDock();applyAutoNum();applyPlanGray();$('#brushSize').value=state.brushSize||46;updateBrushDot();applyRoomLook();updateHiddenChip();renderLibrary();renderFloors();showFloor();renderBoq();
     dismissOnboard();
     toast('Project loaded.');
     return true;
@@ -4305,5 +4368,5 @@ $('#welcome').addEventListener('pointerleave',()=>{ obFx.mx=-9999; obFx.my=-9999
 
 /* ──────────── Init ──────────── */
 $('#obFoot').textContent=`IKONHOUSE · PRE-SALES TOOL · V${APP_VERSION}`;   /* single source of truth */
-renderLookPicker();applyTheme();renderBrand();applyDock();applyAutoNum();applyPlanGray();$('#brushSize').value=state.brushSize||46;updateBrushDot();applyRoomLook();updateHiddenChip();closeLib();renderLibrary();renderFloors();showFloor();obStartFx();
+loadPrefs();buildAppearance();applyTheme();renderRecent();renderBrand();applyDock();applyAutoNum();applyPlanGray();$('#brushSize').value=state.brushSize||46;updateBrushDot();applyRoomLook();updateHiddenChip();closeLib();renderLibrary();renderFloors();showFloor();obStartFx();
 if(!isCompact())setTimeout(()=>toast('Tip: drag the ⠿ grip on the device library to dock it left, right, top or bottom.'),1600);

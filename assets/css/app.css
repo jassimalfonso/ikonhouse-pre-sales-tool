@@ -1517,3 +1517,153 @@ body.arming .room-layer .rlabel{opacity:.45}
 .note-foot .note-hint{flex:1;font-size:10.5px;color:var(--dim);text-align:center}
 /* note labels honour line breaks */
 .nl-t{white-space:pre-line;-webkit-line-clamp:6}
+
+/* ══════════════════════════════════════════════════════════════
+   APPEARANCE — two independent axes
+
+   data-look     the app's character: corner shape, type, density
+   data-palette  the colours
+   data-theme    day or night, as before
+
+   Any look combines with any palette. Clearing both returns the
+   app to exactly how it shipped.
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── LOOKS (character only — no colour here) ── */
+[data-look="atelier"]{
+  --r:5px; --r-lg:7px;
+  --font-d:'Zen Kaku Gothic New',system-ui,sans-serif;
+  --font-s:'Zen Kaku Gothic New',system-ui,sans-serif;
+  --shadow:0 1px 0 rgba(0,0,0,.05), 0 10px 30px rgba(0,0,0,.09);
+}
+[data-look="atelier"] .tb-btn,[data-look="atelier"] .btn,[data-look="atelier"] .item-row{border-radius:5px}
+[data-look="atelier"] .cat-head .cat-nm{letter-spacing:.14em}
+[data-look="atelier"] .wordmark{letter-spacing:.01em}
+
+[data-look="kinari"]{
+  --r:15px; --r-lg:20px;
+  --shadow:0 2px 34px rgba(0,0,0,.07);
+}
+[data-look="kinari"] .tb-btn,[data-look="kinari"] .btn{border-radius:12px}
+[data-look="kinari"] .item-row{border-radius:12px}
+[data-look="kinari"] .lib-panel,[data-look="kinari"] .modal{letter-spacing:.012em}
+[data-look="kinari"] .cat-head{padding-top:22px;opacity:.62}
+[data-look="kinari"] .item-row{padding-top:10px;padding-bottom:10px}
+
+/* Retro — the look of the rack gear this tool specifies: squared
+   corners, engraved labels, hard edges instead of soft shadows */
+[data-look="retro"]{
+  --r:2px; --r-lg:3px;
+  --font-d:'JetBrains Mono',ui-monospace,monospace;
+  --shadow:0 2px 0 rgba(0,0,0,.16);
+}
+[data-look="retro"] .tb-btn,[data-look="retro"] .btn,[data-look="retro"] .item-row,
+[data-look="retro"] .modal,[data-look="retro"] .lib-panel{border-radius:2px}
+[data-look="retro"] .wordmark{font-family:var(--font-m);letter-spacing:-.04em;font-weight:700}
+[data-look="retro"] .cat-head .cat-nm,[data-look="retro"] .vm-label,[data-look="retro"] .sizegrp label{
+  font-family:var(--font-m);letter-spacing:.2em;
+}
+[data-look="retro"] .tb-btn .lbl{font-family:var(--font-m);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+[data-look="retro"] .btn{border-width:1.5px;font-weight:700;letter-spacing:.04em}
+[data-look="retro"] .item-row{border:1px solid transparent}
+[data-look="retro"] .item-row:hover{border-color:var(--line-2)}
+[data-look="retro"] .marker{border-radius:3px}
+
+/* ── PALETTES (colour only — no shape here) ── */
+[data-palette="indigo"][data-theme="light"]{
+  --bg:#F1F1EC; --panel:#FAFAF6; --panel-2:#E8E9E2; --txt:#1D2024; --dim:#5D646B;
+  --line:#DCDDD5; --line-2:#C6C8BE;
+  --hl:#3B4A9E; --hl-soft:rgba(59,74,158,.10); --hl-line:rgba(59,74,158,.30);
+}
+[data-palette="indigo"][data-theme="dark"]{
+  --bg:#14171C; --panel:#1B1F26; --panel-2:#232833; --txt:#E9ECF2; --dim:#98A2B0;
+  --line:#2A303A; --line-2:#3A4250;
+  --hl:#8FA3FF; --hl-soft:rgba(143,163,255,.13); --hl-line:rgba(143,163,255,.34);
+}
+[data-palette="sage"][data-theme="light"]{
+  --bg:#F7F5EF; --panel:#FFFDF8; --panel-2:#EFEBE1; --txt:#2A2A26; --dim:#6E6C63;
+  --line:#E5E0D4; --line-2:#D2CCBC;
+  --hl:#6E7F63; --hl-soft:rgba(110,127,99,.13); --hl-line:rgba(110,127,99,.32);
+}
+[data-palette="sage"][data-theme="dark"]{
+  --bg:#191A17; --panel:#20221E; --panel-2:#2A2D27; --txt:#ECEAE2; --dim:#9C9C90;
+  --line:#2F322B; --line-2:#3E423A;
+  --hl:#9DB08E; --hl-soft:rgba(157,176,142,.14); --hl-line:rgba(157,176,142,.34);
+}
+[data-palette="slate"][data-theme="light"]{
+  --bg:#F2F4F6; --panel:#FFFFFF; --panel-2:#E8ECEF; --txt:#1A1F24; --dim:#5C666F;
+  --line:#DDE3E8; --line-2:#C6CED5;
+  --hl:#2E6F8E; --hl-soft:rgba(46,111,142,.11); --hl-line:rgba(46,111,142,.30);
+}
+[data-palette="slate"][data-theme="dark"]{
+  --bg:#12161A; --panel:#191E24; --panel-2:#222932; --txt:#E8EDF2; --dim:#94A1AC;
+  --line:#252D36; --line-2:#354049;
+  --hl:#6FB3D2; --hl-soft:rgba(111,179,210,.13); --hl-line:rgba(111,179,210,.33);
+}
+[data-palette="clay"][data-theme="light"]{
+  --bg:#F8F4F1; --panel:#FFFCFA; --panel-2:#EFE7E1; --txt:#241E1B; --dim:#6E625B;
+  --line:#E6DAD2; --line-2:#D3C3B8;
+  --hl:#A8503A; --hl-soft:rgba(168,80,58,.11); --hl-line:rgba(168,80,58,.30);
+}
+[data-palette="clay"][data-theme="dark"]{
+  --bg:#1A1614; --panel:#221D1A; --panel-2:#2C2521; --txt:#EFE7E2; --dim:#A6968D;
+  --line:#332B27; --line-2:#443932;
+  --hl:#D98063; --hl-soft:rgba(217,128,99,.14); --hl-line:rgba(217,128,99,.34);
+}
+
+/* ── Appearance panel ── */
+.appear-modal{max-width:470px;width:min(470px,94vw)}
+.ap-sec{padding:4px 0 16px}
+.ap-sec>.vm-label{margin-bottom:8px}
+.ap-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.ap-opt{
+  display:flex;align-items:center;gap:10px;padding:10px 11px;text-align:left;
+  border:1px solid var(--line-2);border-radius:var(--r);background:var(--panel);
+  transition:border-color .14s,background .14s;
+}
+.ap-opt:hover{border-color:var(--hl-line);background:var(--hl-soft)}
+.ap-opt.on{border-color:var(--hl);box-shadow:inset 0 0 0 1px var(--hl)}
+.ap-opt .pv{width:30px;height:30px;flex:none;border:1px solid var(--line-2);overflow:hidden;position:relative}
+.ap-opt .pv i{position:absolute;inset:0}
+.ap-opt .pv i+i{left:56%}
+.ap-opt b{display:block;font-size:12.5px;font-weight:600;line-height:1.3}
+.ap-opt span{font-size:10.5px;color:var(--dim)}
+.ap-pal{display:flex;gap:9px;flex-wrap:wrap}
+.ap-pal button{
+  width:38px;height:38px;border-radius:50%;border:2px solid transparent;position:relative;overflow:hidden;
+  transition:transform .12s;
+}
+.ap-pal button:hover{transform:scale(1.08)}
+.ap-pal button.on{border-color:var(--txt)}
+.ap-pal button i{position:absolute;inset:0}
+.ap-pal button i+i{left:55%}
+.ap-foot{display:flex;align-items:center;gap:12px;padding-top:14px;border-top:1px solid var(--line)}
+.ap-foot .sp{flex:1}
+
+/* ── Recent projects on the welcome screen ── */
+.ob-recent{margin-top:30px;max-width:430px;width:100%}
+.ob-recent .rc-h{
+  font-family:var(--font-m);font-size:9px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--dim);margin-bottom:8px;display:block;
+}
+.rc-item{
+  display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;
+  border-radius:var(--r);text-align:left;transition:background .14s;
+}
+.rc-item:hover{background:var(--hl-soft)}
+.rc-item .ic{
+  width:30px;height:30px;border-radius:8px;flex:none;display:grid;place-items:center;
+  background:var(--panel-2);border:1px solid var(--line);color:var(--dim);
+}
+.rc-item .ic svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7}
+.rc-item .tx{flex:1;min-width:0}
+.rc-item .tx b{display:block;font-size:13.5px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rc-item .tx span{font-size:11px;color:var(--dim)}
+.rc-x{
+  width:26px;height:26px;border-radius:7px;flex:none;color:var(--dim);opacity:0;
+  display:grid;place-items:center;font-size:14px;transition:opacity .12s,color .12s,background .12s;
+}
+.rc-item:hover .rc-x{opacity:1}
+.rc-x:hover{color:var(--hl);background:var(--panel-2)}
+@media (pointer:coarse){ .rc-x{opacity:1} }
+.ob-appear{right:64px}

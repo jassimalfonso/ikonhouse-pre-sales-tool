@@ -4,6 +4,33 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.57.1] — 2026-08-22
+
+### Changed
+- **The radio is now a "now playing" strip in the toolbar** — play/pause, four
+  little bars that move only while something is actually playing, and the
+  station name. Clicking the name drops a small panel beneath it for stations,
+  volume, rename and the autostart switch; clicking away closes it. Closing
+  turns the radio off entirely.
+- **Fitting the plan needs a deliberate double middle-click.** Panning with
+  the wheel button used to trip it: a middle click now only counts if the
+  pointer did not move and the button was not held, so panning never fits the
+  view by accident.
+
+## [1.57.0] — 2026-08-22
+
+### Changed
+- **The radio is now a slim bar** — a small round player, play/pause, the
+  station name, mute and close. Clicking the name expands it for the station
+  list, volume and rename; everything else stays out of the way.
+
+### Added
+- **The radio starts with the app.** Browsers only allow sound once someone
+  has interacted with the page, so it begins at your first click or key press
+  rather than on load — near enough to opening that it feels automatic.
+  **Start with the app** in the expanded panel turns it off, and the setting
+  is remembered.
+
 ## [1.56.3] — 2026-08-22
 
 ### Fixed
@@ -362,6 +389,33 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.57.1] — 2026-08-22
+
+### Changed
+- **The radio is now a "now playing" strip in the toolbar** — play/pause, four
+  little bars that move only while something is actually playing, and the
+  station name. Clicking the name drops a small panel beneath it for stations,
+  volume, rename and the autostart switch; clicking away closes it. Closing
+  turns the radio off entirely.
+- **Fitting the plan needs a deliberate double middle-click.** Panning with
+  the wheel button used to trip it: a middle click now only counts if the
+  pointer did not move and the button was not held, so panning never fits the
+  view by accident.
+
+## [1.57.0] — 2026-08-22
+
+### Changed
+- **The radio is now a slim bar** — a small round player, play/pause, the
+  station name, mute and close. Clicking the name expands it for the station
+  list, volume and rename; everything else stays out of the way.
+
+### Added
+- **The radio starts with the app.** Browsers only allow sound once someone
+  has interacted with the page, so it begins at your first click or key press
+  rather than on load — near enough to opening that it feels automatic.
+  **Start with the app** in the expanded panel turns it off, and the setting
+  is remembered.
 
 ## [1.56.3] — 2026-08-22
 
@@ -1161,6 +1215,33 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.57.1] — 2026-08-22
+
+### Changed
+- **The radio is now a "now playing" strip in the toolbar** — play/pause, four
+  little bars that move only while something is actually playing, and the
+  station name. Clicking the name drops a small panel beneath it for stations,
+  volume, rename and the autostart switch; clicking away closes it. Closing
+  turns the radio off entirely.
+- **Fitting the plan needs a deliberate double middle-click.** Panning with
+  the wheel button used to trip it: a middle click now only counts if the
+  pointer did not move and the button was not held, so panning never fits the
+  view by accident.
+
+## [1.57.0] — 2026-08-22
+
+### Changed
+- **The radio is now a slim bar** — a small round player, play/pause, the
+  station name, mute and close. Clicking the name expands it for the station
+  list, volume and rename; everything else stays out of the way.
+
+### Added
+- **The radio starts with the app.** Browsers only allow sound once someone
+  has interacted with the page, so it begins at your first click or key press
+  rather than on load — near enough to opening that it feels automatic.
+  **Start with the app** in the expanded panel turns it off, and the setting
+  is remembered.
+
 ## [1.56.3] — 2026-08-22
 
 ### Fixed
@@ -1519,6 +1600,33 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.57.1] — 2026-08-22
+
+### Changed
+- **The radio is now a "now playing" strip in the toolbar** — play/pause, four
+  little bars that move only while something is actually playing, and the
+  station name. Clicking the name drops a small panel beneath it for stations,
+  volume, rename and the autostart switch; clicking away closes it. Closing
+  turns the radio off entirely.
+- **Fitting the plan needs a deliberate double middle-click.** Panning with
+  the wheel button used to trip it: a middle click now only counts if the
+  pointer did not move and the button was not held, so panning never fits the
+  view by accident.
+
+## [1.57.0] — 2026-08-22
+
+### Changed
+- **The radio is now a slim bar** — a small round player, play/pause, the
+  station name, mute and close. Clicking the name expands it for the station
+  list, volume and rename; everything else stays out of the way.
+
+### Added
+- **The radio starts with the app.** Browsers only allow sound once someone
+  has interacted with the page, so it begins at your first click or key press
+  rather than on load — near enough to opening that it feels automatic.
+  **Start with the app** in the expanded panel turns it off, and the setting
+  is remembered.
 
 ## [1.56.3] — 2026-08-22
 
@@ -2753,6 +2861,33 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.57.1] — 2026-08-22
+
+### Changed
+- **The radio is now a "now playing" strip in the toolbar** — play/pause, four
+  little bars that move only while something is actually playing, and the
+  station name. Clicking the name drops a small panel beneath it for stations,
+  volume, rename and the autostart switch; clicking away closes it. Closing
+  turns the radio off entirely.
+- **Fitting the plan needs a deliberate double middle-click.** Panning with
+  the wheel button used to trip it: a middle click now only counts if the
+  pointer did not move and the button was not held, so panning never fits the
+  view by accident.
+
+## [1.57.0] — 2026-08-22
+
+### Changed
+- **The radio is now a slim bar** — a small round player, play/pause, the
+  station name, mute and close. Clicking the name expands it for the station
+  list, volume and rename; everything else stays out of the way.
+
+### Added
+- **The radio starts with the app.** Browsers only allow sound once someone
+  has interacted with the page, so it begins at your first click or key press
+  rather than on load — near enough to opening that it feels automatic.
+  **Start with the app** in the expanded panel turns it off, and the setting
+  is remembered.
+
 ## [1.56.3] — 2026-08-22
 
 ### Fixed
@@ -3111,6 +3246,33 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.57.1] — 2026-08-22
+
+### Changed
+- **The radio is now a "now playing" strip in the toolbar** — play/pause, four
+  little bars that move only while something is actually playing, and the
+  station name. Clicking the name drops a small panel beneath it for stations,
+  volume, rename and the autostart switch; clicking away closes it. Closing
+  turns the radio off entirely.
+- **Fitting the plan needs a deliberate double middle-click.** Panning with
+  the wheel button used to trip it: a middle click now only counts if the
+  pointer did not move and the button was not held, so panning never fits the
+  view by accident.
+
+## [1.57.0] — 2026-08-22
+
+### Changed
+- **The radio is now a slim bar** — a small round player, play/pause, the
+  station name, mute and close. Clicking the name expands it for the station
+  list, volume and rename; everything else stays out of the way.
+
+### Added
+- **The radio starts with the app.** Browsers only allow sound once someone
+  has interacted with the page, so it begins at your first click or key press
+  rather than on load — near enough to opening that it feels automatic.
+  **Start with the app** in the expanded panel turns it off, and the setting
+  is remembered.
 
 ## [1.56.3] — 2026-08-22
 
@@ -3910,6 +4072,33 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.57.1] — 2026-08-22
+
+### Changed
+- **The radio is now a "now playing" strip in the toolbar** — play/pause, four
+  little bars that move only while something is actually playing, and the
+  station name. Clicking the name drops a small panel beneath it for stations,
+  volume, rename and the autostart switch; clicking away closes it. Closing
+  turns the radio off entirely.
+- **Fitting the plan needs a deliberate double middle-click.** Panning with
+  the wheel button used to trip it: a middle click now only counts if the
+  pointer did not move and the button was not held, so panning never fits the
+  view by accident.
+
+## [1.57.0] — 2026-08-22
+
+### Changed
+- **The radio is now a slim bar** — a small round player, play/pause, the
+  station name, mute and close. Clicking the name expands it for the station
+  list, volume and rename; everything else stays out of the way.
+
+### Added
+- **The radio starts with the app.** Browsers only allow sound once someone
+  has interacted with the page, so it begins at your first click or key press
+  rather than on load — near enough to opening that it feels automatic.
+  **Start with the app** in the expanded panel turns it off, and the setting
+  is remembered.
+
 ## [1.56.3] — 2026-08-22
 
 ### Fixed
@@ -4268,6 +4457,33 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.57.1] — 2026-08-22
+
+### Changed
+- **The radio is now a "now playing" strip in the toolbar** — play/pause, four
+  little bars that move only while something is actually playing, and the
+  station name. Clicking the name drops a small panel beneath it for stations,
+  volume, rename and the autostart switch; clicking away closes it. Closing
+  turns the radio off entirely.
+- **Fitting the plan needs a deliberate double middle-click.** Panning with
+  the wheel button used to trip it: a middle click now only counts if the
+  pointer did not move and the button was not held, so panning never fits the
+  view by accident.
+
+## [1.57.0] — 2026-08-22
+
+### Changed
+- **The radio is now a slim bar** — a small round player, play/pause, the
+  station name, mute and close. Clicking the name expands it for the station
+  list, volume and rename; everything else stays out of the way.
+
+### Added
+- **The radio starts with the app.** Browsers only allow sound once someone
+  has interacted with the page, so it begins at your first click or key press
+  rather than on load — near enough to opening that it feels automatic.
+  **Start with the app** in the expanded panel turns it off, and the setting
+  is remembered.
 
 ## [1.56.3] — 2026-08-22
 

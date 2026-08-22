@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.56.3';
+const APP_VERSION='1.57.1';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -228,7 +228,7 @@ function findStation(key){
 }
 function stationName(st){ return (radioState.names||{})[stationKey(st)] || st.name; }
 const RADIO_KEY='ikon.radio';
-let ytPlayer=null, ytReady=false, radioState={station:DEFAULT_STATION, vol:45, muted:false, mine:[], names:{}};
+let ytPlayer=null, ytReady=false, radioState={station:DEFAULT_STATION, vol:45, muted:false, mine:[], names:{}, auto:true};
 function loadRadioPrefs(){
   try{ Object.assign(radioState,JSON.parse(localStorage.getItem(RADIO_KEY)||'{}')); }catch(_){}
   /* a station that has since been removed falls back to the default */
@@ -250,6 +250,9 @@ function fillStations(){
   add('__custom','Add a station from a link…');
   sel.value=radioState.station;
   if(sel.value!==radioState.station){ radioState.station=stationKey(STATIONS[0]); sel.value=radioState.station; }
+  const label=stationName(findStation(radioState.station));
+  const a=$('#npTitle'); if(a)a.textContent=label;
+  const b=$('#rdStName'); if(b)b.textContent=label;
 }
 function buildStationList(){
   const sel=$('#rdStation'); if(!sel||sel.dataset.wired)return;
@@ -284,7 +287,6 @@ function ensureYT(cb){
 }
 function playStation(key){
   const st=findStation(key);
-  const idle=$('#rdIdle'); if(idle)idle.style.display='none';
   const host=$('#rdPlayer'); if(!host)return;
   ensureYT(()=>{
     if(ytPlayer&&ytPlayer.destroy){ try{ytPlayer.destroy();}catch(_){} ytPlayer=null; }
@@ -296,9 +298,9 @@ function playStation(key){
           radioState.muted?ytPlayer.mute():ytPlayer.unMute();
           ytPlayer.playVideo();
         }catch(_){}
-        $('#radio').classList.add('playing');
+        setPlayingUi(true);
       },
-      onStateChange:e=>{ $('#radio').classList.toggle('playing', e.data===1); },
+      onStateChange:e=>{ setPlayingUi(e.data===1); },
       onError:()=>toast('That station would not load — it may have ended. Try another, or add one from a link.')
     };
     if(st.channel){
@@ -320,12 +322,40 @@ function playStation(key){
     }
   });
 }
-function toggleRadio(){
-  const p=$('#radio'), open=!p.classList.contains('open');
-  p.classList.toggle('open',open);
-  $('#btnRadio').classList.toggle('on',open);
-  if(open){ buildStationList(); $('#rdVol').value=radioState.vol; $('#radio').classList.toggle('muted',radioState.muted); }
+function radioOn(on){
+  $('#npWrap').classList.toggle('on',on);
+  if(!on){ $('#radio').classList.remove('open'); }
 }
+function toggleRadio(show){
+  const p=$('#radio');
+  const open=show===undefined?!p.classList.contains('open'):!!show;
+  buildStationList();
+  $('#npWrap').classList.add('on');
+  p.classList.toggle('open',open);
+  if(open){
+    $('#rdVol').value=radioState.vol;
+    $('#rdAuto').checked=radioState.auto!==false;
+    setMutedUi(radioState.muted);
+    /* sit the panel under the strip, kept inside the window */
+    const r=$('#npWrap').getBoundingClientRect();
+    p.style.top=(r.bottom+8)+'px';
+    p.style.left=Math.max(8,Math.min(r.left-90,window.innerWidth-278))+'px';
+  }
+}
+function setMutedUi(m){ $('#npWrap').classList.toggle('muted',m); $('#radio').classList.toggle('muted',m); }
+function setPlayingUi(p){ $('#npWrap').classList.toggle('playing',p); $('#radio').classList.toggle('playing',p); }
+/* Browsers only allow sound after the person has interacted, so the radio
+   waits for the very first click or key press and starts itself then. */
+let radioStarted=false;
+function autoStartRadio(){
+  if(radioStarted||radioState.auto===false)return;
+  radioStarted=true;
+  buildStationList();
+  $('#npWrap').classList.add('on');
+  playStation(radioState.station);
+}
+['pointerdown','keydown'].forEach(t=>
+  document.addEventListener(t,()=>{ if(!radioStarted)autoStartRadio(); },{once:false,capture:true}));
 
 /* ── Recent projects ──────────────────────────────────────────
    Names and details are remembered here; the files stay wherever you
@@ -386,6 +416,11 @@ $('#obRadio').addEventListener('click',()=>{
      browsers only allow sound after a click, which this is */
   if($('#radio').classList.contains('open')&&!ytPlayer)playStation(radioState.station);
 });
+document.addEventListener('click',e=>{
+  const p=$('#radio');
+  if(p.classList.contains('open')&&!e.target.closest('#radio,#npWrap'))p.classList.remove('open');
+});
+$('#rdAuto').addEventListener('change',e=>{ radioState.auto=e.target.checked; saveRadioPrefs(); });
 $('#rdRename').addEventListener('click',()=>{
   const st=findStation(radioState.station);
   const name=prompt('Name this station',stationName(st));
@@ -396,25 +431,25 @@ $('#rdRename').addEventListener('click',()=>{
   saveRadioPrefs(); fillStations();
 });
 $('#rdClose').addEventListener('click',()=>{
-  $('#radio').classList.remove('open');$('#btnRadio').classList.remove('on');
   if(ytPlayer&&ytPlayer.pauseVideo)ytPlayer.pauseVideo();
+  setPlayingUi(false); radioOn(false);
 });
 $('#rdPlay').addEventListener('click',()=>{
   if(!ytPlayer){ playStation(radioState.station); return; }
   const st=ytPlayer.getPlayerState&&ytPlayer.getPlayerState();
-  if(st===1){ ytPlayer.pauseVideo(); $('#radio').classList.remove('playing'); }
+  if(st===1){ ytPlayer.pauseVideo(); setPlayingUi(false); }
   else ytPlayer.playVideo();
 });
 $('#rdMute').addEventListener('click',()=>{
   radioState.muted=!radioState.muted; saveRadioPrefs();
-  $('#radio').classList.toggle('muted',radioState.muted);
+  setMutedUi(radioState.muted);
   if(ytPlayer&&ytPlayer.mute){ radioState.muted?ytPlayer.mute():ytPlayer.unMute(); }
 });
 $('#rdVol').addEventListener('input',e=>{
   radioState.vol=+e.target.value;
   if(radioState.vol>0&&radioState.muted){        /* reaching for the volume means "let me hear it" */
     radioState.muted=false;
-    $('#radio').classList.remove('muted');
+    setMutedUi(false);
     if(ytPlayer&&ytPlayer.unMute)ytPlayer.unMute();
   }
   saveRadioPrefs();
@@ -3006,16 +3041,26 @@ document.addEventListener('paste',e=>{
   items.forEach(i=>{const f=i.getAsFile();if(f)importImage(f,`Pasted plan ${++pasteCount}`);});
 });
 const stage=$('#stage');
-/* double-click the scroll wheel to fit the plan to the window */
-let midClickAt=0;
+/* Double-click the scroll wheel to fit the plan. Only clicks that did not
+   move count, so panning with the wheel button never trips it. */
+let midClickAt=-1e9, midDownAt=0, midDownX=0, midDownY=0;   /* -1e9 = 'no recent click' */
+stage.addEventListener('pointerdown',e=>{
+  if(e.button!==1)return;
+  e.preventDefault();
+  midDownAt=performance.now(); midDownX=e.clientX; midDownY=e.clientY;
+});
 stage.addEventListener('auxclick',e=>{
   if(e.button!==1)return;
   e.preventDefault();
+  const moved=Math.hypot(e.clientX-midDownX,e.clientY-midDownY);
+  const held=performance.now()-midDownAt;
+  if(moved>5||held>350){ midClickAt=-1e9; return; }   /* that was a pan, not a click */
   const now=performance.now();
-  if(now-midClickAt<420){ midClickAt=0; if(activeFloor()&&!cropMode){ fitZoom(); toast('Fitted to the window.'); } }
-  else midClickAt=now;
+  if(now-midClickAt<400){
+    midClickAt=-1e9;
+    if(activeFloor()&&!cropMode){ fitZoom(); toast('Fitted to the window.'); }
+  } else midClickAt=now;
 });
-stage.addEventListener('pointerdown',e=>{ if(e.button===1)e.preventDefault(); });
 ['dragenter','dragover'].forEach(ev=>stage.addEventListener(ev,e=>{e.preventDefault();stage.classList.add('dropping');}));
 ['dragleave','drop'].forEach(ev=>stage.addEventListener(ev,e=>{e.preventDefault();if(ev==='dragleave'&&e.relatedTarget&&stage.contains(e.relatedTarget))return;stage.classList.remove('dropping');}));
 stage.addEventListener('drop',e=>{[...(e.dataTransfer?.files||[])].forEach(routeFile);});

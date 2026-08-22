@@ -1643,44 +1643,69 @@ body.arming .room-layer .rlabel{opacity:.45}
 .ap-foot{padding-top:16px;margin-top:2px}
 @media (max-width:560px){ .modal{padding:18px 18px 16px} }
 
-/* ── Focus radio ── */
+/* ── Now playing: a strip in the toolbar, panel underneath ── */
+.np{
+  display:none;align-items:center;gap:3px;padding:2px 4px 2px 2px;
+  border:1px solid var(--line);border-radius:99px;background:var(--panel-2);
+  max-width:210px;position:relative;
+}
+.np.on{display:flex}
+.np-play{width:26px;height:26px;flex:none;border-radius:50%;display:grid;place-items:center;color:var(--txt)}
+.np-play:hover{color:var(--hl);background:var(--hl-soft)}
+.np-play svg{width:12px;height:12px;fill:currentColor;stroke:none}
+.ic-pause,.ic-mute{display:none}
+.playing .ic-play{display:none}
+.playing .ic-pause{display:block}
+.muted .ic-vol{display:none}
+.muted .ic-mute{display:block}
+/* four bars that move only while something is actually playing */
+.eq{display:flex;align-items:flex-end;gap:2px;height:12px;flex:none;padding:0 2px;opacity:.35}
+.eq i{width:2px;height:3px;background:var(--hl);border-radius:1px}
+.np.playing .eq{opacity:1}
+.np.playing .eq i{animation:eqb .9s ease-in-out infinite}
+.np.playing .eq i:nth-child(2){animation-duration:1.15s;animation-delay:.1s}
+.np.playing .eq i:nth-child(3){animation-duration:.75s;animation-delay:.22s}
+.np.playing .eq i:nth-child(4){animation-duration:1.05s;animation-delay:.05s}
+@keyframes eqb{0%,100%{height:3px}50%{height:11px}}
+.np-title{
+  flex:1;min-width:0;padding:0 6px 0 2px;text-align:left;
+  font-size:11.5px;color:var(--dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.np-title:hover{color:var(--hl)}
+
 .radio{
-  position:fixed;right:14px;bottom:64px;z-index:150;width:268px;display:none;
+  position:absolute;z-index:260;display:none;width:262px;
   background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
-  box-shadow:var(--shadow);overflow:hidden;
+  box-shadow:var(--shadow);padding:12px;
 }
 .radio.open{display:block}
-.rd-head{display:flex;align-items:center;justify-content:space-between;padding:10px 12px 8px}
-.rd-t{font-size:12.5px;font-weight:600}
-.rd-x{width:24px;height:24px;border-radius:6px;color:var(--dim);display:grid;place-items:center;font-size:13px}
-.rd-x:hover{color:var(--hl);background:var(--panel-2)}
-.rd-frame{position:relative;margin:0 12px;border-radius:var(--r-sm,8px);overflow:hidden;background:var(--panel-2);aspect-ratio:16/9}
-.rd-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-.rd-idle{
-  position:absolute;inset:0;display:grid;place-items:center;
-  font-size:11.5px;color:var(--dim);text-align:center;padding:0 12px;
+.rd-top{display:flex;align-items:center;gap:10px;margin-bottom:11px}
+.rd-thumb{width:42px;height:42px;border-radius:var(--r-sm,8px);overflow:hidden;flex:none;background:var(--panel-2);position:relative}
+.rd-thumb iframe,.rd-thumb>div{
+  position:absolute;left:50%;top:50%;width:150px;height:84px;border:0;
+  transform:translate(-50%,-50%) scale(1.15);pointer-events:none;
 }
+.rd-meta{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.rd-now{font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+.rd-st{font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rd-b{width:28px;height:28px;flex:none;border-radius:50%;display:grid;place-items:center;color:var(--dim)}
+.rd-b:hover{color:var(--hl);background:var(--hl-soft)}
+.rd-b svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
 .rd-pick{
-  width:calc(100% - 24px);margin:10px 12px 0;padding:7px 9px;
+  width:100%;padding:7px 9px;margin-bottom:10px;
   border:1px solid var(--line-2);border-radius:var(--r-sm,8px);
-  background:var(--panel-2);color:var(--txt);font-size:12.5px;
+  background:var(--panel-2);color:var(--txt);font-size:12px;
 }
-.rd-ctl{display:flex;align-items:center;gap:9px;padding:10px 12px 4px}
-.rd-b{
-  width:32px;height:32px;flex:none;border-radius:50%;display:grid;place-items:center;
-  border:1px solid var(--line-2);color:var(--txt);
-}
-.rd-b:hover{border-color:var(--hl-line);color:var(--hl);background:var(--hl-soft)}
-.rd-b svg{width:15px;height:15px;fill:currentColor;stroke:none}
-.rd-b .ic-vol,.rd-b .ic-mute{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
-.rd-b .ic-pause,.rd-b .ic-mute{display:none}
-.radio.playing .rd-b#rdPlay .ic-play{display:none}
-.radio.playing .rd-b#rdPlay .ic-pause{display:block}
-.radio.muted .rd-b#rdMute .ic-vol{display:none}
-.radio.muted .rd-b#rdMute .ic-mute{display:block}
-.rd-ctl input[type=range]{flex:1;min-width:0}
-.rd-note{font-size:9.5px;color:var(--dim);padding:2px 12px 11px;line-height:1.5}
-#btnRadio.on{color:var(--hl);background:var(--hl-soft);border-color:var(--hl-line)}
+.rd-vol{display:flex;align-items:center;gap:9px;margin-bottom:9px}
+.rd-cap{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);flex:none}
+.rd-vol input{flex:1;min-width:0}
+.rd-auto{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--dim);cursor:pointer;margin-bottom:8px}
+.rd-auto input{accent-color:var(--hl);width:14px;height:14px}
+.rd-ren{font-size:11px;color:var(--dim);text-decoration:underline;text-underline-offset:3px}
+.rd-ren:hover{color:var(--hl)}
+@media (max-width:900px){ .np{max-width:132px} .np-title{display:none} }
+@media (prefers-reduced-motion:reduce){ .np.playing .eq i{animation:none;height:7px} }
+
 @media (max-width:520px){ .radio{right:8px;left:8px;width:auto;bottom:70px} }
 /* the radio sits above the welcome screen, like the appearance panel */
 #radio{z-index:260}

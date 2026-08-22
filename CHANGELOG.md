@@ -4,6 +4,15 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.59.3] — 2026-08-22
+
+### Fixed
+- **The pointer disappeared on white plans.** Rooms and Notes were using the
+  system crosshair, which some setups draw in white — invisible against a
+  white drawing. The app now draws its own: dark lines with a white halo, so
+  it reads on any plan, in any theme, whatever the system is set to. The
+  skribble ring is pinned to the same dark outline for the same reason.
+
 ## [1.59.2] — 2026-08-22
 
 ### Fixed
@@ -496,6 +505,15 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.59.3] — 2026-08-22
+
+### Fixed
+- **The pointer disappeared on white plans.** Rooms and Notes were using the
+  system crosshair, which some setups draw in white — invisible against a
+  white drawing. The app now draws its own: dark lines with a white halo, so
+  it reads on any plan, in any theme, whatever the system is set to. The
+  skribble ring is pinned to the same dark outline for the same reason.
 
 ## [1.59.2] — 2026-08-22
 
@@ -1429,6 +1447,15 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.59.3] — 2026-08-22
+
+### Fixed
+- **The pointer disappeared on white plans.** Rooms and Notes were using the
+  system crosshair, which some setups draw in white — invisible against a
+  white drawing. The app now draws its own: dark lines with a white halo, so
+  it reads on any plan, in any theme, whatever the system is set to. The
+  skribble ring is pinned to the same dark outline for the same reason.
+
 ## [1.59.2] — 2026-08-22
 
 ### Fixed
@@ -1921,6 +1948,15 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.59.3] — 2026-08-22
+
+### Fixed
+- **The pointer disappeared on white plans.** Rooms and Notes were using the
+  system crosshair, which some setups draw in white — invisible against a
+  white drawing. The app now draws its own: dark lines with a white halo, so
+  it reads on any plan, in any theme, whatever the system is set to. The
+  skribble ring is pinned to the same dark outline for the same reason.
 
 ## [1.59.2] — 2026-08-22
 
@@ -3289,6 +3325,15 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.59.3] — 2026-08-22
+
+### Fixed
+- **The pointer disappeared on white plans.** Rooms and Notes were using the
+  system crosshair, which some setups draw in white — invisible against a
+  white drawing. The app now draws its own: dark lines with a white halo, so
+  it reads on any plan, in any theme, whatever the system is set to. The
+  skribble ring is pinned to the same dark outline for the same reason.
+
 ## [1.59.2] — 2026-08-22
 
 ### Fixed
@@ -3781,6 +3826,15 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.59.3] — 2026-08-22
+
+### Fixed
+- **The pointer disappeared on white plans.** Rooms and Notes were using the
+  system crosshair, which some setups draw in white — invisible against a
+  white drawing. The app now draws its own: dark lines with a white halo, so
+  it reads on any plan, in any theme, whatever the system is set to. The
+  skribble ring is pinned to the same dark outline for the same reason.
 
 ## [1.59.2] — 2026-08-22
 
@@ -4714,6 +4768,15 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.59.3] — 2026-08-22
+
+### Fixed
+- **The pointer disappeared on white plans.** Rooms and Notes were using the
+  system crosshair, which some setups draw in white — invisible against a
+  white drawing. The app now draws its own: dark lines with a white halo, so
+  it reads on any plan, in any theme, whatever the system is set to. The
+  skribble ring is pinned to the same dark outline for the same reason.
+
 ## [1.59.2] — 2026-08-22
 
 ### Fixed
@@ -5206,6 +5269,15 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.59.3] — 2026-08-22
+
+### Fixed
+- **The pointer disappeared on white plans.** Rooms and Notes were using the
+  system crosshair, which some setups draw in white — invisible against a
+  white drawing. The app now draws its own: dark lines with a white halo, so
+  it reads on any plan, in any theme, whatever the system is set to. The
+  skribble ring is pinned to the same dark outline for the same reason.
 
 ## [1.59.2] — 2026-08-22
 

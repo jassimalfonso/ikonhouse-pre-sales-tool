@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.59.3';
+const APP_VERSION='1.60.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -168,8 +168,14 @@ const PALETTES=[
   {id:'clay',   name:'Ember',  note:'Warm orange',    pv:['#FDF0EA','#E0552A']},
   {id:'mono',   name:'Mono',   note:'Black and white',pv:['#FFFFFF','#000000']}
 ];
+const LOOKS=[
+  {id:'',       name:'Original',    note:'How it ships',        pv:['#FAF8F5','#AE8B5C']},
+  {id:'modern', name:'Modern',      note:'Soft, calm, roomy',   pv:['#F2F3F5','#3B49E0']},
+  {id:'retro',  name:'Retro',       note:'Bevels and monospace',pv:['#E7E4DA','#141414']},
+  {id:'future', name:'Futuristic',  note:'Dot-matrix, hairline',pv:['#101012','#E5484D']}
+];
 const PREF_KEY='ikon.appearance';
-let prefs={palette:'',theme:''};
+let prefs={look:'',palette:'',theme:''};
 function loadPrefs(){
   try{ Object.assign(prefs,JSON.parse(localStorage.getItem(PREF_KEY)||'{}')); }catch(_){}
   if(prefs.theme==='light'||prefs.theme==='dark')state.theme=prefs.theme;
@@ -178,13 +184,22 @@ function savePrefs(){ try{ localStorage.setItem(PREF_KEY,JSON.stringify(prefs));
 function applyTheme(){
   const d=document.documentElement;
   d.dataset.theme=state.theme;
-  delete d.dataset.look;
+  if(prefs.look)d.dataset.look=prefs.look; else delete d.dataset.look;
   if(prefs.palette)d.dataset.palette=prefs.palette; else delete d.dataset.palette;
   document.querySelectorAll('#themeRow [data-theme-opt]').forEach(b=>b.classList.toggle('on',b.dataset.themeOpt===state.theme));
+  document.querySelectorAll('#apLooks .ap-opt').forEach(b=>b.classList.toggle('on',(b.dataset.look||'')===prefs.look));
   document.querySelectorAll('#apPalettes button').forEach(b=>b.classList.toggle('on',(b.dataset.pal||'')===prefs.palette));
   document.querySelectorAll('#apTheme button').forEach(b=>b.classList.toggle('on',b.dataset.t===(prefs.theme||'auto')));
 }
 function buildAppearance(){
+  const lg=$('#apLooks');
+  if(lg&&!lg.children.length)LOOKS.forEach(L=>{
+    const b=el('button','ap-opt');b.dataset.look=L.id;
+    b.innerHTML=`<span class="pv"><i style="background:${L.pv[0]}"></i><i style="background:${L.pv[1]}"></i></span>
+                 <span><b>${L.name}</b><span>${L.note}</span></span>`;
+    b.addEventListener('click',()=>{ prefs.look=L.id; savePrefs(); applyTheme(); toast(L.id?`${L.name} mode.`:'Back to the original look.'); });
+    lg.appendChild(b);
+  });
   const pg=$('#apPalettes');
   if(pg&&!pg.children.length)PALETTES.forEach(P=>{
     const b=el('button','ap-opt');b.dataset.pal=P.id;
@@ -495,7 +510,7 @@ $('#appearClose').addEventListener('click',closeAppearance);
 $('#apDone').addEventListener('click',closeAppearance);
 $('#appearVeil').addEventListener('click',e=>{ if(e.target.id==='appearVeil')closeAppearance(); });
 $('#apReset').addEventListener('click',()=>{
-  prefs={palette:'',theme:''};
+  prefs={look:'',palette:'',theme:''};
   state.theme=SYS_THEME();
   savePrefs();applyTheme();
   toast('Back to the original look.');
@@ -3982,7 +3997,7 @@ async function exportPackage(paper){
     if(pdfBlob) folder.file(`${safeName()} - Device Location Plan - ${paper.label}.pdf`, pdfBlob);
     if(boqData) folder.file(`${safeName()} - BoQ.xlsx`, boqData);
     /* the editable design file, with a note on how to open it */
-    folder.file(`${safeName()}.ikonplan`, projJson());
+    folder.file(`${safeName()}.ikon`, projJson());
     folder.file('HOW TO OPEN THE DESIGN FILE.txt',
 `${state.project} — ikonhouse Pre-Sales package
 Generated ${today()}${state.preparedBy?` · Prepared by ${state.preparedBy}`:''}
@@ -3991,13 +4006,13 @@ CONTENTS
 - ${safeName()} - Device Location Plan (${paper.label}).pdf — layout sheets & cover
 - ${safeName()} - BoQ.xlsx — Field Device sheet (by room) + priced summary
 - sheets-png/ — each sheet as a high-resolution image
-- ${safeName()}.ikonplan — the editable design file
+- ${safeName()}.ikon — the editable design file
 
 TO OPEN OR EDIT THE DESIGN
 1. Go to  https://ikonhouse-presales-tool.netlify.app
 2. Click "Open a project…" on the welcome screen
    (or Export menu → Open project… if already inside)
-3. Select  ${safeName()}.ikonplan  from this package
+3. Select  ${safeName()}.ikon  from this package
 
 The full project opens exactly as designed — floor plans, ikons, rooms,
 device library and pricing — ready to continue editing.
@@ -4497,7 +4512,7 @@ const projJson=()=>JSON.stringify(state);
 function downloadProject(){
   const blob=new Blob([projJson()],{type:'application/json'});
   const a=document.createElement('a');
-  a.download=`${safeName()}.ikonplan`;
+  a.download=`${safeName()}.ikon`;
   a.href=URL.createObjectURL(blob);a.click();
   setTimeout(()=>URL.revokeObjectURL(a.href),4000);
   toast('Project downloaded.');
@@ -4510,8 +4525,8 @@ async function saveProjectAs(){
   if(!window.showSaveFilePicker){downloadProject();return;}
   try{
     projHandle=await showSaveFilePicker({
-      suggestedName:`${safeName()}.ikonplan`,
-      types:[{description:'ikonhouse project',accept:{'application/json':['.ikonplan']}}]
+      suggestedName:`${safeName()}.ikon`,
+      types:[{description:'ikonhouse project',accept:{'application/json':['.ikon']}}]
     });
     toast('Saving…');await writeProject(projHandle);
     toast('Saved ✓');rememberProject(state.project);
@@ -4546,10 +4561,14 @@ document.addEventListener('keydown',e=>{
 });
 async function openViaPicker(){
   try{
-    const [h]=await showOpenFilePicker({types:[{description:'ikonhouse project',accept:{'application/json':['.ikonplan','.json']}}]});
+    const [h]=await showOpenFilePicker({types:[{description:'ikonhouse project',accept:{'application/json':['.ikon','.ikonplan','.json']}}]});
+    const pickedName=h.name||'';
     const file=await h.getFile();
     const txt=await file.text();
-    if(loadProjectText(txt))projHandle=h;      /* Ctrl+S now writes back here */
+    if(loadProjectText(txt)){
+      if(/\.ikonplan$/i.test(pickedName)) noteLegacyName(pickedName);   /* leaves projHandle null so Save makes a .ikon */
+      else projHandle=h;                                                /* Ctrl+S writes back here */
+    }
   }catch(err){ if(err&&err.name!=='AbortError')$('#fileProject').click(); }
 }
 $('#mOpen').addEventListener('click',()=>{closeMenu();window.showOpenFilePicker?openViaPicker():$('#fileProject').click();});
@@ -4580,9 +4599,16 @@ loadPrefs();loadRadioPrefs();buildAppearance();applyTheme();renderRecent();rende
 $('#fileProject').addEventListener('change',e=>{
   const file=e.target.files[0];e.target.value='';if(!file)return;
   const rd=new FileReader();
-  rd.onload=()=>loadProjectText(rd.result);
+  rd.onload=()=>{ loadProjectText(rd.result); noteLegacyName(file.name); };
   rd.readAsText(file);
 });
+/* Projects are saved as .ikon now. Older .ikonplan files still open; this
+   just says that saving will write the shorter name. */
+function noteLegacyName(name){
+  if(!/\.ikonplan$/i.test(name||''))return;
+  projHandle=null;                       /* so Save writes a fresh .ikon rather than back into the old file */
+  setTimeout(()=>toast('Opened an .ikonplan file — saving will create a “.ikon” file instead. The original is left as it is.'),700);
+}
 
 window.addEventListener('beforeunload',e=>{
   if(state.floors.some(f=>f.placements.length)){e.preventDefault();e.returnValue='';}

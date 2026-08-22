@@ -1834,3 +1834,108 @@ body.rooming .plan-click,.plan-click.rooming{cursor:var(--cur-cross)}
 /* the skribble ring is the cursor there, so keep its own contrast strong */
 body.skribbling .plan-click{cursor:none}
 .brush-cursor{border-color:#141414 !important}
+
+/* ══════════════════════════════════════════════════════════════
+   MODES — three genuinely different characters
+
+   Each changes shape, type, weight, spacing and depth, not colour.
+   Colour stays on its own axis, so any mode works with any theme.
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── MODERN ─────────────────────────────────────────────────────
+   Apple's softness and Google's clarity, cooled by Japanese
+   restraint: pill geometry, generous air, light weights, depth
+   that suggests rather than announces. */
+[data-look="modern"]{
+  --r:16px; --r-lg:22px;
+  --font-d:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',system-ui,sans-serif;
+  --font-s:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',system-ui,sans-serif;
+  --shadow:0 1px 2px rgba(0,0,0,.04), 0 10px 34px rgba(0,0,0,.08);
+  letter-spacing:-.01em;
+}
+[data-look="modern"] .tb-btn,[data-look="modern"] .btn,[data-look="modern"] .pill{border-radius:99px}
+[data-look="modern"] .tb-btn{padding:9px 15px}
+[data-look="modern"] .item-row{border-radius:14px;padding-top:10px;padding-bottom:10px}
+[data-look="modern"] .modal,[data-look="modern"] .more-menu,[data-look="modern"] .display-pop,
+[data-look="modern"] .radio,[data-look="modern"] .room-pop{border-radius:22px}
+[data-look="modern"] .cat-head{padding-top:24px;padding-bottom:10px}
+[data-look="modern"] .cat-head .cat-nm{
+  font-size:12.5px;font-weight:600;letter-spacing:-.005em;text-transform:none;opacity:.9;
+}
+[data-look="modern"] .lib-head b,[data-look="modern"] .m-head span{font-weight:600;letter-spacing:-.02em}
+[data-look="modern"] .vm-label,[data-look="modern"] .sizegrp label{
+  text-transform:none;letter-spacing:0;font-size:11px;font-weight:500;
+}
+[data-look="modern"] .floor-tab{border-radius:99px}
+[data-look="modern"] .marker{box-shadow:0 2px 8px rgba(0,0,0,.18)}
+[data-look="modern"] .note-label{border-radius:16px}
+
+/* ── RETRO ──────────────────────────────────────────────────────
+   The rack gear and CRT terminals this trade grew up on: square
+   corners, bevelled edges, engraved monospace labels, hard shadows
+   and a faint scanline in the panels. */
+[data-look="retro"]{
+  --r:0px; --r-lg:0px;
+  --font-d:'JetBrains Mono',ui-monospace,monospace;
+  --shadow:3px 3px 0 rgba(0,0,0,.30);
+}
+[data-look="retro"] .tb-btn,[data-look="retro"] .btn,[data-look="retro"] .item-row,
+[data-look="retro"] .modal,[data-look="retro"] .lib-panel,[data-look="retro"] .floor-tab,
+[data-look="retro"] .more-menu,[data-look="retro"] .display-pop,[data-look="retro"] .radio{border-radius:0}
+[data-look="retro"] .tb-btn,[data-look="retro"] .btn,[data-look="retro"] .floor-tab{
+  border:1px solid var(--line-2);
+  box-shadow:inset -1px -1px 0 rgba(0,0,0,.22), inset 1px 1px 0 rgba(255,255,255,.45);
+}
+[data-look="retro"] .tb-btn:active,[data-look="retro"] .btn:active{
+  box-shadow:inset 1px 1px 0 rgba(0,0,0,.22), inset -1px -1px 0 rgba(255,255,255,.35);
+}
+[data-look="retro"] .wordmark{font-family:var(--font-m);font-weight:700;letter-spacing:-.06em}
+[data-look="retro"] .tb-btn .lbl,[data-look="retro"] .cat-head .cat-nm,
+[data-look="retro"] .vm-label,[data-look="retro"] .sizegrp label,[data-look="retro"] .lbl{
+  font-family:var(--font-m);text-transform:uppercase;letter-spacing:.16em;font-size:10px;
+}
+[data-look="retro"] .item-row .nm,[data-look="retro"] .m-head span{font-family:var(--font-m);font-size:12px}
+[data-look="retro"] .marker{border-radius:2px}
+[data-look="retro"] .lib-panel,[data-look="retro"] .modal{
+  background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.030) 0 1px,transparent 1px 3px);
+}
+[data-look="retro"] .item-qty,[data-look="retro"] .cell .v{font-family:var(--font-m)}
+
+/* ── FUTURISTIC ─────────────────────────────────────────────────
+   Nothing's vocabulary: near-monochrome, dot-matrix labels, hairline
+   structure, transparency, and circles where other interfaces use
+   rectangles. Nearly everything is stripped away; what remains is
+   deliberate. */
+[data-look="future"]{
+  --r:3px; --r-lg:4px;
+  --font-d:'JetBrains Mono',ui-monospace,monospace;
+  --shadow:0 0 0 1px var(--line), 0 18px 50px rgba(0,0,0,.20);
+}
+[data-look="future"] .tb-btn,[data-look="future"] .btn,[data-look="future"] .item-row,
+[data-look="future"] .modal,[data-look="future"] .more-menu,[data-look="future"] .display-pop{border-radius:3px}
+[data-look="future"] .tb-btn.icon-only,[data-look="future"] .rd-b,[data-look="future"] .np-play,
+[data-look="future"] .acc,[data-look="future"] .rbk-c{border-radius:50%}
+[data-look="future"] .wordmark,[data-look="future"] .cat-head .cat-nm,[data-look="future"] .vm-label,
+[data-look="future"] .sizegrp label,[data-look="future"] .tb-btn .lbl,[data-look="future"] .tag{
+  font-family:'DotGothic16',monospace;text-transform:uppercase;letter-spacing:.22em;font-weight:400;
+}
+[data-look="future"] .cat-head .cat-nm{font-size:11px;opacity:.85}
+[data-look="future"] .tb-btn .lbl{font-size:10.5px}
+[data-look="future"] .lib-panel,[data-look="future"] .topbar,[data-look="future"] .toolbar{
+  background:color-mix(in srgb, var(--panel) 76%, transparent);
+  backdrop-filter:blur(14px);
+}
+[data-look="future"] .modal,[data-look="future"] .radio,[data-look="future"] .room-pop{
+  background:color-mix(in srgb, var(--panel) 88%, transparent);
+  backdrop-filter:blur(18px);border:1px solid var(--line-2);
+}
+[data-look="future"] .item-row{border-bottom:1px solid color-mix(in srgb,var(--line) 55%,transparent)}
+[data-look="future"] .marker{border-radius:50%;box-shadow:0 0 0 1px var(--panel),0 0 0 2px rgba(0,0,0,.18)}
+[data-look="future"] .stage,[data-look="future"] .plan-holder{
+  background-image:radial-gradient(circle at 1px 1px, var(--line-2) .9px, transparent 1px);
+  background-size:22px 22px;
+}
+[data-look="future"] .btn.pri,[data-look="future"] .tb-btn.on{letter-spacing:.14em;text-transform:uppercase;font-size:11px}
+@media (prefers-reduced-motion:no-preference){
+  [data-look="future"] .tb-btn,[data-look="future"] .item-row{transition:background .18s ease,color .18s ease}
+}

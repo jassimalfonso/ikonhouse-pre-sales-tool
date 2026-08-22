@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://www.youtube.com">
 <link rel="preconnect" href="https://s.ytimg.com">
 <link rel="dns-prefetch" href="https://googlevideo.com">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/app.css?v=1.59.3">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=DotGothic16&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/app.css?v=1.60.0">
 </head>
 <body>
 
@@ -102,7 +102,7 @@
       <button id="mCover"><svg viewBox="0 0 24 24"><rect x="4" y="2.5" width="16" height="19" rx="2"/><path d="M8 8h8M8 12h5"/></svg>Cover page…</button>
       <div class="sep"></div>
       <button id="mSave"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>Save <span class="mk">Ctrl+S</span></button>
-      <button id="mSaveAs"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/><path d="M12 13.5v4M10 15.5h4"/></svg>Save as… (.ikonplan)</button>
+      <button id="mSaveAs"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/><path d="M12 13.5v4M10 15.5h4"/></svg>Save as… (.ikon)</button>
       <button id="mOpen"><svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>Open project…</button>
     </div>
   </div>
@@ -241,7 +241,7 @@
       <p class="guide-lead">Everything responds to the same few gestures. Tap to select, double-tap to edit, hold to create.</p>
       <div class="help-cols">
         <div><h4>Making it yours</h4>
-          <p>The <b>palette</b> button in the toolbar — also on the welcome screen — opens <b>Appearance</b>, where you can pick a colour theme: Bronze, Indigo, Green, Azure, Ember, or Mono for pure black and white. Each works in day or night, is remembered for every project you open, and <b>Back to the original</b> restores Bronze in one click.</p></div>
+          <p>The <b>palette</b> button in the toolbar — also on the welcome screen — opens <b>Appearance</b>. <b>Mode</b> changes the app's whole character — Modern (soft and roomy), Retro (bevels and monospace) or Futuristic (dot-matrix and hairlines) — and <b>Colour theme</b> changes the palette: Bronze, Indigo, Green, Azure, Ember, or Mono for pure black and white. Each works in day or night, is remembered for every project you open, and <b>Back to the original</b> restores Bronze in one click.</p></div>
         <div><h4>Shortcuts</h4>
           <p><kbd>R</kbd> rooms · <kbd>K</kbd> skribble · <kbd>A</kbd> notes · <kbd>O</kbd> out of scope · <kbd>C</kbd> crop · <kbd>G</kbd> greyscale · <kbd>N</kbd> numbering · <kbd>L</kbd> library · <kbd>?</kbd> this guide · pressing the same key again, <kbd>Esc</kbd>, or the <b>Done</b> button leaves a tool</p></div>
         <div><h4>Getting around</h4>
@@ -267,7 +267,7 @@
         <div><h4>Excel</h4>
           <p>An <b>FD sheet</b> listing rooms down the side and devices across the top, in your library's order, with out-of-scope rooms shaded. Plus a priced <b>BoQ Summary</b>.</p></div>
         <div><h4>Full package</h4>
-          <p>A zip with the PDF, the Excel, the sheet images, and the editable <b>.ikonplan</b> file — with a note explaining how to reopen it. Send this and the recipient has everything.</p></div>
+          <p>A zip with the PDF, the Excel, the sheet images, and the editable <b>.ikon</b> file — with a note explaining how to reopen it. Send this and the recipient has everything.</p></div>
         <div><h4>Checking as you go</h4>
           <p>Open the <b>BoQ</b> drawer any time for live totals and a room-by-room matrix, so the numbers are never a surprise at export time.</p></div>
       </div>
@@ -309,6 +309,10 @@
 <div class="veil" id="appearVeil">
   <div class="modal appear-modal">
     <div class="m-head"><span>Appearance</span><button class="modal-x" id="appearClose">✕</button></div>
+    <div class="ap-sec">
+      <div class="vm-label">Mode</div>
+      <div class="ap-grid" id="apLooks"></div>
+    </div>
     <div class="ap-sec">
       <div class="vm-label">Colour theme</div>
       <div class="ap-grid" id="apPalettes"></div>
@@ -499,7 +503,7 @@ Use as many lines as you need."></textarea>
 <div class="ctx" id="ctx"><button id="ctxDelete" class="danger">Remove ikon</button></div>
 <div class="toast" id="toast"></div>
 <input type="file" id="filePlan" accept="image/*,.pdf">
-<input type="file" id="fileProject" accept=".ikonplan,.pinplan,.json">
+<input type="file" id="fileProject" accept=".ikon,.ikonplan,.pinplan,.json">
 <input type="file" id="fileLogo" accept="image/*">
 <input type="file" id="fileIcon" accept="image/png,image/webp,image/jpeg">
 
@@ -555,6 +559,6 @@ Use as many lines as you need."></textarea>
   </div>
 </div>
 
-<script src="assets/js/app.js?v=1.59.3"></script>
+<script src="assets/js/app.js?v=1.60.0"></script>
 </body>
 </html>

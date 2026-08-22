@@ -4,6 +4,28 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.60.0] — 2026-08-22
+
+### Added
+- **Three modes**, in Appearance → Mode, each changing shape, type, spacing
+  and depth rather than just colour:
+  - **Modern** — Apple''s softness and Google''s clarity with Japanese
+    restraint: pill geometry, generous air, light weights, quiet depth.
+  - **Retro** — the rack gear and terminals this trade grew up on: square
+    corners, bevelled edges, engraved monospace labels, hard shadows and a
+    faint scanline in the panels.
+  - **Futuristic** — Nothing''s vocabulary: dot-matrix labels, hairline
+    structure, translucency, circles where other interfaces use rectangles,
+    and a dot grid behind the plan.
+  Any mode combines with any colour theme, and **Original** restores the app
+  exactly as it ships.
+
+### Changed
+- **Projects now save as `.ikon`** — shorter, and easier to say. Existing
+  **`.ikonplan` files still open**; opening one says that saving will create
+  a `.ikon` file and leaves the original untouched, rather than writing back
+  over it.
+
 ## [1.59.3] — 2026-08-22
 
 ### Fixed
@@ -505,6 +527,28 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.60.0] — 2026-08-22
+
+### Added
+- **Three modes**, in Appearance → Mode, each changing shape, type, spacing
+  and depth rather than just colour:
+  - **Modern** — Apple''s softness and Google''s clarity with Japanese
+    restraint: pill geometry, generous air, light weights, quiet depth.
+  - **Retro** — the rack gear and terminals this trade grew up on: square
+    corners, bevelled edges, engraved monospace labels, hard shadows and a
+    faint scanline in the panels.
+  - **Futuristic** — Nothing''s vocabulary: dot-matrix labels, hairline
+    structure, translucency, circles where other interfaces use rectangles,
+    and a dot grid behind the plan.
+  Any mode combines with any colour theme, and **Original** restores the app
+  exactly as it ships.
+
+### Changed
+- **Projects now save as `.ikon`** — shorter, and easier to say. Existing
+  **`.ikonplan` files still open**; opening one says that saving will create
+  a `.ikon` file and leaves the original untouched, rather than writing back
+  over it.
 
 ## [1.59.3] — 2026-08-22
 
@@ -1447,6 +1491,28 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.60.0] — 2026-08-22
+
+### Added
+- **Three modes**, in Appearance → Mode, each changing shape, type, spacing
+  and depth rather than just colour:
+  - **Modern** — Apple''s softness and Google''s clarity with Japanese
+    restraint: pill geometry, generous air, light weights, quiet depth.
+  - **Retro** — the rack gear and terminals this trade grew up on: square
+    corners, bevelled edges, engraved monospace labels, hard shadows and a
+    faint scanline in the panels.
+  - **Futuristic** — Nothing''s vocabulary: dot-matrix labels, hairline
+    structure, translucency, circles where other interfaces use rectangles,
+    and a dot grid behind the plan.
+  Any mode combines with any colour theme, and **Original** restores the app
+  exactly as it ships.
+
+### Changed
+- **Projects now save as `.ikon`** — shorter, and easier to say. Existing
+  **`.ikonplan` files still open**; opening one says that saving will create
+  a `.ikon` file and leaves the original untouched, rather than writing back
+  over it.
+
 ## [1.59.3] — 2026-08-22
 
 ### Fixed
@@ -1948,6 +2014,28 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.60.0] — 2026-08-22
+
+### Added
+- **Three modes**, in Appearance → Mode, each changing shape, type, spacing
+  and depth rather than just colour:
+  - **Modern** — Apple''s softness and Google''s clarity with Japanese
+    restraint: pill geometry, generous air, light weights, quiet depth.
+  - **Retro** — the rack gear and terminals this trade grew up on: square
+    corners, bevelled edges, engraved monospace labels, hard shadows and a
+    faint scanline in the panels.
+  - **Futuristic** — Nothing''s vocabulary: dot-matrix labels, hairline
+    structure, translucency, circles where other interfaces use rectangles,
+    and a dot grid behind the plan.
+  Any mode combines with any colour theme, and **Original** restores the app
+  exactly as it ships.
+
+### Changed
+- **Projects now save as `.ikon`** — shorter, and easier to say. Existing
+  **`.ikonplan` files still open**; opening one says that saving will create
+  a `.ikon` file and leaves the original untouched, rather than writing back
+  over it.
 
 ## [1.59.3] — 2026-08-22
 
@@ -3325,6 +3413,28 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.60.0] — 2026-08-22
+
+### Added
+- **Three modes**, in Appearance → Mode, each changing shape, type, spacing
+  and depth rather than just colour:
+  - **Modern** — Apple''s softness and Google''s clarity with Japanese
+    restraint: pill geometry, generous air, light weights, quiet depth.
+  - **Retro** — the rack gear and terminals this trade grew up on: square
+    corners, bevelled edges, engraved monospace labels, hard shadows and a
+    faint scanline in the panels.
+  - **Futuristic** — Nothing''s vocabulary: dot-matrix labels, hairline
+    structure, translucency, circles where other interfaces use rectangles,
+    and a dot grid behind the plan.
+  Any mode combines with any colour theme, and **Original** restores the app
+  exactly as it ships.
+
+### Changed
+- **Projects now save as `.ikon`** — shorter, and easier to say. Existing
+  **`.ikonplan` files still open**; opening one says that saving will create
+  a `.ikon` file and leaves the original untouched, rather than writing back
+  over it.
+
 ## [1.59.3] — 2026-08-22
 
 ### Fixed
@@ -3826,6 +3936,28 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.60.0] — 2026-08-22
+
+### Added
+- **Three modes**, in Appearance → Mode, each changing shape, type, spacing
+  and depth rather than just colour:
+  - **Modern** — Apple''s softness and Google''s clarity with Japanese
+    restraint: pill geometry, generous air, light weights, quiet depth.
+  - **Retro** — the rack gear and terminals this trade grew up on: square
+    corners, bevelled edges, engraved monospace labels, hard shadows and a
+    faint scanline in the panels.
+  - **Futuristic** — Nothing''s vocabulary: dot-matrix labels, hairline
+    structure, translucency, circles where other interfaces use rectangles,
+    and a dot grid behind the plan.
+  Any mode combines with any colour theme, and **Original** restores the app
+  exactly as it ships.
+
+### Changed
+- **Projects now save as `.ikon`** — shorter, and easier to say. Existing
+  **`.ikonplan` files still open**; opening one says that saving will create
+  a `.ikon` file and leaves the original untouched, rather than writing back
+  over it.
 
 ## [1.59.3] — 2026-08-22
 
@@ -4768,6 +4900,28 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.60.0] — 2026-08-22
+
+### Added
+- **Three modes**, in Appearance → Mode, each changing shape, type, spacing
+  and depth rather than just colour:
+  - **Modern** — Apple''s softness and Google''s clarity with Japanese
+    restraint: pill geometry, generous air, light weights, quiet depth.
+  - **Retro** — the rack gear and terminals this trade grew up on: square
+    corners, bevelled edges, engraved monospace labels, hard shadows and a
+    faint scanline in the panels.
+  - **Futuristic** — Nothing''s vocabulary: dot-matrix labels, hairline
+    structure, translucency, circles where other interfaces use rectangles,
+    and a dot grid behind the plan.
+  Any mode combines with any colour theme, and **Original** restores the app
+  exactly as it ships.
+
+### Changed
+- **Projects now save as `.ikon`** — shorter, and easier to say. Existing
+  **`.ikonplan` files still open**; opening one says that saving will create
+  a `.ikon` file and leaves the original untouched, rather than writing back
+  over it.
+
 ## [1.59.3] — 2026-08-22
 
 ### Fixed
@@ -5269,6 +5423,28 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.60.0] — 2026-08-22
+
+### Added
+- **Three modes**, in Appearance → Mode, each changing shape, type, spacing
+  and depth rather than just colour:
+  - **Modern** — Apple''s softness and Google''s clarity with Japanese
+    restraint: pill geometry, generous air, light weights, quiet depth.
+  - **Retro** — the rack gear and terminals this trade grew up on: square
+    corners, bevelled edges, engraved monospace labels, hard shadows and a
+    faint scanline in the panels.
+  - **Futuristic** — Nothing''s vocabulary: dot-matrix labels, hairline
+    structure, translucency, circles where other interfaces use rectangles,
+    and a dot grid behind the plan.
+  Any mode combines with any colour theme, and **Original** restores the app
+  exactly as it ships.
+
+### Changed
+- **Projects now save as `.ikon`** — shorter, and easier to say. Existing
+  **`.ikonplan` files still open**; opening one says that saving will create
+  a `.ikon` file and leaves the original untouched, rather than writing back
+  over it.
 
 ## [1.59.3] — 2026-08-22
 

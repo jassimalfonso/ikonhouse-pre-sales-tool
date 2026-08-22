@@ -1,5 +1,5 @@
 # ikonhouse — AV Pre-Sales Studio
-**Version 1.59** · Developed by Jassim Alfonso with Claude · see CHANGELOG.md
+**Version 1.60** · Developed by Jassim Alfonso with Claude · see CHANGELOG.md
 
 A lightweight, browser-based pre-sales tool for AV integration projects.
 Upload or paste a floor plan, crop it to a print-ready format, place devices
@@ -34,7 +34,7 @@ project files.
 5. Click a device in the library, then click on the plan to place — keep
    clicking to keep placing. `Esc` (or the ✕ in the pill) stops.
 6. **Export** → cover page, layout sheets (A4 / A3 / A1), Excel BoQ, or save
-   the whole project as an `.ikonplan` file for the team.
+   the whole project as an `.ikon` file for the team.
 
 ## Controls
 
@@ -69,7 +69,7 @@ Sheets and the cover export as **PDF or PNG** (choose in the export dialog);
   reference format — devices as rotated column headers, one row per floor,
   blank for zero, and a bold "Total units" row of live SUM formulas — plus
   a priced **BoQ Summary** with per-floor columns, unit prices and amounts.
-- **Project file** (`.ikonplan`) — the full project including plans, ikons,
+- **Project file** (`.ikon`) — the full project including plans, ikons,
   library and details; portable between team members.
 
 ## Cropping and ikons
@@ -132,7 +132,7 @@ ikonhouse-av-planner/
 ## Sharing with the team
 
 Zip or copy the whole folder to a shared drive. Projects are portable
-`.ikonplan` files (they embed the floor-plan images), so anyone with the app
+`.ikon` files (they embed the floor-plan images), so anyone with the app
 folder can open, edit and re-export a colleague's project — on a laptop,
 tablet or phone.
 

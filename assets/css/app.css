@@ -1383,27 +1383,54 @@ body.noting .note-pin{z-index:20}
 .color-custom::-webkit-color-swatch{border:2px solid var(--panel);border-radius:50%}
 .os-custom{isolation:isolate}
 
-/* ── Notes with leader lines ── */
+/* ── Notes: text box joined to points by leader lines ── */
 .note-leaders{position:absolute;inset:0;pointer-events:none;z-index:8}
 .note-leaders svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
-.note-leaders line{stroke:var(--hl);stroke-width:1.4;stroke-dasharray:5 4;vector-effect:non-scaling-stroke;opacity:.9}
-.note-pin{position:absolute;transform:translate(-50%,-50%) scale(var(--zi,1));transform-origin:center;
-  cursor:move;z-index:9;display:block}
-.note-pin .np-dot{
-  width:15px;height:15px;border-radius:50%;display:grid;place-items:center;
-  background:var(--hl);border:2px solid var(--panel);color:#fff;
-  font-family:var(--font-m);font-size:9px;font-weight:700;
-  box-shadow:0 1px 5px rgba(0,0,0,.35);
+.note-leaders line{stroke:var(--hl);stroke-width:1.5;vector-effect:non-scaling-stroke;opacity:.95}
+.nt-dot{fill:var(--hl);stroke:var(--panel);stroke-width:1.5;vector-effect:non-scaling-stroke}
+.nt-arrow{fill:var(--hl);stroke:none}
+.nt-num circle{fill:var(--panel);stroke:var(--hl);stroke-width:2;vector-effect:non-scaling-stroke}
+.nt-num text{fill:var(--hl);font-family:var(--font-m);font-weight:700;text-anchor:middle;dominant-baseline:central}
+/* the point you can grab sits over its tip */
+.note-pin{
+  position:absolute;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:50%;
+  cursor:move;z-index:9;
 }
+.note-pin:hover{background:var(--hl-soft)}
+/* the text box: the leader meets its centre, so it stays attached */
 .note-label{
-  position:absolute;transform:translate(0,-50%) scale(var(--zi,1));transform-origin:0 center;
-  display:flex;align-items:flex-start;gap:7px;max-width:230px;cursor:move;z-index:10;
-  padding:6px 10px;border-radius:9px;
-  background:var(--panel);border:1px solid var(--line);box-shadow:0 2px 12px rgba(0,0,0,.22);
+  position:absolute;transform:translate(-50%,-50%);
+  display:flex;align-items:flex-start;gap:8px;width:max-content;max-width:230px;
+  cursor:move;z-index:10;padding:7px 11px;border-radius:var(--r-sm,8px);
+  background:var(--panel);border:1px solid var(--line-2);box-shadow:0 2px 12px rgba(0,0,0,.22);
 }
-.nl-n{font-family:var(--font-m);font-size:10px;font-weight:700;color:var(--hl);flex:none;line-height:1.5}
-.nl-t{font-size:11.5px;line-height:1.5;color:var(--txt);
-  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.nl-n{font-family:var(--font-m);font-size:10px;font-weight:700;color:var(--hl);flex:none;line-height:1.55}
+.nl-t{
+  font-size:12px;line-height:1.55;color:var(--txt);
+  white-space:pre-line;word-break:break-word;   /* every line stays readable */
+}
+body.noting .plan-click{cursor:crosshair}
+body.noting .note-pin{z-index:20}
+#btnNote.on{color:var(--hl);background:var(--hl-soft);border-color:var(--hl-line)}
+/* note editor */
+.note-area{caret-color:var(--hl)}
+.note-tools{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
+.nt-row{display:flex;align-items:center;gap:11px}
+.nt-lab{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);min-width:96px;flex:none}
+.nt-seg{display:flex;gap:4px}
+.nt-seg button{
+  width:34px;height:28px;border:1px solid var(--line-2);border-radius:var(--r-sm,7px);
+  color:var(--dim);font-size:13px;line-height:1;
+}
+.nt-seg button:hover{color:var(--hl);border-color:var(--hl-line)}
+.nt-seg button.on{color:#fff;background:var(--hl);border-color:var(--hl)}
+.nt-row input[type=range]{flex:1;min-width:0}
+.nt-count{font-size:11.5px;color:var(--txt);flex:1}
+.nt-add{
+  font-size:11.5px;color:var(--hl);border:1px dashed var(--hl-line);border-radius:var(--r-sm,7px);
+  padding:5px 10px;
+}
+.nt-add:hover{background:var(--hl-soft)}
 /* thicker walls, driven by the WALLS slider */
 .rpoly .rfill{stroke-width:calc(1.6px * var(--wall-w,1))}
 .rpoly.hl .rfill,.rpoly.sel .rfill{stroke-width:calc(2.5px * var(--wall-w,1))}

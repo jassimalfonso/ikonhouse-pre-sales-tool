@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.58.3';
+const APP_VERSION='1.59.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -713,6 +713,32 @@ document.addEventListener('click',e=>{
 });
 $('#btnSkribble').addEventListener('click',()=>setSkribbleMode(!skribbleMode));
 $('#btnNote').addEventListener('click',()=>setNoteMode(!noteMode));
+document.querySelectorAll('#noteTip button').forEach(b=>b.addEventListener('click',()=>{
+  if(!noteEditing)return;
+  noteEditing.tip=b.dataset.tip; buildNoteTools(); livePreviewNote();
+}));
+$('#noteTipSize').addEventListener('input',e=>{
+  if(!noteEditing)return;
+  noteEditing.tipSize=+e.target.value/100; livePreviewNote();
+});
+$('#noteAddLeader').addEventListener('click',()=>{
+  if(!noteEditing)return;
+  const last=noteEditing.targets[noteEditing.targets.length-1];
+  noteEditing.targets.push({x:Math.min(.97,last.x+0.05),y:Math.min(.97,last.y+0.05)});
+  buildNoteTools(); livePreviewNote();
+  toast('Leader added — drag its point to where it should aim.');
+});
+/* new notes are committed as soon as they gain a second leader or a tip
+   change, so the change can be seen on the plan straight away */
+function livePreviewNote(){
+  const f=activeFloor();if(!f||!noteEditing)return;
+  if(noteIsNew){ noteEditing.text=$('#noteText').value||'…'; commitNewNote(); }
+  else{
+    const n=(f.notes||[]).find(z=>z.id===noteEditing.id);
+    if(n)Object.assign(n,noteEditing);
+  }
+  renderNotes();
+}
 $('#noteClose').addEventListener('click',closeNoteEditor);
 $('#noteSave').addEventListener('click',saveNoteEditor);
 $('#noteDelete').addEventListener('click',deleteNoteEditor);
@@ -2096,9 +2122,18 @@ function skribbleToPolygon(bin,w,h,opts={}){
 
 
 /* ══════════════ Notes: mark up the plan ══════════════
-   A note is a small numbered pin with text, anchored to the plan in
-   fractional coordinates so it survives crop, rotate and zoom. */
-let noteMode=false;
+   A note is a text box joined by leader lines to one or more points on the
+   plan. Each leader ends in a tip of your choosing — a dot, an arrow, or a
+   number — and the line meets the text box at its centre, so it stays
+   attached wherever the box is dragged. */
+let noteMode=false, noteEditing=null, noteIsNew=false;
+const TIPS=['dot','arrow','number'];
+function migrateNote(n){
+  if(!n.targets||!n.targets.length)n.targets=[{x:n.x??0.5,y:n.y??0.5}];
+  if(n.lx===undefined){n.lx=Math.min(.95,(n.targets[0].x)+0.06);n.ly=Math.max(.05,(n.targets[0].y)-0.06);}
+  n.tip=n.tip||'dot'; n.tipSize=n.tipSize||1;
+  return n;
+}
 function setNoteMode(on){
   noteMode=on;
   document.body.classList.toggle('noting',on);
@@ -2108,15 +2143,14 @@ function setNoteMode(on){
     if(skribbleMode)setSkribbleMode(false);
     if(cropMode)cancelCrop();
     armItem(null);setSelSet([]);renderMarkers();
-    $('#hintbar').innerHTML='<b>Notes</b> — tap the plan to leave a note · tap a note to edit it <button class="hint-done">Done</button>';
+    $('#hintbar').innerHTML='<b>Notes</b> — tap the plan to leave a note · drag the box or its points to arrange <button class="hint-done">Done</button>';
     $('#hintbar').classList.add('show');
   }else $('#hintbar').classList.remove('show');
   updateToolExit();
 }
-let noteEditing=null, noteIsNew=false;
 function addNote(x,y){
   const f=activeFloor();if(!f)return;
-  noteEditing={id:uid(),x,y,text:'',lx:Math.min(0.96,x+0.06),ly:Math.max(0.03,y-0.06)};
+  noteEditing=migrateNote({id:uid(),text:'',targets:[{x,y}]});
   noteIsNew=true;
   openNoteEditor('New note');
 }
@@ -2124,21 +2158,33 @@ function openNoteEditor(title){
   $('#noteTitle').textContent=title;
   $('#noteText').value=noteEditing?noteEditing.text:'';
   $('#noteDelete').style.display=noteIsNew?'none':'';
+  buildNoteTools();
   $('#noteVeil').style.display='grid';
   setTimeout(()=>{const t=$('#noteText');t.focus();t.setSelectionRange(t.value.length,t.value.length);},40);
 }
+function buildNoteTools(){
+  const n=noteEditing; if(!n)return;
+  document.querySelectorAll('#noteTip button').forEach(b=>b.classList.toggle('on',b.dataset.tip===n.tip));
+  const sz=$('#noteTipSize'); if(sz)sz.value=Math.round((n.tipSize||1)*100);
+  const c=$('#noteLeaders'); if(c)c.textContent=`${n.targets.length} leader${n.targets.length===1?'':'s'}`;
+}
 function closeNoteEditor(){ $('#noteVeil').style.display='none'; noteEditing=null; noteIsNew=false; }
+function commitNewNote(){
+  const f=activeFloor();if(!f||!noteEditing)return null;
+  (f.notes=f.notes||[]).push(noteEditing);
+  pushUndo({type:'note-add',floorId:f.id,note:JSON.parse(JSON.stringify(noteEditing))});
+  noteIsNew=false;
+  return noteEditing;
+}
 function saveNoteEditor(){
   const f=activeFloor();if(!f||!noteEditing)return closeNoteEditor();
   const text=$('#noteText').value.replace(/\s+$/,'');
   if(!text.trim()){ deleteNoteEditor(); return; }
-  if(noteIsNew){
-    const n={...noteEditing,text};
-    (f.notes=f.notes||[]).push(n);
-    pushUndo({type:'note-add',floorId:f.id,note:JSON.parse(JSON.stringify(n))});
-  }else{
+  noteEditing.text=text;
+  if(noteIsNew)commitNewNote();
+  else{
     const n=(f.notes||[]).find(z=>z.id===noteEditing.id);
-    if(n){ pushUndo({type:'note-edit',floorId:f.id,noteId:n.id,prev:{text:n.text,x:n.x,y:n.y,lx:n.lx,ly:n.ly}}); n.text=text; }
+    if(n){ pushUndo({type:'note-edit',floorId:f.id,noteId:n.id,prev:JSON.parse(JSON.stringify(n))}); Object.assign(n,noteEditing); }
   }
   closeNoteEditor();renderNotes();
 }
@@ -2154,42 +2200,61 @@ function deleteNoteEditor(){
   }
   closeNoteEditor();renderNotes();
 }
-function editNote(n){
-  noteEditing=n; noteIsNew=false;
-  openNoteEditor('Note');
+function editNote(n){ noteEditing=migrateNote(n); noteIsNew=false; openNoteEditor('Note'); }
+
+/* geometry: where a leader should meet the text box */
+function labelCentre(n){ return {x:n.lx,y:n.ly}; }
+function leaderPath(f,n,t){
+  const c=labelCentre(n);
+  return {x1:t.x*f.w, y1:t.y*f.h, x2:c.x*f.w, y2:c.y*f.h};
+}
+function tipMarkup(f,n,t,idx){
+  const c=labelCentre(n);
+  const r=Math.max(4,7*(n.tipSize||1));
+  const x=t.x*f.w, y=t.y*f.h;
+  if(n.tip==='arrow'){
+    const a=Math.atan2(c.y*f.h-y,c.x*f.w-x);
+    const L=r*2.4, W=r*1.25;
+    const p1=`${x},${y}`;
+    const p2=`${x+Math.cos(a+2.5)*L},${y+Math.sin(a+2.5)*L}`;
+    const p3=`${x+Math.cos(a-2.5)*L},${y+Math.sin(a-2.5)*L}`;
+    return `<polygon class="nt-arrow" points="${p1} ${p2} ${p3}"/>`;
+  }
+  if(n.tip==='number'){
+    return `<g class="nt-num"><circle cx="${x}" cy="${y}" r="${r*1.5}"/>`+
+           `<text x="${x}" y="${y}" font-size="${r*1.7}">${idx}</text></g>`;
+  }
+  return `<circle class="nt-dot" cx="${x}" cy="${y}" r="${r}"/>`;
 }
 function renderNotes(){
   const holder=$('#planHolder');if(!holder)return;
-  holder.querySelectorAll('.note-pin,.note-label,.note-leaders').forEach(el2=>el2.remove());
+  holder.querySelectorAll('.note-pin,.note-label,.note-leaders').forEach(e2=>e2.remove());
   const f=activeFloor();if(!f)return;
-  const notes=f.notes||[];
+  const notes=(f.notes||[]).map(migrateNote);
   if(!notes.length)return;
-  /* leader lines, drawn beneath both ends */
   const svg=el('div','note-leaders');
   svg.innerHTML=`<svg viewBox="0 0 ${f.w} ${f.h}" preserveAspectRatio="none">`+
-    notes.map(n=>{
-      const lx=(n.lx??n.x), ly=(n.ly??n.y);
-      return `<line x1="${n.x*f.w}" y1="${n.y*f.h}" x2="${lx*f.w}" y2="${ly*f.h}"/>`;
-    }).join('')+`</svg>`;
+    notes.map((n,i)=>n.targets.map(t=>{
+      const p=leaderPath(f,n,t);
+      return `<line x1="${p.x1}" y1="${p.y1}" x2="${p.x2}" y2="${p.y2}"/>`;
+    }).join('')+n.targets.map(t=>tipMarkup(f,n,t,i+1)).join('')).join('')+`</svg>`;
   holder.appendChild(svg);
   notes.forEach((n,i)=>{
-    /* the target: a small ring on the thing being described */
-    const t=el('div','note-pin');
-    t.dataset.note=n.id;
-    t.style.cssText=`left:${n.x*100}%;top:${n.y*100}%`;
-    t.innerHTML=`<span class="np-dot">${i+1}</span>`;
-    t.title='Drag to point at something else';
-    t.addEventListener('pointerdown',ev=>{
-      if(cropMode)return;
-      ev.stopPropagation();ev.preventDefault();
-      startNoteDrag(n,t,ev,'target');
+    n.targets.forEach((t,ti)=>{
+      const g=el('div','note-pin');
+      g.style.cssText=`left:${t.x*100}%;top:${t.y*100}%`;
+      g.title='Drag to point somewhere else';
+      g.addEventListener('pointerdown',ev=>{
+        if(cropMode)return;
+        ev.stopPropagation();ev.preventDefault();
+        startNoteDrag(n,g,ev,'target',ti);
+      });
+      holder.appendChild(g);
     });
-    holder.appendChild(t);
-    /* the label: drag it clear of the drawing */
     const d=el('div','note-label');
-    d.dataset.note=n.id;
-    d.style.cssText=`left:${(n.lx??n.x)*100}%;top:${(n.ly??n.y)*100}%`;
-    d.innerHTML=`<span class="nl-n">${i+1}</span><span class="nl-t">${escapeHtml(n.text)}</span>`;
+    d.style.cssText=`left:${n.lx*100}%;top:${n.ly*100}%`;
+    d.innerHTML=`<span class="nl-n">${i+1}</span><span class="nl-t"></span>`;
+    d.querySelector('.nl-t').textContent=n.text;
     d.addEventListener('pointerdown',ev=>{
       if(cropMode)return;
       ev.stopPropagation();ev.preventDefault();
@@ -2201,25 +2266,26 @@ function renderNotes(){
 function renderNoteLeaders(){
   const f=activeFloor();const box=document.querySelector('.note-leaders svg');
   if(!f||!box)return;
-  box.innerHTML=(f.notes||[]).map(n=>{
-    const lx=(n.lx??n.x), ly=(n.ly??n.y);
-    return `<line x1="${n.x*f.w}" y1="${n.y*f.h}" x2="${lx*f.w}" y2="${ly*f.h}"/>`;
-  }).join('');
+  const notes=(f.notes||[]).map(migrateNote);
+  box.innerHTML=notes.map((n,i)=>n.targets.map(t=>{
+      const p=leaderPath(f,n,t);
+      return `<line x1="${p.x1}" y1="${p.y1}" x2="${p.x2}" y2="${p.y2}"/>`;
+    }).join('')+n.targets.map(t=>tipMarkup(f,n,t,i+1)).join('')).join('');
 }
 function escapeHtml(t){return String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function startNoteDrag(n,d,ev,which='label'){
+function startNoteDrag(n,d,ev,which='label',ti=0){
   const f=activeFloor();
   const id=ev.pointerId, sx=ev.clientX, sy=ev.clientY;
   let moved=false, pushed=false;
   const r=planRect();
-  const snap={text:n.text,x:n.x,y:n.y,lx:n.lx,ly:n.ly};
+  const snap=JSON.parse(JSON.stringify(n));
   const mv=e2=>{
     if(e2.pointerId!==id)return;
     if(!moved&&Math.hypot(e2.clientX-sx,e2.clientY-sy)<5)return;
     if(!moved){ moved=true; if(!pushed){pushed=true;pushUndo({type:'note-edit',floorId:f.id,noteId:n.id,prev:snap});} }
     const nx=Math.min(1,Math.max(0,(e2.clientX-r.left)/r.width));
     const ny=Math.min(1,Math.max(0,(e2.clientY-r.top)/r.height));
-    if(which==='target'){ n.x=nx;n.y=ny; } else { n.lx=nx;n.ly=ny; }
+    if(which==='target'){ n.targets[ti]={x:nx,y:ny}; } else { n.lx=nx;n.ly=ny; }
     d.style.left=(nx*100)+'%'; d.style.top=(ny*100)+'%';
     renderNoteLeaders();
   };
@@ -4193,32 +4259,59 @@ async function renderSheet(f,paper,idx,total){
 
   ctx.globalAlpha=1;
 
-  /* notes: leader line, target ring and label */
-  (f.notes||[]).forEach((n,i)=>{
-    const x0=dx+n.x*dw, y0=dy+n.y*dh;
-    const lx=dx+(n.lx??n.x)*dw, ly=dy+(n.ly??n.y)*dh;
-    const rr=Math.max(9,pin*0.40);
-    if(Math.hypot(lx-x0,ly-y0)>rr*1.4){
-      ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(lx,ly);
-      ctx.lineWidth=Math.max(1,rr*0.13);ctx.strokeStyle=PAPER_HL;ctx.setLineDash([rr*0.5,rr*0.4]);ctx.stroke();
-      ctx.setLineDash([]);
-    }
-    ctx.beginPath();ctx.arc(x0,y0,rr*0.42,0,Math.PI*2);ctx.fillStyle=PAPER_HL;ctx.fill();
-    ctx.font=`600 ${Math.round(rr*0.95)}px 'Inter',sans-serif`;
+  /* notes: leaders, tips and the text box */
+  (f.notes||[]).map(migrateNote).forEach((n,i)=>{
+    const lx=dx+n.lx*dw, ly=dy+n.ly*dh;
+    const rr=Math.max(9,pin*0.40)*(n.tipSize||1);
     ctx.textAlign='left';ctx.textBaseline='middle';
-    const label=`${i+1}. ${n.text}`;
-    const words=label.split(/\s+/); const lines=[]; let cur='';
-    const maxW=dw*0.26;
-    words.forEach(w=>{ const t=cur?cur+' '+w:w; if(ctx.measureText(t).width>maxW&&cur){lines.push(cur);cur=w;} else cur=t; });
-    if(cur)lines.push(cur);
-    const lh=rr*1.25, bw=Math.min(maxW,Math.max(...lines.map(l=>ctx.measureText(l).width)))+rr*0.9;
-    const bh=lines.length*lh+rr*0.6;
-    const bx=Math.min(lx+rr*0.5, dx+dw-bw-2), by=Math.max(dy+2,Math.min(ly-bh/2, dy+dh-bh-2));
-    ctx.fillStyle='rgba(255,255,255,.92)';
+    ctx.font=`600 ${Math.round(Math.max(9,pin*0.38))}px 'Inter',sans-serif`;
+    /* the box first, so leaders can be trimmed against it visually */
+    const words=String(n.text).split(/\n/).flatMap(par=>{
+      const out=[];let cur='';
+      par.split(/\s+/).forEach(w=>{ const t=cur?cur+' '+w:w;
+        if(ctx.measureText(t).width>dw*0.24&&cur){out.push(cur);cur=w;} else cur=t; });
+      out.push(cur);return out;
+    });
+    const lh=Math.max(11,pin*0.5);
+    const bw=Math.max(...words.map(l=>ctx.measureText(l).width))+rr*2.2;
+    const bh=words.length*lh+rr*1.1;
+    const bx=Math.max(dx+2,Math.min(lx-bw/2,dx+dw-bw-2));
+    const by=Math.max(dy+2,Math.min(ly-bh/2,dy+dh-bh-2));
+    const cx=bx+bw/2, cy=by+bh/2;
+    /* leaders run to the centre of the box */
+    n.targets.forEach(t=>{
+      const tx=dx+t.x*dw, ty=dy+t.y*dh;
+      ctx.beginPath();ctx.moveTo(tx,ty);ctx.lineTo(cx,cy);
+      ctx.lineWidth=Math.max(1,rr*0.13);ctx.strokeStyle=PAPER_HL;ctx.stroke();
+    });
+    n.targets.forEach(t=>{
+      const tx=dx+t.x*dw, ty=dy+t.y*dh;
+      if(n.tip==='arrow'){
+        const a=Math.atan2(cy-ty,cx-tx), L=rr*2.4;
+        ctx.beginPath();ctx.moveTo(tx,ty);
+        ctx.lineTo(tx+Math.cos(a+2.5)*L,ty+Math.sin(a+2.5)*L);
+        ctx.lineTo(tx+Math.cos(a-2.5)*L,ty+Math.sin(a-2.5)*L);
+        ctx.closePath();ctx.fillStyle=PAPER_HL;ctx.fill();
+      }else if(n.tip==='number'){
+        ctx.beginPath();ctx.arc(tx,ty,rr*1.5,0,Math.PI*2);
+        ctx.fillStyle='#FFFFFF';ctx.fill();
+        ctx.lineWidth=Math.max(1.2,rr*0.2);ctx.strokeStyle=PAPER_HL;ctx.stroke();
+        ctx.fillStyle=PAPER_HL;ctx.textAlign='center';
+        ctx.font=`700 ${Math.round(rr*1.6)}px 'JetBrains Mono',monospace`;
+        ctx.fillText(String(i+1),tx,ty+1);
+        ctx.textAlign='left';
+        ctx.font=`600 ${Math.round(Math.max(9,pin*0.38))}px 'Inter',sans-serif`;
+      }else{
+        ctx.beginPath();ctx.arc(tx,ty,rr*0.62,0,Math.PI*2);
+        ctx.fillStyle=PAPER_HL;ctx.fill();
+        ctx.lineWidth=Math.max(1,rr*0.16);ctx.strokeStyle='#FFFFFF';ctx.stroke();
+      }
+    });
+    ctx.fillStyle='rgba(255,255,255,.94)';
     roundRect(ctx,bx,by,bw,bh,rr*0.3);ctx.fill();
     ctx.strokeStyle=PAPER_LINE;ctx.lineWidth=1;ctx.stroke();
     ctx.fillStyle=PAPER_INK;
-    lines.forEach((l,k)=>ctx.fillText(l,bx+rr*0.45,by+rr*0.3+lh*(k+0.5)));
+    words.forEach((l,k)=>ctx.fillText(l,bx+rr*1.1,by+rr*0.55+lh*(k+0.5)));
   });
   ctx.textBaseline='alphabetic';ctx.textAlign='left';
 

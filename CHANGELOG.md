@@ -4,6 +4,23 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.59.0] — 2026-08-22
+
+### Fixed
+- **Leader lines now meet the text box at its centre**, so they stay properly
+  attached however the box is dragged — they used to stop at its left edge.
+- **Long notes are readable in full.** Labels were cut off after a few lines;
+  they now grow to fit, keep their line breaks, and wrap long words.
+- **The text cursor is visible** in the note editor.
+
+### Added
+- **Choose how a leader ends** — a dot, an arrow that points along the line,
+  or a numbered circle — and set its **size**.
+- **More than one leader per note.** Add as many as you need, drag each point
+  to whatever it should aim at, and the note reads once while pointing at
+  several things. Existing notes carry over untouched.
+- All of it prints on the exported sheets, tips included.
+
 ## [1.58.3] — 2026-08-22
 
 ### Changed
@@ -442,6 +459,23 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.59.0] — 2026-08-22
+
+### Fixed
+- **Leader lines now meet the text box at its centre**, so they stay properly
+  attached however the box is dragged — they used to stop at its left edge.
+- **Long notes are readable in full.** Labels were cut off after a few lines;
+  they now grow to fit, keep their line breaks, and wrap long words.
+- **The text cursor is visible** in the note editor.
+
+### Added
+- **Choose how a leader ends** — a dot, an arrow that points along the line,
+  or a numbered circle — and set its **size**.
+- **More than one leader per note.** Add as many as you need, drag each point
+  to whatever it should aim at, and the note reads once while pointing at
+  several things. Existing notes carry over untouched.
+- All of it prints on the exported sheets, tips included.
 
 ## [1.58.3] — 2026-08-22
 
@@ -1321,6 +1355,23 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.59.0] — 2026-08-22
+
+### Fixed
+- **Leader lines now meet the text box at its centre**, so they stay properly
+  attached however the box is dragged — they used to stop at its left edge.
+- **Long notes are readable in full.** Labels were cut off after a few lines;
+  they now grow to fit, keep their line breaks, and wrap long words.
+- **The text cursor is visible** in the note editor.
+
+### Added
+- **Choose how a leader ends** — a dot, an arrow that points along the line,
+  or a numbered circle — and set its **size**.
+- **More than one leader per note.** Add as many as you need, drag each point
+  to whatever it should aim at, and the note reads once while pointing at
+  several things. Existing notes carry over untouched.
+- All of it prints on the exported sheets, tips included.
+
 ## [1.58.3] — 2026-08-22
 
 ### Changed
@@ -1759,6 +1810,23 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.59.0] — 2026-08-22
+
+### Fixed
+- **Leader lines now meet the text box at its centre**, so they stay properly
+  attached however the box is dragged — they used to stop at its left edge.
+- **Long notes are readable in full.** Labels were cut off after a few lines;
+  they now grow to fit, keep their line breaks, and wrap long words.
+- **The text cursor is visible** in the note editor.
+
+### Added
+- **Choose how a leader ends** — a dot, an arrow that points along the line,
+  or a numbered circle — and set its **size**.
+- **More than one leader per note.** Add as many as you need, drag each point
+  to whatever it should aim at, and the note reads once while pointing at
+  several things. Existing notes carry over untouched.
+- All of it prints on the exported sheets, tips included.
 
 ## [1.58.3] — 2026-08-22
 
@@ -3073,6 +3141,23 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.59.0] — 2026-08-22
+
+### Fixed
+- **Leader lines now meet the text box at its centre**, so they stay properly
+  attached however the box is dragged — they used to stop at its left edge.
+- **Long notes are readable in full.** Labels were cut off after a few lines;
+  they now grow to fit, keep their line breaks, and wrap long words.
+- **The text cursor is visible** in the note editor.
+
+### Added
+- **Choose how a leader ends** — a dot, an arrow that points along the line,
+  or a numbered circle — and set its **size**.
+- **More than one leader per note.** Add as many as you need, drag each point
+  to whatever it should aim at, and the note reads once while pointing at
+  several things. Existing notes carry over untouched.
+- All of it prints on the exported sheets, tips included.
+
 ## [1.58.3] — 2026-08-22
 
 ### Changed
@@ -3511,6 +3596,23 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.59.0] — 2026-08-22
+
+### Fixed
+- **Leader lines now meet the text box at its centre**, so they stay properly
+  attached however the box is dragged — they used to stop at its left edge.
+- **Long notes are readable in full.** Labels were cut off after a few lines;
+  they now grow to fit, keep their line breaks, and wrap long words.
+- **The text cursor is visible** in the note editor.
+
+### Added
+- **Choose how a leader ends** — a dot, an arrow that points along the line,
+  or a numbered circle — and set its **size**.
+- **More than one leader per note.** Add as many as you need, drag each point
+  to whatever it should aim at, and the note reads once while pointing at
+  several things. Existing notes carry over untouched.
+- All of it prints on the exported sheets, tips included.
 
 ## [1.58.3] — 2026-08-22
 
@@ -4390,6 +4492,23 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.59.0] — 2026-08-22
+
+### Fixed
+- **Leader lines now meet the text box at its centre**, so they stay properly
+  attached however the box is dragged — they used to stop at its left edge.
+- **Long notes are readable in full.** Labels were cut off after a few lines;
+  they now grow to fit, keep their line breaks, and wrap long words.
+- **The text cursor is visible** in the note editor.
+
+### Added
+- **Choose how a leader ends** — a dot, an arrow that points along the line,
+  or a numbered circle — and set its **size**.
+- **More than one leader per note.** Add as many as you need, drag each point
+  to whatever it should aim at, and the note reads once while pointing at
+  several things. Existing notes carry over untouched.
+- All of it prints on the exported sheets, tips included.
+
 ## [1.58.3] — 2026-08-22
 
 ### Changed
@@ -4828,6 +4947,23 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.59.0] — 2026-08-22
+
+### Fixed
+- **Leader lines now meet the text box at its centre**, so they stay properly
+  attached however the box is dragged — they used to stop at its left edge.
+- **Long notes are readable in full.** Labels were cut off after a few lines;
+  they now grow to fit, keep their line breaks, and wrap long words.
+- **The text cursor is visible** in the note editor.
+
+### Added
+- **Choose how a leader ends** — a dot, an arrow that points along the line,
+  or a numbered circle — and set its **size**.
+- **More than one leader per note.** Add as many as you need, drag each point
+  to whatever it should aim at, and the note reads once while pointing at
+  several things. Existing notes carry over untouched.
+- All of it prints on the exported sheets, tips included.
 
 ## [1.58.3] — 2026-08-22
 

@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.56.2';
+const APP_VERSION='1.56.3';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -215,14 +215,13 @@ function closeAppearance(){ $('#appearVeil').style.display='none'; }
      channel — whatever that channel is streaming right now, so it never goes stale
    Names can be changed with the pencil, and your own stations are remembered. */
 const STATIONS=[
+  {id:'TwbhWiziZK8', name:'Lofi radio — focus'},
   {id:'rFZHOHl-L8A', name:'Lofi Girl — beats to relax/study to'},
   {id:'4xDzrJKXOOY', name:'Synthwave — beats to chill/game to'},
-  {id:'S_MOd40zlYU', name:'Sleep — ambient and slow'},
-  {channel:'UCkK2B6D3imy6EnpqfrYm-5A', name:'Lofi Tokyo — live now'},
-  {channel:'UCfsmpGXkHvQzOLAhCPML91Q', name:'Chill radio — live now'}
+  {id:'S_MOd40zlYU', name:'Sleep — ambient and slow'}
 ];
 const stationKey=st=>st.channel?('ch:'+st.channel):st.id;
-const DEFAULT_STATION='4xDzrJKXOOY';        /* the dark one */
+const DEFAULT_STATION='TwbhWiziZK8';
 function allStations(){ return [...STATIONS,...(radioState.mine||[])]; }
 function findStation(key){
   return allStations().find(st=>stationKey(st)===key) || {id:key,name:'Station'};
@@ -230,11 +229,18 @@ function findStation(key){
 function stationName(st){ return (radioState.names||{})[stationKey(st)] || st.name; }
 const RADIO_KEY='ikon.radio';
 let ytPlayer=null, ytReady=false, radioState={station:DEFAULT_STATION, vol:45, muted:false, mine:[], names:{}};
-function loadRadioPrefs(){ try{ Object.assign(radioState,JSON.parse(localStorage.getItem(RADIO_KEY)||'{}')); }catch(_){} }
+function loadRadioPrefs(){
+  try{ Object.assign(radioState,JSON.parse(localStorage.getItem(RADIO_KEY)||'{}')); }catch(_){}
+  /* a station that has since been removed falls back to the default */
+  if(!allStations().some(st=>stationKey(st)===radioState.station))radioState.station=DEFAULT_STATION;
+}
 function saveRadioPrefs(){ try{ localStorage.setItem(RADIO_KEY,JSON.stringify(radioState)); }catch(_){} }
 function ytIdFrom(url){
-  const m=String(url).match(/(?:v=|youtu\.be\/|live\/|embed\/)([A-Za-z0-9_-]{6,})/);
-  return m?m[1]:(/^[A-Za-z0-9_-]{6,}$/.test(url)?url:'');
+  const u=String(url).trim();
+  const ch=u.match(/channel\/(UC[A-Za-z0-9_-]{10,})/);
+  if(ch)return 'ch:'+ch[1];                       /* a channel plays whatever is live */
+  const m=u.match(/(?:v=|youtu\.be\/|live\/|embed\/)([A-Za-z0-9_-]{6,})/);
+  return m?m[1]:(/^[A-Za-z0-9_-]{6,}$/.test(u)?u:'');
 }
 function fillStations(){
   const sel=$('#rdStation'); if(!sel)return;
@@ -255,8 +261,9 @@ function buildStationList(){
       const id=url?ytIdFrom(url.trim()):'';
       if(!id){ sel.value=radioState.station; return; }
       const name=(prompt('Name this station','My station')||'My station').trim();
-      radioState.mine=(radioState.mine||[]).filter(x=>x.id!==id);
-      radioState.mine.push({id,name});
+      const st=id.startsWith('ch:')?{channel:id.slice(3),name}:{id,name};
+      radioState.mine=(radioState.mine||[]).filter(x=>stationKey(x)!==id);
+      radioState.mine.push(st);
       radioState.station=id;
       saveRadioPrefs(); fillStations();
     } else radioState.station=sel.value;

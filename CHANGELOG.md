@@ -4,6 +4,16 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.56.3] — 2026-08-22
+
+### Fixed
+- **The two channel stations would not play**, so they have been removed.
+  Four verified streams remain, with **Lofi radio — focus** added and set as
+  the default. A saved station that no longer exists now falls back to the
+  default instead of failing silently.
+- Pasting a **channel** link when adding a station still works — it plays
+  whatever that channel is streaming at the time.
+
 ## [1.56.2] — 2026-08-21
 
 ### Added
@@ -352,6 +362,16 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.56.3] — 2026-08-22
+
+### Fixed
+- **The two channel stations would not play**, so they have been removed.
+  Four verified streams remain, with **Lofi radio — focus** added and set as
+  the default. A saved station that no longer exists now falls back to the
+  default instead of failing silently.
+- Pasting a **channel** link when adding a station still works — it plays
+  whatever that channel is streaming at the time.
 
 ## [1.56.2] — 2026-08-21
 
@@ -1141,6 +1161,16 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.56.3] — 2026-08-22
+
+### Fixed
+- **The two channel stations would not play**, so they have been removed.
+  Four verified streams remain, with **Lofi radio — focus** added and set as
+  the default. A saved station that no longer exists now falls back to the
+  default instead of failing silently.
+- Pasting a **channel** link when adding a station still works — it plays
+  whatever that channel is streaming at the time.
+
 ## [1.56.2] — 2026-08-21
 
 ### Added
@@ -1489,6 +1519,16 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.56.3] — 2026-08-22
+
+### Fixed
+- **The two channel stations would not play**, so they have been removed.
+  Four verified streams remain, with **Lofi radio — focus** added and set as
+  the default. A saved station that no longer exists now falls back to the
+  default instead of failing silently.
+- Pasting a **channel** link when adding a station still works — it plays
+  whatever that channel is streaming at the time.
 
 ## [1.56.2] — 2026-08-21
 
@@ -2713,6 +2753,16 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.56.3] — 2026-08-22
+
+### Fixed
+- **The two channel stations would not play**, so they have been removed.
+  Four verified streams remain, with **Lofi radio — focus** added and set as
+  the default. A saved station that no longer exists now falls back to the
+  default instead of failing silently.
+- Pasting a **channel** link when adding a station still works — it plays
+  whatever that channel is streaming at the time.
+
 ## [1.56.2] — 2026-08-21
 
 ### Added
@@ -3061,6 +3111,16 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.56.3] — 2026-08-22
+
+### Fixed
+- **The two channel stations would not play**, so they have been removed.
+  Four verified streams remain, with **Lofi radio — focus** added and set as
+  the default. A saved station that no longer exists now falls back to the
+  default instead of failing silently.
+- Pasting a **channel** link when adding a station still works — it plays
+  whatever that channel is streaming at the time.
 
 ## [1.56.2] — 2026-08-21
 
@@ -3850,6 +3910,16 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.56.3] — 2026-08-22
+
+### Fixed
+- **The two channel stations would not play**, so they have been removed.
+  Four verified streams remain, with **Lofi radio — focus** added and set as
+  the default. A saved station that no longer exists now falls back to the
+  default instead of failing silently.
+- Pasting a **channel** link when adding a station still works — it plays
+  whatever that channel is streaming at the time.
+
 ## [1.56.2] — 2026-08-21
 
 ### Added
@@ -4198,6 +4268,16 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.56.3] — 2026-08-22
+
+### Fixed
+- **The two channel stations would not play**, so they have been removed.
+  Four verified streams remain, with **Lofi radio — focus** added and set as
+  the default. A saved station that no longer exists now falls back to the
+  default instead of failing silently.
+- Pasting a **channel** link when adding a station still works — it plays
+  whatever that channel is streaming at the time.
 
 ## [1.56.2] — 2026-08-21
 

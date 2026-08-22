@@ -4,6 +4,21 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.56.0] — 2026-08-21
+
+### Changed
+- **Dragging the plan now moves it**, as it already did on touch. Boxing a
+  selection is **Shift-drag** — previously a plain drag started a selection
+  box, which fought with simply moving around the plan.
+
+### Added
+- **Double-click the scroll wheel to fit the plan to the window.**
+- **Focus radio** — a small background-music panel (toolbar, note icon) with
+  Lofi Girl and Chillhop streams, play/pause, mute, volume, and the option to
+  paste any YouTube link. Volume and station are remembered; nothing loads
+  until the panel is opened, so it costs nothing at startup, and closing it
+  stops the music.
+
 ## [1.55.1] — 2026-08-21
 
 ### Changed
@@ -313,6 +328,21 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.56.0] — 2026-08-21
+
+### Changed
+- **Dragging the plan now moves it**, as it already did on touch. Boxing a
+  selection is **Shift-drag** — previously a plain drag started a selection
+  box, which fought with simply moving around the plan.
+
+### Added
+- **Double-click the scroll wheel to fit the plan to the window.**
+- **Focus radio** — a small background-music panel (toolbar, note icon) with
+  Lofi Girl and Chillhop streams, play/pause, mute, volume, and the option to
+  paste any YouTube link. Volume and station are remembered; nothing loads
+  until the panel is opened, so it costs nothing at startup, and closing it
+  stops the music.
 
 ## [1.55.1] — 2026-08-21
 
@@ -1063,6 +1093,21 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.56.0] — 2026-08-21
+
+### Changed
+- **Dragging the plan now moves it**, as it already did on touch. Boxing a
+  selection is **Shift-drag** — previously a plain drag started a selection
+  box, which fought with simply moving around the plan.
+
+### Added
+- **Double-click the scroll wheel to fit the plan to the window.**
+- **Focus radio** — a small background-music panel (toolbar, note icon) with
+  Lofi Girl and Chillhop streams, play/pause, mute, volume, and the option to
+  paste any YouTube link. Volume and station are remembered; nothing loads
+  until the panel is opened, so it costs nothing at startup, and closing it
+  stops the music.
+
 ## [1.55.1] — 2026-08-21
 
 ### Changed
@@ -1372,6 +1417,21 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.56.0] — 2026-08-21
+
+### Changed
+- **Dragging the plan now moves it**, as it already did on touch. Boxing a
+  selection is **Shift-drag** — previously a plain drag started a selection
+  box, which fought with simply moving around the plan.
+
+### Added
+- **Double-click the scroll wheel to fit the plan to the window.**
+- **Focus radio** — a small background-music panel (toolbar, note icon) with
+  Lofi Girl and Chillhop streams, play/pause, mute, volume, and the option to
+  paste any YouTube link. Volume and station are remembered; nothing loads
+  until the panel is opened, so it costs nothing at startup, and closing it
+  stops the music.
 
 ## [1.55.1] — 2026-08-21
 
@@ -2557,6 +2617,21 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.56.0] — 2026-08-21
+
+### Changed
+- **Dragging the plan now moves it**, as it already did on touch. Boxing a
+  selection is **Shift-drag** — previously a plain drag started a selection
+  box, which fought with simply moving around the plan.
+
+### Added
+- **Double-click the scroll wheel to fit the plan to the window.**
+- **Focus radio** — a small background-music panel (toolbar, note icon) with
+  Lofi Girl and Chillhop streams, play/pause, mute, volume, and the option to
+  paste any YouTube link. Volume and station are remembered; nothing loads
+  until the panel is opened, so it costs nothing at startup, and closing it
+  stops the music.
+
 ## [1.55.1] — 2026-08-21
 
 ### Changed
@@ -2866,6 +2941,21 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.56.0] — 2026-08-21
+
+### Changed
+- **Dragging the plan now moves it**, as it already did on touch. Boxing a
+  selection is **Shift-drag** — previously a plain drag started a selection
+  box, which fought with simply moving around the plan.
+
+### Added
+- **Double-click the scroll wheel to fit the plan to the window.**
+- **Focus radio** — a small background-music panel (toolbar, note icon) with
+  Lofi Girl and Chillhop streams, play/pause, mute, volume, and the option to
+  paste any YouTube link. Volume and station are remembered; nothing loads
+  until the panel is opened, so it costs nothing at startup, and closing it
+  stops the music.
 
 ## [1.55.1] — 2026-08-21
 
@@ -3616,6 +3706,21 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.56.0] — 2026-08-21
+
+### Changed
+- **Dragging the plan now moves it**, as it already did on touch. Boxing a
+  selection is **Shift-drag** — previously a plain drag started a selection
+  box, which fought with simply moving around the plan.
+
+### Added
+- **Double-click the scroll wheel to fit the plan to the window.**
+- **Focus radio** — a small background-music panel (toolbar, note icon) with
+  Lofi Girl and Chillhop streams, play/pause, mute, volume, and the option to
+  paste any YouTube link. Volume and station are remembered; nothing loads
+  until the panel is opened, so it costs nothing at startup, and closing it
+  stops the music.
+
 ## [1.55.1] — 2026-08-21
 
 ### Changed
@@ -3925,6 +4030,21 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.56.0] — 2026-08-21
+
+### Changed
+- **Dragging the plan now moves it**, as it already did on touch. Boxing a
+  selection is **Shift-drag** — previously a plain drag started a selection
+  box, which fought with simply moving around the plan.
+
+### Added
+- **Double-click the scroll wheel to fit the plan to the window.**
+- **Focus radio** — a small background-music panel (toolbar, note icon) with
+  Lofi Girl and Chillhop streams, play/pause, mute, volume, and the option to
+  paste any YouTube link. Volume and station are remembered; nothing loads
+  until the panel is opened, so it costs nothing at startup, and closing it
+  stops the music.
 
 ## [1.55.1] — 2026-08-21
 

@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.55.1';
+const APP_VERSION='1.56.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -205,6 +205,81 @@ function buildAppearance(){
 function openAppearance(){ buildAppearance(); applyTheme(); $('#appearVeil').style.display='grid'; }
 function closeAppearance(){ $('#appearVeil').style.display='none'; }
 
+/* ── Focus radio ───────────────────────────────────────────────
+   A small YouTube player for background music while planning. The
+   player stays visible (a hidden one would breach YouTube's terms),
+   the volume and station are remembered, and nothing loads until the
+   panel is opened — so the app costs nothing extra to start. */
+const STATIONS=[
+  {id:'jfKfPfyJRdk', name:'Lofi Girl — beats to relax/study to'},
+  {id:'4xDzrJKXOOY', name:'Lofi Girl — synthwave radio'},
+  {id:'S_MOd40zlYU', name:'Lofi Girl — sleep / ambient'},
+  {id:'Na0w3Mz46GA', name:'Chillhop — jazzy beats'}
+];
+const RADIO_KEY='ikon.radio';
+let ytPlayer=null, ytReady=false, radioState={station:STATIONS[0].id, vol:45, muted:false, custom:''};
+function loadRadioPrefs(){ try{ Object.assign(radioState,JSON.parse(localStorage.getItem(RADIO_KEY)||'{}')); }catch(_){} }
+function saveRadioPrefs(){ try{ localStorage.setItem(RADIO_KEY,JSON.stringify(radioState)); }catch(_){} }
+function ytIdFrom(url){
+  const m=String(url).match(/(?:v=|youtu\.be\/|live\/|embed\/)([A-Za-z0-9_-]{6,})/);
+  return m?m[1]:(/^[A-Za-z0-9_-]{6,}$/.test(url)?url:'');
+}
+function buildStationList(){
+  const sel=$('#rdStation'); if(!sel||sel.children.length)return;
+  STATIONS.forEach(st=>{ const o=document.createElement('option'); o.value=st.id; o.textContent=st.name; sel.appendChild(o); });
+  const o=document.createElement('option'); o.value='__custom'; o.textContent='Paste a YouTube link…'; sel.appendChild(o);
+  sel.value=radioState.station;
+  sel.addEventListener('change',()=>{
+    if(sel.value==='__custom'){
+      const url=prompt('Paste a YouTube link or video ID');
+      const id=url?ytIdFrom(url.trim()):'';
+      if(!id){ sel.value=radioState.station; return; }
+      radioState.custom=id; radioState.station=id;
+      const opt=document.createElement('option'); opt.value=id; opt.textContent='Your station'; sel.insertBefore(opt,sel.lastChild); sel.value=id;
+    } else radioState.station=sel.value;
+    saveRadioPrefs(); playStation(radioState.station);
+  });
+}
+function ensureYT(cb){
+  if(ytReady)return cb();
+  if(!window.__ytLoading){
+    window.__ytLoading=true;
+    const tag=document.createElement('script');
+    tag.src='https://www.youtube.com/iframe_api';
+    document.head.appendChild(tag);
+  }
+  window.onYouTubeIframeAPIReady=()=>{ ytReady=true; cb(); };
+  /* if the API is blocked or offline, say so rather than sit silent */
+  setTimeout(()=>{ if(!ytReady)toast('Could not reach YouTube — check the connection.'); },6000);
+}
+function playStation(id){
+  const idle=$('#rdIdle'); if(idle)idle.style.display='none';
+  ensureYT(()=>{
+    if(!ytPlayer){
+      ytPlayer=new YT.Player('rdPlayer',{
+        videoId:id, host:'https://www.youtube-nocookie.com',
+        playerVars:{autoplay:1,playsinline:1,modestbranding:1,rel:0},
+        events:{
+          onReady:()=>{
+            ytPlayer.setVolume(radioState.vol);
+            radioState.muted?ytPlayer.mute():ytPlayer.unMute();
+            ytPlayer.playVideo();
+            $('#radio').classList.add('playing');
+          },
+          onStateChange:e=>{ $('#radio').classList.toggle('playing', e.data===YT.PlayerState.PLAYING); },
+          onError:()=>toast('That station would not load — try another, or paste a different link.')
+        }
+      });
+    }else{ ytPlayer.loadVideoById(id); }
+  });
+}
+function toggleRadio(){
+  const p=$('#radio'), open=!p.classList.contains('open');
+  p.classList.toggle('open',open);
+  $('#btnRadio').classList.toggle('on',open);
+  if(open){ buildStationList(); $('#rdVol').value=radioState.vol; $('#radio').classList.toggle('muted',radioState.muted); }
+}
+
 /* ── Recent projects ──────────────────────────────────────────
    Names and details are remembered here; the files stay wherever you
    saved them, so opening one asks for the file again. Removing an
@@ -256,6 +331,32 @@ document.querySelectorAll('#themeRow [data-theme-opt]').forEach(b=>{
 });
 $('#themeToggle').addEventListener('click',()=>{
   state.theme=state.theme==='dark'?'light':'dark'; prefs.theme=state.theme; savePrefs(); applyTheme();
+});
+$('#btnRadio').addEventListener('click',toggleRadio);
+$('#rdClose').addEventListener('click',()=>{
+  $('#radio').classList.remove('open');$('#btnRadio').classList.remove('on');
+  if(ytPlayer&&ytPlayer.pauseVideo)ytPlayer.pauseVideo();
+});
+$('#rdPlay').addEventListener('click',()=>{
+  if(!ytPlayer){ playStation(radioState.station); return; }
+  const st=ytPlayer.getPlayerState&&ytPlayer.getPlayerState();
+  if(st===1){ ytPlayer.pauseVideo(); $('#radio').classList.remove('playing'); }
+  else ytPlayer.playVideo();
+});
+$('#rdMute').addEventListener('click',()=>{
+  radioState.muted=!radioState.muted; saveRadioPrefs();
+  $('#radio').classList.toggle('muted',radioState.muted);
+  if(ytPlayer&&ytPlayer.mute){ radioState.muted?ytPlayer.mute():ytPlayer.unMute(); }
+});
+$('#rdVol').addEventListener('input',e=>{
+  radioState.vol=+e.target.value;
+  if(radioState.vol>0&&radioState.muted){        /* reaching for the volume means "let me hear it" */
+    radioState.muted=false;
+    $('#radio').classList.remove('muted');
+    if(ytPlayer&&ytPlayer.unMute)ytPlayer.unMute();
+  }
+  saveRadioPrefs();
+  if(ytPlayer&&ytPlayer.setVolume)ytPlayer.setVolume(radioState.vol);
 });
 $('#btnAppear').addEventListener('click',openAppearance);
 $('#obAppear').addEventListener('click',openAppearance);
@@ -2843,6 +2944,16 @@ document.addEventListener('paste',e=>{
   items.forEach(i=>{const f=i.getAsFile();if(f)importImage(f,`Pasted plan ${++pasteCount}`);});
 });
 const stage=$('#stage');
+/* double-click the scroll wheel to fit the plan to the window */
+let midClickAt=0;
+stage.addEventListener('auxclick',e=>{
+  if(e.button!==1)return;
+  e.preventDefault();
+  const now=performance.now();
+  if(now-midClickAt<420){ midClickAt=0; if(activeFloor()&&!cropMode){ fitZoom(); toast('Fitted to the window.'); } }
+  else midClickAt=now;
+});
+stage.addEventListener('pointerdown',e=>{ if(e.button===1)e.preventDefault(); });
 ['dragenter','dragover'].forEach(ev=>stage.addEventListener(ev,e=>{e.preventDefault();stage.classList.add('dropping');}));
 ['dragleave','drop'].forEach(ev=>stage.addEventListener(ev,e=>{e.preventDefault();if(ev==='dragleave'&&e.relatedTarget&&stage.contains(e.relatedTarget))return;stage.classList.remove('dropping');}));
 stage.addEventListener('drop',e=>{[...(e.dataTransfer?.files||[])].forEach(routeFile);});
@@ -2966,9 +3077,8 @@ stage.addEventListener('pointerdown',e=>{
     const sx=e.clientX, sy=e.clientY, id=e.pointerId; let box=null;
     /* On touch a drag means pan, so selecting has to be asked for: hold still
        for a moment first, then drag to box-select. With a mouse it is immediate. */
-    if(e.pointerType==='touch')return;      /* touch: dragging is always a pan.
-                                              Multi-select there = hold an ikon,
-                                              then tap others to add or remove. */
+    if(e.pointerType==='touch')return;      /* touch: dragging is always a pan */
+    if(!e.shiftKey)return;                  /* mouse: plain drag pans, Shift-drag selects */
     let armed=true, holdT=null;
     const mv=ev=>{
       if(ev.pointerId!==id)return;
@@ -3020,6 +3130,7 @@ stage.addEventListener('pointerdown',e=>{
   const onPlan=!!e.target.closest('#planClick');
   if(skribbleMode&&!spaceHeld&&e.button!==1)return;   /* brushing owns the plan */
   if(marqueeActive)return;                           /* selecting, not panning */
+  if(e.shiftKey&&!spaceHeld&&onPlan)return;          /* Shift-drag is a selection */
   const onRoomLayer=!!(e.target.closest&&e.target.closest('#roomLayer'));
   if(!roomMode&&hlRoom&&nearRoomHandle(e))return;   /* aiming at a handle, not the plan */
   if(roomMode&&(onPlan||onRoomLayer)&&e.button!==1&&!spaceHeld)return;   /* the room layer drives its own pan/draw */
@@ -4208,7 +4319,7 @@ function loadProjectText(txt){
     updateHiddenChip();
     applyRoomLook();applyRoomLook();
     $('#obFoot').textContent=`IKONHOUSE · PRE-SALES TOOL · V${APP_VERSION}`;   /* single source of truth */
-loadPrefs();buildAppearance();applyTheme();renderRecent();renderBrand();applyDock();applyAutoNum();applyPlanGray();$('#brushSize').value=state.brushSize||46;updateBrushDot();applyRoomLook();updateHiddenChip();renderLibrary();renderFloors();showFloor();renderBoq();
+loadPrefs();loadRadioPrefs();buildAppearance();applyTheme();renderRecent();renderBrand();applyDock();applyAutoNum();applyPlanGray();$('#brushSize').value=state.brushSize||46;updateBrushDot();applyRoomLook();updateHiddenChip();renderLibrary();renderFloors();showFloor();renderBoq();
     dismissOnboard();
     toast('Project loaded.');
     return true;
@@ -4354,5 +4465,5 @@ $('#welcome').addEventListener('pointerleave',()=>{ obFx.mx=-9999; obFx.my=-9999
 
 /* ──────────── Init ──────────── */
 $('#obFoot').textContent=`IKONHOUSE · PRE-SALES TOOL · V${APP_VERSION}`;   /* single source of truth */
-loadPrefs();buildAppearance();applyTheme();renderRecent();renderBrand();applyDock();applyAutoNum();applyPlanGray();$('#brushSize').value=state.brushSize||46;updateBrushDot();applyRoomLook();updateHiddenChip();closeLib();renderLibrary();renderFloors();showFloor();obStartFx();
+loadPrefs();loadRadioPrefs();buildAppearance();applyTheme();renderRecent();renderBrand();applyDock();applyAutoNum();applyPlanGray();$('#brushSize').value=state.brushSize||46;updateBrushDot();applyRoomLook();updateHiddenChip();closeLib();renderLibrary();renderFloors();showFloor();obStartFx();
 if(!isCompact())setTimeout(()=>toast('Tip: drag the ⠿ grip on the device library to dock it left, right, top or bottom.'),1600);

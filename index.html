@@ -7,7 +7,7 @@
 <title>ikonhouse — AV Pre-Sales Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/app.css?v=1.55.1">
+<link rel="stylesheet" href="assets/css/app.css?v=1.56.0">
 </head>
 <body>
 
@@ -31,6 +31,9 @@
   <button class="tb-btn icon-only" id="themeToggle" title="Light / dark mode">
     <svg viewBox="0 0 24 24" class="ic-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
     <svg viewBox="0 0 24 24" class="ic-moon"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+  </button>
+  <button class="tb-btn icon-only" id="btnRadio" title="Focus radio — background music">
+    <svg viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg>
   </button>
   <button class="tb-btn icon-only" id="btnAppear" title="Appearance — look, colour and light">
     <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.4 0 2-1 2-1.8 0-1.6-1.8-1.6-1.8-3 0-.9.7-1.6 1.6-1.6H16a5 5 0 0 0 5-5c0-3.6-4-6.6-9-6.6z"/><circle cx="7.5" cy="11" r="1.1"/><circle cx="12" cy="7.5" r="1.1"/><circle cx="16.5" cy="10.5" r="1.1"/></svg>
@@ -223,7 +226,7 @@
         <div><h4>Shortcuts</h4>
           <p><kbd>R</kbd> rooms · <kbd>K</kbd> skribble · <kbd>A</kbd> notes · <kbd>O</kbd> out of scope · <kbd>C</kbd> crop · <kbd>G</kbd> greyscale · <kbd>N</kbd> numbering · <kbd>L</kbd> library · <kbd>?</kbd> this guide · pressing the same key again, <kbd>Esc</kbd>, or the <b>Done</b> button leaves a tool</p></div>
         <div><h4>Getting around</h4>
-          <p>Pinch or <kbd>Ctrl</kbd>+scroll to zoom · swipe, two fingers, or <kbd>Space</kbd>+drag to pan · tap outside the plan to cancel whatever you are doing</p></div>
+          <p>Drag the plan to move it · <b>Shift</b>-drag to select several ikons · double-click the scroll wheel to fit the plan to the window · pinch or <kbd>Ctrl</kbd>+scroll to zoom · swipe, two fingers, or <kbd>Space</kbd>+drag to pan · tap outside the plan to cancel whatever you are doing</p></div>
         <div><h4>Ikons</h4>
           <p>Tap a device then tap the plan to place · drag to move — they snap into rows and columns · drag a box on empty plan to select several (on touch, hold an ikon then tap others) · <kbd>Shift</kbd>-click to add one to the selection · <kbd>Ctrl</kbd>+<kbd>C</kbd> / <kbd>Ctrl</kbd>+<kbd>V</kbd> to copy a cluster · <kbd>Delete</kbd> to remove</p></div>
         <div><h4>Rooms &amp; walls</h4>
@@ -261,6 +264,26 @@
 <button class="tool-exit" id="toolExit">✕ Done</button>
 <div class="room-bulk" id="roomBulk"></div>
 <div class="hidden-chip" id="hiddenChip"></div>
+<div class="radio" id="radio">
+  <div class="rd-head">
+    <span class="rd-t">Focus radio</span>
+    <button class="rd-x" id="rdClose" title="Close">✕</button>
+  </div>
+  <div class="rd-frame"><div id="rdPlayer"></div><div class="rd-idle" id="rdIdle">Pick a station to start</div></div>
+  <select class="rd-pick" id="rdStation" aria-label="Station"></select>
+  <div class="rd-ctl">
+    <button class="rd-b" id="rdPlay" title="Play / pause">
+      <svg viewBox="0 0 24 24" class="ic-play"><path d="M7 4l13 8-13 8z"/></svg>
+      <svg viewBox="0 0 24 24" class="ic-pause"><path d="M7 4h4v16H7zM13 4h4v16h-4z"/></svg>
+    </button>
+    <button class="rd-b" id="rdMute" title="Mute">
+      <svg viewBox="0 0 24 24" class="ic-vol"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/></svg>
+      <svg viewBox="0 0 24 24" class="ic-mute"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M22 9l-5 6M17 9l5 6"/></svg>
+    </button>
+    <input type="range" id="rdVol" min="0" max="100" value="45" aria-label="Volume">
+  </div>
+  <div class="rd-note">Streams play from YouTube · not affiliated with the channels</div>
+</div>
 <div class="veil" id="appearVeil">
   <div class="modal appear-modal">
     <div class="m-head"><span>Appearance</span><button class="modal-x" id="appearClose">✕</button></div>
@@ -475,6 +498,6 @@ Use as many lines as you need."></textarea>
   </div>
 </div>
 
-<script src="assets/js/app.js?v=1.55.1"></script>
+<script src="assets/js/app.js?v=1.56.0"></script>
 </body>
 </html>

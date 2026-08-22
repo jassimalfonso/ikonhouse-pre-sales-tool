@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.58.1';
+const APP_VERSION='1.58.2';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -328,7 +328,7 @@ function radioOn(on){
   $('#npWrap').classList.toggle('on',on);
   if(!on){ $('#radio').classList.remove('open'); }
 }
-function toggleRadio(show){
+function toggleRadio(show,anchorEl){
   const p=$('#radio');
   const open=show===undefined?!p.classList.contains('open'):!!show;
   buildStationList();
@@ -338,10 +338,12 @@ function toggleRadio(show){
     $('#rdVol').value=radioState.vol;
     $('#rdAuto').checked=radioState.auto!==false;
     setMutedUi(radioState.muted);
-    /* sit the panel under the strip, kept inside the window */
-    const r=$('#npWrap').getBoundingClientRect();
-    p.style.top=(r.bottom+8)+'px';
-    p.style.left=Math.max(8,Math.min(r.left-90,window.innerWidth-278))+'px';
+    /* sit the panel under whatever opened it, kept inside the window */
+    const host=anchorEl||$('#npWrap');
+    const r=host.getBoundingClientRect();
+    const top=(r.bottom||0)+8;
+    p.style.top=Math.min(top,window.innerHeight-260)+'px';
+    p.style.left=Math.max(8,Math.min((r.left||0)-90,window.innerWidth-278))+'px';
   }
 }
 function setMutedUi(m){ $('#npWrap').classList.toggle('muted',m); $('#radio').classList.toggle('muted',m); }
@@ -418,15 +420,15 @@ $('#btnRadioShow').addEventListener('click',e=>{
   if(!ytPlayer)playStation(radioState.station); else if(ytPlayer.playVideo)ytPlayer.playVideo();
   toggleRadio(true);
 });
-$('#obRadio').addEventListener('click',()=>{
-  toggleRadio();
-  /* on the welcome screen, opening it starts the dark stream straight away —
-     browsers only allow sound after a click, which this is */
+$('#obRadio').addEventListener('click',e=>{
+  e.stopPropagation();                     /* or the outside-click handler shuts it again */
+  toggleRadio(undefined,$('#obRadio'));
+  /* browsers only allow sound after a click, and this is one */
   if($('#radio').classList.contains('open')&&!ytPlayer)playStation(radioState.station);
 });
 document.addEventListener('click',e=>{
   const p=$('#radio');
-  if(p.classList.contains('open')&&!e.target.closest('#radio,#npWrap'))p.classList.remove('open');
+  if(p.classList.contains('open')&&!e.target.closest('#radio,#npWrap,#obRadio,#btnRadioShow'))p.classList.remove('open');
 });
 $('#rdAuto').addEventListener('change',e=>{ radioState.auto=e.target.checked; saveRadioPrefs(); });
 $('#rdRename').addEventListener('click',()=>{

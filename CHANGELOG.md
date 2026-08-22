@@ -4,6 +4,15 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.58.2] — 2026-08-22
+
+### Fixed
+- **The radio panel would not open from the welcome screen.** It opened and
+  then closed itself: the same click carried on to the handler that dismisses
+  the panel when you click away, which did not recognise the welcome button.
+  Both radio buttons are now exempt, and the panel anchors beneath whichever
+  one opened it rather than to the toolbar hidden behind the welcome screen.
+
 ## [1.58.1] — 2026-08-22
 
 ### Fixed
@@ -421,6 +430,15 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.58.2] — 2026-08-22
+
+### Fixed
+- **The radio panel would not open from the welcome screen.** It opened and
+  then closed itself: the same click carried on to the handler that dismisses
+  the panel when you click away, which did not recognise the welcome button.
+  Both radio buttons are now exempt, and the panel anchors beneath whichever
+  one opened it rather than to the toolbar hidden behind the welcome screen.
 
 ## [1.58.1] — 2026-08-22
 
@@ -1279,6 +1297,15 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.58.2] — 2026-08-22
+
+### Fixed
+- **The radio panel would not open from the welcome screen.** It opened and
+  then closed itself: the same click carried on to the handler that dismisses
+  the panel when you click away, which did not recognise the welcome button.
+  Both radio buttons are now exempt, and the panel anchors beneath whichever
+  one opened it rather than to the toolbar hidden behind the welcome screen.
+
 ## [1.58.1] — 2026-08-22
 
 ### Fixed
@@ -1696,6 +1723,15 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.58.2] — 2026-08-22
+
+### Fixed
+- **The radio panel would not open from the welcome screen.** It opened and
+  then closed itself: the same click carried on to the handler that dismisses
+  the panel when you click away, which did not recognise the welcome button.
+  Both radio buttons are now exempt, and the panel anchors beneath whichever
+  one opened it rather than to the toolbar hidden behind the welcome screen.
 
 ## [1.58.1] — 2026-08-22
 
@@ -2989,6 +3025,15 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.58.2] — 2026-08-22
+
+### Fixed
+- **The radio panel would not open from the welcome screen.** It opened and
+  then closed itself: the same click carried on to the handler that dismisses
+  the panel when you click away, which did not recognise the welcome button.
+  Both radio buttons are now exempt, and the panel anchors beneath whichever
+  one opened it rather than to the toolbar hidden behind the welcome screen.
+
 ## [1.58.1] — 2026-08-22
 
 ### Fixed
@@ -3406,6 +3451,15 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.58.2] — 2026-08-22
+
+### Fixed
+- **The radio panel would not open from the welcome screen.** It opened and
+  then closed itself: the same click carried on to the handler that dismisses
+  the panel when you click away, which did not recognise the welcome button.
+  Both radio buttons are now exempt, and the panel anchors beneath whichever
+  one opened it rather than to the toolbar hidden behind the welcome screen.
 
 ## [1.58.1] — 2026-08-22
 
@@ -4264,6 +4318,15 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.58.2] — 2026-08-22
+
+### Fixed
+- **The radio panel would not open from the welcome screen.** It opened and
+  then closed itself: the same click carried on to the handler that dismisses
+  the panel when you click away, which did not recognise the welcome button.
+  Both radio buttons are now exempt, and the panel anchors beneath whichever
+  one opened it rather than to the toolbar hidden behind the welcome screen.
+
 ## [1.58.1] — 2026-08-22
 
 ### Fixed
@@ -4681,6 +4744,15 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.58.2] — 2026-08-22
+
+### Fixed
+- **The radio panel would not open from the welcome screen.** It opened and
+  then closed itself: the same click carried on to the handler that dismisses
+  the panel when you click away, which did not recognise the welcome button.
+  Both radio buttons are now exempt, and the panel anchors beneath whichever
+  one opened it rather than to the toolbar hidden behind the welcome screen.
 
 ## [1.58.1] — 2026-08-22
 

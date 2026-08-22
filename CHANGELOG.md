@@ -4,6 +4,30 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.56.2] — 2026-08-21
+
+### Added
+- **Five stations**, including the working Lofi Girl beats stream and two
+  channels — Lofi Tokyo and one other — added as **channel** stations rather
+  than fixed video IDs, so they always play whatever that channel is
+  streaming and cannot go stale when a stream restarts.
+- **Rename any station** with the pencil in the radio header; names are
+  remembered, so an unfamiliar channel can be labelled however you like.
+
+## [1.56.1] — 2026-08-21
+
+### Fixed
+- **Two radio stations would not play.** Live-stream IDs change whenever a
+  channel restarts its stream, and two of the four shipped were stale. Only
+  verified streams now ship — **Synthwave** and **Sleep** — and rather than
+  guess at others, **stations you add from a link are saved and stay in the
+  list**, with a name of your choosing.
+
+### Added
+- **The radio is on the welcome screen too**, next to the appearance button.
+  Opening it there starts the dark Synthwave stream straight away — that click
+  is what browsers require before sound is allowed.
+
 ## [1.56.0] — 2026-08-21
 
 ### Changed
@@ -328,6 +352,30 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.56.2] — 2026-08-21
+
+### Added
+- **Five stations**, including the working Lofi Girl beats stream and two
+  channels — Lofi Tokyo and one other — added as **channel** stations rather
+  than fixed video IDs, so they always play whatever that channel is
+  streaming and cannot go stale when a stream restarts.
+- **Rename any station** with the pencil in the radio header; names are
+  remembered, so an unfamiliar channel can be labelled however you like.
+
+## [1.56.1] — 2026-08-21
+
+### Fixed
+- **Two radio stations would not play.** Live-stream IDs change whenever a
+  channel restarts its stream, and two of the four shipped were stale. Only
+  verified streams now ship — **Synthwave** and **Sleep** — and rather than
+  guess at others, **stations you add from a link are saved and stay in the
+  list**, with a name of your choosing.
+
+### Added
+- **The radio is on the welcome screen too**, next to the appearance button.
+  Opening it there starts the dark Synthwave stream straight away — that click
+  is what browsers require before sound is allowed.
 
 ## [1.56.0] — 2026-08-21
 
@@ -1093,6 +1141,30 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.56.2] — 2026-08-21
+
+### Added
+- **Five stations**, including the working Lofi Girl beats stream and two
+  channels — Lofi Tokyo and one other — added as **channel** stations rather
+  than fixed video IDs, so they always play whatever that channel is
+  streaming and cannot go stale when a stream restarts.
+- **Rename any station** with the pencil in the radio header; names are
+  remembered, so an unfamiliar channel can be labelled however you like.
+
+## [1.56.1] — 2026-08-21
+
+### Fixed
+- **Two radio stations would not play.** Live-stream IDs change whenever a
+  channel restarts its stream, and two of the four shipped were stale. Only
+  verified streams now ship — **Synthwave** and **Sleep** — and rather than
+  guess at others, **stations you add from a link are saved and stay in the
+  list**, with a name of your choosing.
+
+### Added
+- **The radio is on the welcome screen too**, next to the appearance button.
+  Opening it there starts the dark Synthwave stream straight away — that click
+  is what browsers require before sound is allowed.
+
 ## [1.56.0] — 2026-08-21
 
 ### Changed
@@ -1417,6 +1489,30 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.56.2] — 2026-08-21
+
+### Added
+- **Five stations**, including the working Lofi Girl beats stream and two
+  channels — Lofi Tokyo and one other — added as **channel** stations rather
+  than fixed video IDs, so they always play whatever that channel is
+  streaming and cannot go stale when a stream restarts.
+- **Rename any station** with the pencil in the radio header; names are
+  remembered, so an unfamiliar channel can be labelled however you like.
+
+## [1.56.1] — 2026-08-21
+
+### Fixed
+- **Two radio stations would not play.** Live-stream IDs change whenever a
+  channel restarts its stream, and two of the four shipped were stale. Only
+  verified streams now ship — **Synthwave** and **Sleep** — and rather than
+  guess at others, **stations you add from a link are saved and stay in the
+  list**, with a name of your choosing.
+
+### Added
+- **The radio is on the welcome screen too**, next to the appearance button.
+  Opening it there starts the dark Synthwave stream straight away — that click
+  is what browsers require before sound is allowed.
 
 ## [1.56.0] — 2026-08-21
 
@@ -2617,6 +2713,30 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.56.2] — 2026-08-21
+
+### Added
+- **Five stations**, including the working Lofi Girl beats stream and two
+  channels — Lofi Tokyo and one other — added as **channel** stations rather
+  than fixed video IDs, so they always play whatever that channel is
+  streaming and cannot go stale when a stream restarts.
+- **Rename any station** with the pencil in the radio header; names are
+  remembered, so an unfamiliar channel can be labelled however you like.
+
+## [1.56.1] — 2026-08-21
+
+### Fixed
+- **Two radio stations would not play.** Live-stream IDs change whenever a
+  channel restarts its stream, and two of the four shipped were stale. Only
+  verified streams now ship — **Synthwave** and **Sleep** — and rather than
+  guess at others, **stations you add from a link are saved and stay in the
+  list**, with a name of your choosing.
+
+### Added
+- **The radio is on the welcome screen too**, next to the appearance button.
+  Opening it there starts the dark Synthwave stream straight away — that click
+  is what browsers require before sound is allowed.
+
 ## [1.56.0] — 2026-08-21
 
 ### Changed
@@ -2941,6 +3061,30 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.56.2] — 2026-08-21
+
+### Added
+- **Five stations**, including the working Lofi Girl beats stream and two
+  channels — Lofi Tokyo and one other — added as **channel** stations rather
+  than fixed video IDs, so they always play whatever that channel is
+  streaming and cannot go stale when a stream restarts.
+- **Rename any station** with the pencil in the radio header; names are
+  remembered, so an unfamiliar channel can be labelled however you like.
+
+## [1.56.1] — 2026-08-21
+
+### Fixed
+- **Two radio stations would not play.** Live-stream IDs change whenever a
+  channel restarts its stream, and two of the four shipped were stale. Only
+  verified streams now ship — **Synthwave** and **Sleep** — and rather than
+  guess at others, **stations you add from a link are saved and stay in the
+  list**, with a name of your choosing.
+
+### Added
+- **The radio is on the welcome screen too**, next to the appearance button.
+  Opening it there starts the dark Synthwave stream straight away — that click
+  is what browsers require before sound is allowed.
 
 ## [1.56.0] — 2026-08-21
 
@@ -3706,6 +3850,30 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.56.2] — 2026-08-21
+
+### Added
+- **Five stations**, including the working Lofi Girl beats stream and two
+  channels — Lofi Tokyo and one other — added as **channel** stations rather
+  than fixed video IDs, so they always play whatever that channel is
+  streaming and cannot go stale when a stream restarts.
+- **Rename any station** with the pencil in the radio header; names are
+  remembered, so an unfamiliar channel can be labelled however you like.
+
+## [1.56.1] — 2026-08-21
+
+### Fixed
+- **Two radio stations would not play.** Live-stream IDs change whenever a
+  channel restarts its stream, and two of the four shipped were stale. Only
+  verified streams now ship — **Synthwave** and **Sleep** — and rather than
+  guess at others, **stations you add from a link are saved and stay in the
+  list**, with a name of your choosing.
+
+### Added
+- **The radio is on the welcome screen too**, next to the appearance button.
+  Opening it there starts the dark Synthwave stream straight away — that click
+  is what browsers require before sound is allowed.
+
 ## [1.56.0] — 2026-08-21
 
 ### Changed
@@ -4030,6 +4198,30 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.56.2] — 2026-08-21
+
+### Added
+- **Five stations**, including the working Lofi Girl beats stream and two
+  channels — Lofi Tokyo and one other — added as **channel** stations rather
+  than fixed video IDs, so they always play whatever that channel is
+  streaming and cannot go stale when a stream restarts.
+- **Rename any station** with the pencil in the radio header; names are
+  remembered, so an unfamiliar channel can be labelled however you like.
+
+## [1.56.1] — 2026-08-21
+
+### Fixed
+- **Two radio stations would not play.** Live-stream IDs change whenever a
+  channel restarts its stream, and two of the four shipped were stale. Only
+  verified streams now ship — **Synthwave** and **Sleep** — and rather than
+  guess at others, **stations you add from a link are saved and stay in the
+  list**, with a name of your choosing.
+
+### Added
+- **The radio is on the welcome screen too**, next to the appearance button.
+  Opening it there starts the dark Synthwave stream straight away — that click
+  is what browsers require before sound is allowed.
 
 ## [1.56.0] — 2026-08-21
 

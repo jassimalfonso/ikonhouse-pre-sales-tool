@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.56.0';
+const APP_VERSION='1.56.2';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -210,32 +210,55 @@ function closeAppearance(){ $('#appearVeil').style.display='none'; }
    player stays visible (a hidden one would breach YouTube's terms),
    the volume and station are remembered, and nothing loads until the
    panel is opened — so the app costs nothing extra to start. */
+/* Two kinds of station:
+     id      — a specific video/stream, exact but it dies if the stream restarts
+     channel — whatever that channel is streaming right now, so it never goes stale
+   Names can be changed with the pencil, and your own stations are remembered. */
 const STATIONS=[
-  {id:'jfKfPfyJRdk', name:'Lofi Girl — beats to relax/study to'},
-  {id:'4xDzrJKXOOY', name:'Lofi Girl — synthwave radio'},
-  {id:'S_MOd40zlYU', name:'Lofi Girl — sleep / ambient'},
-  {id:'Na0w3Mz46GA', name:'Chillhop — jazzy beats'}
+  {id:'rFZHOHl-L8A', name:'Lofi Girl — beats to relax/study to'},
+  {id:'4xDzrJKXOOY', name:'Synthwave — beats to chill/game to'},
+  {id:'S_MOd40zlYU', name:'Sleep — ambient and slow'},
+  {channel:'UCkK2B6D3imy6EnpqfrYm-5A', name:'Lofi Tokyo — live now'},
+  {channel:'UCfsmpGXkHvQzOLAhCPML91Q', name:'Chill radio — live now'}
 ];
+const stationKey=st=>st.channel?('ch:'+st.channel):st.id;
+const DEFAULT_STATION='4xDzrJKXOOY';        /* the dark one */
+function allStations(){ return [...STATIONS,...(radioState.mine||[])]; }
+function findStation(key){
+  return allStations().find(st=>stationKey(st)===key) || {id:key,name:'Station'};
+}
+function stationName(st){ return (radioState.names||{})[stationKey(st)] || st.name; }
 const RADIO_KEY='ikon.radio';
-let ytPlayer=null, ytReady=false, radioState={station:STATIONS[0].id, vol:45, muted:false, custom:''};
+let ytPlayer=null, ytReady=false, radioState={station:DEFAULT_STATION, vol:45, muted:false, mine:[], names:{}};
 function loadRadioPrefs(){ try{ Object.assign(radioState,JSON.parse(localStorage.getItem(RADIO_KEY)||'{}')); }catch(_){} }
 function saveRadioPrefs(){ try{ localStorage.setItem(RADIO_KEY,JSON.stringify(radioState)); }catch(_){} }
 function ytIdFrom(url){
   const m=String(url).match(/(?:v=|youtu\.be\/|live\/|embed\/)([A-Za-z0-9_-]{6,})/);
   return m?m[1]:(/^[A-Za-z0-9_-]{6,}$/.test(url)?url:'');
 }
-function buildStationList(){
-  const sel=$('#rdStation'); if(!sel||sel.children.length)return;
-  STATIONS.forEach(st=>{ const o=document.createElement('option'); o.value=st.id; o.textContent=st.name; sel.appendChild(o); });
-  const o=document.createElement('option'); o.value='__custom'; o.textContent='Paste a YouTube link…'; sel.appendChild(o);
+function fillStations(){
+  const sel=$('#rdStation'); if(!sel)return;
+  sel.innerHTML='';
+  const add=(v,t)=>{const o=document.createElement('option');o.value=v;o.textContent=t;sel.appendChild(o);};
+  allStations().forEach(st=>add(stationKey(st),stationName(st)));
+  add('__custom','Add a station from a link…');
   sel.value=radioState.station;
+  if(sel.value!==radioState.station){ radioState.station=stationKey(STATIONS[0]); sel.value=radioState.station; }
+}
+function buildStationList(){
+  const sel=$('#rdStation'); if(!sel||sel.dataset.wired)return;
+  sel.dataset.wired='1';
+  fillStations();
   sel.addEventListener('change',()=>{
     if(sel.value==='__custom'){
       const url=prompt('Paste a YouTube link or video ID');
       const id=url?ytIdFrom(url.trim()):'';
       if(!id){ sel.value=radioState.station; return; }
-      radioState.custom=id; radioState.station=id;
-      const opt=document.createElement('option'); opt.value=id; opt.textContent='Your station'; sel.insertBefore(opt,sel.lastChild); sel.value=id;
+      const name=(prompt('Name this station','My station')||'My station').trim();
+      radioState.mine=(radioState.mine||[]).filter(x=>x.id!==id);
+      radioState.mine.push({id,name});
+      radioState.station=id;
+      saveRadioPrefs(); fillStations();
     } else radioState.station=sel.value;
     saveRadioPrefs(); playStation(radioState.station);
   });
@@ -252,25 +275,42 @@ function ensureYT(cb){
   /* if the API is blocked or offline, say so rather than sit silent */
   setTimeout(()=>{ if(!ytReady)toast('Could not reach YouTube — check the connection.'); },6000);
 }
-function playStation(id){
+function playStation(key){
+  const st=findStation(key);
   const idle=$('#rdIdle'); if(idle)idle.style.display='none';
+  const host=$('#rdPlayer'); if(!host)return;
   ensureYT(()=>{
-    if(!ytPlayer){
-      ytPlayer=new YT.Player('rdPlayer',{
-        videoId:id, host:'https://www.youtube-nocookie.com',
+    if(ytPlayer&&ytPlayer.destroy){ try{ytPlayer.destroy();}catch(_){} ytPlayer=null; }
+    host.innerHTML='';
+    const events={
+      onReady:()=>{
+        try{
+          ytPlayer.setVolume(radioState.vol);
+          radioState.muted?ytPlayer.mute():ytPlayer.unMute();
+          ytPlayer.playVideo();
+        }catch(_){}
+        $('#radio').classList.add('playing');
+      },
+      onStateChange:e=>{ $('#radio').classList.toggle('playing', e.data===1); },
+      onError:()=>toast('That station would not load — it may have ended. Try another, or add one from a link.')
+    };
+    if(st.channel){
+      /* whatever this channel is streaming right now */
+      const f=document.createElement('iframe');
+      f.id='rdFrame';
+      f.allow='autoplay; encrypted-media';
+      f.src=`https://www.youtube-nocookie.com/embed/live_stream?channel=${st.channel}`+
+            `&autoplay=1&playsinline=1&rel=0&modestbranding=1&enablejsapi=1`;
+      host.appendChild(f);
+      ytPlayer=new YT.Player('rdFrame',{events});
+    }else{
+      const d=document.createElement('div'); d.id='rdFrame'; host.appendChild(d);
+      ytPlayer=new YT.Player('rdFrame',{
+        videoId:st.id, host:'https://www.youtube-nocookie.com',
         playerVars:{autoplay:1,playsinline:1,modestbranding:1,rel:0},
-        events:{
-          onReady:()=>{
-            ytPlayer.setVolume(radioState.vol);
-            radioState.muted?ytPlayer.mute():ytPlayer.unMute();
-            ytPlayer.playVideo();
-            $('#radio').classList.add('playing');
-          },
-          onStateChange:e=>{ $('#radio').classList.toggle('playing', e.data===YT.PlayerState.PLAYING); },
-          onError:()=>toast('That station would not load — try another, or paste a different link.')
-        }
+        events
       });
-    }else{ ytPlayer.loadVideoById(id); }
+    }
   });
 }
 function toggleRadio(){
@@ -333,6 +373,21 @@ $('#themeToggle').addEventListener('click',()=>{
   state.theme=state.theme==='dark'?'light':'dark'; prefs.theme=state.theme; savePrefs(); applyTheme();
 });
 $('#btnRadio').addEventListener('click',toggleRadio);
+$('#obRadio').addEventListener('click',()=>{
+  toggleRadio();
+  /* on the welcome screen, opening it starts the dark stream straight away —
+     browsers only allow sound after a click, which this is */
+  if($('#radio').classList.contains('open')&&!ytPlayer)playStation(radioState.station);
+});
+$('#rdRename').addEventListener('click',()=>{
+  const st=findStation(radioState.station);
+  const name=prompt('Name this station',stationName(st));
+  if(name===null)return;
+  radioState.names=radioState.names||{};
+  const t=name.trim();
+  if(t)radioState.names[stationKey(st)]=t; else delete radioState.names[stationKey(st)];
+  saveRadioPrefs(); fillStations();
+});
 $('#rdClose').addEventListener('click',()=>{
   $('#radio').classList.remove('open');$('#btnRadio').classList.remove('on');
   if(ytPlayer&&ytPlayer.pauseVideo)ytPlayer.pauseVideo();

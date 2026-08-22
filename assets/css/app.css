@@ -1682,3 +1682,8 @@ body.arming .room-layer .rlabel{opacity:.45}
 .rd-note{font-size:9.5px;color:var(--dim);padding:2px 12px 11px;line-height:1.5}
 #btnRadio.on{color:var(--hl);background:var(--hl-soft);border-color:var(--hl-line)}
 @media (max-width:520px){ .radio{right:8px;left:8px;width:auto;bottom:70px} }
+/* the radio sits above the welcome screen, like the appearance panel */
+#radio{z-index:260}
+.ob-radio{right:110px}
+.rd-head{gap:4px}
+.rd-t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}

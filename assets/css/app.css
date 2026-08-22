@@ -1423,7 +1423,7 @@ body.noting .note-pin{z-index:20}
   color:var(--dim);font-size:13px;line-height:1;
 }
 .nt-seg button:hover{color:var(--hl);border-color:var(--hl-line)}
-.nt-seg button.on{color:#fff;background:var(--hl);border-color:var(--hl)}
+.nt-seg button.on{background:var(--hl);border-color:var(--hl);color:var(--bg)}
 .nt-row input[type=range]{flex:1;min-width:0}
 .nt-count{font-size:11.5px;color:var(--txt);flex:1}
 .nt-add{
@@ -1793,10 +1793,6 @@ body.arming .room-layer .rlabel{opacity:.45}
 [data-palette="mono"][data-theme="dark"] .nt-arrow{fill:#000;stroke:#fff}
 [data-palette="mono"][data-theme="dark"] .note-leaders line{stroke:#000}
 /* note text box always sits on its own solid ground */
-.note-label{background:var(--panel);border-color:var(--line-2)}
-[data-palette="mono"] .note-label{background:#fff;border-color:#000;color:#000}
-[data-palette="mono"] .nl-t{color:#000}
-[data-palette="mono"] .nl-n{color:#000}
 /* note text size follows the setting */
 .nl-t{font-size:var(--note-px,18px);line-height:1.45}
 .nl-n{font-size:calc(var(--note-px,18px) * .8)}
@@ -1806,3 +1802,19 @@ body.arming .room-layer .rlabel{opacity:.45}
   background:var(--panel-2);color:var(--txt);font-size:12px;
 }
 .nt-unit{font-size:10.5px;color:var(--dim)}
+
+/* Anything filled with the accent must take its text from the background,
+   never a hard-coded white — in Mono the accent is pure white or black. */
+.tb-btn.on,.btn.pri,.rbk-act,.tool-exit,.hint-done,.nt-seg button.on{color:var(--bg)}
+[data-palette="mono"] .btn.pri,[data-palette="mono"] .rbk-act,
+[data-palette="mono"] .tool-exit,[data-palette="mono"] .hint-done{color:var(--bg)}
+/* the brush ring keeps its own contrast whatever the theme or the drawing */
+.brush-cursor{
+  border-width:2px;
+  box-shadow:0 0 0 1.5px rgba(255,255,255,.95),
+             0 0 0 3px rgba(0,0,0,.55),
+             0 1px 6px rgba(0,0,0,.3);
+}
+/* size row: presets, slider and a number that all track each other */
+#notePresets button{width:38px;font-family:var(--font-m);font-size:11px}
+.nt-row input[type=range]{flex:1;min-width:80px}

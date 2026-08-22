@@ -4,6 +4,23 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.59.2] — 2026-08-22
+
+### Fixed
+- **Choosing a leader tip was impossible to see in Mono.** The selected
+  button drew its symbol in white on a fill that is itself white in that
+  theme. Anything filled with the accent colour now takes its symbol from the
+  background instead of a hard-coded white, so it stays legible in every
+  theme — the same trap affected several other lit controls.
+- **The brush ring is visible on any drawing**, with a dark ring inside a
+  light one rather than relying on the accent colour.
+- **Note boxes follow the theme again** — the Mono-specific overrides added
+  in 1.59.1 have been dropped.
+
+### Changed
+- **Note text size is set in real pixel values** — presets of 12, 16, 20, 26
+  and 34, plus a slider and a typed value, all kept in step with each other.
+
 ## [1.59.1] — 2026-08-22
 
 ### Fixed
@@ -479,6 +496,23 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.59.2] — 2026-08-22
+
+### Fixed
+- **Choosing a leader tip was impossible to see in Mono.** The selected
+  button drew its symbol in white on a fill that is itself white in that
+  theme. Anything filled with the accent colour now takes its symbol from the
+  background instead of a hard-coded white, so it stays legible in every
+  theme — the same trap affected several other lit controls.
+- **The brush ring is visible on any drawing**, with a dark ring inside a
+  light one rather than relying on the accent colour.
+- **Note boxes follow the theme again** — the Mono-specific overrides added
+  in 1.59.1 have been dropped.
+
+### Changed
+- **Note text size is set in real pixel values** — presets of 12, 16, 20, 26
+  and 34, plus a slider and a typed value, all kept in step with each other.
 
 ## [1.59.1] — 2026-08-22
 
@@ -1395,6 +1429,23 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.59.2] — 2026-08-22
+
+### Fixed
+- **Choosing a leader tip was impossible to see in Mono.** The selected
+  button drew its symbol in white on a fill that is itself white in that
+  theme. Anything filled with the accent colour now takes its symbol from the
+  background instead of a hard-coded white, so it stays legible in every
+  theme — the same trap affected several other lit controls.
+- **The brush ring is visible on any drawing**, with a dark ring inside a
+  light one rather than relying on the accent colour.
+- **Note boxes follow the theme again** — the Mono-specific overrides added
+  in 1.59.1 have been dropped.
+
+### Changed
+- **Note text size is set in real pixel values** — presets of 12, 16, 20, 26
+  and 34, plus a slider and a typed value, all kept in step with each other.
+
 ## [1.59.1] — 2026-08-22
 
 ### Fixed
@@ -1870,6 +1921,23 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.59.2] — 2026-08-22
+
+### Fixed
+- **Choosing a leader tip was impossible to see in Mono.** The selected
+  button drew its symbol in white on a fill that is itself white in that
+  theme. Anything filled with the accent colour now takes its symbol from the
+  background instead of a hard-coded white, so it stays legible in every
+  theme — the same trap affected several other lit controls.
+- **The brush ring is visible on any drawing**, with a dark ring inside a
+  light one rather than relying on the accent colour.
+- **Note boxes follow the theme again** — the Mono-specific overrides added
+  in 1.59.1 have been dropped.
+
+### Changed
+- **Note text size is set in real pixel values** — presets of 12, 16, 20, 26
+  and 34, plus a slider and a typed value, all kept in step with each other.
 
 ## [1.59.1] — 2026-08-22
 
@@ -3221,6 +3289,23 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.59.2] — 2026-08-22
+
+### Fixed
+- **Choosing a leader tip was impossible to see in Mono.** The selected
+  button drew its symbol in white on a fill that is itself white in that
+  theme. Anything filled with the accent colour now takes its symbol from the
+  background instead of a hard-coded white, so it stays legible in every
+  theme — the same trap affected several other lit controls.
+- **The brush ring is visible on any drawing**, with a dark ring inside a
+  light one rather than relying on the accent colour.
+- **Note boxes follow the theme again** — the Mono-specific overrides added
+  in 1.59.1 have been dropped.
+
+### Changed
+- **Note text size is set in real pixel values** — presets of 12, 16, 20, 26
+  and 34, plus a slider and a typed value, all kept in step with each other.
+
 ## [1.59.1] — 2026-08-22
 
 ### Fixed
@@ -3696,6 +3781,23 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.59.2] — 2026-08-22
+
+### Fixed
+- **Choosing a leader tip was impossible to see in Mono.** The selected
+  button drew its symbol in white on a fill that is itself white in that
+  theme. Anything filled with the accent colour now takes its symbol from the
+  background instead of a hard-coded white, so it stays legible in every
+  theme — the same trap affected several other lit controls.
+- **The brush ring is visible on any drawing**, with a dark ring inside a
+  light one rather than relying on the accent colour.
+- **Note boxes follow the theme again** — the Mono-specific overrides added
+  in 1.59.1 have been dropped.
+
+### Changed
+- **Note text size is set in real pixel values** — presets of 12, 16, 20, 26
+  and 34, plus a slider and a typed value, all kept in step with each other.
 
 ## [1.59.1] — 2026-08-22
 
@@ -4612,6 +4714,23 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.59.2] — 2026-08-22
+
+### Fixed
+- **Choosing a leader tip was impossible to see in Mono.** The selected
+  button drew its symbol in white on a fill that is itself white in that
+  theme. Anything filled with the accent colour now takes its symbol from the
+  background instead of a hard-coded white, so it stays legible in every
+  theme — the same trap affected several other lit controls.
+- **The brush ring is visible on any drawing**, with a dark ring inside a
+  light one rather than relying on the accent colour.
+- **Note boxes follow the theme again** — the Mono-specific overrides added
+  in 1.59.1 have been dropped.
+
+### Changed
+- **Note text size is set in real pixel values** — presets of 12, 16, 20, 26
+  and 34, plus a slider and a typed value, all kept in step with each other.
+
 ## [1.59.1] — 2026-08-22
 
 ### Fixed
@@ -5087,6 +5206,23 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.59.2] — 2026-08-22
+
+### Fixed
+- **Choosing a leader tip was impossible to see in Mono.** The selected
+  button drew its symbol in white on a fill that is itself white in that
+  theme. Anything filled with the accent colour now takes its symbol from the
+  background instead of a hard-coded white, so it stays legible in every
+  theme — the same trap affected several other lit controls.
+- **The brush ring is visible on any drawing**, with a dark ring inside a
+  light one rather than relying on the accent colour.
+- **Note boxes follow the theme again** — the Mono-specific overrides added
+  in 1.59.1 have been dropped.
+
+### Changed
+- **Note text size is set in real pixel values** — presets of 12, 16, 20, 26
+  and 34, plus a slider and a typed value, all kept in step with each other.
 
 ## [1.59.1] — 2026-08-22
 

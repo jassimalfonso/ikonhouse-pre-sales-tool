@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.59.1';
+const APP_VERSION='1.59.2';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -721,13 +721,13 @@ $('#noteTipSize').addEventListener('input',e=>{
   if(!noteEditing)return;
   noteEditing.tipSize=+e.target.value/100; livePreviewNote();
 });
-document.querySelectorAll('#notePresets button').forEach(b=>b.addEventListener('click',()=>{
-  state.noteSize=+b.dataset.px; applyRoomLook(); renderNotes();
-}));
-$('#noteSizePx').addEventListener('input',e=>{
-  const v=Math.max(8,Math.min(72,+e.target.value||18));
-  state.noteSize=v; applyRoomLook(); renderNotes();
-});
+document.querySelectorAll('#notePresets button').forEach(b=>b.addEventListener('click',()=>setNoteSize(+b.dataset.px)));
+function setNoteSize(v){
+  state.noteSize=Math.max(8,Math.min(72,Math.round(v)||18));
+  applyRoomLook(); renderNotes();
+}
+$('#noteSizePx').addEventListener('input',e=>setNoteSize(+e.target.value));
+$('#noteSizeRange').addEventListener('input',e=>setNoteSize(+e.target.value));
 $('#noteAddLeader').addEventListener('click',()=>{
   if(!noteEditing)return;
   const last=noteEditing.targets[noteEditing.targets.length-1];
@@ -3209,8 +3209,10 @@ function applyRoomLook(){
   const q=$('#seqSize');     if(q)q.value=Math.round((state.seqScale??1)*100);
   const lk=$('#linkNodesOpt'); if(lk)lk.checked=state.linkNodes!==false;
   const ww=$('#wallWeight'); if(ww)ww.value=Math.round((state.wallWeight??1)*100);
-  const np=$('#noteSizePx'); if(np)np.value=state.noteSize??18;
-  document.querySelectorAll('#notePresets button').forEach(b=>b.classList.toggle('on',+b.dataset.px===(state.noteSize??18)));
+  const sz=state.noteSize??18;
+  const np=$('#noteSizePx'); if(np)np.value=sz;
+  const nr=$('#noteSizeRange'); if(nr)nr.value=sz;
+  document.querySelectorAll('#notePresets button').forEach(b=>b.classList.toggle('on',+b.dataset.px===sz));
 }
 function applyPlanGray(){
   const img=$('#planImg');

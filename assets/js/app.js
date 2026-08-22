@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.61.0';
+const APP_VERSION='1.62.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -189,6 +189,7 @@ function applyTheme(){
   document.querySelectorAll('#themeRow [data-theme-opt]').forEach(b=>b.classList.toggle('on',b.dataset.themeOpt===state.theme));
   document.querySelectorAll('#apLooks .ap-opt').forEach(b=>b.classList.toggle('on',(b.dataset.look||'')===prefs.look));
   document.querySelectorAll('#obModes .ob-mode').forEach(b=>b.classList.toggle('on',(b.dataset.look||'')===prefs.look));
+  buildModeMenu();
   document.querySelectorAll('#apPalettes button').forEach(b=>b.classList.toggle('on',(b.dataset.pal||'')===prefs.palette));
   document.querySelectorAll('#apTheme button').forEach(b=>b.classList.toggle('on',b.dataset.t===(prefs.theme||'auto')));
 }
@@ -220,20 +221,35 @@ function buildAppearance(){
   }
 }
 /* the same choice, offered right on the welcome screen */
+function setLook(id){
+  prefs.look=id; savePrefs(); applyTheme();
+}
 function buildWelcomeModes(){
   const row=$('#obModes'); if(!row)return;
-  if(!row.children.length)LOOKS.forEach(L=>{
+  if(!row.children.length)LOOKS.forEach((L,i)=>{
+    if(i)row.appendChild(el('span','ob-sep'));
     const b=el('button','ob-mode');
     b.dataset.look=L.id;
-    b.innerHTML=`<span class="pv"><i style="background:${L.pv[0]}"></i><i style="background:${L.pv[1]}"></i></span><span>${L.name}</span>`;
-    b.addEventListener('click',e=>{
-      e.stopPropagation();
-      prefs.look=L.id; savePrefs(); applyTheme();
-      toast(L.id?`${L.name} mode.`:'Back to the original look.');
-    });
+    b.textContent=L.name;
+    b.addEventListener('click',e=>{ e.stopPropagation(); setLook(L.id); });
     row.appendChild(b);
   });
   row.querySelectorAll('.ob-mode').forEach(b=>b.classList.toggle('on',(b.dataset.look||'')===prefs.look));
+}
+function buildModeMenu(){
+  const pop=$('#modePop'); if(!pop)return;
+  if(!pop.children.length)LOOKS.forEach(L=>{
+    const b=el('button','mode-opt');
+    b.dataset.look=L.id;
+    b.innerHTML=`<span class="mode-sw"><i style="background:${L.pv[0]}"></i><i style="background:${L.pv[1]}"></i></span>
+                 <span><b>${L.name}</b><span>${L.note}</span></span>`;
+    b.addEventListener('click',e=>{ e.stopPropagation(); setLook(L.id); pop.classList.remove('open'); });
+    pop.appendChild(b);
+  });
+  pop.querySelectorAll('.mode-opt').forEach(b=>b.classList.toggle('on',(b.dataset.look||'')===prefs.look));
+  const cur=LOOKS.find(L=>L.id===prefs.look)||LOOKS[0];
+  const nm=$('#modeName'); if(nm)nm.textContent=cur.name;
+  const sw=$('#modeSw'); if(sw)sw.innerHTML=`<i style="background:${cur.pv[0]}"></i><i style="background:${cur.pv[1]}"></i>`;
 }
 function openAppearance(){ buildAppearance(); applyTheme(); $('#appearVeil').style.display='grid'; }
 function closeAppearance(){ $('#appearVeil').style.display='none'; }
@@ -520,6 +536,13 @@ $('#rdVol').addEventListener('input',e=>{
   }
   saveRadioPrefs();
   if(ytPlayer&&ytPlayer.setVolume)ytPlayer.setVolume(radioState.vol);
+});
+$('#btnMode').addEventListener('click',e=>{
+  e.stopPropagation(); buildModeMenu(); $('#modePop').classList.toggle('open');
+});
+document.addEventListener('click',e=>{
+  const p=$('#modePop');
+  if(p&&p.classList.contains('open')&&!e.target.closest('#modePop,#btnMode'))p.classList.remove('open');
 });
 $('#btnAppear').addEventListener('click',openAppearance);
 $('#obAppear').addEventListener('click',openAppearance);
@@ -4607,7 +4630,7 @@ function loadProjectText(txt){
     updateHiddenChip();
     applyRoomLook();applyRoomLook();
     $('#obFoot').textContent=`IKONHOUSE · PRE-SALES TOOL · V${APP_VERSION}`;   /* single source of truth */
-loadPrefs();loadRadioPrefs();buildAppearance();buildWelcomeModes();applyTheme();renderRecent();renderBrand();applyDock();applyAutoNum();applyPlanGray();$('#brushSize').value=state.brushSize||46;updateBrushDot();applyRoomLook();updateHiddenChip();renderLibrary();renderFloors();showFloor();renderBoq();
+loadPrefs();loadRadioPrefs();buildAppearance();buildWelcomeModes();buildModeMenu();applyTheme();renderRecent();renderBrand();applyDock();applyAutoNum();applyPlanGray();$('#brushSize').value=state.brushSize||46;updateBrushDot();applyRoomLook();updateHiddenChip();renderLibrary();renderFloors();showFloor();renderBoq();
     dismissOnboard();
     toast('Project loaded.');
     return true;
@@ -4760,5 +4783,5 @@ $('#welcome').addEventListener('pointerleave',()=>{ obFx.mx=-9999; obFx.my=-9999
 
 /* ──────────── Init ──────────── */
 $('#obFoot').textContent=`IKONHOUSE · PRE-SALES TOOL · V${APP_VERSION}`;   /* single source of truth */
-loadPrefs();loadRadioPrefs();buildAppearance();buildWelcomeModes();applyTheme();renderRecent();renderBrand();applyDock();applyAutoNum();applyPlanGray();$('#brushSize').value=state.brushSize||46;updateBrushDot();applyRoomLook();updateHiddenChip();closeLib();renderLibrary();renderFloors();showFloor();obStartFx();
+loadPrefs();loadRadioPrefs();buildAppearance();buildWelcomeModes();buildModeMenu();applyTheme();renderRecent();renderBrand();applyDock();applyAutoNum();applyPlanGray();$('#brushSize').value=state.brushSize||46;updateBrushDot();applyRoomLook();updateHiddenChip();closeLib();renderLibrary();renderFloors();showFloor();obStartFx();
 if(!isCompact())setTimeout(()=>toast('Tip: drag the ⠿ grip on the device library to dock it left, right, top or bottom.'),1600);

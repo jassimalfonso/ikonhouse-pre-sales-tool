@@ -2016,6 +2016,118 @@ body.skribbling .plan-click{cursor:none}
   .modal,.display-pop,.more-menu,.radio,.room-pop,.toast{animation:none!important}
   [data-look="retro"] .wordmark::after{animation:none}
 }
+/* welcome: a quiet line of words, aligned with everything else */
+.ob-modes{
+  margin-top:24px;display:flex;align-items:center;gap:9px;flex-wrap:wrap;
+  font-size:11.5px;color:var(--dim);
+}
+.ob-sep{width:3px;height:3px;border-radius:50%;background:var(--line-2);flex:none}
+.ob-mode{
+  font-size:11.5px;color:var(--dim);padding:2px 0;
+  border-bottom:1px solid transparent;
+}
+.ob-mode:hover{color:var(--txt)}
+.ob-mode.on{color:var(--hl);border-bottom-color:var(--hl)}
+
+/* dashboard: a plainly labelled control that says which mode you are in */
+.mode-wrap{position:relative;display:inline-flex}
+.mode-btn{display:inline-flex;align-items:center;gap:8px;padding:7px 10px}
+.mode-sw{width:18px;height:18px;border-radius:5px;overflow:hidden;position:relative;flex:none;border:1px solid var(--line-2)}
+.mode-sw i{position:absolute;inset:0}
+.mode-sw i+i{left:56%}
+.mode-caret{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;opacity:.5}
+.mode-pop{
+  display:none;position:absolute;right:0;top:calc(100% + 8px);z-index:170;
+  flex-direction:column;gap:2px;min-width:232px;padding:6px;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);
+}
+.mode-pop.open{display:flex}
+.mode-opt{
+  display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--r-sm,8px);
+  text-align:left;width:100%;color:var(--txt);
+}
+.mode-opt:hover{background:var(--hl-soft)}
+.mode-opt.on{background:var(--hl-soft);box-shadow:inset 0 0 0 1px var(--hl-line)}
+.mode-opt b{display:block;font-size:12.5px;font-weight:600;line-height:1.3}
+.mode-opt span span{font-size:10.5px;color:var(--dim)}
+@media (max-width:1080px){ .mode-btn .lbl{display:none} .mode-caret{display:none} }
+
+/* ══════════════════════════════════════════════════════════════
+   MODE DYNAMICS
+
+   Shape alone is not enough — how a thing moves is most of how it
+   feels. Each mode sets its own timing, easing and press behaviour,
+   and the whole interface inherits them.
+   ══════════════════════════════════════════════════════════════ */
+:root{ --dur:.16s; --ease:ease; --pop:.24s; }
+
+/* things that should answer to the mode's timing */
+.tb-btn,.btn,.item-row,.cat-head,.floor-tab,.marker,.rd-b,.np-play,
+.ap-opt,.tsw,.acc,.sw,.ct-btn,.item-mv,.nt-seg button,.tool{
+  transition:transform var(--dur) var(--ease),
+             background var(--dur) var(--ease),
+             color var(--dur) var(--ease),
+             box-shadow var(--dur) var(--ease),
+             border-color var(--dur) var(--ease);
+}
+
+/* ── MODERN: everything settles, nothing snaps ── */
+[data-look="modern"]{ --dur:.28s; --ease:cubic-bezier(.32,.72,0,1); --pop:.42s; }
+[data-look="modern"] .tb-btn:active,[data-look="modern"] .btn:active,
+[data-look="modern"] .floor-tab:active{transform:scale(.96)}
+[data-look="modern"] .item-row:active{transform:scale(.985)}
+[data-look="modern"] .modal,[data-look="modern"] .display-pop,[data-look="modern"] .more-menu,
+[data-look="modern"] .radio,[data-look="modern"] .room-pop{
+  animation:mdIn var(--pop) cubic-bezier(.32,.72,0,1);
+}
+@keyframes mdIn{from{opacity:0;transform:scale(.955) translateY(8px)}to{opacity:1;transform:none}}
+[data-look="modern"] .toast{animation:mdIn var(--pop) cubic-bezier(.32,.72,0,1)}
+[data-look="modern"] .marker:hover{transform:translate(-50%,-50%) scale(1.14)}
+
+/* ── RETRO: instant, mechanical, no easing anywhere ── */
+[data-look="retro"]{ --dur:0s; --ease:steps(1,end); --pop:0s; }
+[data-look="retro"] .tb-btn:active,[data-look="retro"] .btn:active,
+[data-look="retro"] .floor-tab:active{transform:translate(1px,1px)}
+[data-look="retro"] .modal,[data-look="retro"] .display-pop,[data-look="retro"] .more-menu,
+[data-look="retro"] .radio,[data-look="retro"] .room-pop{animation:none}
+[data-look="retro"] .toast{animation:rtBlink .28s steps(2,end) 1}
+@keyframes rtBlink{0%,49%{opacity:0}50%,100%{opacity:1}}
+[data-look="retro"] .marker:hover{transform:translate(-50%,-50%) scale(1.06)}
+[data-look="retro"] .item-row:hover{outline:1px dashed var(--line-2);outline-offset:-2px}
+/* a terminal caret after the project name */
+[data-look="retro"] .wordmark::after{
+  content:'_';margin-left:2px;animation:rtCaret 1.05s steps(2,end) infinite;color:var(--hl);
+}
+@keyframes rtCaret{0%,49%{opacity:1}50%,100%{opacity:0}}
+
+/* ── FUTURISTIC: fast, precise, faintly electric ── */
+[data-look="future"]{ --dur:.12s; --ease:cubic-bezier(.2,0,0,1); --pop:.2s; }
+[data-look="future"] .tb-btn:active,[data-look="future"] .btn:active{transform:scale(.97)}
+[data-look="future"] .modal,[data-look="future"] .display-pop,[data-look="future"] .more-menu,
+[data-look="future"] .radio,[data-look="future"] .room-pop{animation:ftIn var(--pop) cubic-bezier(.2,0,0,1)}
+@keyframes ftIn{from{opacity:0;transform:translateY(-6px);filter:blur(3px)}to{opacity:1;transform:none;filter:none}}
+[data-look="future"] .tb-btn.on,[data-look="future"] .btn.pri{box-shadow:0 0 0 1px var(--hl-line),0 0 16px -4px var(--hl)}
+[data-look="future"] .marker{transition:box-shadow .12s linear,transform .12s linear}
+[data-look="future"] .marker.sel{box-shadow:0 0 0 2px var(--panel),0 0 0 3px var(--hl),0 0 18px -2px var(--hl)}
+[data-look="future"] .toast{animation:ftIn var(--pop) cubic-bezier(.2,0,0,1);letter-spacing:.08em}
+[data-look="future"] .item-row:hover{box-shadow:inset 2px 0 0 var(--hl)}
+/* the hairline under the active tool sweeps in */
+[data-look="future"] .floor-tab.on::after{animation:ftSweep .22s cubic-bezier(.2,0,0,1)}
+@keyframes ftSweep{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+/* the welcome screen wears the mode too — first impressions count */
+[data-look="modern"] .ob-title{font-weight:600;letter-spacing:-.03em}
+[data-look="retro"] .ob-title{font-family:var(--font-m);letter-spacing:-.04em;text-transform:uppercase;font-size:clamp(24px,4vw,40px)}
+[data-look="future"] .ob-title{font-family:'DotGothic16',monospace;letter-spacing:.06em;font-weight:400}
+[data-look="future"] .onboard{background:var(--bg)}
+[data-look="retro"] .onboard{background:
+  repeating-linear-gradient(0deg,rgba(0,0,0,.035) 0 1px,transparent 1px 3px), var(--bg)}
+
+@media (prefers-reduced-motion:reduce){
+  :root,[data-look]{--dur:0s;--pop:0s}
+  .modal,.display-pop,.more-menu,.radio,.room-pop,.toast{animation:none!important}
+  [data-look="retro"] .wordmark::after{animation:none}
+}
 /* mode picker on the welcome screen */
 .ob-modes{margin-top:26px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .ob-modes-lab{
@@ -2033,3 +2145,94 @@ body.skribbling .plan-click{cursor:none}
 .ob-mode .pv i{position:absolute;inset:0}
 .ob-mode .pv i+i{left:56%}
 @media (max-width:620px){ .ob-modes{gap:8px} .ob-mode{padding:6px 10px 6px 7px;font-size:11.5px} }
+
+/* ══════════════════════════════════════════════════════════════
+   MODES, IN EARNEST
+
+   Beyond colour and corners: density, type scale, icon weight, the
+   shape of a device pin, how a room outline is drawn, how panels
+   are built. Each mode should feel like different software that
+   happens to do the same job.
+   ══════════════════════════════════════════════════════════════ */
+
+/* ─────────────── MODERN ─────────────── */
+[data-look="modern"]{ --pad:1.35; }
+[data-look="modern"] .topbar{height:60px;padding:0 20px}
+[data-look="modern"] .toolbar{padding:9px 18px;gap:10px;background:transparent;border-bottom-color:transparent}
+[data-look="modern"] .toolbar .tb-btn{background:var(--panel);border:1px solid transparent;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+[data-look="modern"] .toolbar .tb-btn:hover{box-shadow:0 2px 10px rgba(0,0,0,.09)}
+[data-look="modern"] .toolbar .tb-btn.on{box-shadow:0 2px 12px -2px var(--hl)}
+[data-look="modern"] .lib-panel{border:none;box-shadow:1px 0 0 var(--line)}
+[data-look="modern"] .lib-head{padding:20px 20px 14px}
+[data-look="modern"] .item-row{padding:11px 16px;margin:0 8px;gap:13px}
+[data-look="modern"] .item-chip{border-radius:11px;width:32px;height:32px}
+[data-look="modern"] .item-row .nm{font-size:13.5px;letter-spacing:-.01em}
+[data-look="modern"] .marker{border-radius:50%;box-shadow:0 3px 10px rgba(0,0,0,.20),0 0 0 2px var(--panel)}
+[data-look="modern"] .rpoly .rfill{stroke-dasharray:none;stroke-linejoin:round;stroke-width:2}
+[data-look="modern"] .rlabel{border-radius:99px;padding:3px 11px}
+[data-look="modern"] .toast{border-radius:99px;padding:11px 20px}
+[data-look="modern"] svg{stroke-linecap:round;stroke-linejoin:round}
+[data-look="modern"] .stage{background:var(--bg)}
+
+/* ─────────────── RETRO ─────────────── */
+[data-look="retro"]{ --pad:.85; }
+[data-look="retro"] .topbar{
+  height:42px;border-bottom:2px solid var(--line-2);
+  box-shadow:inset 0 -1px 0 rgba(255,255,255,.35);
+}
+[data-look="retro"] .toolbar{padding:4px 8px;gap:4px;border-bottom:2px solid var(--line-2)}
+[data-look="retro"] .lib-panel{border-right:2px solid var(--line-2)}
+/* every panel gets a title strip, like a window manager from 1990 */
+[data-look="retro"] .lib-head,[data-look="retro"] .m-head{
+  border-bottom:2px solid var(--line-2);
+  background:linear-gradient(var(--panel-2),var(--panel));
+  position:relative;
+}
+[data-look="retro"] .lib-head::after,[data-look="retro"] .m-head::after{
+  content:'▪ ▪ ▪';position:absolute;right:10px;top:50%;transform:translateY(-50%);
+  font-size:8px;letter-spacing:2px;color:var(--dim);
+}
+[data-look="retro"] .item-row{padding:6px 10px;gap:8px;border-bottom:1px dotted var(--line)}
+[data-look="retro"] .item-chip{border-radius:0;width:24px;height:24px;box-shadow:1px 1px 0 rgba(0,0,0,.3)}
+[data-look="retro"] .item-row .nm{font-family:var(--font-m);font-size:11.5px}
+[data-look="retro"] .marker{border-radius:0;box-shadow:2px 2px 0 rgba(0,0,0,.35)}
+[data-look="retro"] .rpoly .rfill{stroke-dasharray:6 3;stroke-width:2.4;stroke-linejoin:miter}
+[data-look="retro"] .rlabel{border-radius:0;border:1px solid var(--line-2);font-family:var(--font-m);font-size:10px;text-transform:uppercase}
+[data-look="retro"] .toast{border-radius:0;border:2px solid var(--line-2);font-family:var(--font-m);text-transform:uppercase;letter-spacing:.1em;font-size:11px}
+[data-look="retro"] svg{stroke-linecap:square;stroke-linejoin:miter;stroke-width:2.2}
+[data-look="retro"] .stage{
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.028) 0 1px,transparent 1px 3px), var(--bg);
+}
+[data-look="retro"] .floors{border-top:2px solid var(--line-2)}
+[data-look="retro"] .cell .v,[data-look="retro"] .item-qty{font-family:var(--font-m)}
+
+/* ─────────────── FUTURISTIC ─────────────── */
+[data-look="future"]{ --pad:1.5; }
+[data-look="future"] .topbar{height:58px;border-bottom:1px solid var(--line)}
+[data-look="future"] .toolbar{padding:10px 18px;gap:12px;border-bottom:1px solid var(--line)}
+[data-look="future"] .tb-btn{border:1px solid transparent}
+[data-look="future"] .tb-btn:hover{border-color:var(--line-2)}
+[data-look="future"] .lib-panel{border-right:1px solid var(--line)}
+[data-look="future"] .lib-head{padding:22px 20px 16px}
+[data-look="future"] .item-row{padding:12px 18px;gap:14px}
+[data-look="future"] .item-chip{border-radius:50%;width:26px;height:26px}
+[data-look="future"] .item-row .nm{letter-spacing:.04em;font-size:12px}
+[data-look="future"] .item-qty{font-family:'DotGothic16',monospace;font-size:13px}
+[data-look="future"] .marker{border-radius:50%;background:transparent!important;
+  box-shadow:inset 0 0 0 2px currentColor,0 0 0 1px var(--panel)}
+[data-look="future"] .rpoly .rfill{stroke-dasharray:1 5;stroke-linecap:round;stroke-width:2;fill-opacity:.045}
+[data-look="future"] .rlabel{
+  border-radius:2px;font-family:'DotGothic16',monospace;text-transform:uppercase;
+  letter-spacing:.16em;font-size:9.5px;
+}
+[data-look="future"] .toast{
+  border-radius:2px;font-family:'DotGothic16',monospace;text-transform:uppercase;letter-spacing:.16em;font-size:10.5px;
+}
+[data-look="future"] svg{stroke-width:1.3;stroke-linecap:round}
+[data-look="future"] .cell .v,[data-look="future"] .np-title{font-family:'DotGothic16',monospace}
+[data-look="future"] .sep,[data-look="future"] .divider{background:none;border-left:1px dotted var(--line-2)}
+
+/* density follows the mode, everywhere it is worth following */
+[data-look] .cat-head{padding-top:calc(16px * var(--pad,1));padding-bottom:calc(6px * var(--pad,1))}
+[data-look] .m-actions{margin-top:calc(16px * var(--pad,1))}
+[data-look] .ap-sec{padding-bottom:calc(16px * var(--pad,1))}

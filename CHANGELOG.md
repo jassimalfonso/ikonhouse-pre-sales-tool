@@ -4,6 +4,26 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.62.0] — 2026-08-22
+
+### Changed
+- **The welcome screen''s mode picker is now a quiet line of words**, aligned
+  with everything else on the page, rather than a row of chips.
+- **A plainly labelled Mode control sits in the toolbar**, showing which mode
+  you are in and opening a menu to change it — no longer buried in Appearance.
+- **The modes are far further apart.** Each now sets its own density, type
+  scale, icon weight, pin shape, room-outline style and panel construction:
+  - **Modern** — roomier throughout, a transparent toolbar of floating
+    buttons, round pins with soft shadows, smooth room outlines, pill labels
+    and toasts, rounded icon strokes.
+  - **Retro** — compact and dense, two-pixel borders, panels topped by a
+    title strip with ▪ ▪ ▪ in the corner, square pins with hard shadows,
+    dashed room outlines, dotted row separators, square icon caps, and a
+    scanline over the whole plan.
+  - **Futuristic** — airy and stripped back, dot-matrix labels and figures,
+    hollow ring pins, room outlines drawn as fine dots, hairline dotted
+    separators, thin icon strokes, and a dot grid behind the plan.
+
 ## [1.61.0] — 2026-08-22
 
 ### Added
@@ -543,6 +563,26 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.62.0] — 2026-08-22
+
+### Changed
+- **The welcome screen''s mode picker is now a quiet line of words**, aligned
+  with everything else on the page, rather than a row of chips.
+- **A plainly labelled Mode control sits in the toolbar**, showing which mode
+  you are in and opening a menu to change it — no longer buried in Appearance.
+- **The modes are far further apart.** Each now sets its own density, type
+  scale, icon weight, pin shape, room-outline style and panel construction:
+  - **Modern** — roomier throughout, a transparent toolbar of floating
+    buttons, round pins with soft shadows, smooth room outlines, pill labels
+    and toasts, rounded icon strokes.
+  - **Retro** — compact and dense, two-pixel borders, panels topped by a
+    title strip with ▪ ▪ ▪ in the corner, square pins with hard shadows,
+    dashed room outlines, dotted row separators, square icon caps, and a
+    scanline over the whole plan.
+  - **Futuristic** — airy and stripped back, dot-matrix labels and figures,
+    hollow ring pins, room outlines drawn as fine dots, hairline dotted
+    separators, thin icon strokes, and a dot grid behind the plan.
 
 ## [1.61.0] — 2026-08-22
 
@@ -1523,6 +1563,26 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.62.0] — 2026-08-22
+
+### Changed
+- **The welcome screen''s mode picker is now a quiet line of words**, aligned
+  with everything else on the page, rather than a row of chips.
+- **A plainly labelled Mode control sits in the toolbar**, showing which mode
+  you are in and opening a menu to change it — no longer buried in Appearance.
+- **The modes are far further apart.** Each now sets its own density, type
+  scale, icon weight, pin shape, room-outline style and panel construction:
+  - **Modern** — roomier throughout, a transparent toolbar of floating
+    buttons, round pins with soft shadows, smooth room outlines, pill labels
+    and toasts, rounded icon strokes.
+  - **Retro** — compact and dense, two-pixel borders, panels topped by a
+    title strip with ▪ ▪ ▪ in the corner, square pins with hard shadows,
+    dashed room outlines, dotted row separators, square icon caps, and a
+    scanline over the whole plan.
+  - **Futuristic** — airy and stripped back, dot-matrix labels and figures,
+    hollow ring pins, room outlines drawn as fine dots, hairline dotted
+    separators, thin icon strokes, and a dot grid behind the plan.
+
 ## [1.61.0] — 2026-08-22
 
 ### Added
@@ -2062,6 +2122,26 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.62.0] — 2026-08-22
+
+### Changed
+- **The welcome screen''s mode picker is now a quiet line of words**, aligned
+  with everything else on the page, rather than a row of chips.
+- **A plainly labelled Mode control sits in the toolbar**, showing which mode
+  you are in and opening a menu to change it — no longer buried in Appearance.
+- **The modes are far further apart.** Each now sets its own density, type
+  scale, icon weight, pin shape, room-outline style and panel construction:
+  - **Modern** — roomier throughout, a transparent toolbar of floating
+    buttons, round pins with soft shadows, smooth room outlines, pill labels
+    and toasts, rounded icon strokes.
+  - **Retro** — compact and dense, two-pixel borders, panels topped by a
+    title strip with ▪ ▪ ▪ in the corner, square pins with hard shadows,
+    dashed room outlines, dotted row separators, square icon caps, and a
+    scanline over the whole plan.
+  - **Futuristic** — airy and stripped back, dot-matrix labels and figures,
+    hollow ring pins, room outlines drawn as fine dots, hairline dotted
+    separators, thin icon strokes, and a dot grid behind the plan.
 
 ## [1.61.0] — 2026-08-22
 
@@ -3477,6 +3557,26 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.62.0] — 2026-08-22
+
+### Changed
+- **The welcome screen''s mode picker is now a quiet line of words**, aligned
+  with everything else on the page, rather than a row of chips.
+- **A plainly labelled Mode control sits in the toolbar**, showing which mode
+  you are in and opening a menu to change it — no longer buried in Appearance.
+- **The modes are far further apart.** Each now sets its own density, type
+  scale, icon weight, pin shape, room-outline style and panel construction:
+  - **Modern** — roomier throughout, a transparent toolbar of floating
+    buttons, round pins with soft shadows, smooth room outlines, pill labels
+    and toasts, rounded icon strokes.
+  - **Retro** — compact and dense, two-pixel borders, panels topped by a
+    title strip with ▪ ▪ ▪ in the corner, square pins with hard shadows,
+    dashed room outlines, dotted row separators, square icon caps, and a
+    scanline over the whole plan.
+  - **Futuristic** — airy and stripped back, dot-matrix labels and figures,
+    hollow ring pins, room outlines drawn as fine dots, hairline dotted
+    separators, thin icon strokes, and a dot grid behind the plan.
+
 ## [1.61.0] — 2026-08-22
 
 ### Added
@@ -4016,6 +4116,26 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.62.0] — 2026-08-22
+
+### Changed
+- **The welcome screen''s mode picker is now a quiet line of words**, aligned
+  with everything else on the page, rather than a row of chips.
+- **A plainly labelled Mode control sits in the toolbar**, showing which mode
+  you are in and opening a menu to change it — no longer buried in Appearance.
+- **The modes are far further apart.** Each now sets its own density, type
+  scale, icon weight, pin shape, room-outline style and panel construction:
+  - **Modern** — roomier throughout, a transparent toolbar of floating
+    buttons, round pins with soft shadows, smooth room outlines, pill labels
+    and toasts, rounded icon strokes.
+  - **Retro** — compact and dense, two-pixel borders, panels topped by a
+    title strip with ▪ ▪ ▪ in the corner, square pins with hard shadows,
+    dashed room outlines, dotted row separators, square icon caps, and a
+    scanline over the whole plan.
+  - **Futuristic** — airy and stripped back, dot-matrix labels and figures,
+    hollow ring pins, room outlines drawn as fine dots, hairline dotted
+    separators, thin icon strokes, and a dot grid behind the plan.
 
 ## [1.61.0] — 2026-08-22
 
@@ -4996,6 +5116,26 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.62.0] — 2026-08-22
+
+### Changed
+- **The welcome screen''s mode picker is now a quiet line of words**, aligned
+  with everything else on the page, rather than a row of chips.
+- **A plainly labelled Mode control sits in the toolbar**, showing which mode
+  you are in and opening a menu to change it — no longer buried in Appearance.
+- **The modes are far further apart.** Each now sets its own density, type
+  scale, icon weight, pin shape, room-outline style and panel construction:
+  - **Modern** — roomier throughout, a transparent toolbar of floating
+    buttons, round pins with soft shadows, smooth room outlines, pill labels
+    and toasts, rounded icon strokes.
+  - **Retro** — compact and dense, two-pixel borders, panels topped by a
+    title strip with ▪ ▪ ▪ in the corner, square pins with hard shadows,
+    dashed room outlines, dotted row separators, square icon caps, and a
+    scanline over the whole plan.
+  - **Futuristic** — airy and stripped back, dot-matrix labels and figures,
+    hollow ring pins, room outlines drawn as fine dots, hairline dotted
+    separators, thin icon strokes, and a dot grid behind the plan.
+
 ## [1.61.0] — 2026-08-22
 
 ### Added
@@ -5535,6 +5675,26 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.62.0] — 2026-08-22
+
+### Changed
+- **The welcome screen''s mode picker is now a quiet line of words**, aligned
+  with everything else on the page, rather than a row of chips.
+- **A plainly labelled Mode control sits in the toolbar**, showing which mode
+  you are in and opening a menu to change it — no longer buried in Appearance.
+- **The modes are far further apart.** Each now sets its own density, type
+  scale, icon weight, pin shape, room-outline style and panel construction:
+  - **Modern** — roomier throughout, a transparent toolbar of floating
+    buttons, round pins with soft shadows, smooth room outlines, pill labels
+    and toasts, rounded icon strokes.
+  - **Retro** — compact and dense, two-pixel borders, panels topped by a
+    title strip with ▪ ▪ ▪ in the corner, square pins with hard shadows,
+    dashed room outlines, dotted row separators, square icon caps, and a
+    scanline over the whole plan.
+  - **Futuristic** — airy and stripped back, dot-matrix labels and figures,
+    hollow ring pins, room outlines drawn as fine dots, hairline dotted
+    separators, thin icon strokes, and a dot grid behind the plan.
 
 ## [1.61.0] — 2026-08-22
 

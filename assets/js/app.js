@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.58.0';
+const APP_VERSION='1.58.1';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -411,7 +411,13 @@ document.querySelectorAll('#themeRow [data-theme-opt]').forEach(b=>{
 $('#themeToggle').addEventListener('click',()=>{
   state.theme=state.theme==='dark'?'light':'dark'; prefs.theme=state.theme; savePrefs(); applyTheme();
 });
-$('#btnRadio').addEventListener('click',toggleRadio);
+$('#btnRadio').addEventListener('click',e=>{ e.stopPropagation(); toggleRadio(); });
+$('#btnRadioShow').addEventListener('click',e=>{
+  e.stopPropagation();
+  radioOn(true);
+  if(!ytPlayer)playStation(radioState.station); else if(ytPlayer.playVideo)ytPlayer.playVideo();
+  toggleRadio(true);
+});
 $('#obRadio').addEventListener('click',()=>{
   toggleRadio();
   /* on the welcome screen, opening it starts the dark stream straight away —
@@ -432,25 +438,32 @@ $('#rdRename').addEventListener('click',()=>{
   if(t)radioState.names[stationKey(st)]=t; else delete radioState.names[stationKey(st)];
   saveRadioPrefs(); fillStations();
 });
-$('#rdClose').addEventListener('click',()=>{
+$('#rdClose').addEventListener('click',e=>{
+  e.stopPropagation();
+  $('#radio').classList.remove('open');   /* the panel only — the music plays on */
+});
+$('#rdOff').addEventListener('click',()=>{
   if(ytPlayer&&ytPlayer.pauseVideo)ytPlayer.pauseVideo();
   setPlayingUi(false); radioOn(false);
+  toast('Radio off — the note button in the toolbar brings it back.');
 });
-$('#rdNext').addEventListener('click',()=>{
+function hopStation(dir){
   const list=allStations();
   const i=list.findIndex(st=>stationKey(st)===radioState.station);
-  const nxt=list[(i+1)%list.length];
+  const nxt=list[(i+dir+list.length)%list.length];
   radioState.station=stationKey(nxt); saveRadioPrefs();
   fillStations(); playStation(radioState.station);
   toast(`Now playing: ${stationName(nxt)}`);
-});
-$('#rdPlay').addEventListener('click',()=>{
+}
+$('#rdPrev').addEventListener('click',e=>{ e.stopPropagation(); hopStation(-1); });
+$('#rdNext').addEventListener('click',e=>{ e.stopPropagation(); hopStation(1); });
+$('#rdPlay').addEventListener('click',e=>{ e.stopPropagation();
   if(!ytPlayer){ playStation(radioState.station); return; }
   const st=ytPlayer.getPlayerState&&ytPlayer.getPlayerState();
   if(st===1){ ytPlayer.pauseVideo(); setPlayingUi(false); }
   else ytPlayer.playVideo();
 });
-$('#rdMute').addEventListener('click',()=>{
+$('#rdMute').addEventListener('click',e=>{ e.stopPropagation();
   radioState.muted=!radioState.muted; saveRadioPrefs();
   setMutedUi(radioState.muted);
   if(ytPlayer&&ytPlayer.mute){ radioState.muted?ytPlayer.mute():ytPlayer.unMute(); }

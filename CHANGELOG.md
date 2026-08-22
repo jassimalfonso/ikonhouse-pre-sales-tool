@@ -4,6 +4,19 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.58.1] — 2026-08-22
+
+### Fixed
+- **The ✕ on the radio panel was switching the whole radio off.** It now
+  closes the panel only and the music keeps playing. Turning the radio off is
+  its own action — **Turn the radio off** at the foot of the panel — and the
+  note button returns to the toolbar so it can be brought back.
+- **Clicking the pill reliably closes its panel again**; the controls on the
+  pill no longer bubble up and reopen it.
+
+### Added
+- **Previous button** on the pill, alongside skip — both wrap around the list.
+
 ## [1.58.0] — 2026-08-22
 
 ### Added
@@ -408,6 +421,19 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.58.1] — 2026-08-22
+
+### Fixed
+- **The ✕ on the radio panel was switching the whole radio off.** It now
+  closes the panel only and the music keeps playing. Turning the radio off is
+  its own action — **Turn the radio off** at the foot of the panel — and the
+  note button returns to the toolbar so it can be brought back.
+- **Clicking the pill reliably closes its panel again**; the controls on the
+  pill no longer bubble up and reopen it.
+
+### Added
+- **Previous button** on the pill, alongside skip — both wrap around the list.
 
 ## [1.58.0] — 2026-08-22
 
@@ -1253,6 +1279,19 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.58.1] — 2026-08-22
+
+### Fixed
+- **The ✕ on the radio panel was switching the whole radio off.** It now
+  closes the panel only and the music keeps playing. Turning the radio off is
+  its own action — **Turn the radio off** at the foot of the panel — and the
+  note button returns to the toolbar so it can be brought back.
+- **Clicking the pill reliably closes its panel again**; the controls on the
+  pill no longer bubble up and reopen it.
+
+### Added
+- **Previous button** on the pill, alongside skip — both wrap around the list.
+
 ## [1.58.0] — 2026-08-22
 
 ### Added
@@ -1657,6 +1696,19 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.58.1] — 2026-08-22
+
+### Fixed
+- **The ✕ on the radio panel was switching the whole radio off.** It now
+  closes the panel only and the music keeps playing. Turning the radio off is
+  its own action — **Turn the radio off** at the foot of the panel — and the
+  note button returns to the toolbar so it can be brought back.
+- **Clicking the pill reliably closes its panel again**; the controls on the
+  pill no longer bubble up and reopen it.
+
+### Added
+- **Previous button** on the pill, alongside skip — both wrap around the list.
 
 ## [1.58.0] — 2026-08-22
 
@@ -2937,6 +2989,19 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.58.1] — 2026-08-22
+
+### Fixed
+- **The ✕ on the radio panel was switching the whole radio off.** It now
+  closes the panel only and the music keeps playing. Turning the radio off is
+  its own action — **Turn the radio off** at the foot of the panel — and the
+  note button returns to the toolbar so it can be brought back.
+- **Clicking the pill reliably closes its panel again**; the controls on the
+  pill no longer bubble up and reopen it.
+
+### Added
+- **Previous button** on the pill, alongside skip — both wrap around the list.
+
 ## [1.58.0] — 2026-08-22
 
 ### Added
@@ -3341,6 +3406,19 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.58.1] — 2026-08-22
+
+### Fixed
+- **The ✕ on the radio panel was switching the whole radio off.** It now
+  closes the panel only and the music keeps playing. Turning the radio off is
+  its own action — **Turn the radio off** at the foot of the panel — and the
+  note button returns to the toolbar so it can be brought back.
+- **Clicking the pill reliably closes its panel again**; the controls on the
+  pill no longer bubble up and reopen it.
+
+### Added
+- **Previous button** on the pill, alongside skip — both wrap around the list.
 
 ## [1.58.0] — 2026-08-22
 
@@ -4186,6 +4264,19 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.58.1] — 2026-08-22
+
+### Fixed
+- **The ✕ on the radio panel was switching the whole radio off.** It now
+  closes the panel only and the music keeps playing. Turning the radio off is
+  its own action — **Turn the radio off** at the foot of the panel — and the
+  note button returns to the toolbar so it can be brought back.
+- **Clicking the pill reliably closes its panel again**; the controls on the
+  pill no longer bubble up and reopen it.
+
+### Added
+- **Previous button** on the pill, alongside skip — both wrap around the list.
+
 ## [1.58.0] — 2026-08-22
 
 ### Added
@@ -4590,6 +4681,19 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.58.1] — 2026-08-22
+
+### Fixed
+- **The ✕ on the radio panel was switching the whole radio off.** It now
+  closes the panel only and the music keeps playing. Turning the radio off is
+  its own action — **Turn the radio off** at the foot of the panel — and the
+  note button returns to the toolbar so it can be brought back.
+- **Clicking the pill reliably closes its panel again**; the controls on the
+  pill no longer bubble up and reopen it.
+
+### Added
+- **Previous button** on the pill, alongside skip — both wrap around the list.
 
 ## [1.58.0] — 2026-08-22
 

@@ -1729,3 +1729,8 @@ body.arming .room-layer .rlabel{opacity:.45}
 .ob-radio{right:110px}
 .rd-head{gap:4px}
 .rd-t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* the note button appears only while the radio is off */
+.np.on + #btnRadioShow{display:none}
+.rd-links{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.rd-off{color:var(--dim)}
+.rd-off:hover{color:var(--hl)}

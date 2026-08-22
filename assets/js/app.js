@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.59.0';
+const APP_VERSION='1.59.1';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -86,7 +86,7 @@ let state = {
   project:'Untitled Project', client:'', location:'', reference:'', preparedBy:'',
   theme:SYS_THEME(), look:'', accent:'', brandLogo:null, libDock:'left', lastDock:'left', libHidden:false, libFloat:null,
   libSize:{w:324,h:60,fw:288,fh:520}, catOrder:['Control','Climate','Lighting','Shading','Audio','Network','Security','Video'],
-  items:[], floors:[], activeFloor:null, pinScale:1, pinOpacity:1, planGray:false, brushSize:46, roomOpacity:1, seqScale:1, wallWeight:1, skribbleColor:null, outScopeColor:'#E5484D', linkNodes:true
+  items:[], floors:[], activeFloor:null, pinScale:1, pinOpacity:1, planGray:false, brushSize:46, roomOpacity:1, seqScale:1, wallWeight:1, noteSize:18, skribbleColor:null, outScopeColor:'#E5484D', linkNodes:true
 };
 let armedItem=null, selMarker=null, selSet=new Set(), multiSelect=false, zoom=1, undoStack=[], redoStack=[], ctxTarget=null, draggingCat=null;
 
@@ -720,6 +720,13 @@ document.querySelectorAll('#noteTip button').forEach(b=>b.addEventListener('clic
 $('#noteTipSize').addEventListener('input',e=>{
   if(!noteEditing)return;
   noteEditing.tipSize=+e.target.value/100; livePreviewNote();
+});
+document.querySelectorAll('#notePresets button').forEach(b=>b.addEventListener('click',()=>{
+  state.noteSize=+b.dataset.px; applyRoomLook(); renderNotes();
+}));
+$('#noteSizePx').addEventListener('input',e=>{
+  const v=Math.max(8,Math.min(72,+e.target.value||18));
+  state.noteSize=v; applyRoomLook(); renderNotes();
 });
 $('#noteAddLeader').addEventListener('click',()=>{
   if(!noteEditing)return;
@@ -2213,11 +2220,11 @@ function tipMarkup(f,n,t,idx){
   const r=Math.max(4,7*(n.tipSize||1));
   const x=t.x*f.w, y=t.y*f.h;
   if(n.tip==='arrow'){
-    const a=Math.atan2(c.y*f.h-y,c.x*f.w-x);
-    const L=r*2.4, W=r*1.25;
-    const p1=`${x},${y}`;
-    const p2=`${x+Math.cos(a+2.5)*L},${y+Math.sin(a+2.5)*L}`;
-    const p3=`${x+Math.cos(a-2.5)*L},${y+Math.sin(a-2.5)*L}`;
+    const a=Math.atan2(c.y*f.h-y,c.x*f.w-x);   /* target → box */
+    const L=r*2.6, spread=0.42;
+    const p1=`${x},${y}`;                      /* the point, at the target */
+    const p2=`${x+Math.cos(a+spread)*L},${y+Math.sin(a+spread)*L}`;
+    const p3=`${x+Math.cos(a-spread)*L},${y+Math.sin(a-spread)*L}`;
     return `<polygon class="nt-arrow" points="${p1} ${p2} ${p3}"/>`;
   }
   if(n.tip==='number'){
@@ -3195,12 +3202,15 @@ function applyRoomLook(){
     h.style.setProperty('--room-a',state.roomOpacity??1);
     h.style.setProperty('--seq-k',state.seqScale??1);
     h.style.setProperty('--wall-w',state.wallWeight??1);
+    h.style.setProperty('--note-px',(state.noteSize??18)+'px');
   }
   const r=$('#roomOpacity'); if(r)r.value=Math.round((state.roomOpacity??1)*100);
   renderOutScopeSwatches();
   const q=$('#seqSize');     if(q)q.value=Math.round((state.seqScale??1)*100);
   const lk=$('#linkNodesOpt'); if(lk)lk.checked=state.linkNodes!==false;
   const ww=$('#wallWeight'); if(ww)ww.value=Math.round((state.wallWeight??1)*100);
+  const np=$('#noteSizePx'); if(np)np.value=state.noteSize??18;
+  document.querySelectorAll('#notePresets button').forEach(b=>b.classList.toggle('on',+b.dataset.px===(state.noteSize??18)));
 }
 function applyPlanGray(){
   const img=$('#planImg');
@@ -4259,12 +4269,17 @@ async function renderSheet(f,paper,idx,total){
 
   ctx.globalAlpha=1;
 
-  /* notes: leaders, tips and the text box */
+  /* notes: leaders, tips and the text box (text sized as on screen) */
+  /* The label sits inside the zoomed plan, so its size is already in plan
+     pixels — printing just rescales plan pixels to sheet pixels, and the
+     result never depends on how far you happen to be zoomed in. */
+  const S_NOTE_K=dw/Math.max(1,f.w);
   (f.notes||[]).map(migrateNote).forEach((n,i)=>{
     const lx=dx+n.lx*dw, ly=dy+n.ly*dh;
     const rr=Math.max(9,pin*0.40)*(n.tipSize||1);
     ctx.textAlign='left';ctx.textBaseline='middle';
-    ctx.font=`600 ${Math.round(Math.max(9,pin*0.38))}px 'Inter',sans-serif`;
+    const nfs=Math.max(9,(state.noteSize??18)*(S_NOTE_K||1));
+    ctx.font=`600 ${Math.round(nfs)}px 'Inter',sans-serif`;
     /* the box first, so leaders can be trimmed against it visually */
     const words=String(n.text).split(/\n/).flatMap(par=>{
       const out=[];let cur='';
@@ -4272,7 +4287,7 @@ async function renderSheet(f,paper,idx,total){
         if(ctx.measureText(t).width>dw*0.24&&cur){out.push(cur);cur=w;} else cur=t; });
       out.push(cur);return out;
     });
-    const lh=Math.max(11,pin*0.5);
+    const lh=nfs*1.45;
     const bw=Math.max(...words.map(l=>ctx.measureText(l).width))+rr*2.2;
     const bh=words.length*lh+rr*1.1;
     const bx=Math.max(dx+2,Math.min(lx-bw/2,dx+dw-bw-2));
@@ -4287,10 +4302,10 @@ async function renderSheet(f,paper,idx,total){
     n.targets.forEach(t=>{
       const tx=dx+t.x*dw, ty=dy+t.y*dh;
       if(n.tip==='arrow'){
-        const a=Math.atan2(cy-ty,cx-tx), L=rr*2.4;
+        const a=Math.atan2(cy-ty,cx-tx), L=rr*2.6, spread=0.42;
         ctx.beginPath();ctx.moveTo(tx,ty);
-        ctx.lineTo(tx+Math.cos(a+2.5)*L,ty+Math.sin(a+2.5)*L);
-        ctx.lineTo(tx+Math.cos(a-2.5)*L,ty+Math.sin(a-2.5)*L);
+        ctx.lineTo(tx+Math.cos(a+spread)*L,ty+Math.sin(a+spread)*L);
+        ctx.lineTo(tx+Math.cos(a-spread)*L,ty+Math.sin(a-spread)*L);
         ctx.closePath();ctx.fillStyle=PAPER_HL;ctx.fill();
       }else if(n.tip==='number'){
         ctx.beginPath();ctx.arc(tx,ty,rr*1.5,0,Math.PI*2);
@@ -4300,7 +4315,8 @@ async function renderSheet(f,paper,idx,total){
         ctx.font=`700 ${Math.round(rr*1.6)}px 'JetBrains Mono',monospace`;
         ctx.fillText(String(i+1),tx,ty+1);
         ctx.textAlign='left';
-        ctx.font=`600 ${Math.round(Math.max(9,pin*0.38))}px 'Inter',sans-serif`;
+        const nfs=Math.max(9,(state.noteSize??18)*(S_NOTE_K||1));
+    ctx.font=`600 ${Math.round(nfs)}px 'Inter',sans-serif`;
       }else{
         ctx.beginPath();ctx.arc(tx,ty,rr*0.62,0,Math.PI*2);
         ctx.fillStyle=PAPER_HL;ctx.fill();
@@ -4540,7 +4556,7 @@ function loadProjectText(txt){
     const s=JSON.parse(txt);
     if(!s.items||!s.floors)throw 0;
     s.floors&&s.floors.forEach(f=>{f.rooms=f.rooms||[];});
-    state=Object.assign({version:APP_VERSION,theme:SYS_THEME(),look:'',accent:'',brandLogo:null,pinScale:1,pinOpacity:1,planGray:false,brushSize:46,roomOpacity:1,seqScale:1,wallWeight:1,cropRatio:null,skribbleColor:null,outScopeColor:OUT_SCOPE_DEFAULT,linkNodes:true,client:'',location:'',reference:'',preparedBy:'',libDock:'left',lastDock:'left',libHidden:false,libFloat:null,libSize:{w:324,h:60,fw:288,fh:520},catOrder:['Control','Climate','Lighting','Shading','Audio','Network','Security','Video']},s);
+    state=Object.assign({version:APP_VERSION,theme:SYS_THEME(),look:'',accent:'',brandLogo:null,pinScale:1,pinOpacity:1,planGray:false,brushSize:46,roomOpacity:1,seqScale:1,wallWeight:1,noteSize:18,cropRatio:null,skribbleColor:null,outScopeColor:OUT_SCOPE_DEFAULT,linkNodes:true,client:'',location:'',reference:'',preparedBy:'',libDock:'left',lastDock:'left',libHidden:false,libFloat:null,libSize:{w:324,h:60,fw:288,fh:520},catOrder:['Control','Climate','Lighting','Shading','Audio','Network','Security','Video']},s);
     projHandle=null;                            /* re-linked by the picker path */
     armedItem=null;setSelMarker(null);undoStack=[];redoStack=[];
     if(cropMode)cancelCrop();

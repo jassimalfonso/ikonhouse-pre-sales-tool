@@ -4,6 +4,26 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.59.1] — 2026-08-22
+
+### Fixed
+- **The leader arrow pointed the wrong way.** Its base was set behind the
+  point rather than back along the line, so it aimed away from what it was
+  marking. It now points at its target, on screen and on the sheet.
+- **Things floating over the plan no longer vanish in the Mono theme.** The
+  brush cursor has a dark ring inside a light one, leader tips carry a light
+  outline, and note boxes sit on solid ground — none of it now depends on an
+  accent colour that may be pure white or pure black.
+- **Selecting a leader point no longer hides the ikon beneath it.** The
+  highlight is a ring rather than a filled patch.
+
+### Added
+- **Note text size** — set it in pixels, or from **S / M / L / XL** presets so
+  a set of drawings stays consistent. The default is larger than before,
+  since notes were unreadably small on big plans. The size is in plan
+  pixels, so a note keeps its proportions when printed no matter how far
+  you are zoomed in.
+
 ## [1.59.0] — 2026-08-22
 
 ### Fixed
@@ -459,6 +479,26 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.59.1] — 2026-08-22
+
+### Fixed
+- **The leader arrow pointed the wrong way.** Its base was set behind the
+  point rather than back along the line, so it aimed away from what it was
+  marking. It now points at its target, on screen and on the sheet.
+- **Things floating over the plan no longer vanish in the Mono theme.** The
+  brush cursor has a dark ring inside a light one, leader tips carry a light
+  outline, and note boxes sit on solid ground — none of it now depends on an
+  accent colour that may be pure white or pure black.
+- **Selecting a leader point no longer hides the ikon beneath it.** The
+  highlight is a ring rather than a filled patch.
+
+### Added
+- **Note text size** — set it in pixels, or from **S / M / L / XL** presets so
+  a set of drawings stays consistent. The default is larger than before,
+  since notes were unreadably small on big plans. The size is in plan
+  pixels, so a note keeps its proportions when printed no matter how far
+  you are zoomed in.
 
 ## [1.59.0] — 2026-08-22
 
@@ -1355,6 +1395,26 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.59.1] — 2026-08-22
+
+### Fixed
+- **The leader arrow pointed the wrong way.** Its base was set behind the
+  point rather than back along the line, so it aimed away from what it was
+  marking. It now points at its target, on screen and on the sheet.
+- **Things floating over the plan no longer vanish in the Mono theme.** The
+  brush cursor has a dark ring inside a light one, leader tips carry a light
+  outline, and note boxes sit on solid ground — none of it now depends on an
+  accent colour that may be pure white or pure black.
+- **Selecting a leader point no longer hides the ikon beneath it.** The
+  highlight is a ring rather than a filled patch.
+
+### Added
+- **Note text size** — set it in pixels, or from **S / M / L / XL** presets so
+  a set of drawings stays consistent. The default is larger than before,
+  since notes were unreadably small on big plans. The size is in plan
+  pixels, so a note keeps its proportions when printed no matter how far
+  you are zoomed in.
+
 ## [1.59.0] — 2026-08-22
 
 ### Fixed
@@ -1810,6 +1870,26 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.59.1] — 2026-08-22
+
+### Fixed
+- **The leader arrow pointed the wrong way.** Its base was set behind the
+  point rather than back along the line, so it aimed away from what it was
+  marking. It now points at its target, on screen and on the sheet.
+- **Things floating over the plan no longer vanish in the Mono theme.** The
+  brush cursor has a dark ring inside a light one, leader tips carry a light
+  outline, and note boxes sit on solid ground — none of it now depends on an
+  accent colour that may be pure white or pure black.
+- **Selecting a leader point no longer hides the ikon beneath it.** The
+  highlight is a ring rather than a filled patch.
+
+### Added
+- **Note text size** — set it in pixels, or from **S / M / L / XL** presets so
+  a set of drawings stays consistent. The default is larger than before,
+  since notes were unreadably small on big plans. The size is in plan
+  pixels, so a note keeps its proportions when printed no matter how far
+  you are zoomed in.
 
 ## [1.59.0] — 2026-08-22
 
@@ -3141,6 +3221,26 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.59.1] — 2026-08-22
+
+### Fixed
+- **The leader arrow pointed the wrong way.** Its base was set behind the
+  point rather than back along the line, so it aimed away from what it was
+  marking. It now points at its target, on screen and on the sheet.
+- **Things floating over the plan no longer vanish in the Mono theme.** The
+  brush cursor has a dark ring inside a light one, leader tips carry a light
+  outline, and note boxes sit on solid ground — none of it now depends on an
+  accent colour that may be pure white or pure black.
+- **Selecting a leader point no longer hides the ikon beneath it.** The
+  highlight is a ring rather than a filled patch.
+
+### Added
+- **Note text size** — set it in pixels, or from **S / M / L / XL** presets so
+  a set of drawings stays consistent. The default is larger than before,
+  since notes were unreadably small on big plans. The size is in plan
+  pixels, so a note keeps its proportions when printed no matter how far
+  you are zoomed in.
+
 ## [1.59.0] — 2026-08-22
 
 ### Fixed
@@ -3596,6 +3696,26 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.59.1] — 2026-08-22
+
+### Fixed
+- **The leader arrow pointed the wrong way.** Its base was set behind the
+  point rather than back along the line, so it aimed away from what it was
+  marking. It now points at its target, on screen and on the sheet.
+- **Things floating over the plan no longer vanish in the Mono theme.** The
+  brush cursor has a dark ring inside a light one, leader tips carry a light
+  outline, and note boxes sit on solid ground — none of it now depends on an
+  accent colour that may be pure white or pure black.
+- **Selecting a leader point no longer hides the ikon beneath it.** The
+  highlight is a ring rather than a filled patch.
+
+### Added
+- **Note text size** — set it in pixels, or from **S / M / L / XL** presets so
+  a set of drawings stays consistent. The default is larger than before,
+  since notes were unreadably small on big plans. The size is in plan
+  pixels, so a note keeps its proportions when printed no matter how far
+  you are zoomed in.
 
 ## [1.59.0] — 2026-08-22
 
@@ -4492,6 +4612,26 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.59.1] — 2026-08-22
+
+### Fixed
+- **The leader arrow pointed the wrong way.** Its base was set behind the
+  point rather than back along the line, so it aimed away from what it was
+  marking. It now points at its target, on screen and on the sheet.
+- **Things floating over the plan no longer vanish in the Mono theme.** The
+  brush cursor has a dark ring inside a light one, leader tips carry a light
+  outline, and note boxes sit on solid ground — none of it now depends on an
+  accent colour that may be pure white or pure black.
+- **Selecting a leader point no longer hides the ikon beneath it.** The
+  highlight is a ring rather than a filled patch.
+
+### Added
+- **Note text size** — set it in pixels, or from **S / M / L / XL** presets so
+  a set of drawings stays consistent. The default is larger than before,
+  since notes were unreadably small on big plans. The size is in plan
+  pixels, so a note keeps its proportions when printed no matter how far
+  you are zoomed in.
+
 ## [1.59.0] — 2026-08-22
 
 ### Fixed
@@ -4947,6 +5087,26 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.59.1] — 2026-08-22
+
+### Fixed
+- **The leader arrow pointed the wrong way.** Its base was set behind the
+  point rather than back along the line, so it aimed away from what it was
+  marking. It now points at its target, on screen and on the sheet.
+- **Things floating over the plan no longer vanish in the Mono theme.** The
+  brush cursor has a dark ring inside a light one, leader tips carry a light
+  outline, and note boxes sit on solid ground — none of it now depends on an
+  accent colour that may be pure white or pure black.
+- **Selecting a leader point no longer hides the ikon beneath it.** The
+  highlight is a ring rather than a filled patch.
+
+### Added
+- **Note text size** — set it in pixels, or from **S / M / L / XL** presets so
+  a set of drawings stays consistent. The default is larger than before,
+  since notes were unreadably small on big plans. The size is in plan
+  pixels, so a note keeps its proportions when printed no matter how far
+  you are zoomed in.
 
 ## [1.59.0] — 2026-08-22
 

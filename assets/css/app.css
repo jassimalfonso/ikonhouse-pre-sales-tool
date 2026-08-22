@@ -1761,3 +1761,48 @@ body.arming .room-layer .rlabel{opacity:.45}
 .rd-links{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .rd-off{color:var(--dim)}
 .rd-off:hover{color:var(--hl)}
+
+/* ══════════════════════════════════════════════════════════════
+   Legibility over the plan
+
+   The plan underneath is whatever the architect drew — usually near
+   white — so anything floating over it needs its own contrast and
+   cannot rely on the theme's colours. This matters most in Mono,
+   where the accent is pure white or pure black.
+   ══════════════════════════════════════════════════════════════ */
+/* brush cursor: dark ring inside a light one, legible on any drawing */
+.brush-cursor{
+  box-shadow:0 0 0 1.5px rgba(255,255,255,.95),
+             0 0 0 3px rgba(0,0,0,.45),
+             0 1px 6px rgba(0,0,0,.3);
+}
+[data-palette="mono"] .brush-cursor{border-color:#111}
+/* note points: a ring, never a filled patch that hides the ikon beneath */
+.note-pin{background:none}
+.note-pin:hover,.note-pin:active{
+  background:none;
+  box-shadow:inset 0 0 0 2px var(--hl), inset 0 0 0 3.5px rgba(255,255,255,.9);
+  border-radius:50%;
+}
+/* leader tips keep a light outline so they read on a dark or busy plan */
+.nt-dot{stroke:#fff;stroke-width:1.6}
+.nt-arrow{stroke:#fff;stroke-width:1.2;paint-order:stroke}
+.nt-num circle{fill:#fff}
+[data-palette="mono"] .nt-num text{fill:#000}
+[data-palette="mono"][data-theme="dark"] .nt-dot,
+[data-palette="mono"][data-theme="dark"] .nt-arrow{fill:#000;stroke:#fff}
+[data-palette="mono"][data-theme="dark"] .note-leaders line{stroke:#000}
+/* note text box always sits on its own solid ground */
+.note-label{background:var(--panel);border-color:var(--line-2)}
+[data-palette="mono"] .note-label{background:#fff;border-color:#000;color:#000}
+[data-palette="mono"] .nl-t{color:#000}
+[data-palette="mono"] .nl-n{color:#000}
+/* note text size follows the setting */
+.nl-t{font-size:var(--note-px,18px);line-height:1.45}
+.nl-n{font-size:calc(var(--note-px,18px) * .8)}
+/* size controls in the editor */
+.nt-px{
+  width:58px;padding:5px 7px;border:1px solid var(--line-2);border-radius:var(--r-sm,7px);
+  background:var(--panel-2);color:var(--txt);font-size:12px;
+}
+.nt-unit{font-size:10.5px;color:var(--dim)}

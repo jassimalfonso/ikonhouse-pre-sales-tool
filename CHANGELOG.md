@@ -4,6 +4,22 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.63.1] — 2026-08-22
+
+### Fixed
+- **Device pins and chips disappeared in Futuristic mode.** The outline
+  treatment hollowed them out while their symbols stayed white, so on a white
+  plan there was nothing to see. A pin sits on someone else''s drawing, so it
+  now always carries a solid fill and a contrasting ring in every mode — the
+  modes differ by **shape, ring and glow**, never by hollowing the pin:
+  - **Modern** — round, white ring, soft drop shadow, slightly bolder symbol.
+  - **Retro** — square, dark hairline, hard offset shadow, blunt-capped symbol.
+  - **Futuristic** — round with a **neon halo** in the device''s own colour,
+    and a brighter one when selected.
+- **Modes are listed by name and description only.** The colour chips beside
+  them said nothing useful about a mode — colour themes keep theirs, since
+  there the colour *is* the choice.
+
 ## [1.63.0] — 2026-08-22
 
 ### Added
@@ -588,6 +604,22 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.63.1] — 2026-08-22
+
+### Fixed
+- **Device pins and chips disappeared in Futuristic mode.** The outline
+  treatment hollowed them out while their symbols stayed white, so on a white
+  plan there was nothing to see. A pin sits on someone else''s drawing, so it
+  now always carries a solid fill and a contrasting ring in every mode — the
+  modes differ by **shape, ring and glow**, never by hollowing the pin:
+  - **Modern** — round, white ring, soft drop shadow, slightly bolder symbol.
+  - **Retro** — square, dark hairline, hard offset shadow, blunt-capped symbol.
+  - **Futuristic** — round with a **neon halo** in the device''s own colour,
+    and a brighter one when selected.
+- **Modes are listed by name and description only.** The colour chips beside
+  them said nothing useful about a mode — colour themes keep theirs, since
+  there the colour *is* the choice.
 
 ## [1.63.0] — 2026-08-22
 
@@ -1613,6 +1645,22 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.63.1] — 2026-08-22
+
+### Fixed
+- **Device pins and chips disappeared in Futuristic mode.** The outline
+  treatment hollowed them out while their symbols stayed white, so on a white
+  plan there was nothing to see. A pin sits on someone else''s drawing, so it
+  now always carries a solid fill and a contrasting ring in every mode — the
+  modes differ by **shape, ring and glow**, never by hollowing the pin:
+  - **Modern** — round, white ring, soft drop shadow, slightly bolder symbol.
+  - **Retro** — square, dark hairline, hard offset shadow, blunt-capped symbol.
+  - **Futuristic** — round with a **neon halo** in the device''s own colour,
+    and a brighter one when selected.
+- **Modes are listed by name and description only.** The colour chips beside
+  them said nothing useful about a mode — colour themes keep theirs, since
+  there the colour *is* the choice.
+
 ## [1.63.0] — 2026-08-22
 
 ### Added
@@ -2197,6 +2245,22 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.63.1] — 2026-08-22
+
+### Fixed
+- **Device pins and chips disappeared in Futuristic mode.** The outline
+  treatment hollowed them out while their symbols stayed white, so on a white
+  plan there was nothing to see. A pin sits on someone else''s drawing, so it
+  now always carries a solid fill and a contrasting ring in every mode — the
+  modes differ by **shape, ring and glow**, never by hollowing the pin:
+  - **Modern** — round, white ring, soft drop shadow, slightly bolder symbol.
+  - **Retro** — square, dark hairline, hard offset shadow, blunt-capped symbol.
+  - **Futuristic** — round with a **neon halo** in the device''s own colour,
+    and a brighter one when selected.
+- **Modes are listed by name and description only.** The colour chips beside
+  them said nothing useful about a mode — colour themes keep theirs, since
+  there the colour *is* the choice.
 
 ## [1.63.0] — 2026-08-22
 
@@ -3657,6 +3721,22 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.63.1] — 2026-08-22
+
+### Fixed
+- **Device pins and chips disappeared in Futuristic mode.** The outline
+  treatment hollowed them out while their symbols stayed white, so on a white
+  plan there was nothing to see. A pin sits on someone else''s drawing, so it
+  now always carries a solid fill and a contrasting ring in every mode — the
+  modes differ by **shape, ring and glow**, never by hollowing the pin:
+  - **Modern** — round, white ring, soft drop shadow, slightly bolder symbol.
+  - **Retro** — square, dark hairline, hard offset shadow, blunt-capped symbol.
+  - **Futuristic** — round with a **neon halo** in the device''s own colour,
+    and a brighter one when selected.
+- **Modes are listed by name and description only.** The colour chips beside
+  them said nothing useful about a mode — colour themes keep theirs, since
+  there the colour *is* the choice.
+
 ## [1.63.0] — 2026-08-22
 
 ### Added
@@ -4241,6 +4321,22 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.63.1] — 2026-08-22
+
+### Fixed
+- **Device pins and chips disappeared in Futuristic mode.** The outline
+  treatment hollowed them out while their symbols stayed white, so on a white
+  plan there was nothing to see. A pin sits on someone else''s drawing, so it
+  now always carries a solid fill and a contrasting ring in every mode — the
+  modes differ by **shape, ring and glow**, never by hollowing the pin:
+  - **Modern** — round, white ring, soft drop shadow, slightly bolder symbol.
+  - **Retro** — square, dark hairline, hard offset shadow, blunt-capped symbol.
+  - **Futuristic** — round with a **neon halo** in the device''s own colour,
+    and a brighter one when selected.
+- **Modes are listed by name and description only.** The colour chips beside
+  them said nothing useful about a mode — colour themes keep theirs, since
+  there the colour *is* the choice.
 
 ## [1.63.0] — 2026-08-22
 
@@ -5266,6 +5362,22 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.63.1] — 2026-08-22
+
+### Fixed
+- **Device pins and chips disappeared in Futuristic mode.** The outline
+  treatment hollowed them out while their symbols stayed white, so on a white
+  plan there was nothing to see. A pin sits on someone else''s drawing, so it
+  now always carries a solid fill and a contrasting ring in every mode — the
+  modes differ by **shape, ring and glow**, never by hollowing the pin:
+  - **Modern** — round, white ring, soft drop shadow, slightly bolder symbol.
+  - **Retro** — square, dark hairline, hard offset shadow, blunt-capped symbol.
+  - **Futuristic** — round with a **neon halo** in the device''s own colour,
+    and a brighter one when selected.
+- **Modes are listed by name and description only.** The colour chips beside
+  them said nothing useful about a mode — colour themes keep theirs, since
+  there the colour *is* the choice.
+
 ## [1.63.0] — 2026-08-22
 
 ### Added
@@ -5850,6 +5962,22 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.63.1] — 2026-08-22
+
+### Fixed
+- **Device pins and chips disappeared in Futuristic mode.** The outline
+  treatment hollowed them out while their symbols stayed white, so on a white
+  plan there was nothing to see. A pin sits on someone else''s drawing, so it
+  now always carries a solid fill and a contrasting ring in every mode — the
+  modes differ by **shape, ring and glow**, never by hollowing the pin:
+  - **Modern** — round, white ring, soft drop shadow, slightly bolder symbol.
+  - **Retro** — square, dark hairline, hard offset shadow, blunt-capped symbol.
+  - **Futuristic** — round with a **neon halo** in the device''s own colour,
+    and a brighter one when selected.
+- **Modes are listed by name and description only.** The colour chips beside
+  them said nothing useful about a mode — colour themes keep theirs, since
+  there the colour *is* the choice.
 
 ## [1.63.0] — 2026-08-22
 

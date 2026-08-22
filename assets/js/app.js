@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.63.0';
+const APP_VERSION='1.63.1';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -198,9 +198,9 @@ function buildAppearance(){
   const lg=$('#apLooks');
   if(lg&&!lg.children.length)LOOKS.forEach(L=>{
     const b=el('button','ap-opt');b.dataset.look=L.id;
-    b.innerHTML=`<span class="pv"><i style="background:${L.pv[0]}"></i><i style="background:${L.pv[1]}"></i></span>
-                 <span><b>${L.name}</b><span>${L.note}</span></span>`;
-    b.addEventListener('click',()=>{ prefs.look=L.id; savePrefs(); applyTheme(); toast(L.id?`${L.name} mode.`:'Back to the original look.'); });
+    b.classList.add('ap-mode');
+    b.innerHTML=`<span><b>${L.name}</b><span>${L.note}</span></span>`;
+    b.addEventListener('click',()=>{ setLook(L.id); toast(L.id?`${L.name} mode.`:'Back to the original look.'); });
     lg.appendChild(b);
   });
   const pg=$('#apPalettes');
@@ -242,8 +242,7 @@ function buildModeMenu(){
   if(!pop.children.length)LOOKS.forEach(L=>{
     const b=el('button','mode-opt');
     b.dataset.look=L.id;
-    b.innerHTML=`<span class="mode-mark" data-m="${L.id||'orig'}"></span>
-                 <span><b>${L.name}</b><span>${L.note}</span></span>`;
+    b.innerHTML=`<span><b>${L.name}</b><span>${L.note}</span></span>`;
     b.addEventListener('click',e=>{ e.stopPropagation(); setLook(L.id); pop.classList.remove('open'); });
     pop.appendChild(b);
   });

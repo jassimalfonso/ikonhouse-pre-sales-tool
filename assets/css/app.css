@@ -2218,8 +2218,7 @@ body.skribbling .plan-click{cursor:none}
 [data-look="future"] .item-chip{border-radius:50%;width:26px;height:26px}
 [data-look="future"] .item-row .nm{letter-spacing:.04em;font-size:12px}
 [data-look="future"] .item-qty{font-family:'DotGothic16',monospace;font-size:13px}
-[data-look="future"] .marker{border-radius:50%;background:transparent!important;
-  box-shadow:inset 0 0 0 2px currentColor,0 0 0 1px var(--panel)}
+
 [data-look="future"] .rpoly .rfill{stroke-dasharray:1 5;stroke-linecap:round;stroke-width:2;fill-opacity:.045}
 [data-look="future"] .rlabel{
   border-radius:2px;font-family:'DotGothic16',monospace;text-transform:uppercase;
@@ -2324,8 +2323,8 @@ body.skribbling .plan-click{cursor:none}
 /* and so do the device chips: soft square, hard square, hollow ring */
 [data-look="modern"] .item-chip{box-shadow:0 2px 8px rgba(0,0,0,.12)}
 [data-look="retro"]  .item-chip{box-shadow:2px 2px 0 rgba(0,0,0,.35);border:1px solid rgba(0,0,0,.35)}
-[data-look="future"] .item-chip{background:transparent!important;box-shadow:inset 0 0 0 1.5px currentColor}
-[data-look="future"] .item-chip svg{stroke:currentColor}
+
+
 
 /* Bronze as an explicit choice, so it can override a mode's own palette
    the same way every other theme does. */
@@ -2341,3 +2340,49 @@ body.skribbling .plan-click{cursor:none}
   --txt:#F0EEE9; --dim:#8E8A82;
   --hl:#C9A876; --hl-soft:#2A2318; --hl-line:#4E4128;
 }
+
+/* ══════════════════════════════════════════════════════════════
+   DEVICE PINS AND CHIPS — legible first, characterful second
+
+   A pin sits on someone else's drawing, so it always carries a solid
+   fill and a contrasting ring. Modes differ in shape, ring and glow,
+   never by hollowing the pin out — an outline pin with a white glyph
+   disappears on a white plan, which is exactly what went wrong.
+   ══════════════════════════════════════════════════════════════ */
+[data-look="modern"] .marker{
+  border-radius:50%;
+  box-shadow:0 0 0 2px var(--panel), 0 3px 10px rgba(0,0,0,.22);
+}
+[data-look="modern"] .marker svg{stroke-width:2.2}
+[data-look="modern"] .item-chip{border-radius:11px;box-shadow:0 2px 8px rgba(0,0,0,.14)}
+
+[data-look="retro"] .marker{
+  border-radius:0;
+  box-shadow:0 0 0 1px rgba(0,0,0,.55), 2px 2px 0 rgba(0,0,0,.4);
+}
+[data-look="retro"] .marker svg{stroke-width:2.6;stroke-linecap:butt}
+[data-look="retro"] .item-chip{border-radius:0;box-shadow:2px 2px 0 rgba(0,0,0,.35);border:1px solid rgba(0,0,0,.4)}
+
+/* Futuristic keeps its neon idea, but as a halo around a solid pin
+   rather than a hollow one */
+[data-look="future"] .marker{
+  border-radius:50%;
+  box-shadow:0 0 0 1.5px var(--panel), 0 0 0 2.5px rgba(0,0,0,.35), 0 0 14px -2px currentColor;
+}
+[data-look="future"] .marker svg{stroke-width:1.9}
+[data-look="future"] .marker.sel{
+  box-shadow:0 0 0 1.5px var(--panel), 0 0 0 3px var(--hl), 0 0 22px -2px var(--hl);
+}
+[data-look="future"] .item-chip{
+  border-radius:50%;
+  box-shadow:0 0 0 1px var(--panel), 0 0 0 2px color-mix(in srgb, var(--txt) 22%, transparent),
+             0 0 12px -3px rgba(0,0,0,.5);
+}
+[data-look="future"] .item-chip svg{stroke:#fff;stroke-width:1.6}
+/* chip icons stay white on their fill in every mode */
+[data-look] .item-chip svg{stroke:#fff}
+/* modes are described in words — a colour chip says nothing about a mode */
+.ap-opt.ap-mode{padding:11px 13px}
+.ap-opt.ap-mode b{font-size:13px}
+.mode-opt{padding:10px 12px}
+.mode-mark{display:none}

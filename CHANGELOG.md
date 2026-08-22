@@ -4,6 +4,31 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.63.0] — 2026-08-22
+
+### Added
+- **Each mode now brings its own colours**, because a design ethos is not
+  only shapes:
+  - **Modern** — Apple''s system blue on near-white, almost no chroma
+    anywhere else; true black at night.
+  - **Retro** — a warm CRT: tan paper and burnt orange by day, **amber on
+    black with a phosphor glow** at night.
+  - **Futuristic** — monochrome with a single red, used sparingly and never
+    decoratively.
+  A mode paints only while the colour theme is set to **Match mode**;
+  choosing any theme takes over, exactly as before. **Bronze** is now an
+  explicit choice rather than the absence of one.
+- **Icons take each mode''s hand** — 1.15px hairlines for Futuristic, 1.7px
+  rounded for Modern, 2.4px square-capped for Retro — and device chips follow:
+  soft shadowed squares, hard-shadowed blocks, or hollow rings.
+
+### Fixed
+- **The welcome mode row is centred** with the rest of the page.
+- **The Futuristic title fits on one line** — the dot-matrix face needed a
+  smaller size and tighter tracking than the others.
+- **The colour chips beside the mode name are gone** from the toolbar, in
+  favour of a plain glyph.
+
 ## [1.62.0] — 2026-08-22
 
 ### Changed
@@ -563,6 +588,31 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.63.0] — 2026-08-22
+
+### Added
+- **Each mode now brings its own colours**, because a design ethos is not
+  only shapes:
+  - **Modern** — Apple''s system blue on near-white, almost no chroma
+    anywhere else; true black at night.
+  - **Retro** — a warm CRT: tan paper and burnt orange by day, **amber on
+    black with a phosphor glow** at night.
+  - **Futuristic** — monochrome with a single red, used sparingly and never
+    decoratively.
+  A mode paints only while the colour theme is set to **Match mode**;
+  choosing any theme takes over, exactly as before. **Bronze** is now an
+  explicit choice rather than the absence of one.
+- **Icons take each mode''s hand** — 1.15px hairlines for Futuristic, 1.7px
+  rounded for Modern, 2.4px square-capped for Retro — and device chips follow:
+  soft shadowed squares, hard-shadowed blocks, or hollow rings.
+
+### Fixed
+- **The welcome mode row is centred** with the rest of the page.
+- **The Futuristic title fits on one line** — the dot-matrix face needed a
+  smaller size and tighter tracking than the others.
+- **The colour chips beside the mode name are gone** from the toolbar, in
+  favour of a plain glyph.
 
 ## [1.62.0] — 2026-08-22
 
@@ -1563,6 +1613,31 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.63.0] — 2026-08-22
+
+### Added
+- **Each mode now brings its own colours**, because a design ethos is not
+  only shapes:
+  - **Modern** — Apple''s system blue on near-white, almost no chroma
+    anywhere else; true black at night.
+  - **Retro** — a warm CRT: tan paper and burnt orange by day, **amber on
+    black with a phosphor glow** at night.
+  - **Futuristic** — monochrome with a single red, used sparingly and never
+    decoratively.
+  A mode paints only while the colour theme is set to **Match mode**;
+  choosing any theme takes over, exactly as before. **Bronze** is now an
+  explicit choice rather than the absence of one.
+- **Icons take each mode''s hand** — 1.15px hairlines for Futuristic, 1.7px
+  rounded for Modern, 2.4px square-capped for Retro — and device chips follow:
+  soft shadowed squares, hard-shadowed blocks, or hollow rings.
+
+### Fixed
+- **The welcome mode row is centred** with the rest of the page.
+- **The Futuristic title fits on one line** — the dot-matrix face needed a
+  smaller size and tighter tracking than the others.
+- **The colour chips beside the mode name are gone** from the toolbar, in
+  favour of a plain glyph.
+
 ## [1.62.0] — 2026-08-22
 
 ### Changed
@@ -2122,6 +2197,31 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.63.0] — 2026-08-22
+
+### Added
+- **Each mode now brings its own colours**, because a design ethos is not
+  only shapes:
+  - **Modern** — Apple''s system blue on near-white, almost no chroma
+    anywhere else; true black at night.
+  - **Retro** — a warm CRT: tan paper and burnt orange by day, **amber on
+    black with a phosphor glow** at night.
+  - **Futuristic** — monochrome with a single red, used sparingly and never
+    decoratively.
+  A mode paints only while the colour theme is set to **Match mode**;
+  choosing any theme takes over, exactly as before. **Bronze** is now an
+  explicit choice rather than the absence of one.
+- **Icons take each mode''s hand** — 1.15px hairlines for Futuristic, 1.7px
+  rounded for Modern, 2.4px square-capped for Retro — and device chips follow:
+  soft shadowed squares, hard-shadowed blocks, or hollow rings.
+
+### Fixed
+- **The welcome mode row is centred** with the rest of the page.
+- **The Futuristic title fits on one line** — the dot-matrix face needed a
+  smaller size and tighter tracking than the others.
+- **The colour chips beside the mode name are gone** from the toolbar, in
+  favour of a plain glyph.
 
 ## [1.62.0] — 2026-08-22
 
@@ -3557,6 +3657,31 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.63.0] — 2026-08-22
+
+### Added
+- **Each mode now brings its own colours**, because a design ethos is not
+  only shapes:
+  - **Modern** — Apple''s system blue on near-white, almost no chroma
+    anywhere else; true black at night.
+  - **Retro** — a warm CRT: tan paper and burnt orange by day, **amber on
+    black with a phosphor glow** at night.
+  - **Futuristic** — monochrome with a single red, used sparingly and never
+    decoratively.
+  A mode paints only while the colour theme is set to **Match mode**;
+  choosing any theme takes over, exactly as before. **Bronze** is now an
+  explicit choice rather than the absence of one.
+- **Icons take each mode''s hand** — 1.15px hairlines for Futuristic, 1.7px
+  rounded for Modern, 2.4px square-capped for Retro — and device chips follow:
+  soft shadowed squares, hard-shadowed blocks, or hollow rings.
+
+### Fixed
+- **The welcome mode row is centred** with the rest of the page.
+- **The Futuristic title fits on one line** — the dot-matrix face needed a
+  smaller size and tighter tracking than the others.
+- **The colour chips beside the mode name are gone** from the toolbar, in
+  favour of a plain glyph.
+
 ## [1.62.0] — 2026-08-22
 
 ### Changed
@@ -4116,6 +4241,31 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.63.0] — 2026-08-22
+
+### Added
+- **Each mode now brings its own colours**, because a design ethos is not
+  only shapes:
+  - **Modern** — Apple''s system blue on near-white, almost no chroma
+    anywhere else; true black at night.
+  - **Retro** — a warm CRT: tan paper and burnt orange by day, **amber on
+    black with a phosphor glow** at night.
+  - **Futuristic** — monochrome with a single red, used sparingly and never
+    decoratively.
+  A mode paints only while the colour theme is set to **Match mode**;
+  choosing any theme takes over, exactly as before. **Bronze** is now an
+  explicit choice rather than the absence of one.
+- **Icons take each mode''s hand** — 1.15px hairlines for Futuristic, 1.7px
+  rounded for Modern, 2.4px square-capped for Retro — and device chips follow:
+  soft shadowed squares, hard-shadowed blocks, or hollow rings.
+
+### Fixed
+- **The welcome mode row is centred** with the rest of the page.
+- **The Futuristic title fits on one line** — the dot-matrix face needed a
+  smaller size and tighter tracking than the others.
+- **The colour chips beside the mode name are gone** from the toolbar, in
+  favour of a plain glyph.
 
 ## [1.62.0] — 2026-08-22
 
@@ -5116,6 +5266,31 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.63.0] — 2026-08-22
+
+### Added
+- **Each mode now brings its own colours**, because a design ethos is not
+  only shapes:
+  - **Modern** — Apple''s system blue on near-white, almost no chroma
+    anywhere else; true black at night.
+  - **Retro** — a warm CRT: tan paper and burnt orange by day, **amber on
+    black with a phosphor glow** at night.
+  - **Futuristic** — monochrome with a single red, used sparingly and never
+    decoratively.
+  A mode paints only while the colour theme is set to **Match mode**;
+  choosing any theme takes over, exactly as before. **Bronze** is now an
+  explicit choice rather than the absence of one.
+- **Icons take each mode''s hand** — 1.15px hairlines for Futuristic, 1.7px
+  rounded for Modern, 2.4px square-capped for Retro — and device chips follow:
+  soft shadowed squares, hard-shadowed blocks, or hollow rings.
+
+### Fixed
+- **The welcome mode row is centred** with the rest of the page.
+- **The Futuristic title fits on one line** — the dot-matrix face needed a
+  smaller size and tighter tracking than the others.
+- **The colour chips beside the mode name are gone** from the toolbar, in
+  favour of a plain glyph.
+
 ## [1.62.0] — 2026-08-22
 
 ### Changed
@@ -5675,6 +5850,31 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.63.0] — 2026-08-22
+
+### Added
+- **Each mode now brings its own colours**, because a design ethos is not
+  only shapes:
+  - **Modern** — Apple''s system blue on near-white, almost no chroma
+    anywhere else; true black at night.
+  - **Retro** — a warm CRT: tan paper and burnt orange by day, **amber on
+    black with a phosphor glow** at night.
+  - **Futuristic** — monochrome with a single red, used sparingly and never
+    decoratively.
+  A mode paints only while the colour theme is set to **Match mode**;
+  choosing any theme takes over, exactly as before. **Bronze** is now an
+  explicit choice rather than the absence of one.
+- **Icons take each mode''s hand** — 1.15px hairlines for Futuristic, 1.7px
+  rounded for Modern, 2.4px square-capped for Retro — and device chips follow:
+  soft shadowed squares, hard-shadowed blocks, or hollow rings.
+
+### Fixed
+- **The welcome mode row is centred** with the rest of the page.
+- **The Futuristic title fits on one line** — the dot-matrix face needed a
+  smaller size and tighter tracking than the others.
+- **The colour chips beside the mode name are gone** from the toolbar, in
+  favour of a plain glyph.
 
 ## [1.62.0] — 2026-08-22
 

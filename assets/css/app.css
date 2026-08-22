@@ -2236,3 +2236,108 @@ body.skribbling .plan-click{cursor:none}
 [data-look] .cat-head{padding-top:calc(16px * var(--pad,1));padding-bottom:calc(6px * var(--pad,1))}
 [data-look] .m-actions{margin-top:calc(16px * var(--pad,1))}
 [data-look] .ap-sec{padding-bottom:calc(16px * var(--pad,1))}
+
+/* ── mode control: a glyph, not paint chips ── */
+.mode-ico{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
+.mode-mark{
+  width:26px;height:26px;flex:none;border-radius:7px;display:grid;place-items:center;
+  border:1px solid var(--line-2);font-size:11px;color:var(--dim);
+}
+.mode-mark[data-m="orig"]::before{content:'◆'}
+.mode-mark[data-m="modern"]::before{content:'○';font-size:13px}
+.mode-mark[data-m="retro"]::before{content:'▮';font-size:10px}
+.mode-mark[data-m="future"]::before{content:'⠿';letter-spacing:-1px}
+.mode-opt.on .mode-mark{color:var(--hl);border-color:var(--hl-line)}
+/* welcome: centred with the rest of the page, and a title that fits */
+.ob-modes{justify-content:center;margin-top:22px}
+[data-look="future"] .ob-title{
+  font-size:clamp(19px,2.6vw,30px);letter-spacing:.02em;line-height:1.3;
+}
+[data-look="retro"] .ob-title{font-size:clamp(22px,3.4vw,36px)}
+.ob-title{max-width:22ch;margin-left:auto;margin-right:auto}
+
+/* ══════════════════════════════════════════════════════════════
+   EACH MODE BRINGS ITS OWN COLOUR
+
+   A mode is a whole design ethos, so it carries a palette to match.
+   These apply only when no colour theme has been chosen explicitly
+   — pick one from Appearance and it takes over, as before.
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── MODERN — Apple system blue on near-white, almost no chroma
+      elsewhere. Calm, bright, generous. ── */
+[data-look="modern"]:not([data-palette])[data-theme="light"]{
+  --bg:#F5F5F7; --panel:#FFFFFF; --panel-2:#EDEDF0;
+  --txt:#1D1D1F; --dim:#6E6E73;
+  --line:#E4E4E8; --line-2:#D2D2D7;
+  --hl:#0A84FF; --hl-soft:rgba(10,132,255,.10); --hl-line:rgba(10,132,255,.32);
+}
+[data-look="modern"]:not([data-palette])[data-theme="dark"]{
+  --bg:#000000; --panel:#1C1C1E; --panel-2:#2C2C2E;
+  --txt:#F5F5F7; --dim:#98989D;
+  --line:#2C2C2E; --line-2:#3A3A3C;
+  --hl:#0A84FF; --hl-soft:rgba(10,132,255,.16); --hl-line:rgba(10,132,255,.38);
+}
+
+/* ── RETRO — a warm CRT: tan paper, burnt orange, and amber-on-black
+      when the lights go out. Colours that pop. ── */
+[data-look="retro"]:not([data-palette])[data-theme="light"]{
+  --bg:#E8DFC8; --panel:#F2EBD8; --panel-2:#DCD2B6;
+  --txt:#2B2416; --dim:#6B5D3F;
+  --line:#C9BC97; --line-2:#A89473;
+  --hl:#C8501E; --hl-soft:rgba(200,80,30,.14); --hl-line:rgba(200,80,30,.42);
+}
+[data-look="retro"]:not([data-palette])[data-theme="dark"]{
+  --bg:#14100A; --panel:#1D1710; --panel-2:#2A2116;
+  --txt:#FFD08A; --dim:#B08A4F;
+  --line:#33281A; --line-2:#4A3A24;
+  --hl:#FFB000; --hl-soft:rgba(255,176,0,.16); --hl-line:rgba(255,176,0,.45);
+}
+/* phosphor glow on the text that matters */
+[data-look="retro"]:not([data-palette])[data-theme="dark"] .wordmark,
+[data-look="retro"]:not([data-palette])[data-theme="dark"] .cell .v,
+[data-look="retro"]:not([data-palette])[data-theme="dark"] .item-qty{
+  text-shadow:0 0 8px rgba(255,176,0,.45);
+}
+
+/* ── FUTURISTIC — Nothing: monochrome with one red. Nothing else
+      gets to be a colour. ── */
+[data-look="future"]:not([data-palette])[data-theme="light"]{
+  --bg:#F2F2F2; --panel:#FFFFFF; --panel-2:#E8E8E8;
+  --txt:#0A0A0A; --dim:#7A7A7A;
+  --line:#E0E0E0; --line-2:#C4C4C4;
+  --hl:#D71921; --hl-soft:rgba(215,25,33,.09); --hl-line:rgba(215,25,33,.34);
+}
+[data-look="future"]:not([data-palette])[data-theme="dark"]{
+  --bg:#0A0A0A; --panel:#121212; --panel-2:#1A1A1A;
+  --txt:#F2F2F2; --dim:#7E7E7E;
+  --line:#1F1F1F; --line-2:#303030;
+  --hl:#FF3B3B; --hl-soft:rgba(255,59,59,.13); --hl-line:rgba(255,59,59,.40);
+}
+/* the accent is used sparingly and deliberately, never decoratively */
+[data-look="future"]:not([data-palette]) .tb-btn.on{box-shadow:0 0 0 1px var(--hl),0 0 20px -6px var(--hl)}
+
+/* ── icons take the mode's hand ── */
+[data-look="modern"] .tb-btn svg,[data-look="modern"] .item-chip svg{stroke-width:1.7}
+[data-look="retro"]  .tb-btn svg,[data-look="retro"]  .item-chip svg{stroke-width:2.4;stroke-linecap:butt;stroke-linejoin:miter}
+[data-look="future"] .tb-btn svg,[data-look="future"] .item-chip svg{stroke-width:1.15}
+/* and so do the device chips: soft square, hard square, hollow ring */
+[data-look="modern"] .item-chip{box-shadow:0 2px 8px rgba(0,0,0,.12)}
+[data-look="retro"]  .item-chip{box-shadow:2px 2px 0 rgba(0,0,0,.35);border:1px solid rgba(0,0,0,.35)}
+[data-look="future"] .item-chip{background:transparent!important;box-shadow:inset 0 0 0 1.5px currentColor}
+[data-look="future"] .item-chip svg{stroke:currentColor}
+
+/* Bronze as an explicit choice, so it can override a mode's own palette
+   the same way every other theme does. */
+[data-palette="bronze"][data-theme="light"]{
+  --bg:#F7F6F3; --panel:#FFFFFF; --panel-2:#FBFAF7;
+  --line:#E9E6E0; --line-2:#D9D4CB;
+  --txt:#141414; --dim:#8A857C;
+  --hl:#AE8B5C; --hl-soft:#F5EFE6; --hl-line:#E2D4BD;
+}
+[data-palette="bronze"][data-theme="dark"]{
+  --bg:#111112; --panel:#1A1A1B; --panel-2:#161617;
+  --line:#28282A; --line-2:#3B3B3E;
+  --txt:#F0EEE9; --dim:#8E8A82;
+  --hl:#C9A876; --hl-soft:#2A2318; --hl-line:#4E4128;
+}

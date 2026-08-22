@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.62.0';
+const APP_VERSION='1.63.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -161,7 +161,8 @@ const today=()=>new Date().toLocaleDateString(undefined,{day:'2-digit',month:'sh
    it whichever project you open. Clearing both returns it exactly to
    how it shipped. */
 const PALETTES=[
-  {id:'',       name:'Bronze', note:'The original',   pv:['#FAF8F5','#AE8B5C']},
+  {id:'',       name:'Match mode', note:'Follows the mode', pv:['#9E9E9E','#4A4A4A']},
+  {id:'bronze', name:'Bronze', note:'The original',   pv:['#FAF8F5','#AE8B5C']},
   {id:'indigo', name:'Indigo', note:'Electric blue',  pv:['#EEF0FA','#3B49E0']},
   {id:'sage',   name:'Green',  note:'Fresh green',    pv:['#EDF6EE','#1E9E5A']},
   {id:'slate',  name:'Azure',  note:'Bright blue',    pv:['#EAF4FA','#0A84C9']},
@@ -241,7 +242,7 @@ function buildModeMenu(){
   if(!pop.children.length)LOOKS.forEach(L=>{
     const b=el('button','mode-opt');
     b.dataset.look=L.id;
-    b.innerHTML=`<span class="mode-sw"><i style="background:${L.pv[0]}"></i><i style="background:${L.pv[1]}"></i></span>
+    b.innerHTML=`<span class="mode-mark" data-m="${L.id||'orig'}"></span>
                  <span><b>${L.name}</b><span>${L.note}</span></span>`;
     b.addEventListener('click',e=>{ e.stopPropagation(); setLook(L.id); pop.classList.remove('open'); });
     pop.appendChild(b);
@@ -249,7 +250,7 @@ function buildModeMenu(){
   pop.querySelectorAll('.mode-opt').forEach(b=>b.classList.toggle('on',(b.dataset.look||'')===prefs.look));
   const cur=LOOKS.find(L=>L.id===prefs.look)||LOOKS[0];
   const nm=$('#modeName'); if(nm)nm.textContent=cur.name;
-  const sw=$('#modeSw'); if(sw)sw.innerHTML=`<i style="background:${cur.pv[0]}"></i><i style="background:${cur.pv[1]}"></i>`;
+
 }
 function openAppearance(){ buildAppearance(); applyTheme(); $('#appearVeil').style.display='grid'; }
 function closeAppearance(){ $('#appearVeil').style.display='none'; }

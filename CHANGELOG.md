@@ -4,6 +4,18 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.58.3] — 2026-08-22
+
+### Changed
+- **The radio starts far sooner.** The YouTube player library was only
+  fetched at the moment you pressed play, so the first note waited on a
+  download. It is now fetched quietly while the app is idle, and connections
+  to YouTube are opened in advance, so playback begins almost at once.
+  The pill shows **Connecting…** until sound actually starts, so the wait —
+  whatever remains of it — is never silent and unexplained.
+- The library is still only fetched when the radio is set to start with the
+  app, and only ever once.
+
 ## [1.58.2] — 2026-08-22
 
 ### Fixed
@@ -430,6 +442,18 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.58.3] — 2026-08-22
+
+### Changed
+- **The radio starts far sooner.** The YouTube player library was only
+  fetched at the moment you pressed play, so the first note waited on a
+  download. It is now fetched quietly while the app is idle, and connections
+  to YouTube are opened in advance, so playback begins almost at once.
+  The pill shows **Connecting…** until sound actually starts, so the wait —
+  whatever remains of it — is never silent and unexplained.
+- The library is still only fetched when the radio is set to start with the
+  app, and only ever once.
 
 ## [1.58.2] — 2026-08-22
 
@@ -1297,6 +1321,18 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.58.3] — 2026-08-22
+
+### Changed
+- **The radio starts far sooner.** The YouTube player library was only
+  fetched at the moment you pressed play, so the first note waited on a
+  download. It is now fetched quietly while the app is idle, and connections
+  to YouTube are opened in advance, so playback begins almost at once.
+  The pill shows **Connecting…** until sound actually starts, so the wait —
+  whatever remains of it — is never silent and unexplained.
+- The library is still only fetched when the radio is set to start with the
+  app, and only ever once.
+
 ## [1.58.2] — 2026-08-22
 
 ### Fixed
@@ -1723,6 +1759,18 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.58.3] — 2026-08-22
+
+### Changed
+- **The radio starts far sooner.** The YouTube player library was only
+  fetched at the moment you pressed play, so the first note waited on a
+  download. It is now fetched quietly while the app is idle, and connections
+  to YouTube are opened in advance, so playback begins almost at once.
+  The pill shows **Connecting…** until sound actually starts, so the wait —
+  whatever remains of it — is never silent and unexplained.
+- The library is still only fetched when the radio is set to start with the
+  app, and only ever once.
 
 ## [1.58.2] — 2026-08-22
 
@@ -3025,6 +3073,18 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.58.3] — 2026-08-22
+
+### Changed
+- **The radio starts far sooner.** The YouTube player library was only
+  fetched at the moment you pressed play, so the first note waited on a
+  download. It is now fetched quietly while the app is idle, and connections
+  to YouTube are opened in advance, so playback begins almost at once.
+  The pill shows **Connecting…** until sound actually starts, so the wait —
+  whatever remains of it — is never silent and unexplained.
+- The library is still only fetched when the radio is set to start with the
+  app, and only ever once.
+
 ## [1.58.2] — 2026-08-22
 
 ### Fixed
@@ -3451,6 +3511,18 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.58.3] — 2026-08-22
+
+### Changed
+- **The radio starts far sooner.** The YouTube player library was only
+  fetched at the moment you pressed play, so the first note waited on a
+  download. It is now fetched quietly while the app is idle, and connections
+  to YouTube are opened in advance, so playback begins almost at once.
+  The pill shows **Connecting…** until sound actually starts, so the wait —
+  whatever remains of it — is never silent and unexplained.
+- The library is still only fetched when the radio is set to start with the
+  app, and only ever once.
 
 ## [1.58.2] — 2026-08-22
 
@@ -4318,6 +4390,18 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.58.3] — 2026-08-22
+
+### Changed
+- **The radio starts far sooner.** The YouTube player library was only
+  fetched at the moment you pressed play, so the first note waited on a
+  download. It is now fetched quietly while the app is idle, and connections
+  to YouTube are opened in advance, so playback begins almost at once.
+  The pill shows **Connecting…** until sound actually starts, so the wait —
+  whatever remains of it — is never silent and unexplained.
+- The library is still only fetched when the radio is set to start with the
+  app, and only ever once.
+
 ## [1.58.2] — 2026-08-22
 
 ### Fixed
@@ -4744,6 +4828,18 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.58.3] — 2026-08-22
+
+### Changed
+- **The radio starts far sooner.** The YouTube player library was only
+  fetched at the moment you pressed play, so the first note waited on a
+  download. It is now fetched quietly while the app is idle, and connections
+  to YouTube are opened in advance, so playback begins almost at once.
+  The pill shows **Connecting…** until sound actually starts, so the wait —
+  whatever remains of it — is never silent and unexplained.
+- The library is still only fetched when the radio is set to start with the
+  app, and only ever once.
 
 ## [1.58.2] — 2026-08-22
 

@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.58.2';
+const APP_VERSION='1.58.3';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -275,20 +275,28 @@ function buildStationList(){
     saveRadioPrefs(); playStation(radioState.station);
   });
 }
+let ytWaiting=[];
+function preloadYT(){
+  if(window.__ytLoading||ytReady)return;
+  window.__ytLoading=true;
+  window.onYouTubeIframeAPIReady=()=>{ ytReady=true; ytWaiting.splice(0).forEach(f=>f()); };
+  const tag=document.createElement('script');
+  tag.src='https://www.youtube.com/iframe_api';
+  document.head.appendChild(tag);
+}
 function ensureYT(cb){
   if(ytReady)return cb();
-  if(!window.__ytLoading){
-    window.__ytLoading=true;
-    const tag=document.createElement('script');
-    tag.src='https://www.youtube.com/iframe_api';
-    document.head.appendChild(tag);
-  }
-  window.onYouTubeIframeAPIReady=()=>{ ytReady=true; cb(); };
-  /* if the API is blocked or offline, say so rather than sit silent */
-  setTimeout(()=>{ if(!ytReady)toast('Could not reach YouTube — check the connection.'); },6000);
+  ytWaiting.push(cb);
+  preloadYT();
+  setTimeout(()=>{ if(!ytReady)toast('Could not reach YouTube — check the connection.'); },7000);
 }
+/* the player library is fetched while the app is idle, so pressing play is
+   instant rather than waiting on a download */
+if(window.requestIdleCallback)requestIdleCallback(()=>{ if(radioState.auto!==false)preloadYT(); },{timeout:2500});
+else setTimeout(()=>{ if(radioState.auto!==false)preloadYT(); },1200);
 function playStation(key){
   const st=findStation(key);
+  const t=$('#npTitle'); if(t)t.textContent='Connecting…';
   const host=$('#rdPlayer'); if(!host)return;
   ensureYT(()=>{
     if(ytPlayer&&ytPlayer.destroy){ try{ytPlayer.destroy();}catch(_){} ytPlayer=null; }
@@ -301,6 +309,7 @@ function playStation(key){
           ytPlayer.playVideo();
         }catch(_){}
         setPlayingUi(true);
+        const t2=$('#npTitle'); if(t2)t2.textContent=stationName(st);
       },
       onStateChange:e=>{ setPlayingUi(e.data===1); },
       onError:()=>toast('That station would not load — it may have ended. Try another, or add one from a link.')

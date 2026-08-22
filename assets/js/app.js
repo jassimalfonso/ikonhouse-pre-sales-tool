@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.60.0';
+const APP_VERSION='1.61.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -188,6 +188,7 @@ function applyTheme(){
   if(prefs.palette)d.dataset.palette=prefs.palette; else delete d.dataset.palette;
   document.querySelectorAll('#themeRow [data-theme-opt]').forEach(b=>b.classList.toggle('on',b.dataset.themeOpt===state.theme));
   document.querySelectorAll('#apLooks .ap-opt').forEach(b=>b.classList.toggle('on',(b.dataset.look||'')===prefs.look));
+  document.querySelectorAll('#obModes .ob-mode').forEach(b=>b.classList.toggle('on',(b.dataset.look||'')===prefs.look));
   document.querySelectorAll('#apPalettes button').forEach(b=>b.classList.toggle('on',(b.dataset.pal||'')===prefs.palette));
   document.querySelectorAll('#apTheme button').forEach(b=>b.classList.toggle('on',b.dataset.t===(prefs.theme||'auto')));
 }
@@ -217,6 +218,22 @@ function buildAppearance(){
       savePrefs(); applyTheme();
     }));
   }
+}
+/* the same choice, offered right on the welcome screen */
+function buildWelcomeModes(){
+  const row=$('#obModes'); if(!row)return;
+  if(!row.children.length)LOOKS.forEach(L=>{
+    const b=el('button','ob-mode');
+    b.dataset.look=L.id;
+    b.innerHTML=`<span class="pv"><i style="background:${L.pv[0]}"></i><i style="background:${L.pv[1]}"></i></span><span>${L.name}</span>`;
+    b.addEventListener('click',e=>{
+      e.stopPropagation();
+      prefs.look=L.id; savePrefs(); applyTheme();
+      toast(L.id?`${L.name} mode.`:'Back to the original look.');
+    });
+    row.appendChild(b);
+  });
+  row.querySelectorAll('.ob-mode').forEach(b=>b.classList.toggle('on',(b.dataset.look||'')===prefs.look));
 }
 function openAppearance(){ buildAppearance(); applyTheme(); $('#appearVeil').style.display='grid'; }
 function closeAppearance(){ $('#appearVeil').style.display='none'; }
@@ -4590,7 +4607,7 @@ function loadProjectText(txt){
     updateHiddenChip();
     applyRoomLook();applyRoomLook();
     $('#obFoot').textContent=`IKONHOUSE · PRE-SALES TOOL · V${APP_VERSION}`;   /* single source of truth */
-loadPrefs();loadRadioPrefs();buildAppearance();applyTheme();renderRecent();renderBrand();applyDock();applyAutoNum();applyPlanGray();$('#brushSize').value=state.brushSize||46;updateBrushDot();applyRoomLook();updateHiddenChip();renderLibrary();renderFloors();showFloor();renderBoq();
+loadPrefs();loadRadioPrefs();buildAppearance();buildWelcomeModes();applyTheme();renderRecent();renderBrand();applyDock();applyAutoNum();applyPlanGray();$('#brushSize').value=state.brushSize||46;updateBrushDot();applyRoomLook();updateHiddenChip();renderLibrary();renderFloors();showFloor();renderBoq();
     dismissOnboard();
     toast('Project loaded.');
     return true;
@@ -4743,5 +4760,5 @@ $('#welcome').addEventListener('pointerleave',()=>{ obFx.mx=-9999; obFx.my=-9999
 
 /* ──────────── Init ──────────── */
 $('#obFoot').textContent=`IKONHOUSE · PRE-SALES TOOL · V${APP_VERSION}`;   /* single source of truth */
-loadPrefs();loadRadioPrefs();buildAppearance();applyTheme();renderRecent();renderBrand();applyDock();applyAutoNum();applyPlanGray();$('#brushSize').value=state.brushSize||46;updateBrushDot();applyRoomLook();updateHiddenChip();closeLib();renderLibrary();renderFloors();showFloor();obStartFx();
+loadPrefs();loadRadioPrefs();buildAppearance();buildWelcomeModes();applyTheme();renderRecent();renderBrand();applyDock();applyAutoNum();applyPlanGray();$('#brushSize').value=state.brushSize||46;updateBrushDot();applyRoomLook();updateHiddenChip();closeLib();renderLibrary();renderFloors();showFloor();obStartFx();
 if(!isCompact())setTimeout(()=>toast('Tip: drag the ⠿ grip on the device library to dock it left, right, top or bottom.'),1600);

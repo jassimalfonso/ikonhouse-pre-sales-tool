@@ -4,6 +4,22 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.61.0] — 2026-08-22
+
+### Added
+- **Mode is chosen on the welcome screen**, before you even open a project —
+  the same four options, and the screen itself changes as you pick.
+- **Each mode now moves differently**, which is most of why it feels like a
+  different app:
+  - **Modern** — long, settling easing; panels rise and scale in; buttons give
+    slightly under a press.
+  - **Retro** — no easing at all. Everything is instant and mechanical,
+    buttons shift a pixel down-right as if depressed, toasts blink on, and a
+    terminal caret blinks beside the wordmark.
+  - **Futuristic** — fast and precise, with a faint blur as panels arrive,
+    a glow on lit controls, and hairlines that sweep into place.
+- Motion honours **reduced-motion** settings; all three fall still when asked.
+
 ## [1.60.0] — 2026-08-22
 
 ### Added
@@ -527,6 +543,22 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.61.0] — 2026-08-22
+
+### Added
+- **Mode is chosen on the welcome screen**, before you even open a project —
+  the same four options, and the screen itself changes as you pick.
+- **Each mode now moves differently**, which is most of why it feels like a
+  different app:
+  - **Modern** — long, settling easing; panels rise and scale in; buttons give
+    slightly under a press.
+  - **Retro** — no easing at all. Everything is instant and mechanical,
+    buttons shift a pixel down-right as if depressed, toasts blink on, and a
+    terminal caret blinks beside the wordmark.
+  - **Futuristic** — fast and precise, with a faint blur as panels arrive,
+    a glow on lit controls, and hairlines that sweep into place.
+- Motion honours **reduced-motion** settings; all three fall still when asked.
 
 ## [1.60.0] — 2026-08-22
 
@@ -1491,6 +1523,22 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.61.0] — 2026-08-22
+
+### Added
+- **Mode is chosen on the welcome screen**, before you even open a project —
+  the same four options, and the screen itself changes as you pick.
+- **Each mode now moves differently**, which is most of why it feels like a
+  different app:
+  - **Modern** — long, settling easing; panels rise and scale in; buttons give
+    slightly under a press.
+  - **Retro** — no easing at all. Everything is instant and mechanical,
+    buttons shift a pixel down-right as if depressed, toasts blink on, and a
+    terminal caret blinks beside the wordmark.
+  - **Futuristic** — fast and precise, with a faint blur as panels arrive,
+    a glow on lit controls, and hairlines that sweep into place.
+- Motion honours **reduced-motion** settings; all three fall still when asked.
+
 ## [1.60.0] — 2026-08-22
 
 ### Added
@@ -2014,6 +2062,22 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.61.0] — 2026-08-22
+
+### Added
+- **Mode is chosen on the welcome screen**, before you even open a project —
+  the same four options, and the screen itself changes as you pick.
+- **Each mode now moves differently**, which is most of why it feels like a
+  different app:
+  - **Modern** — long, settling easing; panels rise and scale in; buttons give
+    slightly under a press.
+  - **Retro** — no easing at all. Everything is instant and mechanical,
+    buttons shift a pixel down-right as if depressed, toasts blink on, and a
+    terminal caret blinks beside the wordmark.
+  - **Futuristic** — fast and precise, with a faint blur as panels arrive,
+    a glow on lit controls, and hairlines that sweep into place.
+- Motion honours **reduced-motion** settings; all three fall still when asked.
 
 ## [1.60.0] — 2026-08-22
 
@@ -3413,6 +3477,22 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.61.0] — 2026-08-22
+
+### Added
+- **Mode is chosen on the welcome screen**, before you even open a project —
+  the same four options, and the screen itself changes as you pick.
+- **Each mode now moves differently**, which is most of why it feels like a
+  different app:
+  - **Modern** — long, settling easing; panels rise and scale in; buttons give
+    slightly under a press.
+  - **Retro** — no easing at all. Everything is instant and mechanical,
+    buttons shift a pixel down-right as if depressed, toasts blink on, and a
+    terminal caret blinks beside the wordmark.
+  - **Futuristic** — fast and precise, with a faint blur as panels arrive,
+    a glow on lit controls, and hairlines that sweep into place.
+- Motion honours **reduced-motion** settings; all three fall still when asked.
+
 ## [1.60.0] — 2026-08-22
 
 ### Added
@@ -3936,6 +4016,22 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.61.0] — 2026-08-22
+
+### Added
+- **Mode is chosen on the welcome screen**, before you even open a project —
+  the same four options, and the screen itself changes as you pick.
+- **Each mode now moves differently**, which is most of why it feels like a
+  different app:
+  - **Modern** — long, settling easing; panels rise and scale in; buttons give
+    slightly under a press.
+  - **Retro** — no easing at all. Everything is instant and mechanical,
+    buttons shift a pixel down-right as if depressed, toasts blink on, and a
+    terminal caret blinks beside the wordmark.
+  - **Futuristic** — fast and precise, with a faint blur as panels arrive,
+    a glow on lit controls, and hairlines that sweep into place.
+- Motion honours **reduced-motion** settings; all three fall still when asked.
 
 ## [1.60.0] — 2026-08-22
 
@@ -4900,6 +4996,22 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.61.0] — 2026-08-22
+
+### Added
+- **Mode is chosen on the welcome screen**, before you even open a project —
+  the same four options, and the screen itself changes as you pick.
+- **Each mode now moves differently**, which is most of why it feels like a
+  different app:
+  - **Modern** — long, settling easing; panels rise and scale in; buttons give
+    slightly under a press.
+  - **Retro** — no easing at all. Everything is instant and mechanical,
+    buttons shift a pixel down-right as if depressed, toasts blink on, and a
+    terminal caret blinks beside the wordmark.
+  - **Futuristic** — fast and precise, with a faint blur as panels arrive,
+    a glow on lit controls, and hairlines that sweep into place.
+- Motion honours **reduced-motion** settings; all three fall still when asked.
+
 ## [1.60.0] — 2026-08-22
 
 ### Added
@@ -5423,6 +5535,22 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.61.0] — 2026-08-22
+
+### Added
+- **Mode is chosen on the welcome screen**, before you even open a project —
+  the same four options, and the screen itself changes as you pick.
+- **Each mode now moves differently**, which is most of why it feels like a
+  different app:
+  - **Modern** — long, settling easing; panels rise and scale in; buttons give
+    slightly under a press.
+  - **Retro** — no easing at all. Everything is instant and mechanical,
+    buttons shift a pixel down-right as if depressed, toasts blink on, and a
+    terminal caret blinks beside the wordmark.
+  - **Futuristic** — fast and precise, with a faint blur as panels arrive,
+    a glow on lit controls, and hairlines that sweep into place.
+- Motion honours **reduced-motion** settings; all three fall still when asked.
 
 ## [1.60.0] — 2026-08-22
 

@@ -4,6 +4,25 @@ All notable changes to the ikonhouse AV Pre-Sales Tool.
 Format follows [Keep a Changelog](https://keepachangelog.com); versioning
 follows [Semantic Versioning](https://semver.org).
 
+## [1.58.0] — 2026-08-22
+
+### Added
+- **Claude Music** joins the stations, and the first is now named
+  **Tokyo Lofi** — also the default.
+- **Skip button** on the now-playing pill: step to the next station, wrapping
+  round at the end.
+- **Mono theme** — black and white only, with no hue anywhere. Emphasis comes
+  from contrast alone, which suits presenting and printing; lit controls
+  invert rather than tint.
+
+### Changed
+- **The colour themes have far more life in them.** The muted set has been
+  replaced by Indigo (electric blue), Green, Azure, Ember and Mono, each with
+  a matching night version, and backgrounds now carry a hint of the accent
+  instead of being uniformly grey.
+- **Clicking the now-playing pill closes the panel again**, rather than only
+  opening it.
+
 ## [1.57.1] — 2026-08-22
 
 ### Changed
@@ -389,6 +408,25 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.58.0] — 2026-08-22
+
+### Added
+- **Claude Music** joins the stations, and the first is now named
+  **Tokyo Lofi** — also the default.
+- **Skip button** on the now-playing pill: step to the next station, wrapping
+  round at the end.
+- **Mono theme** — black and white only, with no hue anywhere. Emphasis comes
+  from contrast alone, which suits presenting and printing; lit controls
+  invert rather than tint.
+
+### Changed
+- **The colour themes have far more life in them.** The muted set has been
+  replaced by Indigo (electric blue), Green, Azure, Ember and Mono, each with
+  a matching night version, and backgrounds now carry a hint of the accent
+  instead of being uniformly grey.
+- **Clicking the now-playing pill closes the panel again**, rather than only
+  opening it.
 
 ## [1.57.1] — 2026-08-22
 
@@ -1215,6 +1253,25 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.58.0] — 2026-08-22
+
+### Added
+- **Claude Music** joins the stations, and the first is now named
+  **Tokyo Lofi** — also the default.
+- **Skip button** on the now-playing pill: step to the next station, wrapping
+  round at the end.
+- **Mono theme** — black and white only, with no hue anywhere. Emphasis comes
+  from contrast alone, which suits presenting and printing; lit controls
+  invert rather than tint.
+
+### Changed
+- **The colour themes have far more life in them.** The muted set has been
+  replaced by Indigo (electric blue), Green, Azure, Ember and Mono, each with
+  a matching night version, and backgrounds now carry a hint of the accent
+  instead of being uniformly grey.
+- **Clicking the now-playing pill closes the panel again**, rather than only
+  opening it.
+
 ## [1.57.1] — 2026-08-22
 
 ### Changed
@@ -1600,6 +1657,25 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.58.0] — 2026-08-22
+
+### Added
+- **Claude Music** joins the stations, and the first is now named
+  **Tokyo Lofi** — also the default.
+- **Skip button** on the now-playing pill: step to the next station, wrapping
+  round at the end.
+- **Mono theme** — black and white only, with no hue anywhere. Emphasis comes
+  from contrast alone, which suits presenting and printing; lit controls
+  invert rather than tint.
+
+### Changed
+- **The colour themes have far more life in them.** The muted set has been
+  replaced by Indigo (electric blue), Green, Azure, Ember and Mono, each with
+  a matching night version, and backgrounds now carry a hint of the accent
+  instead of being uniformly grey.
+- **Clicking the now-playing pill closes the panel again**, rather than only
+  opening it.
 
 ## [1.57.1] — 2026-08-22
 
@@ -2861,6 +2937,25 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.58.0] — 2026-08-22
+
+### Added
+- **Claude Music** joins the stations, and the first is now named
+  **Tokyo Lofi** — also the default.
+- **Skip button** on the now-playing pill: step to the next station, wrapping
+  round at the end.
+- **Mono theme** — black and white only, with no hue anywhere. Emphasis comes
+  from contrast alone, which suits presenting and printing; lit controls
+  invert rather than tint.
+
+### Changed
+- **The colour themes have far more life in them.** The muted set has been
+  replaced by Indigo (electric blue), Green, Azure, Ember and Mono, each with
+  a matching night version, and backgrounds now carry a hint of the accent
+  instead of being uniformly grey.
+- **Clicking the now-playing pill closes the panel again**, rather than only
+  opening it.
+
 ## [1.57.1] — 2026-08-22
 
 ### Changed
@@ -3246,6 +3341,25 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.58.0] — 2026-08-22
+
+### Added
+- **Claude Music** joins the stations, and the first is now named
+  **Tokyo Lofi** — also the default.
+- **Skip button** on the now-playing pill: step to the next station, wrapping
+  round at the end.
+- **Mono theme** — black and white only, with no hue anywhere. Emphasis comes
+  from contrast alone, which suits presenting and printing; lit controls
+  invert rather than tint.
+
+### Changed
+- **The colour themes have far more life in them.** The muted set has been
+  replaced by Indigo (electric blue), Green, Azure, Ember and Mono, each with
+  a matching night version, and backgrounds now carry a hint of the accent
+  instead of being uniformly grey.
+- **Clicking the now-playing pill closes the panel again**, rather than only
+  opening it.
 
 ## [1.57.1] — 2026-08-22
 
@@ -4072,6 +4186,25 @@ follows [Semantic Versioning](https://semver.org).
   files from being committed. Keep such files outside the repository and
   consult them locally.
 
+## [1.58.0] — 2026-08-22
+
+### Added
+- **Claude Music** joins the stations, and the first is now named
+  **Tokyo Lofi** — also the default.
+- **Skip button** on the now-playing pill: step to the next station, wrapping
+  round at the end.
+- **Mono theme** — black and white only, with no hue anywhere. Emphasis comes
+  from contrast alone, which suits presenting and printing; lit controls
+  invert rather than tint.
+
+### Changed
+- **The colour themes have far more life in them.** The muted set has been
+  replaced by Indigo (electric blue), Green, Azure, Ember and Mono, each with
+  a matching night version, and backgrounds now carry a hint of the accent
+  instead of being uniformly grey.
+- **Clicking the now-playing pill closes the panel again**, rather than only
+  opening it.
+
 ## [1.57.1] — 2026-08-22
 
 ### Changed
@@ -4457,6 +4590,25 @@ follows [Semantic Versioning](https://semver.org).
   scrubbed from the documentation, and a `.gitignore` now blocks spreadsheet
   files from being committed. Keep such files outside the repository and
   consult them locally.
+
+## [1.58.0] — 2026-08-22
+
+### Added
+- **Claude Music** joins the stations, and the first is now named
+  **Tokyo Lofi** — also the default.
+- **Skip button** on the now-playing pill: step to the next station, wrapping
+  round at the end.
+- **Mono theme** — black and white only, with no hue anywhere. Emphasis comes
+  from contrast alone, which suits presenting and printing; lit controls
+  invert rather than tint.
+
+### Changed
+- **The colour themes have far more life in them.** The muted set has been
+  replaced by Indigo (electric blue), Green, Azure, Ember and Mono, each with
+  a matching night version, and backgrounds now carry a hint of the accent
+  instead of being uniformly grey.
+- **Clicking the now-playing pill closes the panel again**, rather than only
+  opening it.
 
 ## [1.57.1] — 2026-08-22
 

@@ -77,7 +77,7 @@ function ensureLib(name){
 }
 
 /* ──────────── State ──────────── */
-const APP_VERSION='1.57.1';
+const APP_VERSION='1.58.0';
 const isCompact=()=>window.innerWidth<=1160||(window.innerHeight>window.innerWidth&&window.innerWidth<=1280);
 const SYS_THEME=()=> (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 const uid = () => Math.random().toString(36).slice(2,9);
@@ -161,11 +161,12 @@ const today=()=>new Date().toLocaleDateString(undefined,{day:'2-digit',month:'sh
    it whichever project you open. Clearing both returns it exactly to
    how it shipped. */
 const PALETTES=[
-  {id:'',       name:'Bronze', note:'The original',  pv:['#FAF8F5','#AE8B5C']},
-  {id:'indigo', name:'Indigo', note:'Cool and calm', pv:['#F1F1EC','#3B4A9E']},
-  {id:'sage',   name:'Sage',   note:'Soft green',    pv:['#F7F5EF','#6E7F63']},
-  {id:'slate',  name:'Slate',  note:'Neutral grey',  pv:['#F2F4F6','#2E6F8E']},
-  {id:'clay',   name:'Clay',   note:'Warm terracotta',pv:['#F8F4F1','#A8503A']}
+  {id:'',       name:'Bronze', note:'The original',   pv:['#FAF8F5','#AE8B5C']},
+  {id:'indigo', name:'Indigo', note:'Electric blue',  pv:['#EEF0FA','#3B49E0']},
+  {id:'sage',   name:'Green',  note:'Fresh green',    pv:['#EDF6EE','#1E9E5A']},
+  {id:'slate',  name:'Azure',  note:'Bright blue',    pv:['#EAF4FA','#0A84C9']},
+  {id:'clay',   name:'Ember',  note:'Warm orange',    pv:['#FDF0EA','#E0552A']},
+  {id:'mono',   name:'Mono',   note:'Black and white',pv:['#FFFFFF','#000000']}
 ];
 const PREF_KEY='ikon.appearance';
 let prefs={palette:'',theme:''};
@@ -215,7 +216,8 @@ function closeAppearance(){ $('#appearVeil').style.display='none'; }
      channel — whatever that channel is streaming right now, so it never goes stale
    Names can be changed with the pencil, and your own stations are remembered. */
 const STATIONS=[
-  {id:'TwbhWiziZK8', name:'Lofi radio — focus'},
+  {id:'TwbhWiziZK8', name:'Tokyo Lofi'},
+  {id:'tRsQsTMvPNg', name:'Claude Music'},
   {id:'rFZHOHl-L8A', name:'Lofi Girl — beats to relax/study to'},
   {id:'4xDzrJKXOOY', name:'Synthwave — beats to chill/game to'},
   {id:'S_MOd40zlYU', name:'Sleep — ambient and slow'}
@@ -433,6 +435,14 @@ $('#rdRename').addEventListener('click',()=>{
 $('#rdClose').addEventListener('click',()=>{
   if(ytPlayer&&ytPlayer.pauseVideo)ytPlayer.pauseVideo();
   setPlayingUi(false); radioOn(false);
+});
+$('#rdNext').addEventListener('click',()=>{
+  const list=allStations();
+  const i=list.findIndex(st=>stationKey(st)===radioState.station);
+  const nxt=list[(i+1)%list.length];
+  radioState.station=stationKey(nxt); saveRadioPrefs();
+  fillStations(); playStation(radioState.station);
+  toast(`Now playing: ${stationName(nxt)}`);
 });
 $('#rdPlay').addEventListener('click',()=>{
   if(!ytPlayer){ playStation(radioState.station); return; }

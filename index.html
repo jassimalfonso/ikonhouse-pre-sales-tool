@@ -7,7 +7,7 @@
 <title>ikonhouse — AV Pre-Sales Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/app.css?v=1.57.1">
+<link rel="stylesheet" href="assets/css/app.css?v=1.58.0">
 </head>
 <body>
 
@@ -36,6 +36,9 @@
     <button class="np-play" id="rdPlay" title="Play / pause">
       <svg viewBox="0 0 24 24" class="ic-play"><path d="M7 4l13 8-13 8z"/></svg>
       <svg viewBox="0 0 24 24" class="ic-pause"><path d="M7 4h4v16H7zM13 4h4v16h-4z"/></svg>
+    </button>
+    <button class="np-play" id="rdNext" title="Next station">
+      <svg viewBox="0 0 24 24"><path d="M5 4l10 8-10 8z"/><path d="M17 4h3v16h-3z"/></svg>
     </button>
     <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
     <button class="np-title" id="btnRadio" title="Stations and volume"><span id="npTitle">Radio</span></button>
@@ -227,7 +230,7 @@
       <p class="guide-lead">Everything responds to the same few gestures. Tap to select, double-tap to edit, hold to create.</p>
       <div class="help-cols">
         <div><h4>Making it yours</h4>
-          <p>The <b>palette</b> button in the toolbar — also on the welcome screen — opens <b>Appearance</b>, where you can pick a colour theme: Bronze, Indigo, Sage, Slate or Clay. Each works in day or night, is remembered for every project you open, and <b>Back to the original</b> restores Bronze in one click.</p></div>
+          <p>The <b>palette</b> button in the toolbar — also on the welcome screen — opens <b>Appearance</b>, where you can pick a colour theme: Bronze, Indigo, Green, Azure, Ember, or Mono for pure black and white. Each works in day or night, is remembered for every project you open, and <b>Back to the original</b> restores Bronze in one click.</p></div>
         <div><h4>Shortcuts</h4>
           <p><kbd>R</kbd> rooms · <kbd>K</kbd> skribble · <kbd>A</kbd> notes · <kbd>O</kbd> out of scope · <kbd>C</kbd> crop · <kbd>G</kbd> greyscale · <kbd>N</kbd> numbering · <kbd>L</kbd> library · <kbd>?</kbd> this guide · pressing the same key again, <kbd>Esc</kbd>, or the <b>Done</b> button leaves a tool</p></div>
         <div><h4>Getting around</h4>
@@ -506,6 +509,6 @@ Use as many lines as you need."></textarea>
   </div>
 </div>
 
-<script src="assets/js/app.js?v=1.57.1"></script>
+<script src="assets/js/app.js?v=1.58.0"></script>
 </body>
 </html>
